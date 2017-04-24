@@ -1,0 +1,136 @@
+/* 
+* @Author: anchen
+* @Date:   2015-08-12 18:09:35
+* @Last Modified by:   Marte
+* @Last Modified time: 2015-11-13 11:00:59
+*/
+.page{
+    margin-top:10px;
+    padding-bottom: 70px;
+    background:#eee;
+}
+.page>div{
+    border-top:1px solid #e0e0e0;
+    border-bottom:1px solid #e0e0e0;
+    padding:0 10px;
+    background:#fff;
+    margin-bottom: 10px;   
+}
+.tksq_sj{
+    padding:9px 20px 9px 0;
+    border-bottom:1px solid #e0e0e0;
+    background:url(../images/go_icon.png) no-repeat right center;
+    background-size: auto 17px ;
+    font-size: 15px;
+    color:#191919;
+}
+.tksq_sj>span{
+    color:#ffa525;
+}
+.tksq_info{
+    padding:10px 0;
+    position:relative;
+}
+.tksq_pic{
+    position:absolute;
+    top:10px;
+    left:0;
+    width:50px;
+    height:50px;
+    overflow:hidden;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin-right: 15px; 
+}
+.tksq_pic img{
+    width:100%;
+    height:auto;
+    display:block;
+}
+.tksq_content{
+   margin-left: 60px; 
+   
+}
+.tksq_content>p:nth-child(1){
+   padding:2px 0 13px;
+   color:#676767;
+   font-size: 15px;
+}
+.tksq_content>p:nth-child(1) span{
+    margin-right: 10px;
+}
+.tksq_content>p:nth-child(2){
+    color:#999;
+}
+.tksq_content>p:nth-child(2) .paihao{
+    margin-left: 15px;
+}
+.tksq_status{
+    position:absolute;
+    right:0;
+    top:10px;
+    z-index: 9;
+}
+.tksq_status>p{
+    color:#f00;
+    text-align: right;
+}
+.qrsh{
+    display:block;
+    padding:3px 7px;
+    border:1px solid #e0e0e0;
+    margin-top:8px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    color:#fc342d;
+
+}
+.qrsh:hover,.qrsh:visited{
+    color:#fc342d;
+}
+.third-statu,.third-statu:hover,.third-statu:visited{
+    color:#ffa525;
+}
+
+/*选择下单类型*/
+.select-order{
+    border-bottom: 1px solid #d9d9d9;
+    background:#fff;
+    padding-left: 10px;
+}
+.select-order li{
+    border-bottom: 1px solid #d9d9d9;
+    padding:12px 0;
+    font-size: 16px;
+}
+.select-order li:last-child{
+   border-bottom: 0; 
+}
+.select-order li a{
+    display:block;
+    margin-right:15px;
+    background:url(../images/no_select_icon.png) no-repeat right center;
+    background-size:16px auto;
+}
+.select-order li a.active{
+    background:url(../images/select_icon.png) no-repeat right center;
+    background-size:16px auto; 
+}
+.confirm{
+    display:block;
+    width:60%;
+    padding:10px 0;
+    background:#fc342d;
+    color:#fff;
+    font-size: 16px;
+    margin:30px auto 0;
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -o-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius: 5px;
+}
+.confirm:visited,.confirm:hover{
+    color:#fff;
+}
+

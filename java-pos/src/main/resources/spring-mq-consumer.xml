@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!--消费者配置信息 -->
+	<bean id="smsConsumerProp" class="java.util.Properties">
+		<constructor-arg>
+			<props>
+				<prop key="AccessKey">${AccessKey}</prop>
+				<prop key="SecretKey">${SecretKey}</prop>
+				<prop key="maxReconsumeTimes">${maxReconsumeTimes}</prop>
+				<prop key="ConsumerId">${ConsumerId_MSG}</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+	<!--Listener配置 -->
+	<bean id="smsListener" class="com.mq.consumer.ShortMsgListener"></bean>
+	<bean id="smsConsumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean"
+		init-method="start" destroy-method="shutdown" >
+		<property name="properties" ref="smsConsumerProp" />
+		<property name="subscriptionTable">
+			<map>
+				<entry value-ref="smsListener">
+					<key>
+						<bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+							<property name="topic" value="${Topic_MSG}" />
+							<property name="expression" value="*" />
+						</bean>
+					</key>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="printConsumerProp" class="java.util.Properties">
+		<constructor-arg>
+			<props>
+				<prop key="AccessKey">${AccessKey}</prop>
+				<prop key="SecretKey">${SecretKey}</prop>
+				<prop key="maxReconsumeTimes">${maxReconsumeTimes}</prop>
+				<prop key="ConsumerId">${ConsumerId_PRINT}</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+	<bean id="printListener" class="com.mq.consumer.PrintListener"></bean>
+	<bean id="printConsumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean"
+		init-method="start" destroy-method="shutdown" >
+		<property name="properties" ref="printConsumerProp" />
+		<property name="subscriptionTable">
+			<map>
+				<entry value-ref="printListener">
+					<key>
+						<bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+							<property name="topic" value="${Topic_PRINT}" />
+							<property name="expression" value="*" />
+						</bean>
+					</key>
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

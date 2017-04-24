@@ -1,0 +1,25 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{padding:0px; margin:0px; max-width:100%;}
+body{width:640px;font-size:12px;height:auto; font-family: "Hiragino Sans GB","Microsoft YaHei","微软雅黑",tahoma,arial,simsun,"宋体"; margin:0 auto;}
+.head_log{width:100%;text-align:center;}
+.head_log img{width:100%;height:auto;}
+.b_title{font-size:2em;padding-left:1%;width: 98%;color: #080604;margin: 25px 0% 25px 1%;font-family: "宋体";text-align:center;}
+.b_title2{text-align:left;}
+.b_title2 span{border-left:5px #FF9900 solid; padding-left:5px; margin-left:5px;}
+.b_button{text-align:center;width:100%;margin: 3% 0%;font-family: "华文宋体";}
+.b_button a{line-height:2em;padding:0px 20px;display:block;font-size:1.7em;border:solid 1px #20D81C;background-color:#15db15;width:70%;border-radius:1em;color: #FFFFFF;text-decoration: none;margin-left: 10%;font-family: "华文细黑";margin-bottom:30px;text-align:left;}
+.b_button2 a{border:solid 1px #1C98D8;background-color:#1C98D8;}
+.b_button3 a{border:solid 1px #DE9E03;background-color:#DE9E03;}
+.btnDisable{border: solid 1px #DAE6DA;background-color: #DAE6DA;}
+.a_logo{background: url(./images/a_logo.png) no-repeat; background-size:70% 80%;background-position-y:5px;width: 2em;height: 2em;display: block;float: left;}
+.p_logo{background: url(./images/p_logo.png) no-repeat; background-size:70% 80%;background-position-y:5px;width: 2em;height: 2em;display: block;float: left;}
+.line{border-bottom:solid 1px #eee;width:97%;margin-left:3%; clear:both;}
+
+
+/*微信弹出框*/
+.po_text{background: rgba(8, 8, 8, 0.8); filter:alpha(opacity=80);position: absolute; top:0px; left:0px; width:100%; text-align: left;  z-index:99; height:100%; }
+.po_jt{  width:100%; display: block; margin-top:10px; }
+.po_llq{ width: 92%; margin: 2% auto 0; font-size: 14px; color: #DEDEDE; line-height:20px; padding-top: 2%; }
+.po_llq span{ font-size: 18px; line-height:32PX; font-weight: bold;color: #FFF;}

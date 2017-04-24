@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+<meta content="telephone=no" name="format-detection" />
+<title>Wap弹出框</title>
+<script type="text/javascript" src="./jquery-1.11.1.min.js"></script>
+<link type="text/css" rel="stylesheet" href="./css/wap.dialog.css" />
+<script type="text/javascript" src="./jquery.wap.dialog.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	//show();
+	
+	$("#testId1").click(function(){
+		//只显示内容
+		$.WapDialog.open({content:'简单的方式，只显示消息和一个确定按钮'});
+	});
+	
+	$("#testId7").click(function(){
+		$.WapDialog.open({content:'最简单的方式，只显示消息,3秒钟后自动关闭',ok:{show:false},times:3000});
+	});
+	
+	$("#testId2").click(function(){
+		//显示标题和内容
+		$.WapDialog.open({
+			title:'温馨提示',
+			content:'显示标题和内容'}
+		);
+	});
+	
+	$("#testId3").click(function(){
+		//显示取消按钮
+		$.WapDialog.open({
+			title:'温馨提示',
+			content:'带标题的消息',
+			cancel:{show:true}
+		});
+	});
+	
+	$("#testId4").click(function(){
+		//就确定修改为'马上下载'，点击确定按钮并回调函数
+		$.WapDialog.open({
+			title:'温馨提示',
+			content:'确定修改为\'马上下载\'，点击马上下载按钮回调函数',
+			cancel:{show:true},
+			ok:{
+				name:'马上下载',
+				callBack:function(){ 
+					alert('你点击了马上下载');
+				}
+			}
+		});
+	});
+	
+	$("#testId5").click(function(){
+		//自定义扩展按钮,并修改默认的按钮
+		$.WapDialog.open({
+			title:'温馨提醒',
+			content:'欢迎光临欢迎光临欢迎欢'
+			,ok:{name:'1确定',callBack:function(){				//确定按钮默认为显示，默认为关闭，默认文字为‘确定’,可以设置不显示
+				alert('点击了确定');
+			}}
+			,cancel:{name:'2取消',show:true,callBack:function(){			//取消按钮默认不显示，默认为关闭，默认文字为‘取消’,可设置显示
+				alert('点击了取消');
+			}}
+			,buttons:[											//扩展按钮,默认为显示：{name:按钮名,show:是否显示按钮,callBack:单击按钮后回调函数}
+				{name:'3再见',callBack:function(){
+					alert('点击了再见');
+				}}
+				,{name:'4走起',callBack:function(){
+					alert('点击了走起');
+				}}
+				,{name:'5谢谢'}
+			]
+		});
+	});
+	
+	$("#testId6").click(function(){
+		//显示取消按钮
+		$.WapDialog.open({ok:{name:'1确定',callBack:function(){				//确定按钮默认为显示，默认为关闭，默认文字为‘确定’,可以设置不显示
+			alert('点击了确定');
+		}}
+		,cancel:{name:'2取消',show:true,callBack:function(){			//取消按钮默认不显示，默认为关闭，默认文字为‘取消’,可设置显示
+			alert('点击了取消');
+		}}
+		,buttons:[											//扩展按钮,默认为显示：{name:按钮名,show:是否显示按钮,callBack:单击按钮后回调函数}
+			{name:'3再见',callBack:function(){
+				alert('点击了再见');
+			}}
+			,{name:'4走起',callBack:function(){
+				alert('点击了走起');
+			}}
+			,{name:'5谢谢'}
+		]});
+	});
+	
+	$("#testId8").click(function(){
+		$.WapDialog.tip('显示一个小提示消息，2秒后消失');
+	});
+
+	$("#testId9").click(function(){
+		$.WapDialog.lock({content:'加载中...'});
+	});
+	
+	$("#testId10").click(function(){
+		$.WapDialog.lock({content:'锁屏,指定3秒后关闭',time:3000});
+	});
+	$("#testId11").click(function(){
+		$.WapDialog.loading();
+	});
+});
+
+</script>
+</head>
+<body>
+wapDialog的调用实例：<br/><br/>
+<div style="width:100%;height:auto;background-color:#eee;text-align:center;display:in-line;">
+	<div class="spinner spinner2"></div>加载中...
+</div>
+0.<a id="testId1">只显示内容和确定按钮</a><br/><br/>
+1.<a id="testId7">最简单的方式，只显示消息，并且定时关闭</a><br/><br/>
+2.<a id="testId6">只显示操作按钮</a><br/><br/>
+3.<a id="testId2">显示标题和内容</a><br/><br/>
+4.<a id="testId3">显示取消按钮</a><br/><br/>
+5.<a id="testId4">确定按钮修改为'马上下载'，点击确定按钮并回调函数</a><br/><br/>
+6.<a id="testId5">自定义扩展按钮,并修改默认的按钮</a><br/><br/>
+7.<a id="testId8">显示一个小提示消息，2秒后消失</a><br/><br/>
+8.<a id="testId9">锁屏</a><br/><br/>
+9.<a id="testId10">指定锁屏多少秒后关闭</a><br/><br/>
+10.<a id="testId11">弹出加载中的图标</a><br/><br/><br/><br/><br/>
+11.<a href="http://wwww.baidu.com">跳转</a><br/><br/><br/><br/><br/>
+<div style="width:100%;height:2000px;">
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+<p>这是测试<p>
+</div>
+</body>
+</html>

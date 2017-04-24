@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- scan 当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true -->
+<!-- scanPeriod 设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。 -->
+<!-- debug 当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false -->
+<configuration scan="false" scanPeriod="5000" debug="true">
+	<property name="LOG_NAME" value="waimai" />
+	<contextName>${LOG_NAME}</contextName>
+
+	<!-- 控制台日志 -->
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%le][%d][%thread][%40logger{60}][%M\(\)] - %msg%n</pattern>
+			<charset>UTF-8</charset> <!-- 此处设置字符集 -->
+		</encoder>
+	</appender>
+
+
+	<!-- 所有内容日志文件 -->
+	<appender name="INFO_FILE" class="ch.qos.logback.core.FileAppender">
+		<file>${catalina.home}/logs/${LOG_NAME}.log</file>
+		<!-- 日志切割由运维处理 -->
+		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			daily rollover
+			<fileNamePattern>${catalina.home}/logs/${LOG_NAME}.%d{yyyyMMdd}.gz</fileNamePattern>
+			keep 30 days' worth of history
+			<maxHistory>1</maxHistory>
+		</rollingPolicy> -->
+		<encoder>
+			<pattern>[%le][%d][%thread][%40logger{35}][%M\(\)] - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- 只打印警告以及以上级别的日志 -->
+	<appender name="ERROR_FILE" class="ch.qos.logback.core.FileAppender">
+		<file>${catalina.home}/logs/${LOG_NAME}_error.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+        <!-- 日志切割由运维处理 -->
+		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			daily rollover
+			<fileNamePattern>${catalina.home}/logs/${LOG_NAME}_error.%d{yyyyMMdd}.gz</fileNamePattern>
+			keep 30 days' worth of history
+			<maxHistory>1</maxHistory>
+		</rollingPolicy> -->
+
+		<encoder>
+			<pattern>[%le][%d][%thread][%40logger{60}][%M] - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	
+	<appender name="copyData" class="ch.qos.logback.core.FileAppender">
+		<file>${catalina.home}/logs/${LOG_NAME}_copydata.log</file>
+		<encoder>
+			<pattern>[%le][%d][%thread][%40logger{60}][%M] - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<logger name="com.test" level="info" additivity="true">
+		<appender-ref ref="copyData" />
+	</logger>
+
+
+    <logger name="com" level="info" />
+    <logger name="jeecg.system" level="info" />
+    <logger name="org.jeecgframework" level="info" />
+	
+	<logger name="httpclient.wire.header" level="info" />
+	
+	<root level="info">
+		<appender-ref ref="Console" />
+		<appender-ref ref="INFO_FILE" />
+		<appender-ref ref="ERROR_FILE" />
+	</root>
+</configuration>

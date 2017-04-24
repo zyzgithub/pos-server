@@ -1,0 +1,630 @@
+/* 
+* @Author: anchen
+* @Date:   2015-08-07 15:38:14
+* @Last Modified by:   Marte
+* @Last Modified time: 2015-09-29 13:53:42
+*/
+
+/*我的主页面*/
+.mine_bar{
+    background: #fc3f2d;
+    color:#fff;
+    position:relative;
+}
+.mine_bar>p{
+    position:relative;
+    padding:10px 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+.mine_bar p .setting{
+  position:absolute;
+  top:10px;
+  left:10px;
+  display:block;
+  width:30px; 
+  height:30px;
+  background:url(../images/mine_setting_icon.png) no-repeat;
+  background-size: 22px auto;
+}
+.mine_bar p .mes{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:30px;
+  height:30px;
+  display:block;
+  background:url(../images/mine_new_icon.png) no-repeat;
+  background-size: 22px auto;
+}
+.mine_info{
+    padding:7px 0 10px 20px;
+    position:relative;
+}
+.mine_info .mine_icon{
+  float:left;
+  width:60px;
+  height:60px;
+  overflow:hidden;
+  -webkit-border-radius: 50%;
+  -o-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.mine_info .mine_icon img{
+  width:100%;
+  height:auto;
+  display:block; 
+}
+.mine_info .mine_detail{
+  float:left;
+  color:#fff;
+  margin-top: 5px;
+}
+
+.mine_info .mine_detail>p{
+    max-width: 180px;
+    line-height: 25px;
+    font-size: 16px;
+}
+.mine_info .mine_detail>p:last-child{
+  font-size: 15px;
+}
+.mine_dd > ul li>a span{
+  color:#666;
+  font-size: 13px;
+}
+.mine_info .mine_detail>i{
+  position:absolute;
+  bottom:20px;
+  right:15px;
+  width:20px;
+  height:20px;
+  display:block;
+  background:url(../images/arrow_white.png) no-repeat right bottom;
+  background-size: auto 15px;
+}
+
+
+.mine_info>span{
+    position:absolute;
+    right:20px;
+    bottom:20px;
+    font-size: 1.5rem;
+}
+.mine_div{
+    height:40px;
+    width:100%;
+    background:#000;
+    opacity:0.25;
+}
+
+.mine_bar>ul{
+    position:absolute;
+    bottom:10px;
+    left: 0;
+    width:100%;
+}
+.mine_bar>ul li{
+    float:left;
+    width:50%;
+    border-right: 1px solid #da6c69;
+    box-sizing: border-box;
+    text-align: center;
+}
+.mine_bar>ul li:nth-child(2){
+    border-right:0;
+
+}
+.mine_inner{
+  margin-top: 10px;
+  padding-bottom: 55px;
+}
+.mine_dd{
+    background:#fff;
+    border-bottom: 1px solid #d9d9d9;
+    border-top: 1px solid #d9d9d9;
+
+}
+.mine_dd>p{
+    border-bottom: 1px solid #d9d9d9;
+    padding:10px;
+}
+.mine_dd>p a{
+   display:block;
+    padding-left: 25px;
+    background:url(../images/home_search_icon.png) no-repeat;
+    background-size: auto 20px;
+}
+.mine_dd>p span{
+    float:right;
+    display:inline-block;
+    padding-right: 20px;
+    background:url(../images/go_icon.png) no-repeat right center;
+    background-size:auto  14px ;
+    color:#9b9b9b;
+}
+.mine_dd>ul {
+    padding:10px 0;
+}
+.mine_dd>ul li{
+   float:left;
+   width:25%;
+   text-align: center;
+}
+.mine_dd>ul li i{
+    width:25px;
+    height:25px;
+    display:block;
+    margin:0 auto 1px;
+  
+}
+.mine_dd ul li:nth-child(1) i{
+    background:url(../images/mine_paid_icon.png) no-repeat center center;
+    background-size:22px  auto ;
+}
+.mine_dd ul li:nth-child(2) i{
+    background:url(../images/mine_receipt_icon.png) no-repeat center center;
+    background-size:22px  auto ;
+}
+.mine_dd ul li:nth-child(3) i{
+    background:url(../images/mine_evaluation_icon.png) no-repeat center center;
+    background-size:22px  auto ;
+}
+.mine_dd ul li:nth-child(4) i{
+    background:url(../images/mine_refund_icon.png) no-repeat center center;
+    background-size: auto 20px ;
+}
+
+.mine_djq , .mine_gl{
+    margin-top: 10px;
+    background:#fff;
+    padding:0 10px;
+    border-bottom: 1px solid #d9d9d9;
+    border-top: 1px solid #d9d9d9;
+}
+.mine_djq p , .mine_gl p{
+    padding:10px 0 10px 25px;
+    border-bottom: 1px solid #d9d9d9;
+}
+.mine_djq p a, .mine_gl p a{
+    display:block;
+    width:100%;
+    font-size: 15px;
+    color:#666;
+}
+/* .mine_djq>p:nth-child(1){
+    background:url(../images/mine_recharge_icon.png) no-repeat 0 center;
+    background-size: 17px auto;
+    border-bottom:0;
+} */
+.mine_djq>p{
+    background:url(../images/mine_vouchers_icon.png) no-repeat 0 center;
+    background-size: 17px auto;
+    border-bottom:0;
+}
+.mine_djq>p i{
+    float:right;
+    display:inline-block;
+    width:20px;
+    height:20px;
+    background:url(../images/go_icon.png) no-repeat right center;
+    background-size:auto  14px ;
+    color:#9b9b9b;
+}
+.mine_gl>p:nth-child(1){
+    background:url(../images/mine_my_adress_icon.png) no-repeat 0 center;
+    background-size: 17px auto;
+}
+.mine_gl>p:nth-child(2){
+    background:url(../images/mine_my_collect.png) no-repeat 0 center;
+    background-size: 17px auto;
+}
+.mine_gl>p:last-child{
+  border-bottom:0;
+}
+.mine_djq>p i , .mine_gl>p i{
+    float:right;
+    display:inline-block;
+    width:20px;
+    height:20px;
+    background:url(../images/go_icon.png) no-repeat right center;
+    background-size:auto  14px ;
+}
+/*消息页面*/
+.mine_mes_no{
+   padding-top:30px;
+}
+.mine_mes{
+  width:100px;
+  height:100px;
+  margin:0 auto;
+  background:url(../images/none_bg.png) no-repeat center 0;
+  background-size:auto 100%;
+}
+.mine_mes_no>p{
+  text-align: center;
+  padding:10px 0;
+  color:#999;
+}
+
+
+/*关于我们*/
+.setting_inner{
+  margin-top: 10px;
+  padding-left:10px;
+  background:#fff;
+  font-size: 15px;
+
+}
+.setting_inner>ul li{
+   padding:10px 0;
+   border-bottom: 1px solid #d8d8d8;
+}
+.setting_inner>ul li:nth-child(1)>a{
+  display:block;
+  margin-right: 10px;
+  background:url(../images/go_icon.png) no-repeat right center;
+  background-size: auto 14px;
+}
+.setting_inner>ul li:last-child{
+   border-bottom: 0;
+}
+.setting_inner>ul li:last-child>a{
+   display:block;
+   margin-right: 10px;
+   border-bottom: 0;
+   position:relative;
+  background:url(../images/go_icon.png) no-repeat right center;
+  background-size: auto 14px;
+
+}
+.setting_inner>ul li:last-child>a span{
+   position:absolute;
+   top:2px;
+   right:15px;
+   color:#b3b3b3;
+   font-size: 14px;
+}
+
+/*关于我们*/
+.about_pic{
+    margin: 40px auto 0;
+    width:100px; 
+    overflow:hidden;
+}
+.about_pic img{
+    width:100%;
+    height:auto;
+    display:block;
+}
+.about_pic p{
+    text-align: center;
+    padding:8px 0;
+}
+/*我的订单*/
+.mine_order_list {
+    background:#fff;
+    border-bottom:1px solid #d8d8d8;
+
+}
+.mine_order_list li{
+    float:left;
+    width:25%;
+    padding:6px 0;
+    text-align: center;
+}
+.mine_order_list li.cur{
+    border-bottom: 2px solid #fa3f2d;
+}
+.mine_out{
+   margin-top: 95px ;
+}
+.mine_out .mine{
+    background:#fff;
+    padding:0 10px;
+    font-size: 0.925rem;
+    font-weight: normal;
+    color:#808080;
+}
+.mine_out .mine>h4{
+    padding:8px 0;
+    border-bottom: 1px solid #d8d8d8;
+    background:url(../images/go_icon.png) no-repeat right center;
+    background-size: auto 15px;
+    font-size:16px;
+    font-weight: normal;
+}
+.mine_out .mine .mine_order{
+    padding:10px 0;
+}
+.mine_out .mine .mine_order .mine_pic{
+   float:left;
+   margin-right: 20px;
+   width:50px;
+   height:50px;
+}
+.mine_out .mine .mine_order .mine_pic img{
+    width:100%;
+    height:auto;
+    display:block;
+}
+.mine_out .mine .mine_order .mine_times{
+    float:left;
+}
+.mine_out .mine .mine_order .mine_times>p span{
+    color:#676767;
+    margin-right: 10px;   
+}
+.mine_out .mine .mine_order .mine_times>span{
+    display:block;
+    margin-top: 12px;
+    color:#999;
+}
+.mine_out .mine .mine_order .mine_status{
+    float:right;
+    text-align: right;
+}
+.mine_out .mine .mine_order .mine_status a{
+    display:block;
+    padding:2px 7px;
+    color:#ff1010;
+    -webkit-border-radius: 3px;
+    -o-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius: 3px;
+    border:1px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+/*充值页面*/
+.mine_cz{
+    margin-top: 10px;
+    background:#fff;
+    border-bottom:1px solid #d8d8d8;
+    border-top:1px solid #d8d8d8;
+    padding:10px;
+    font-size: 15px;
+    color:#4d4d4d;
+    
+}
+.mine_cz>input{
+    outline:none;
+    outline:medium;
+    border:none;
+    float:right;
+    height:20px;
+    width:100px;
+}
+.mine_czfs{
+    margin-top: 10px;
+    background:#fff;
+    padding:0 10px;
+    color:#4d4d4d;
+    font-size: 15px;
+}
+
+.mine_czfs ul li{
+   width:100%;
+   padding:10px 0 10px 25px;
+   position:relative;
+}
+.mine_czfs ul li:nth-child(1){
+   background:url(../images/mine_recharge_wechat_icon.png) no-repeat 0 center;
+   background-size: 20px auto;  
+}
+.mine_czfs ul li:nth-child(2){
+   background:url(../images/mine_recharge_alipay_icon.png) no-repeat 0 center;
+   background-size: 17px auto;  
+}
+
+
+.mine_czfs ul li i{
+   position:absolute;
+   right:10px;
+   top:10px;
+   width:20px;
+   height:20px;
+   background:url(../images/no_select_icon.png) no-repeat;
+   background-size: 16px auto;
+}
+.mine_czfs ul li .cur{
+  background:url(../images/order_state_complete_icon.png) no-repeat;
+  background-size: 16px auto;
+}
+
+.mine_submit{
+    display:block;
+    width:80%;
+    padding:10px 0;
+    margin:20px auto 0;
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -o-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius: 5px;
+    background:#d9d9d9;
+    color:#999;
+    font-size: 15px;
+}
+.mine_submit_on{
+   background:#fc3f2d;
+   color:#fff;
+}
+.mine_submit_on:hover , .mine_submit_on:visited{
+    color:#fff;
+}
+
+
+/*账户信息*/
+.mine_account{
+  margin-top: 10px;
+  padding-left:10px;
+  background:#fff;
+  font-size: 15px;
+  color:#4d4d4d;
+}
+.mine_account>ul li{
+  padding:10px 0;
+  border-bottom:1px solid #d8d8d8;
+  color:#4d4d4d;
+}
+.mine_account>ul li>span{
+  float:left;
+  display:block;
+}
+.mine_account>ul li:nth-child(1)>span{
+  height:50px;
+  line-height: 50px;
+}
+.mine_account_icon{
+  float:right;
+  margin-right: 20px;
+  width:50px;
+  height:50px;
+  overflow:hidden;
+  -webkit-border-radius: 50%;
+  -o-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+}
+.mine_account_icon img{
+  width:100%;
+  -webkit-border-radius: 50%;
+  -o-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+  height:auto;
+  display:block;
+}
+.mine_account>ul li>p{
+  float:right;
+  margin-right: 10px;
+  padding-right: 15px;
+  color:#b3b3b3;
+  position:relative;
+}
+.mine_account>ul li:last-child{
+  border-bottom: 0;
+}
+.mine_account>ul li:last-child>p i
+{ width:20px;
+  height:20px;
+  display:inline-block;
+  position:absolute;
+  top:1px;
+  right:0;
+  background:url(../images/go_icon.png) no-repeat right center;
+  background-size: auto 14px;
+}
+.mine_account>ul li:last-child>p
+
+/*我的收藏*/
+.mine_sc{
+  margin-top: 10px;
+  background:#fff;
+}
+/*绑定手机*/
+.bind_phone{
+  margin-top: 10px;
+  background:#fff;
+  border-top:1px solid #dedede;
+  border-bottom: 1px solid #dedede;
+  color:#666;
+  font-size: 16px;
+}
+.bind_phone>ul li{
+  padding:8px 10px ;
+  border-bottom: 1px solid #ebebeb;
+  position:relative;
+}
+.bind_phone>ul li>span{
+  margin-right: 10px;
+}
+.bind_phone>ul li>input{
+  height:24px;
+  width:150px;
+}
+.bind_phone>ul li:nth-child(2)>input{
+    width:100px;
+}
+.bind_phone>ul li>a{
+  position:absolute;
+  top:7px;
+  right:15px;
+  display: block;
+  padding:5px 6px;
+  background:#42b2fa;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  color:#fff;
+  font-size: 14px;
+}
+.bind_btn{
+   display:block;
+   width:60%;
+   margin:30px auto 0;
+   padding:10px 0;
+   text-align: center;
+   background:#fc3f2d;
+   -webkit-border-radius: 5px;
+   -o-border-radius:5px;
+   -moz-border-radius:5px;
+   border-radius: 5px;
+   font-size: 16px; 
+}
+
+/*--------------优惠券页面----------------*/
+.mine-coupon{
+  padding:0 20px 10px;
+}
+.mine-couponItem{
+  width:100%;
+  height:90px;
+  margin-top: 15px;
+  background:url(../images/coupon.png) no-repeat;
+  background-size: 100% 100%;
+  position:relative;
+}
+.mine-noncouponItem{
+  background:url(../images/coupon-non.png) no-repeat;
+  background-size: 100% 100%;
+}
+.mine-couponItem .couponItem-left{
+   float:left;
+   width:66%;
+   color:#fff;
+   font-size: 15px;
+}
+.mine-couponItem .couponItem-left>p{
+  width:100%;
+  text-align: center;
+}
+.mine-couponItem .couponItem-left>p:first-child{
+  font-size: 30px;
+  padding:8px  0  6px;
+}
+.mine-couponItem .couponItem-left>p:last-child span{
+  margin-right: 5px;
+}
+.mine-couponItem  .couponItem-right{
+  position:absolute;
+  top:50%;
+  right:0;
+  width:34%;
+  -webkit-transform: translateY(-50%);
+     -moz-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+  text-align: center;
+  color:#999;
+  line-height: 20px;
+}
+
+

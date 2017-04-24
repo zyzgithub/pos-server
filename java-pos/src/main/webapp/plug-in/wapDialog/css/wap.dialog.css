@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+.wapDialog{width:100%;height:100%;z-index: 1201;top:0px;left:0px;position: fixed;font-size:0.9em;color:#343434;padding:0px;margin:0px;font-family: 微软雅黑;}
+.wapDialog_bg{background:rgba(0,0,0,0.7); filter:alpha(opacity=70);width:100%;height:100%;position: absolute;z-index: 1202;}
+.wapDialog_dialog{width:28%;left:36%;top:25%;background-color:#FFFFFF; position: absolute;z-index: 1203;border-radius:5px;}
+.wapDialog_dialog_top{width:100%;margin-top:1%;}
+.wapDialog_line{border-bottom:solid 1px #59C2E7;width:100%;height:1%;clear: both;}
+.wapDialog_dialog_top_title{padding:3% 1.5%;width:97%;float:left;color:#59C2E7;font-weight: 600;text-align:left;}
+.wapDialog_dialog_content{padding:1.5%;width:97%;height: 110px;display: table; _position:relative;}
+.wapDialog_dialog_content > div{;text-align: center;display: table-cell;vertical-align:middle;_position:absolute;_top:50%;}
+.wapDialog_dialog_content > div >div{_position:relative;_top:-50%;}
+.wapDialog_dialog_bottom{text-align: center;width:100%;}
+.wapDialog_dialog_bottom > a{display: block;padding:3% 0;text-decoration: none;color:#343434;float:left;width:49.6%;background-color:#FFFFFF;}
+.wapDialog_dialog_bottom > a:hover,.wapDialog_dialog_bottom a.hover{background: #59C2E7;color:#FFFFFF;}
+.wapDialog_dialog_bottom > a.border{border-right:solid 1px #E2E2E2;border-top:solid 1px #E2E2E2;}
+.wapDialog_tip{font-size:.8em;height:auto;width:100%;top:25%;position: fixed;z-index: 1203;text-align: center;}
+.wapDialog_tip_content{height:auto;width:30%;text-align: center;margin:0% 35% 0%;background-color:#ccc;background:rgba(0,0,0,0.7);padding:10px; filter:alpha(opacity=70);border-radius:5px;color:#FFFFFF;}
+.spinner{height: 33px;margin: 0px auto;width: 33px;display: block;overflow: hidden;text-indent: 100%;white-space: nowrap;background-size:cover;animation:.9s spin infinite linear;-webkit-animation:.9s spin infinite linear;background-image: url("../images/loading4.png");background-repeat:no-repeat;}
+.spinner2{background-image: url("../images/loading4-2.png");}
+@-webkit-keyframes spin{from{-webkit-transform:rotate(0deg);transform:rotate(0deg);}to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}}
+@keyframes spin{m{-webkit-transform:rotate(0deg);transform:rotate(0deg);}to{-webkit-transform:rotate(360deg);transform:rotate(360deg);}}
+@media screen and (min-width: 640px) and (max-width:1024px){.wapDialog_dialog{width:40%;left:30%;}}
+@media screen and (max-width: 640px){.wapDialog{font-size:1.2em;}.wapDialog_dialog{width:80%;left:10%;}.wapDialog_dialog_bottom > a{padding:5% 0;}.wapDialog_dialog_top_title{padding:4% 1.5%;}.wapDialog_tip_content{margin:0% 10% 0%;width:80%;}}
+@media screen and (max-width: 300px){.wapDialog_dialog_bottom a{width:100%;}}
+@media screen and (max-height: 300px){.wapDialog_dialog{top:5%;}.wapDialog_dialog_content{height:50px;}}

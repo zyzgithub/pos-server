@@ -1,0 +1,18 @@
+
+/*.top img{ height: auto; width: 100%;}
+.bottom{ height: auto; width: 100%;position: relative;}
+.bottomLink{ position: absolute; top: 0; left: 2px; }
+.bottomLink ul{ height: auto; width: 80%; margin: 0 auto; margin-top: -8%;}
+.bottomLink ul li{ height: auto; width: 40%;float: left; margin-top: 8%; margin-left: 15px;}
+.bottomLink ul li a{height: auto; width:100%; display: block; background: #febb2b url(../img/smallBar.png) no-repeat left bottom; background-size: contain; color: #1a021c; font-size: 16px; border-radius: 4px; padding: 12px 0; text-align: center;}
+.bottomLink ul li.marketing{ height: auto; width: 100%; margin: 8% auto;}
+.bottomLink ul li.marketing a{ height: auto; width: 86%; margin-left: 15px; background: #febb2b url(../img/bar.png) no-repeat left bottom !important; background-size: contain; border-radius: 4px;}*/
+body{ max-width: 700px; margin: 0 auto;}
+.top img{ height: auto; width: 100%;}
+.bottom{ height: auto; width: 100%; position: relative; }
+.bottomLink{ height: auto; width: 100%; position: absolute; top: 0;}
+.bottomLink ul{ height: auto; width: 72%; margin: -8% auto 0;}
+.bottomLink ul li{ height: auto; width: 40%;float: left; margin-top: 8%; margin-left: 7%;}
+.bottomLink ul li a{height: auto; width:100%; display: block; background: #febb2b url(../img/smallBar.png) no-repeat left bottom; background-size: contain; color: #1a021c; font-size: 16px; border-radius: 4px; padding: 12px 0; text-align: center;}
+.bottomLink ul li.marketing{ height: auto; width: 100%; margin: 8% auto;}
+.bottomLink ul li.marketing a{ height: auto; width: 86%; margin-left: 7%; background: #febb2b url(../img/bar.png) no-repeat left bottom !important; background-size: contain; border-radius: 4px;}
