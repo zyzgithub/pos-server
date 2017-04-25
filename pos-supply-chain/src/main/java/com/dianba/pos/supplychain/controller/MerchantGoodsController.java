@@ -12,12 +12,13 @@ public class MerchantGoodsController {
 
 
     @RequestMapping("matchItems")
-    public void matchItems(HttpServletRequest request) {
+    public String matchItems(HttpServletRequest request) {
         System.out.println();
 //        String barcodes = mustText("barcodes");
 //        Integer userId = mustInt("userId");
 //
 //        JSONArray response = goodsService.matchItems(userId, barcodes);
 //        addResponse("result", response);
+        return "";
     }
 }
