@@ -12,4 +12,92 @@
     <context:component-scan base-package="com.dianba.pos"/>
     <mvc:annotation-driven/>
 
+    <!-- 异常处理类 -->
+    <bean id="exceptionHandler"
+          class="org.jeecgframework.core.common.exception.MyExceptionHandler" />
+    <!-- 系统错误转发配置[并记录错误日志] -->
+    <bean
+            class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="500"></property>   <!-- 默认为500，系统错误(error.jsp) -->
+        <property name="defaultStatusCode" value="404"></property>
+        <property name="statusCodes"><!-- 配置多个statusCode -->
+            <props>
+                <prop key="error">500</prop>  <!-- error.jsp -->
+                <prop key="error1">404</prop>    <!-- error1.jsp -->
+            </props>
+        </property>
+        <property name="exceptionMappings">
+            <props>
+                <!-- 这里你可以根据需要定义N多个错误异常转发 -->
+                <prop key="java.sql.SQLException">dbError</prop> <!-- 数据库错误(dbError.jsp) -->
+                <prop key="org.springframework.web.bind.ServletRequestBindingException">bizError</prop> <!-- 参数绑定错误(如：必须参数没传递)(bizError.jsp) -->
+                <prop key="java.lang.IllegalArgumentException">bizError</prop>  <!-- 参数错误(bizError.jsp) -->
+                <prop key="org.springframework.validation.BindException">bizError</prop>  <!-- 参数类型有误(bizError.jsp) -->
+                <prop key="java.lang.Exception">unknowError</prop>  <!-- 其他错误为'未定义错误'(unknowError.jsp) -->
+            </props>
+        </property>
+    </bean>
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="org.jeecgframework.core.interceptors.EncodingInterceptor" />
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/web/**" />
+            <bean class="org.jeecgframework.core.interceptors.AuthInterceptor">
+                <property name="excludeUrls">
+                    <list>
+                        <value>loginController.do?goPwdInit</value>
+                        <value>loginController.do?pwdInit</value>
+                        <value>loginController.do?login</value>
+                        <value>loginController.do?checkuser</value>
+                        <value>controller.do?login</value>
+                        <value>controller.do?execute</value>
+                        <value>takeOutController.do?waimai</value>
+                        <value>takeOutController.do?tangshi</value>
+                        <value>takeOutController.do?shoppingcar</value>
+                        <value>takeOutController.do?getChooseGoods</value>
+                        <value>takeOutController.do?placeOrder</value>
+                        <value>takeOutController.do?payOrder</value>
+                        <value>takeOutController.do?orderList</value>
+                        <value>takeOutController.do?payPage</value>
+                        <value>ci/menuController.do?getMenuList</value>
+                        <value>takeOutController.do?payresult</value>
+                        <value>takeOutController.do?merchantList</value>
+                        <value>takeOutController.do?getCode</value>
+                        <value>takeOutController.do?getPayInfo</value>
+                        <value>weChatController.do?getPayInfo</value>
+                        <value>ci/smsController.do?sendSms</value>
+                        <value>ci/validateCodeController.do?validateCode</value>
+                        <value>takeOutController.do?checkMerchantState</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+
+        <!-- 接口登录拦截器 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/ci/**" />
+            <bean
+                    class="org.jeecgframework.core.interceptors.InterfaceLoginInterceptor">
+                <property name="excludeUrls">
+                    <list>
+                        <value>ci/controller.do?login</value>
+                        <value>ci/menuController.do?getMenuList</value>
+                        <value>ci/smsController.do?sendSms</value>
+                        <value>ci/smsController.do?sendSmsValidateCode</value>
+                        <value>ci/validateCodeController.do?validateCode</value>
+                        <value>ci/validateCodeController.do?validateCodeNew</value>
+                        <value>ci/tvLoginController.do?generateCode</value>
+                        <value>ci/tvLoginController.do?code</value>
+                        <value>ci/tvLoginController.do?login</value>
+                        <value>ci/tvLoginController.do?getTvLogin</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
 </beans>
