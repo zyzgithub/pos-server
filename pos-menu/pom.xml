@@ -11,5 +11,11 @@
 
     <artifactId>pos-menu</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.dianba</groupId>
+            <artifactId>pos-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
