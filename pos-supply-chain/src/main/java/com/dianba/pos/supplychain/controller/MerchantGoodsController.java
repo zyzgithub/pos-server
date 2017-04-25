@@ -1,8 +1,10 @@
 package com.dianba.pos.supplychain.controller;
 
+import com.dianba.pos.menu.po.Menu;
 import com.dianba.pos.supplychain.config.SupplyChainURLConstant;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,13 +14,15 @@ public class MerchantGoodsController {
 
 
     @RequestMapping("matchItems")
-    public String matchItems(HttpServletRequest request) {
-        System.out.println();
+    @ResponseBody
+    public Menu matchItems(HttpServletRequest request) {
+        Menu menu=new Menu();
+        menu.setDisplay("this is a str");
 //        String barcodes = mustText("barcodes");
 //        Integer userId = mustInt("userId");
 //
 //        JSONArray response = goodsService.matchItems(userId, barcodes);
 //        addResponse("result", response);
-        return "";
+        return menu;
     }
 }
