@@ -18,3 +18,7 @@
 
 ## Build Supply War
     mvn clean package -Psupply -DskipTests
+
+## pos_casher 金融接口对接
+
+  MerchantController 商家控制器
