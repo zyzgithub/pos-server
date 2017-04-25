@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
 
 public class StringUtil {
 
-	
-	
+
+
   /**
    * 取指定小数位的浮点数,不够小数位数时补零
    * @param floStr
@@ -45,15 +45,15 @@ public class StringUtil {
     }
     return floStr.substring(0, index+location+1);
   }
-  
+
   /**
-   * 
+   *
    * @param intStr
    * @return
    */
   public static int truncateInt(String intStr) {
 	  int len=intStr.length();
-	  
+
 	  int result=0;
 	  for(int i=0; i<len; i++) {
 		  char c=intStr.charAt(i);
@@ -64,14 +64,14 @@ public class StringUtil {
 			  break;
 		  }
 	  }
-	  
+
 	  return result;
   }
-  
-  
+
+
 	/**
 	 * 把字符型数字转换成整型.
-	 * 
+	 *
 	 * @param str
 	 *            字符型数字
 	 * @return int 返回整型值。如果不能转换则返回默认值defaultValue.
@@ -95,7 +95,7 @@ public class StringUtil {
 	 * 判断一个字符串是否为Int类型
 	 */
 	public static boolean isInt(String str) {
-		
+
 		if (isNum(str)){
 			if(str.length()<10){
 				return true;
@@ -105,7 +105,7 @@ public class StringUtil {
 					return true;
 				}catch(Exception e){}
 			}
-			
+
 		}
 		return false;
 	}
@@ -136,17 +136,17 @@ public class StringUtil {
 		}
 		return str;
 	}
-	
+
 	/**
 	 * 判断2个字符串是否相等
 	 */
 	public static boolean isequals(String str1,String str2) {
 		return str1.equals(str2);
 	}
-	
+
 	/**
 	 * 在长数字前补零
-	 * 
+	 *
 	 * @param num 数字
 	 * @param length 输出位数
 	 */
@@ -167,7 +167,7 @@ public class StringUtil {
 
 	/**
 	 * 在数字前补零
-	 * 
+	 *
 	 * @param num 数字
 	 * @param length 输出位数
 	 */
@@ -187,7 +187,7 @@ public class StringUtil {
 
 	/**
 	 * 使HTML的标签失去作用*
-	 * 
+	 *
 	 * @param input
 	 *            被操作的字符串
 	 * @return String
@@ -204,9 +204,9 @@ public class StringUtil {
 		input = input.replaceAll("\\\\", "&#92;");
 		return input;
 
-		
+
 	}
-	
+
 	/**
 	 * 对表单提交的数据进行处理，有专门针对textarea的数据进行处理的逻辑,对空格进行保留.
 	 * 如果不是textarea提交的数据(根据是否有"<br>"和"&nbsp;"进行判断)
@@ -215,27 +215,27 @@ public class StringUtil {
 	public static final String escapeHTMLTag(String input) {
 		if (input == null)
 			return "";
-		
+
 		if (input.indexOf("<br>")==-1 && input.indexOf("&nbsp;")==-1) {
 			return escapeHTMLTagOld(input);
 		}
-		
+
 		int len = input.length();
 		StringBuilder strBuilder = new StringBuilder();
 		int pos=0;
 		while(pos<len){
 		    char c = input.charAt(pos);
-		    
+
 		    switch(c){
 		        case '<' :{
 		        	if ( (pos+4) < len && "<br>".equals( input.substring(pos,pos+4) )  ) {
 			    		strBuilder.append("<br>");
 			    		pos +=4;
-			    		
+
 			    	}else{
 			    		strBuilder.append("&lt;");
 			    		pos++;
-			    	}	
+			    	}
 		        	break;
 		        }
 		        case '>':    strBuilder.append("&gt;");    pos++; break;
@@ -243,26 +243,26 @@ public class StringUtil {
 		        	if ( (pos+6) < len && "&nbsp;".equals( input.substring(pos,pos+6) )  ) {
 			    		strBuilder.append("&nbsp;");
 			    		pos +=6;
-			    		
+
 			    	}else{
 			    		strBuilder.append("&amp;");
 			    		pos++;
-			    	}	
-		        	break;	
-		        	         
+			    	}
+		        	break;
+
 		        }
 		        case '\'':   strBuilder.append("&#39;");   pos++; break;
 		        case '\"':   strBuilder.append("&quot;");  pos++; break;
 		        case '\\':   strBuilder.append("&#92;");   pos++; break;
 		        default:     strBuilder.append(c);         pos++; break;
 		    }
-		    
+
 		}
-		
+
 		return strBuilder.toString();
 
 	}
-	
+
 	/**
 	 * 还原html标签
 	 * @param input
@@ -280,7 +280,7 @@ public class StringUtil {
 	    input = input.replaceAll("&#92;", "\\\\");
 	    return input;
 	  }
-	 
+
 	/**
 	 * 把数组合成字符串
 	 * @param str
@@ -298,7 +298,7 @@ public class StringUtil {
 	}
 	/**
 	 * 把字符串分隔成数组
-	 * 
+	 *
 	 * @param str
 	 *            字符 如： 1/2/3/4/5
 	 * @param seperator
@@ -367,7 +367,7 @@ public class StringUtil {
     }
     return 0;
   }
-  
+
 	public static String getSub(String str, int len) {
 		return getSub(str, len, "");
 	}
@@ -510,7 +510,7 @@ public class StringUtil {
 
 	/**
 	 * 判断是不是一个合法的电子邮件地址
-	 * 
+	 *
 	 * @param email
 	 * @return boolean
 	 */
@@ -527,7 +527,7 @@ public class StringUtil {
 
 	/**
 	 * 转换html特殊字符为html码
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -569,9 +569,9 @@ public class StringUtil {
 			return "";
 		}
 	}
-	
+
   /**
-   * 
+   *
    * @param word: 输入的字符串
    * @return 是否输入的是字符
    */
@@ -608,7 +608,7 @@ public class StringUtil {
     StringBuffer smallPro =new  StringBuffer("<ol>").append("\n");
     //用来存放小项的标号
     int index = 1;
-    
+
     String regex = "(<div class=s_title>)(.*?)(</div>)";
     Matcher testM = Pattern.compile(regex,Pattern.CASE_INSENSITIVE).matcher(input);
     while (testM.find()) {
@@ -630,7 +630,7 @@ public class StringUtil {
     }
     return null;
   }
-  
+
   /**
    * 字符串截取
    * @param str 要处理的字符串
@@ -645,13 +645,13 @@ public class StringUtil {
 	  if(endIndex == -1){
 		  return str.substring(beginIndex);
 	  }
-	  
+
 	  if(endIndex > str.length()){
 		  endIndex = str.length();
 	  }
 	  return str.substring(beginIndex, endIndex);
   }
-  
+
   /**
 	 * 随机生成几个不同的数
 	 * @param lenth
@@ -660,9 +660,9 @@ public class StringUtil {
 	 */
 	 public static int[] random5(int lenth, int num ) {
 
-	        Random rd = new Random();        
+	        Random rd = new Random();
 
-	        HashSet set = new HashSet();        
+	        HashSet set = new HashSet();
 	        while(true){
 	            int i= rd.nextInt(lenth);
 	            set.add(new Integer(i));
@@ -674,14 +674,14 @@ public class StringUtil {
 	        int jj[] = new int[num];
 	        int i = 0;
 	        while (iter.hasNext()) {
-	        	
+
 	            jj[i] = ((Integer) iter.next()).intValue();
 	            ++i;
 	        }
 	       return jj;
 	    }
-	
-  
+
+
   /**
    * 字符串截取
    * @param str 要处理的字符串
@@ -697,17 +697,17 @@ public class StringUtil {
 	  if(endIndex == -1){
 		  return str.substring(beginIndex);
 	  }
-	  
+
 	  if(endIndex > str.length()){
 		  endIndex = str.length();
 	  }
-	  String restr = str.substring(beginIndex, endIndex); 
+	  String restr = str.substring(beginIndex, endIndex);
 	  if(endIndex < str.length()){
 		  restr = restr + endMark;
 	  }
 	  return restr;
   }
-  
+
   /**
    * 去掉超链接和<P></P>,文章摘要使用
    * @param str
@@ -716,7 +716,7 @@ public class StringUtil {
   public static String filtHref( String str ){
 	  if( str == null)
 		  return "";
-	  String regex = "<[a|A] href=\".*?>(.*?)</[a|A]>"; 
+	  String regex = "<[a|A] href=\".*?>(.*?)</[a|A]>";
 	  Pattern pattern = null;
 	  pattern = Pattern.compile(regex);
 	  Matcher matcher = pattern.matcher(str);
@@ -724,8 +724,8 @@ public class StringUtil {
 		  String ss = matcher.group(1);
 		  str = str.replaceAll("<[a|A] href=\".*?>"+ss+"</[a|A]>", ss);
 	  }
-	  
-	  regex = "<[p|P] [^>]*?>(.*?)</[p|P]>"; 
+
+	  regex = "<[p|P] [^>]*?>(.*?)</[p|P]>";
 	  pattern = Pattern.compile(regex);
 	  matcher = pattern.matcher(str);
 	  while( matcher.find() ){
@@ -734,7 +734,7 @@ public class StringUtil {
 	  }
 	  return str;
   }
-  
+
   /**
    * 给超链接加上:target="_blank"
    * @param str
@@ -743,7 +743,7 @@ public class StringUtil {
   public static String addHrefBlank( String str ){
 	  if( str == null)
 		  return "";
-	  String regex = "<[a|A] href=\"([^>]*?)>.*?</[a|A]>"; 
+	  String regex = "<[a|A] href=\"([^>]*?)>.*?</[a|A]>";
 	  Pattern pattern = null;
 	  pattern = Pattern.compile(regex);
 	  Matcher matcher = pattern.matcher(str);
@@ -755,17 +755,17 @@ public class StringUtil {
 	  }
 	  return str;
   }
-  
+
   //获取26个字母
   public static char[] getEnChar(){
 	  char[] cs = new char[26];
-	  char  c = 'A'-1;   
+	  char  c = 'A'-1;
 	  for(int i=0;c++<'Z';i++){
 		  cs[i] = c;
   	  }
 	  return cs;
   }
-  
+
   //判断是否在26个字母里面
   public static boolean isInChar(String c){
 	  boolean in = false;
@@ -776,9 +776,9 @@ public class StringUtil {
 			  break;
 		  }
 	  }
-	  return in;  
+	  return in;
   }
-  
+
   //转化成大写
   public String toUpperCase(String str){
 	  if(isBlank(str)){
@@ -786,7 +786,7 @@ public class StringUtil {
 	  }
 	  return str.toUpperCase();
   }
-  
+
   //转化成大写
   public String toLowerCase(String str){
 	  if(isBlank(str)){
@@ -794,7 +794,7 @@ public class StringUtil {
 	  }
 	  return str.toLowerCase();
   }
-  
+
   /**
    * 根据大图获得小图地址
    * @param imgurl
@@ -805,7 +805,7 @@ public class StringUtil {
   	if(len>1) return imgurl.substring(0, len + 1) + "t_" + imgurl.substring(len + 1, imgurl.length());
   	else return imgurl;
   }
-  
+
 //  /**
 //   * 去掉html代码
 //   * @param html
@@ -820,7 +820,7 @@ public class StringUtil {
 //				html = sb.getStrings();
 //			} catch (Exception e) {
 //				logger.error(e, e);
-//			}			
+//			}
 //		}
 //		return html;
 //  }
@@ -832,7 +832,7 @@ public class StringUtil {
   public static char[] toArray(String str){
     return str.toCharArray();
   }
-  
+
   /**
    * b代替a
    * @param str
@@ -846,7 +846,7 @@ public class StringUtil {
     }
     return str.replaceAll(a, b);
   }
-  
+
   /**
 	 * 获取要过滤的URL
 	 */
@@ -878,7 +878,7 @@ public class StringUtil {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Description: 基本功能：过滤URL
 	 * @param str
@@ -890,7 +890,7 @@ public class StringUtil {
 		boolean result = matcher.find();
 		return result;
 	}
-	
+
 	/**
 	 * 判断字符串是否正常(不为null，不为空)
 	 * @param str
@@ -902,10 +902,10 @@ public class StringUtil {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 判断字符串是否一个数字
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -913,8 +913,8 @@ public class StringUtil {
 		if (str == null)return false;
 		return str.matches("\\d+");
 	}
-	
-	
+
+
 	/**
 	 * 获得字符串去掉空格、回车、tab之后的长度
 	 * @param str
@@ -923,7 +923,7 @@ public class StringUtil {
 	public static int getLenWithoutBlank(String str){
 		return str.replace("\n", "").replace("\t", "").replace(" ", "").replace("　", "").length();
 	}
-	
+
 	public static String parserToWord(String str){
 		String result = "";
 		if(str != null){
@@ -935,13 +935,13 @@ public class StringUtil {
 		}
 		return result;
 	}
-	
+
 	public static String parserToHTMLForTextArea(String str){
 		String result = escapeHTMLTag(str);
 		result = result.replaceAll(" ", "&ensp;");
 		return result;
 	}
-	
+
 	/**
 	 * 把double由科学计数法转为正常计数法
 	 * @param
@@ -955,12 +955,12 @@ public class StringUtil {
         String valueN= numformat.format(dnum);
         return valueN;
 	}
-	
+
 	public static void main(String[] args) {
 //		int a=2147483647;
 //		boolean b=isInt("-2");
 //		System.out.println(b);
-	
+
 //	    String intStr = "3.2万元";
 //	    System.out.println(truncateInt(intStr));
 		double a=123456789.10;

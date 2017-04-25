@@ -22,6 +22,7 @@
         <module>pos-casher</module>
         <module>pos-payment</module>
         <module>pos-web</module>
+        <module>pos-menu</module>
     </modules>
 
 </project>

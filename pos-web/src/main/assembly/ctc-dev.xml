@@ -11,6 +11,7 @@
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <outputDirectory>WEB-INF/lib</outputDirectory>
             <excludes>
+                <exclude>servlet-api*.jar</exclude>
                 <exclude>pos-web-*.war</exclude>
             </excludes>
         </dependencySet>
