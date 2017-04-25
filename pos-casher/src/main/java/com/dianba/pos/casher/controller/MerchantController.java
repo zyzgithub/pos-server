@@ -1,10 +1,12 @@
-package com.bianba.pos.casher.controller;
+package com.dianba.pos.casher.controller;
 
+import com.dianba.pos.common.util.DateUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Created by Administrator on 2017/4/25 0025.
+ * zyz
  *  商家控制器
  */
 @Controller
@@ -23,8 +25,10 @@ public class MerchantController
      使用商米POS超过6个月，最近6个月内商家每日余额的平均数
      使用商米POS未超过6个月,已开店月数商家每日余额的平均数
      */
-    @RequestMapping(value="getMerchantProfit",method = {})
+    @RequestMapping(value="getMerchantProfit")
     public  void getMerchantProfit(){
+
+        String todayDate=DateUtil.getCurrDate("yyyy-MM-dd HH:mm");
 
 
 
