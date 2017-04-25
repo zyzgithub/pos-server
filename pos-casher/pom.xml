@@ -8,7 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-、、pp   <artifactId>pos-casher</artifactId>
+   <artifactId>pos-casher</artifactId>
 
     <dependencies>
         <dependency>
