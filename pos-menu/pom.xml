@@ -10,8 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pos-menu</artifactId>
-
     <dependencies>
+
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>pos-core</artifactId>
