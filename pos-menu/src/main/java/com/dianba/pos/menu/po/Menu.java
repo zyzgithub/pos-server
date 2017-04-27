@@ -1,8 +1,20 @@
 package com.dianba.pos.menu.po;
 
-public class Menu {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "MENU")
+public class Menu implements Serializable{
+
+    @Id
+    @Column(name = "ID")
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
     private Double price;

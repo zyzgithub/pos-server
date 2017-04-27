@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.dianba.pos.mapper.UserMapper">
-  <resultMap id="BaseResultMap" type="cn.dianba.pos.po.User">
+<mapper namespace="com.dianba.pos.menu.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.dianba.pos.menu.po.User">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
@@ -96,7 +96,7 @@
     mobile_remark, openid_remark, is_delete, first_order_time, user_state, age, buy_count, 
     update_time, mem_status, creator, aliAcNo
   </sql>
-  <select id="selectByExample" parameterType="cn.dianba.pos.po.UserExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.dianba.pos.menu.po.UserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -120,13 +120,13 @@
     delete from user
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="cn.dianba.pos.po.UserExample">
+  <delete id="deleteByExample" parameterType="com.dianba.pos.menu.po.UserExample">
     delete from user
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.dianba.pos.po.User">
+  <insert id="insert" parameterType="com.dianba.pos.menu.po.User">
     insert into user (id, username, nickname, 
       password, gender, mobile, 
       photoUrl, money, score, 
@@ -148,7 +148,7 @@
       #{updateTime,jdbcType=BIGINT}, #{memStatus,jdbcType=TINYINT}, #{creator,jdbcType=INTEGER}, 
       #{aliacno,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cn.dianba.pos.po.User">
+  <insert id="insertSelective" parameterType="com.dianba.pos.menu.po.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -329,7 +329,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cn.dianba.pos.po.UserExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.dianba.pos.menu.po.UserExample" resultType="java.lang.Long">
     select count(*) from user
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -465,7 +465,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.dianba.pos.po.User">
+  <update id="updateByPrimaryKeySelective" parameterType="com.dianba.pos.menu.po.User">
     update user
     <set>
       <if test="username != null">
@@ -555,7 +555,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.dianba.pos.po.User">
+  <update id="updateByPrimaryKey" parameterType="com.dianba.pos.menu.po.User">
     update user
     set username = #{username,jdbcType=VARCHAR},
       nickname = #{nickname,jdbcType=VARCHAR},

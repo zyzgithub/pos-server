@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.dianba.pos.menu.po.Menu;
 import com.dianba.pos.menu.po.MenuExample;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface MenuMapper {
     long countByExample(MenuExample example);
 

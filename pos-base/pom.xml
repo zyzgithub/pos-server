@@ -14,27 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>platform-spring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>platform-mybatis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>platform-spring-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>platform-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>platform-quartz</artifactId>
+            <artifactId>platform-base</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

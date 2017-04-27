@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="cn.dianba.pos.mapper.MerchantMapper">
+<mapper namespace="com.dianba.pos.menu.mapper.MerchantMapper">
 
-  <resultMap id="BaseResultMap" type="cn.dianba.pos.po.Merchant">
+  <resultMap id="BaseResultMap" type="com.dianba.pos.menu.po.Merchant">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="title" jdbcType="VARCHAR" property="title" />
@@ -113,7 +113,7 @@
     deduction, order_num, income_date, dine_order_print, notice_time, is_delete, mobile_update_time, 
     delivery_begin_update_time, alipay_limit, wechat_limit
   </sql>
-  <select id="selectByExample" parameterType="cn.dianba.pos.po.MerchantExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.dianba.pos.menu.po.MerchantExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -137,13 +137,13 @@
     delete from merchant
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="cn.dianba.pos.po.MerchantExample">
+  <delete id="deleteByExample" parameterType="com.dianba.pos.menu.po.MerchantExample">
     delete from merchant
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cn.dianba.pos.po.Merchant">
+  <insert id="insert" parameterType="com.dianba.pos.menu.po.Merchant">
     insert into merchant (id, user_id, title, 
       group_id, city_id, bank_name, 
       bank_no, bank_user, address, 
@@ -175,7 +175,7 @@
       #{deliveryBeginUpdateTime,jdbcType=TIMESTAMP}, #{alipayLimit,jdbcType=INTEGER}, 
       #{wechatLimit,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.dianba.pos.po.Merchant">
+  <insert id="insertSelective" parameterType="com.dianba.pos.menu.po.Merchant">
     insert into merchant
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -434,7 +434,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cn.dianba.pos.po.MerchantExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.dianba.pos.menu.po.MerchantExample" resultType="java.lang.Long">
     select count(*) from merchant
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -622,7 +622,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.dianba.pos.po.Merchant">
+  <update id="updateByPrimaryKeySelective" parameterType="com.dianba.pos.menu.po.Merchant">
     update merchant
     <set>
       <if test="userId != null">
@@ -751,7 +751,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.dianba.pos.po.Merchant">
+  <update id="updateByPrimaryKey" parameterType="com.dianba.pos.menu.po.Merchant">
     update merchant
     set user_id = #{userId,jdbcType=BIGINT},
       title = #{title,jdbcType=VARCHAR},
