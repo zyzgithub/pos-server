@@ -2,6 +2,7 @@ package com.dianba.pos.casher.controller;
 
 import com.dianba.pos.menu.mapper.MenuMapper;
 import com.dianba.pos.menu.po.Menu;
+import com.dianba.pos.menu.po.Merchant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/merchant")
-public class MerchantController {
+public class MerchantController extends  BaseController{
 
-    @Autowired
-    private MenuMapper menuMapper;
+
 
     /**
      * 获取商家盈利信息
@@ -32,8 +32,14 @@ public class MerchantController {
      */
     @ResponseBody
     @RequestMapping(value = "getMerchantProfit")
-    public Menu getMerchantProfit() {
-        Menu menu = menuMapper.selectByPrimaryKey(25l);
-        return menu;
+    public Merchant getMerchantProfit(Long id) {
+
+        //先获取商家信息
+        Merchant mc=merchantServiceI.getInfoById(id);
+
+        //获取商家使用商米pos机的时间
+
+      //  Menu menu = menuMapper.selectByPrimaryKey(25l);
+        return mc;
     }
 }
