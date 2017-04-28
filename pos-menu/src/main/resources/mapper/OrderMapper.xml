@@ -1,0 +1,1374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.menu.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.dianba.pos.menu.po.Order">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pay_id" jdbcType="VARCHAR" property="payId" />
+    <result column="pay_type" jdbcType="CHAR" property="payType" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="courier_id" jdbcType="BIGINT" property="courierId" />
+    <result column="city_id" jdbcType="BIGINT" property="cityId" />
+    <result column="card_id" jdbcType="VARCHAR" property="cardId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="state" jdbcType="CHAR" property="state" />
+    <result column="rstate" jdbcType="CHAR" property="rstate" />
+    <result column="retime" jdbcType="INTEGER" property="retime" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="online_money" jdbcType="DOUBLE" property="onlineMoney" />
+    <result column="origin" jdbcType="DOUBLE" property="origin" />
+    <result column="credit" jdbcType="DOUBLE" property="credit" />
+    <result column="card" jdbcType="DOUBLE" property="card" />
+    <result column="create_time" jdbcType="INTEGER" property="createTime" />
+    <result column="pay_time" jdbcType="INTEGER" property="payTime" />
+    <result column="comment_display" jdbcType="CHAR" property="commentDisplay" />
+    <result column="comment_taste" jdbcType="REAL" property="commentTaste" />
+    <result column="comment_speed" jdbcType="REAL" property="commentSpeed" />
+    <result column="comment_service" jdbcType="REAL" property="commentService" />
+    <result column="comment_courier" jdbcType="REAL" property="commentCourier" />
+    <result column="comment_time" jdbcType="INTEGER" property="commentTime" />
+    <result column="merchant_id" jdbcType="INTEGER" property="merchantId" />
+    <result column="score_money" jdbcType="DOUBLE" property="scoreMoney" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="order_type" jdbcType="CHAR" property="orderType" />
+    <result column="access_time" jdbcType="INTEGER" property="accessTime" />
+    <result column="delivery_time" jdbcType="INTEGER" property="deliveryTime" />
+    <result column="complete_time" jdbcType="INTEGER" property="completeTime" />
+    <result column="urgent_time" jdbcType="INTEGER" property="urgentTime" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="ifCourier" jdbcType="VARCHAR" property="ifcourier" />
+    <result column="delivery_done_time" jdbcType="INTEGER" property="deliveryDoneTime" />
+    <result column="pay_state" jdbcType="CHAR" property="payState" />
+    <result column="sale_type" jdbcType="INTEGER" property="saleType" />
+    <result column="order_num" jdbcType="VARCHAR" property="orderNum" />
+    <result column="out_trace_id" jdbcType="VARCHAR" property="outTraceId" />
+    <result column="time_remark" jdbcType="VARCHAR" property="timeRemark" />
+    <result column="cook_done_time" jdbcType="INTEGER" property="cookDoneTime" />
+    <result column="cook_done_code" jdbcType="CHAR" property="cookDoneCode" />
+    <result column="start_time" jdbcType="INTEGER" property="startTime" />
+    <result column="comment_courier_content" jdbcType="VARCHAR" property="commentCourierContent" />
+    <result column="start_send_time" jdbcType="INTEGER" property="startSendTime" />
+    <result column="end_send_time" jdbcType="INTEGER" property="endSendTime" />
+    <result column="user_address_id" jdbcType="INTEGER" property="userAddressId" />
+    <result column="invoice" jdbcType="VARCHAR" property="invoice" />
+    <result column="from_type" jdbcType="CHAR" property="fromType" />
+    <result column="delivery_fee" jdbcType="DOUBLE" property="deliveryFee" />
+    <result column="cost_lunch_box" jdbcType="DOUBLE" property="costLunchBox" />
+    <result column="member_discount_money" jdbcType="DOUBLE" property="memberDiscountMoney" />
+    <result column="merchant_member_discount_money" jdbcType="DOUBLE" property="merchantMemberDiscountMoney" />
+    <result column="dine_in_discount_money" jdbcType="DOUBLE" property="dineInDiscountMoney" />
+    <result column="recharge_src" jdbcType="INTEGER" property="rechargeSrc" />
+    <result column="invite_id" jdbcType="BIGINT" property="inviteId" />
+    <result column="agent_id" jdbcType="INTEGER" property="agentId" />
+    <result column="is_merchant_delivery" jdbcType="CHAR" property="isMerchantDelivery" />
+    <result column="lwk_id" jdbcType="VARCHAR" property="lwkId" />
+    <result column="lwk_mark" jdbcType="VARCHAR" property="lwkMark" />
+    <result column="lwk_flag" jdbcType="VARCHAR" property="lwkFlag" />
+    <result column="flash_order_id" jdbcType="BIGINT" property="flashOrderId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dianba.pos.menu.po.OrderWithBLOBs">
+    <result column="rereason" jdbcType="LONGVARCHAR" property="rereason" />
+    <result column="remark" jdbcType="LONGVARCHAR" property="remark" />
+    <result column="comment_content" jdbcType="LONGVARCHAR" property="commentContent" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, pay_id, pay_type, user_id, courier_id, city_id, card_id, status, state, rstate, 
+    retime, realname, mobile, address, online_money, origin, credit, card, create_time, 
+    pay_time, comment_display, comment_taste, comment_speed, comment_service, comment_courier, 
+    comment_time, merchant_id, score_money, score, order_type, access_time, delivery_time, 
+    complete_time, urgent_time, title, ifCourier, delivery_done_time, pay_state, sale_type, 
+    order_num, out_trace_id, time_remark, cook_done_time, cook_done_code, start_time, 
+    comment_courier_content, start_send_time, end_send_time, user_address_id, invoice, 
+    from_type, delivery_fee, cost_lunch_box, member_discount_money, merchant_member_discount_money, 
+    dine_in_discount_money, recharge_src, invite_id, agent_id, is_merchant_delivery, 
+    lwk_id, lwk_mark, lwk_flag, flash_order_id
+  </sql>
+  <sql id="Blob_Column_List">
+    rereason, remark, comment_content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.dianba.pos.menu.po.OrderExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.dianba.pos.menu.po.OrderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dianba.pos.menu.po.OrderExample">
+    delete from order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dianba.pos.menu.po.OrderWithBLOBs">
+    insert into order (id, pay_id, pay_type, 
+      user_id, courier_id, city_id, 
+      card_id, status, state, 
+      rstate, retime, realname, 
+      mobile, address, online_money, 
+      origin, credit, card, 
+      create_time, pay_time, comment_display, 
+      comment_taste, comment_speed, comment_service, 
+      comment_courier, comment_time, merchant_id, 
+      score_money, score, order_type, 
+      access_time, delivery_time, complete_time, 
+      urgent_time, title, ifCourier, 
+      delivery_done_time, pay_state, sale_type, 
+      order_num, out_trace_id, time_remark, 
+      cook_done_time, cook_done_code, start_time, 
+      comment_courier_content, start_send_time, end_send_time, 
+      user_address_id, invoice, from_type, 
+      delivery_fee, cost_lunch_box, member_discount_money, 
+      merchant_member_discount_money, dine_in_discount_money, 
+      recharge_src, invite_id, agent_id, 
+      is_merchant_delivery, lwk_id, lwk_mark, 
+      lwk_flag, flash_order_id, rereason, 
+      remark, comment_content)
+    values (#{id,jdbcType=BIGINT}, #{payId,jdbcType=VARCHAR}, #{payType,jdbcType=CHAR}, 
+      #{userId,jdbcType=BIGINT}, #{courierId,jdbcType=BIGINT}, #{cityId,jdbcType=BIGINT}, 
+      #{cardId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{state,jdbcType=CHAR}, 
+      #{rstate,jdbcType=CHAR}, #{retime,jdbcType=INTEGER}, #{realname,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{onlineMoney,jdbcType=DOUBLE}, 
+      #{origin,jdbcType=DOUBLE}, #{credit,jdbcType=DOUBLE}, #{card,jdbcType=DOUBLE}, 
+      #{createTime,jdbcType=INTEGER}, #{payTime,jdbcType=INTEGER}, #{commentDisplay,jdbcType=CHAR}, 
+      #{commentTaste,jdbcType=REAL}, #{commentSpeed,jdbcType=REAL}, #{commentService,jdbcType=REAL}, 
+      #{commentCourier,jdbcType=REAL}, #{commentTime,jdbcType=INTEGER}, #{merchantId,jdbcType=INTEGER}, 
+      #{scoreMoney,jdbcType=DOUBLE}, #{score,jdbcType=INTEGER}, #{orderType,jdbcType=CHAR}, 
+      #{accessTime,jdbcType=INTEGER}, #{deliveryTime,jdbcType=INTEGER}, #{completeTime,jdbcType=INTEGER}, 
+      #{urgentTime,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{ifcourier,jdbcType=VARCHAR}, 
+      #{deliveryDoneTime,jdbcType=INTEGER}, #{payState,jdbcType=CHAR}, #{saleType,jdbcType=INTEGER}, 
+      #{orderNum,jdbcType=VARCHAR}, #{outTraceId,jdbcType=VARCHAR}, #{timeRemark,jdbcType=VARCHAR}, 
+      #{cookDoneTime,jdbcType=INTEGER}, #{cookDoneCode,jdbcType=CHAR}, #{startTime,jdbcType=INTEGER}, 
+      #{commentCourierContent,jdbcType=VARCHAR}, #{startSendTime,jdbcType=INTEGER}, #{endSendTime,jdbcType=INTEGER}, 
+      #{userAddressId,jdbcType=INTEGER}, #{invoice,jdbcType=VARCHAR}, #{fromType,jdbcType=CHAR}, 
+      #{deliveryFee,jdbcType=DOUBLE}, #{costLunchBox,jdbcType=DOUBLE}, #{memberDiscountMoney,jdbcType=DOUBLE}, 
+      #{merchantMemberDiscountMoney,jdbcType=DOUBLE}, #{dineInDiscountMoney,jdbcType=DOUBLE}, 
+      #{rechargeSrc,jdbcType=INTEGER}, #{inviteId,jdbcType=BIGINT}, #{agentId,jdbcType=INTEGER}, 
+      #{isMerchantDelivery,jdbcType=CHAR}, #{lwkId,jdbcType=VARCHAR}, #{lwkMark,jdbcType=VARCHAR}, 
+      #{lwkFlag,jdbcType=VARCHAR}, #{flashOrderId,jdbcType=BIGINT}, #{rereason,jdbcType=LONGVARCHAR}, 
+      #{remark,jdbcType=LONGVARCHAR}, #{commentContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dianba.pos.menu.po.OrderWithBLOBs">
+    insert into order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="payId != null">
+        pay_id,
+      </if>
+      <if test="payType != null">
+        pay_type,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="courierId != null">
+        courier_id,
+      </if>
+      <if test="cityId != null">
+        city_id,
+      </if>
+      <if test="cardId != null">
+        card_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="rstate != null">
+        rstate,
+      </if>
+      <if test="retime != null">
+        retime,
+      </if>
+      <if test="realname != null">
+        realname,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="onlineMoney != null">
+        online_money,
+      </if>
+      <if test="origin != null">
+        origin,
+      </if>
+      <if test="credit != null">
+        credit,
+      </if>
+      <if test="card != null">
+        card,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="payTime != null">
+        pay_time,
+      </if>
+      <if test="commentDisplay != null">
+        comment_display,
+      </if>
+      <if test="commentTaste != null">
+        comment_taste,
+      </if>
+      <if test="commentSpeed != null">
+        comment_speed,
+      </if>
+      <if test="commentService != null">
+        comment_service,
+      </if>
+      <if test="commentCourier != null">
+        comment_courier,
+      </if>
+      <if test="commentTime != null">
+        comment_time,
+      </if>
+      <if test="merchantId != null">
+        merchant_id,
+      </if>
+      <if test="scoreMoney != null">
+        score_money,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="orderType != null">
+        order_type,
+      </if>
+      <if test="accessTime != null">
+        access_time,
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time,
+      </if>
+      <if test="completeTime != null">
+        complete_time,
+      </if>
+      <if test="urgentTime != null">
+        urgent_time,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="ifcourier != null">
+        ifCourier,
+      </if>
+      <if test="deliveryDoneTime != null">
+        delivery_done_time,
+      </if>
+      <if test="payState != null">
+        pay_state,
+      </if>
+      <if test="saleType != null">
+        sale_type,
+      </if>
+      <if test="orderNum != null">
+        order_num,
+      </if>
+      <if test="outTraceId != null">
+        out_trace_id,
+      </if>
+      <if test="timeRemark != null">
+        time_remark,
+      </if>
+      <if test="cookDoneTime != null">
+        cook_done_time,
+      </if>
+      <if test="cookDoneCode != null">
+        cook_done_code,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="commentCourierContent != null">
+        comment_courier_content,
+      </if>
+      <if test="startSendTime != null">
+        start_send_time,
+      </if>
+      <if test="endSendTime != null">
+        end_send_time,
+      </if>
+      <if test="userAddressId != null">
+        user_address_id,
+      </if>
+      <if test="invoice != null">
+        invoice,
+      </if>
+      <if test="fromType != null">
+        from_type,
+      </if>
+      <if test="deliveryFee != null">
+        delivery_fee,
+      </if>
+      <if test="costLunchBox != null">
+        cost_lunch_box,
+      </if>
+      <if test="memberDiscountMoney != null">
+        member_discount_money,
+      </if>
+      <if test="merchantMemberDiscountMoney != null">
+        merchant_member_discount_money,
+      </if>
+      <if test="dineInDiscountMoney != null">
+        dine_in_discount_money,
+      </if>
+      <if test="rechargeSrc != null">
+        recharge_src,
+      </if>
+      <if test="inviteId != null">
+        invite_id,
+      </if>
+      <if test="agentId != null">
+        agent_id,
+      </if>
+      <if test="isMerchantDelivery != null">
+        is_merchant_delivery,
+      </if>
+      <if test="lwkId != null">
+        lwk_id,
+      </if>
+      <if test="lwkMark != null">
+        lwk_mark,
+      </if>
+      <if test="lwkFlag != null">
+        lwk_flag,
+      </if>
+      <if test="flashOrderId != null">
+        flash_order_id,
+      </if>
+      <if test="rereason != null">
+        rereason,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="commentContent != null">
+        comment_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="payId != null">
+        #{payId,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="courierId != null">
+        #{courierId,jdbcType=BIGINT},
+      </if>
+      <if test="cityId != null">
+        #{cityId,jdbcType=BIGINT},
+      </if>
+      <if test="cardId != null">
+        #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=CHAR},
+      </if>
+      <if test="rstate != null">
+        #{rstate,jdbcType=CHAR},
+      </if>
+      <if test="retime != null">
+        #{retime,jdbcType=INTEGER},
+      </if>
+      <if test="realname != null">
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="onlineMoney != null">
+        #{onlineMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="origin != null">
+        #{origin,jdbcType=DOUBLE},
+      </if>
+      <if test="credit != null">
+        #{credit,jdbcType=DOUBLE},
+      </if>
+      <if test="card != null">
+        #{card,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="payTime != null">
+        #{payTime,jdbcType=INTEGER},
+      </if>
+      <if test="commentDisplay != null">
+        #{commentDisplay,jdbcType=CHAR},
+      </if>
+      <if test="commentTaste != null">
+        #{commentTaste,jdbcType=REAL},
+      </if>
+      <if test="commentSpeed != null">
+        #{commentSpeed,jdbcType=REAL},
+      </if>
+      <if test="commentService != null">
+        #{commentService,jdbcType=REAL},
+      </if>
+      <if test="commentCourier != null">
+        #{commentCourier,jdbcType=REAL},
+      </if>
+      <if test="commentTime != null">
+        #{commentTime,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null">
+        #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="scoreMoney != null">
+        #{scoreMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="orderType != null">
+        #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="accessTime != null">
+        #{accessTime,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryTime != null">
+        #{deliveryTime,jdbcType=INTEGER},
+      </if>
+      <if test="completeTime != null">
+        #{completeTime,jdbcType=INTEGER},
+      </if>
+      <if test="urgentTime != null">
+        #{urgentTime,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="ifcourier != null">
+        #{ifcourier,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDoneTime != null">
+        #{deliveryDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="payState != null">
+        #{payState,jdbcType=CHAR},
+      </if>
+      <if test="saleType != null">
+        #{saleType,jdbcType=INTEGER},
+      </if>
+      <if test="orderNum != null">
+        #{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="outTraceId != null">
+        #{outTraceId,jdbcType=VARCHAR},
+      </if>
+      <if test="timeRemark != null">
+        #{timeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="cookDoneTime != null">
+        #{cookDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="cookDoneCode != null">
+        #{cookDoneCode,jdbcType=CHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=INTEGER},
+      </if>
+      <if test="commentCourierContent != null">
+        #{commentCourierContent,jdbcType=VARCHAR},
+      </if>
+      <if test="startSendTime != null">
+        #{startSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="endSendTime != null">
+        #{endSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="userAddressId != null">
+        #{userAddressId,jdbcType=INTEGER},
+      </if>
+      <if test="invoice != null">
+        #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="fromType != null">
+        #{fromType,jdbcType=CHAR},
+      </if>
+      <if test="deliveryFee != null">
+        #{deliveryFee,jdbcType=DOUBLE},
+      </if>
+      <if test="costLunchBox != null">
+        #{costLunchBox,jdbcType=DOUBLE},
+      </if>
+      <if test="memberDiscountMoney != null">
+        #{memberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="merchantMemberDiscountMoney != null">
+        #{merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="dineInDiscountMoney != null">
+        #{dineInDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="rechargeSrc != null">
+        #{rechargeSrc,jdbcType=INTEGER},
+      </if>
+      <if test="inviteId != null">
+        #{inviteId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        #{agentId,jdbcType=INTEGER},
+      </if>
+      <if test="isMerchantDelivery != null">
+        #{isMerchantDelivery,jdbcType=CHAR},
+      </if>
+      <if test="lwkId != null">
+        #{lwkId,jdbcType=VARCHAR},
+      </if>
+      <if test="lwkMark != null">
+        #{lwkMark,jdbcType=VARCHAR},
+      </if>
+      <if test="lwkFlag != null">
+        #{lwkFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="flashOrderId != null">
+        #{flashOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="rereason != null">
+        #{rereason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="commentContent != null">
+        #{commentContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dianba.pos.menu.po.OrderExample" resultType="java.lang.Long">
+    select count(*) from order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update order
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.payId != null">
+        pay_id = #{record.payId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payType != null">
+        pay_type = #{record.payType,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.courierId != null">
+        courier_id = #{record.courierId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cityId != null">
+        city_id = #{record.cityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cardId != null">
+        card_id = #{record.cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=CHAR},
+      </if>
+      <if test="record.rstate != null">
+        rstate = #{record.rstate,jdbcType=CHAR},
+      </if>
+      <if test="record.retime != null">
+        retime = #{record.retime,jdbcType=INTEGER},
+      </if>
+      <if test="record.realname != null">
+        realname = #{record.realname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile != null">
+        mobile = #{record.mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.onlineMoney != null">
+        online_money = #{record.onlineMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.origin != null">
+        origin = #{record.origin,jdbcType=DOUBLE},
+      </if>
+      <if test="record.credit != null">
+        credit = #{record.credit,jdbcType=DOUBLE},
+      </if>
+      <if test="record.card != null">
+        card = #{record.card,jdbcType=DOUBLE},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.payTime != null">
+        pay_time = #{record.payTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.commentDisplay != null">
+        comment_display = #{record.commentDisplay,jdbcType=CHAR},
+      </if>
+      <if test="record.commentTaste != null">
+        comment_taste = #{record.commentTaste,jdbcType=REAL},
+      </if>
+      <if test="record.commentSpeed != null">
+        comment_speed = #{record.commentSpeed,jdbcType=REAL},
+      </if>
+      <if test="record.commentService != null">
+        comment_service = #{record.commentService,jdbcType=REAL},
+      </if>
+      <if test="record.commentCourier != null">
+        comment_courier = #{record.commentCourier,jdbcType=REAL},
+      </if>
+      <if test="record.commentTime != null">
+        comment_time = #{record.commentTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.merchantId != null">
+        merchant_id = #{record.merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="record.scoreMoney != null">
+        score_money = #{record.scoreMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.score != null">
+        score = #{record.score,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderType != null">
+        order_type = #{record.orderType,jdbcType=CHAR},
+      </if>
+      <if test="record.accessTime != null">
+        access_time = #{record.accessTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.deliveryTime != null">
+        delivery_time = #{record.deliveryTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.completeTime != null">
+        complete_time = #{record.completeTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.urgentTime != null">
+        urgent_time = #{record.urgentTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ifcourier != null">
+        ifCourier = #{record.ifcourier,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deliveryDoneTime != null">
+        delivery_done_time = #{record.deliveryDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.payState != null">
+        pay_state = #{record.payState,jdbcType=CHAR},
+      </if>
+      <if test="record.saleType != null">
+        sale_type = #{record.saleType,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderNum != null">
+        order_num = #{record.orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTraceId != null">
+        out_trace_id = #{record.outTraceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeRemark != null">
+        time_remark = #{record.timeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cookDoneTime != null">
+        cook_done_time = #{record.cookDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.cookDoneCode != null">
+        cook_done_code = #{record.cookDoneCode,jdbcType=CHAR},
+      </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.commentCourierContent != null">
+        comment_courier_content = #{record.commentCourierContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startSendTime != null">
+        start_send_time = #{record.startSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.endSendTime != null">
+        end_send_time = #{record.endSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.userAddressId != null">
+        user_address_id = #{record.userAddressId,jdbcType=INTEGER},
+      </if>
+      <if test="record.invoice != null">
+        invoice = #{record.invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fromType != null">
+        from_type = #{record.fromType,jdbcType=CHAR},
+      </if>
+      <if test="record.deliveryFee != null">
+        delivery_fee = #{record.deliveryFee,jdbcType=DOUBLE},
+      </if>
+      <if test="record.costLunchBox != null">
+        cost_lunch_box = #{record.costLunchBox,jdbcType=DOUBLE},
+      </if>
+      <if test="record.memberDiscountMoney != null">
+        member_discount_money = #{record.memberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.merchantMemberDiscountMoney != null">
+        merchant_member_discount_money = #{record.merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.dineInDiscountMoney != null">
+        dine_in_discount_money = #{record.dineInDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.rechargeSrc != null">
+        recharge_src = #{record.rechargeSrc,jdbcType=INTEGER},
+      </if>
+      <if test="record.inviteId != null">
+        invite_id = #{record.inviteId,jdbcType=BIGINT},
+      </if>
+      <if test="record.agentId != null">
+        agent_id = #{record.agentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.isMerchantDelivery != null">
+        is_merchant_delivery = #{record.isMerchantDelivery,jdbcType=CHAR},
+      </if>
+      <if test="record.lwkId != null">
+        lwk_id = #{record.lwkId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lwkMark != null">
+        lwk_mark = #{record.lwkMark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lwkFlag != null">
+        lwk_flag = #{record.lwkFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flashOrderId != null">
+        flash_order_id = #{record.flashOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.rereason != null">
+        rereason = #{record.rereason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.commentContent != null">
+        comment_content = #{record.commentContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update order
+    set id = #{record.id,jdbcType=BIGINT},
+      pay_id = #{record.payId,jdbcType=VARCHAR},
+      pay_type = #{record.payType,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      courier_id = #{record.courierId,jdbcType=BIGINT},
+      city_id = #{record.cityId,jdbcType=BIGINT},
+      card_id = #{record.cardId,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=CHAR},
+      rstate = #{record.rstate,jdbcType=CHAR},
+      retime = #{record.retime,jdbcType=INTEGER},
+      realname = #{record.realname,jdbcType=VARCHAR},
+      mobile = #{record.mobile,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      online_money = #{record.onlineMoney,jdbcType=DOUBLE},
+      origin = #{record.origin,jdbcType=DOUBLE},
+      credit = #{record.credit,jdbcType=DOUBLE},
+      card = #{record.card,jdbcType=DOUBLE},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      pay_time = #{record.payTime,jdbcType=INTEGER},
+      comment_display = #{record.commentDisplay,jdbcType=CHAR},
+      comment_taste = #{record.commentTaste,jdbcType=REAL},
+      comment_speed = #{record.commentSpeed,jdbcType=REAL},
+      comment_service = #{record.commentService,jdbcType=REAL},
+      comment_courier = #{record.commentCourier,jdbcType=REAL},
+      comment_time = #{record.commentTime,jdbcType=INTEGER},
+      merchant_id = #{record.merchantId,jdbcType=INTEGER},
+      score_money = #{record.scoreMoney,jdbcType=DOUBLE},
+      score = #{record.score,jdbcType=INTEGER},
+      order_type = #{record.orderType,jdbcType=CHAR},
+      access_time = #{record.accessTime,jdbcType=INTEGER},
+      delivery_time = #{record.deliveryTime,jdbcType=INTEGER},
+      complete_time = #{record.completeTime,jdbcType=INTEGER},
+      urgent_time = #{record.urgentTime,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      ifCourier = #{record.ifcourier,jdbcType=VARCHAR},
+      delivery_done_time = #{record.deliveryDoneTime,jdbcType=INTEGER},
+      pay_state = #{record.payState,jdbcType=CHAR},
+      sale_type = #{record.saleType,jdbcType=INTEGER},
+      order_num = #{record.orderNum,jdbcType=VARCHAR},
+      out_trace_id = #{record.outTraceId,jdbcType=VARCHAR},
+      time_remark = #{record.timeRemark,jdbcType=VARCHAR},
+      cook_done_time = #{record.cookDoneTime,jdbcType=INTEGER},
+      cook_done_code = #{record.cookDoneCode,jdbcType=CHAR},
+      start_time = #{record.startTime,jdbcType=INTEGER},
+      comment_courier_content = #{record.commentCourierContent,jdbcType=VARCHAR},
+      start_send_time = #{record.startSendTime,jdbcType=INTEGER},
+      end_send_time = #{record.endSendTime,jdbcType=INTEGER},
+      user_address_id = #{record.userAddressId,jdbcType=INTEGER},
+      invoice = #{record.invoice,jdbcType=VARCHAR},
+      from_type = #{record.fromType,jdbcType=CHAR},
+      delivery_fee = #{record.deliveryFee,jdbcType=DOUBLE},
+      cost_lunch_box = #{record.costLunchBox,jdbcType=DOUBLE},
+      member_discount_money = #{record.memberDiscountMoney,jdbcType=DOUBLE},
+      merchant_member_discount_money = #{record.merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      dine_in_discount_money = #{record.dineInDiscountMoney,jdbcType=DOUBLE},
+      recharge_src = #{record.rechargeSrc,jdbcType=INTEGER},
+      invite_id = #{record.inviteId,jdbcType=BIGINT},
+      agent_id = #{record.agentId,jdbcType=INTEGER},
+      is_merchant_delivery = #{record.isMerchantDelivery,jdbcType=CHAR},
+      lwk_id = #{record.lwkId,jdbcType=VARCHAR},
+      lwk_mark = #{record.lwkMark,jdbcType=VARCHAR},
+      lwk_flag = #{record.lwkFlag,jdbcType=VARCHAR},
+      flash_order_id = #{record.flashOrderId,jdbcType=BIGINT},
+      rereason = #{record.rereason,jdbcType=LONGVARCHAR},
+      remark = #{record.remark,jdbcType=LONGVARCHAR},
+      comment_content = #{record.commentContent,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update order
+    set id = #{record.id,jdbcType=BIGINT},
+      pay_id = #{record.payId,jdbcType=VARCHAR},
+      pay_type = #{record.payType,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      courier_id = #{record.courierId,jdbcType=BIGINT},
+      city_id = #{record.cityId,jdbcType=BIGINT},
+      card_id = #{record.cardId,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=CHAR},
+      rstate = #{record.rstate,jdbcType=CHAR},
+      retime = #{record.retime,jdbcType=INTEGER},
+      realname = #{record.realname,jdbcType=VARCHAR},
+      mobile = #{record.mobile,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      online_money = #{record.onlineMoney,jdbcType=DOUBLE},
+      origin = #{record.origin,jdbcType=DOUBLE},
+      credit = #{record.credit,jdbcType=DOUBLE},
+      card = #{record.card,jdbcType=DOUBLE},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      pay_time = #{record.payTime,jdbcType=INTEGER},
+      comment_display = #{record.commentDisplay,jdbcType=CHAR},
+      comment_taste = #{record.commentTaste,jdbcType=REAL},
+      comment_speed = #{record.commentSpeed,jdbcType=REAL},
+      comment_service = #{record.commentService,jdbcType=REAL},
+      comment_courier = #{record.commentCourier,jdbcType=REAL},
+      comment_time = #{record.commentTime,jdbcType=INTEGER},
+      merchant_id = #{record.merchantId,jdbcType=INTEGER},
+      score_money = #{record.scoreMoney,jdbcType=DOUBLE},
+      score = #{record.score,jdbcType=INTEGER},
+      order_type = #{record.orderType,jdbcType=CHAR},
+      access_time = #{record.accessTime,jdbcType=INTEGER},
+      delivery_time = #{record.deliveryTime,jdbcType=INTEGER},
+      complete_time = #{record.completeTime,jdbcType=INTEGER},
+      urgent_time = #{record.urgentTime,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      ifCourier = #{record.ifcourier,jdbcType=VARCHAR},
+      delivery_done_time = #{record.deliveryDoneTime,jdbcType=INTEGER},
+      pay_state = #{record.payState,jdbcType=CHAR},
+      sale_type = #{record.saleType,jdbcType=INTEGER},
+      order_num = #{record.orderNum,jdbcType=VARCHAR},
+      out_trace_id = #{record.outTraceId,jdbcType=VARCHAR},
+      time_remark = #{record.timeRemark,jdbcType=VARCHAR},
+      cook_done_time = #{record.cookDoneTime,jdbcType=INTEGER},
+      cook_done_code = #{record.cookDoneCode,jdbcType=CHAR},
+      start_time = #{record.startTime,jdbcType=INTEGER},
+      comment_courier_content = #{record.commentCourierContent,jdbcType=VARCHAR},
+      start_send_time = #{record.startSendTime,jdbcType=INTEGER},
+      end_send_time = #{record.endSendTime,jdbcType=INTEGER},
+      user_address_id = #{record.userAddressId,jdbcType=INTEGER},
+      invoice = #{record.invoice,jdbcType=VARCHAR},
+      from_type = #{record.fromType,jdbcType=CHAR},
+      delivery_fee = #{record.deliveryFee,jdbcType=DOUBLE},
+      cost_lunch_box = #{record.costLunchBox,jdbcType=DOUBLE},
+      member_discount_money = #{record.memberDiscountMoney,jdbcType=DOUBLE},
+      merchant_member_discount_money = #{record.merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      dine_in_discount_money = #{record.dineInDiscountMoney,jdbcType=DOUBLE},
+      recharge_src = #{record.rechargeSrc,jdbcType=INTEGER},
+      invite_id = #{record.inviteId,jdbcType=BIGINT},
+      agent_id = #{record.agentId,jdbcType=INTEGER},
+      is_merchant_delivery = #{record.isMerchantDelivery,jdbcType=CHAR},
+      lwk_id = #{record.lwkId,jdbcType=VARCHAR},
+      lwk_mark = #{record.lwkMark,jdbcType=VARCHAR},
+      lwk_flag = #{record.lwkFlag,jdbcType=VARCHAR},
+      flash_order_id = #{record.flashOrderId,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dianba.pos.menu.po.OrderWithBLOBs">
+    update order
+    <set>
+      <if test="payId != null">
+        pay_id = #{payId,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null">
+        pay_type = #{payType,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="courierId != null">
+        courier_id = #{courierId,jdbcType=BIGINT},
+      </if>
+      <if test="cityId != null">
+        city_id = #{cityId,jdbcType=BIGINT},
+      </if>
+      <if test="cardId != null">
+        card_id = #{cardId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="rstate != null">
+        rstate = #{rstate,jdbcType=CHAR},
+      </if>
+      <if test="retime != null">
+        retime = #{retime,jdbcType=INTEGER},
+      </if>
+      <if test="realname != null">
+        realname = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="onlineMoney != null">
+        online_money = #{onlineMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="origin != null">
+        origin = #{origin,jdbcType=DOUBLE},
+      </if>
+      <if test="credit != null">
+        credit = #{credit,jdbcType=DOUBLE},
+      </if>
+      <if test="card != null">
+        card = #{card,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="payTime != null">
+        pay_time = #{payTime,jdbcType=INTEGER},
+      </if>
+      <if test="commentDisplay != null">
+        comment_display = #{commentDisplay,jdbcType=CHAR},
+      </if>
+      <if test="commentTaste != null">
+        comment_taste = #{commentTaste,jdbcType=REAL},
+      </if>
+      <if test="commentSpeed != null">
+        comment_speed = #{commentSpeed,jdbcType=REAL},
+      </if>
+      <if test="commentService != null">
+        comment_service = #{commentService,jdbcType=REAL},
+      </if>
+      <if test="commentCourier != null">
+        comment_courier = #{commentCourier,jdbcType=REAL},
+      </if>
+      <if test="commentTime != null">
+        comment_time = #{commentTime,jdbcType=INTEGER},
+      </if>
+      <if test="merchantId != null">
+        merchant_id = #{merchantId,jdbcType=INTEGER},
+      </if>
+      <if test="scoreMoney != null">
+        score_money = #{scoreMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="orderType != null">
+        order_type = #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="accessTime != null">
+        access_time = #{accessTime,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time = #{deliveryTime,jdbcType=INTEGER},
+      </if>
+      <if test="completeTime != null">
+        complete_time = #{completeTime,jdbcType=INTEGER},
+      </if>
+      <if test="urgentTime != null">
+        urgent_time = #{urgentTime,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="ifcourier != null">
+        ifCourier = #{ifcourier,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryDoneTime != null">
+        delivery_done_time = #{deliveryDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="payState != null">
+        pay_state = #{payState,jdbcType=CHAR},
+      </if>
+      <if test="saleType != null">
+        sale_type = #{saleType,jdbcType=INTEGER},
+      </if>
+      <if test="orderNum != null">
+        order_num = #{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="outTraceId != null">
+        out_trace_id = #{outTraceId,jdbcType=VARCHAR},
+      </if>
+      <if test="timeRemark != null">
+        time_remark = #{timeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="cookDoneTime != null">
+        cook_done_time = #{cookDoneTime,jdbcType=INTEGER},
+      </if>
+      <if test="cookDoneCode != null">
+        cook_done_code = #{cookDoneCode,jdbcType=CHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=INTEGER},
+      </if>
+      <if test="commentCourierContent != null">
+        comment_courier_content = #{commentCourierContent,jdbcType=VARCHAR},
+      </if>
+      <if test="startSendTime != null">
+        start_send_time = #{startSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="endSendTime != null">
+        end_send_time = #{endSendTime,jdbcType=INTEGER},
+      </if>
+      <if test="userAddressId != null">
+        user_address_id = #{userAddressId,jdbcType=INTEGER},
+      </if>
+      <if test="invoice != null">
+        invoice = #{invoice,jdbcType=VARCHAR},
+      </if>
+      <if test="fromType != null">
+        from_type = #{fromType,jdbcType=CHAR},
+      </if>
+      <if test="deliveryFee != null">
+        delivery_fee = #{deliveryFee,jdbcType=DOUBLE},
+      </if>
+      <if test="costLunchBox != null">
+        cost_lunch_box = #{costLunchBox,jdbcType=DOUBLE},
+      </if>
+      <if test="memberDiscountMoney != null">
+        member_discount_money = #{memberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="merchantMemberDiscountMoney != null">
+        merchant_member_discount_money = #{merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="dineInDiscountMoney != null">
+        dine_in_discount_money = #{dineInDiscountMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="rechargeSrc != null">
+        recharge_src = #{rechargeSrc,jdbcType=INTEGER},
+      </if>
+      <if test="inviteId != null">
+        invite_id = #{inviteId,jdbcType=BIGINT},
+      </if>
+      <if test="agentId != null">
+        agent_id = #{agentId,jdbcType=INTEGER},
+      </if>
+      <if test="isMerchantDelivery != null">
+        is_merchant_delivery = #{isMerchantDelivery,jdbcType=CHAR},
+      </if>
+      <if test="lwkId != null">
+        lwk_id = #{lwkId,jdbcType=VARCHAR},
+      </if>
+      <if test="lwkMark != null">
+        lwk_mark = #{lwkMark,jdbcType=VARCHAR},
+      </if>
+      <if test="lwkFlag != null">
+        lwk_flag = #{lwkFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="flashOrderId != null">
+        flash_order_id = #{flashOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="rereason != null">
+        rereason = #{rereason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="commentContent != null">
+        comment_content = #{commentContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dianba.pos.menu.po.OrderWithBLOBs">
+    update order
+    set pay_id = #{payId,jdbcType=VARCHAR},
+      pay_type = #{payType,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      courier_id = #{courierId,jdbcType=BIGINT},
+      city_id = #{cityId,jdbcType=BIGINT},
+      card_id = #{cardId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      state = #{state,jdbcType=CHAR},
+      rstate = #{rstate,jdbcType=CHAR},
+      retime = #{retime,jdbcType=INTEGER},
+      realname = #{realname,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      online_money = #{onlineMoney,jdbcType=DOUBLE},
+      origin = #{origin,jdbcType=DOUBLE},
+      credit = #{credit,jdbcType=DOUBLE},
+      card = #{card,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=INTEGER},
+      pay_time = #{payTime,jdbcType=INTEGER},
+      comment_display = #{commentDisplay,jdbcType=CHAR},
+      comment_taste = #{commentTaste,jdbcType=REAL},
+      comment_speed = #{commentSpeed,jdbcType=REAL},
+      comment_service = #{commentService,jdbcType=REAL},
+      comment_courier = #{commentCourier,jdbcType=REAL},
+      comment_time = #{commentTime,jdbcType=INTEGER},
+      merchant_id = #{merchantId,jdbcType=INTEGER},
+      score_money = #{scoreMoney,jdbcType=DOUBLE},
+      score = #{score,jdbcType=INTEGER},
+      order_type = #{orderType,jdbcType=CHAR},
+      access_time = #{accessTime,jdbcType=INTEGER},
+      delivery_time = #{deliveryTime,jdbcType=INTEGER},
+      complete_time = #{completeTime,jdbcType=INTEGER},
+      urgent_time = #{urgentTime,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      ifCourier = #{ifcourier,jdbcType=VARCHAR},
+      delivery_done_time = #{deliveryDoneTime,jdbcType=INTEGER},
+      pay_state = #{payState,jdbcType=CHAR},
+      sale_type = #{saleType,jdbcType=INTEGER},
+      order_num = #{orderNum,jdbcType=VARCHAR},
+      out_trace_id = #{outTraceId,jdbcType=VARCHAR},
+      time_remark = #{timeRemark,jdbcType=VARCHAR},
+      cook_done_time = #{cookDoneTime,jdbcType=INTEGER},
+      cook_done_code = #{cookDoneCode,jdbcType=CHAR},
+      start_time = #{startTime,jdbcType=INTEGER},
+      comment_courier_content = #{commentCourierContent,jdbcType=VARCHAR},
+      start_send_time = #{startSendTime,jdbcType=INTEGER},
+      end_send_time = #{endSendTime,jdbcType=INTEGER},
+      user_address_id = #{userAddressId,jdbcType=INTEGER},
+      invoice = #{invoice,jdbcType=VARCHAR},
+      from_type = #{fromType,jdbcType=CHAR},
+      delivery_fee = #{deliveryFee,jdbcType=DOUBLE},
+      cost_lunch_box = #{costLunchBox,jdbcType=DOUBLE},
+      member_discount_money = #{memberDiscountMoney,jdbcType=DOUBLE},
+      merchant_member_discount_money = #{merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      dine_in_discount_money = #{dineInDiscountMoney,jdbcType=DOUBLE},
+      recharge_src = #{rechargeSrc,jdbcType=INTEGER},
+      invite_id = #{inviteId,jdbcType=BIGINT},
+      agent_id = #{agentId,jdbcType=INTEGER},
+      is_merchant_delivery = #{isMerchantDelivery,jdbcType=CHAR},
+      lwk_id = #{lwkId,jdbcType=VARCHAR},
+      lwk_mark = #{lwkMark,jdbcType=VARCHAR},
+      lwk_flag = #{lwkFlag,jdbcType=VARCHAR},
+      flash_order_id = #{flashOrderId,jdbcType=BIGINT},
+      rereason = #{rereason,jdbcType=LONGVARCHAR},
+      remark = #{remark,jdbcType=LONGVARCHAR},
+      comment_content = #{commentContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dianba.pos.menu.po.Order">
+    update order
+    set pay_id = #{payId,jdbcType=VARCHAR},
+      pay_type = #{payType,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      courier_id = #{courierId,jdbcType=BIGINT},
+      city_id = #{cityId,jdbcType=BIGINT},
+      card_id = #{cardId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      state = #{state,jdbcType=CHAR},
+      rstate = #{rstate,jdbcType=CHAR},
+      retime = #{retime,jdbcType=INTEGER},
+      realname = #{realname,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      online_money = #{onlineMoney,jdbcType=DOUBLE},
+      origin = #{origin,jdbcType=DOUBLE},
+      credit = #{credit,jdbcType=DOUBLE},
+      card = #{card,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=INTEGER},
+      pay_time = #{payTime,jdbcType=INTEGER},
+      comment_display = #{commentDisplay,jdbcType=CHAR},
+      comment_taste = #{commentTaste,jdbcType=REAL},
+      comment_speed = #{commentSpeed,jdbcType=REAL},
+      comment_service = #{commentService,jdbcType=REAL},
+      comment_courier = #{commentCourier,jdbcType=REAL},
+      comment_time = #{commentTime,jdbcType=INTEGER},
+      merchant_id = #{merchantId,jdbcType=INTEGER},
+      score_money = #{scoreMoney,jdbcType=DOUBLE},
+      score = #{score,jdbcType=INTEGER},
+      order_type = #{orderType,jdbcType=CHAR},
+      access_time = #{accessTime,jdbcType=INTEGER},
+      delivery_time = #{deliveryTime,jdbcType=INTEGER},
+      complete_time = #{completeTime,jdbcType=INTEGER},
+      urgent_time = #{urgentTime,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      ifCourier = #{ifcourier,jdbcType=VARCHAR},
+      delivery_done_time = #{deliveryDoneTime,jdbcType=INTEGER},
+      pay_state = #{payState,jdbcType=CHAR},
+      sale_type = #{saleType,jdbcType=INTEGER},
+      order_num = #{orderNum,jdbcType=VARCHAR},
+      out_trace_id = #{outTraceId,jdbcType=VARCHAR},
+      time_remark = #{timeRemark,jdbcType=VARCHAR},
+      cook_done_time = #{cookDoneTime,jdbcType=INTEGER},
+      cook_done_code = #{cookDoneCode,jdbcType=CHAR},
+      start_time = #{startTime,jdbcType=INTEGER},
+      comment_courier_content = #{commentCourierContent,jdbcType=VARCHAR},
+      start_send_time = #{startSendTime,jdbcType=INTEGER},
+      end_send_time = #{endSendTime,jdbcType=INTEGER},
+      user_address_id = #{userAddressId,jdbcType=INTEGER},
+      invoice = #{invoice,jdbcType=VARCHAR},
+      from_type = #{fromType,jdbcType=CHAR},
+      delivery_fee = #{deliveryFee,jdbcType=DOUBLE},
+      cost_lunch_box = #{costLunchBox,jdbcType=DOUBLE},
+      member_discount_money = #{memberDiscountMoney,jdbcType=DOUBLE},
+      merchant_member_discount_money = #{merchantMemberDiscountMoney,jdbcType=DOUBLE},
+      dine_in_discount_money = #{dineInDiscountMoney,jdbcType=DOUBLE},
+      recharge_src = #{rechargeSrc,jdbcType=INTEGER},
+      invite_id = #{inviteId,jdbcType=BIGINT},
+      agent_id = #{agentId,jdbcType=INTEGER},
+      is_merchant_delivery = #{isMerchantDelivery,jdbcType=CHAR},
+      lwk_id = #{lwkId,jdbcType=VARCHAR},
+      lwk_mark = #{lwkMark,jdbcType=VARCHAR},
+      lwk_flag = #{lwkFlag,jdbcType=VARCHAR},
+      flash_order_id = #{flashOrderId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 定义返回参数-->
+
+  <!-- 封装Order查询信息-->
+  <select id="queryOrderList" resultMap="queryOrderListMap">
+   SELECT FROM_UNIXTIME(o.create_time) ,
+    FROM_UNIXTIME(o.access_time ) ,
+    FROM_UNIXTIME(o.complete_time ),
+    FROM_UNIXTIME(m.create_time ) ,
+    o.origin ,
+    os.stock_price,-
+    om.total_price ,
+    om.price  ,
+    me.name
+
+
+  FROM  `order` o
+  INNER JOIN merchant m  ON o.merchant_id=m.id
+  INNER JOIN order_menu om on om.order_id =o.id
+  INNER JOIN  menu me on me.id=om.menu_id
+  INNER JOIN `0085_stock` AS os ON os.menu_id=me.id
+WHERE m.id=69524 AND FROM_UNIXTIME(o.complete_time ) BETWEEN  "2016-04-28" AND "2017-04-28"
+  </select>
+</mapper>

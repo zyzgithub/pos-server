@@ -1,9 +1,8 @@
 package com.dianba.pos.menu.po;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -11,14 +10,17 @@ import java.io.Serializable;
 public class Menu implements Serializable{
 
     @Id
+
     @Column(name = "ID")
     private Long id;
 
     @Column(name = "name")
     private String name;
 
+    @Column(name="price")
     private Double price;
 
+    @Column(name = "image")
     private String image;
 
     private Long typeId;
