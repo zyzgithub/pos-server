@@ -72,7 +72,6 @@ public class DateUtil {
     private int MaxYear;// 一年最大天数
 
 
-
     /**
      * 把符合日期格式的字符串转换为日期类型
      *
@@ -344,17 +343,19 @@ public class DateUtil {
         Date afterDay = StringtoDate(after, LONG_DATE_FORMAT);
         return getMonth(afterDay) - getMonth(beforeDay);
     }
+
     /*
         * 将时间戳转换为时间
         */
-    public static String stampToDate(Long lt){
+    public static String stampToDate(Long lt) {
         String res;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Date date = new Date(lt);
-        res = simpleDateFormat.format(lt*1000l);
+        res = simpleDateFormat.format(lt * 1000l);
         return res;
     }
+
     /**
      * 比较两个日期的月差
      *
@@ -363,12 +364,12 @@ public class DateUtil {
      * @return
      */
     public static Integer getDateByYueDiff(Long createTime) {
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         //转换为时间
         String d = stampToDate(createTime);
-        String nowTime=getCurrDate("yyyy-MM-dd HH:mm:ss");
-        int num=   yueDiff(d,nowTime);
+        String nowTime = getCurrDate("yyyy-MM-dd HH:mm:ss");
+        int num = yueDiff(d, nowTime);
 
         return num;
     }
@@ -531,15 +532,18 @@ public class DateUtil {
 
     /**
      * 获取当前的时间戳
+     *
      * @return
      */
-    public static Long currentTimeMillis(){return  System.currentTimeMillis();}
+    public static Long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
 
     /**
-     *  获取前几个月的时间戳
+     * 获取前几个月的时间戳
      * -1 前一个月
      */
-    public static Long getMillisByMonth(Integer month){
+    public static Long getMillisByMonth(Integer month) {
 
         Date dNow = new Date();   //当前时间
         Date dBefore = new Date();
@@ -547,15 +551,16 @@ public class DateUtil {
         calendar.setTime(dNow);//把当前时间赋给日历
         calendar.add(calendar.MONTH, month);  //设置为前3月
         dBefore = calendar.getTime();
-        Long a= dBefore.getTime();
-        Long time=Long.parseLong(a.toString().substring(0,10));
-        return  time;
+        Long a = dBefore.getTime();
+        Long time = Long.parseLong(a.toString().substring(0, 10));
+        return time;
     }
 //    public static boolean getMillisByTwo(Long millis  ){
 //
 //        Long s = (System.currentTimeMillis() - hqtime) / (1000 * 60*60*24);
 //
 //    }
+
     /**
      * 获取昨天的日期
      *
@@ -673,6 +678,215 @@ public class DateUtil {
         }
         long day = (date.getTime() - mydate.getTime()) / (24 * 60 * 60 * 1000);
         return day;
+    }
+
+    public static Date getTomorrow() {
+        Calendar current = Calendar.getInstance();
+        current.add(Calendar.DATE, 1);// 加一天
+        Date tomorrow = current.getTime();
+        System.out.println(tomorrow);
+        return tomorrow;
+
+    }
+
+    public static void main(String[] args) {
+
+        DateUtil du = new DateUtil();
+        System.out.println("获取当天日期:" + du.getNowTime("yyyy-MM-dd"));
+        System.out.println("获取本周一日期:" + du.getMondayOFWeek());
+        System.out.println("获取本周日的日期~:" + du.getCurrentWeekday());
+        System.out.println("获取上周一日期:" + du.getPreviousWeekday());
+        System.out.println("获取上周日日期:" + du.getPreviousWeekSunday());
+        System.out.println("获取下周一日期:" + du.getNextMonday());
+        System.out.println("获取下周日日期:" + du.getNextSunday());
+        System.out.println("获得相应周的周六的日期:" + du.getNowTime("yyyy-MM-dd"));
+        System.out.println("获取本月第一天日期:" + du.getFirstDayOfMonth());
+        System.out.println("获取本月最后一天日期:" + du.getDefaultDay());
+        System.out.println("获取上月第一天日期:" + du.getPreviousMonthFirst());
+        System.out.println("获取上月最后一天的日期:" + du.getPreviousMonthEnd());
+        System.out.println("获取下月第一天日期:" + du.getNextMonthFirst());
+        System.out.println("获取下月最后一天日期:" + du.getNextMonthEnd());
+        System.out.println("获取本年的第一天日期:" + du.getCurrentYearFirst());
+        System.out.println("获取本年最后一天日期:" + du.getCurrentYearEnd());
+        System.out.println("获取去年的第一天日期:" + du.getPreviousYearFirst());
+        System.out.println("获取去年的最后一天日期:" + du.getPreviousYearEnd());
+        System.out.println("获取明年第一天日期:" + du.getNextYearFirst());
+        System.out.println("获取明年最后一天日期:" + du.getNextYearEnd());
+        System.out.println("获取本季度第一天到最后一天:" + du.getThisSeasonTime(11));
+        System.out.println("获取本季度第一天:" + du.getThisSeasonTime(DateUtil.getToMonth()).split(";"));
+        System.out.println("获取两个日期之间间隔天数2008-12-1~2008-9.29:"
+                + DateUtil.getTwoDay("2008-12-1", "2008-9-29"));
+
+        String birth = "2008-02-31";
+        Date tomorrow = getTomorrow();
+        Date now = new Date();
+        System.out.println("当前天:" + DateUtil.DateToString(now, DateUtil.LONG_DATE_FORMAT));
+        System.out.println(tomorrow.after(now));
+
+    }
+
+    /**
+     * 获取参数月的上 12个月的 起始时间,返回值是从最远的时间点开始，比如当前为2012年9月，那么则返回[2011/9,2011/10,....2012/8]
+     *
+     * @param year
+     * @param month
+     * @return list[i][0] = start; list[i][1] = end; list[i][2] = year+"/"+month;
+     */
+    public static String[][] getPreTwelveList(int year, int month) {
+        String[][] list = new String[12][3];
+
+        String start = "";
+        String end = "";
+        for (int i = 0; i < 12; i++) {
+
+            int days = DateUtil.getDaysOfMonth(year, month);
+
+            if (month >= 1) {
+
+                start = year + "-" + month + "-01 00:00:00";
+                end = year + "-" + month + "-" + days + " 00:00:00";
+
+            } else {
+                month = 12;
+
+                start = year - 1 + "-" + month + "-01 00:00:00";
+                end = year - 1 + "-" + month + "-" + days + " 00:00:00";
+                year--;
+            }
+
+            list[12 - i - 1][0] = start;
+            list[12 - i - 1][1] = end;
+            list[12 - i - 1][2] = year + "/" + month;
+
+            month--;
+        }
+
+        return list;
+    }
+
+    /**
+     * 获取 在指定年份 的 指定月份之前的 月份
+     * 例如：2012年8月之前的月份 包含8月,最近的月份放在第一个element中
+     *
+     * @param month
+     * @return list[i][0] = start; list[i][1] = end; list[i][2] = year+"/"+month;
+     */
+    public static String[][] getPreMonthList(int month, int year) {
+        String[][] list = new String[12][3];
+
+        String start = "";
+        String end = "";
+        for (int i = 0; i < 12; i++) {
+
+            if (month >= 1) {
+                int days = DateUtil.getDaysOfMonth(year, month);
+
+                start = year + "-" + month + "-01 00:00:00";
+                end = year + "-" + month + "-" + days + " 00:00:00";
+
+                list[12 - i - 1][0] = start;
+                list[12 - i - 1][1] = end;
+                list[12 - i - 1][2] = year + "/" + month;
+
+                month--;
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * 返回从beginYear年开始到去年的所有年份，最近的年份放在list的最开始处。
+     * 例如beginYear2009，今年是2012年，则返回[2011,2010,2009]
+     *
+     * @param beginYear
+     * @return
+     */
+    public static List<Integer> getPreYear(int beginYear) {
+        int preYear = DateUtil.getToYear() - 1;  //去年
+        int noOfYear = preYear - beginYear + 1;
+
+        List<Integer> yearList = new ArrayList<Integer>(noOfYear);
+
+        for (int year = preYear; year >= beginYear; year--) {
+            yearList.add(year);
+        }
+
+        return yearList;
+    }
+
+    /**
+     * 包括beginYear年。
+     * 返回从beginYear年开始到去年的所有年份，最近的年份放在list的最开始处。
+     * 例如beginYear2009，今年是2012年，则返回[2012,2011,2010,2009]
+     *
+     * @param beginYear
+     * @return
+     */
+    public static List<Integer> getBeginYearToPreYear(int beginYear) {
+        int curyear = DateUtil.getToYear();  //去年
+        int noOfYear = curyear - beginYear + 1;
+
+        List<Integer> yearList = new ArrayList<Integer>(noOfYear);
+
+        for (int year = curyear; year >= beginYear; year--) {
+            yearList.add(year);
+        }
+
+        return yearList;
+    }
+
+    /**
+     * @param date     现在日期
+     * @param birthday 出生日期
+     * @return
+     * @throws Exception
+     */
+    public static String getAge(Date date, String birthday) throws Exception {
+        String str = "";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = GregorianCalendar.getInstance();
+        try {
+            calendar.setTime(date);
+            int theYear = calendar.get(Calendar.YEAR);
+            int theMonth = calendar.get(Calendar.MONTH) + 1;
+            int theDay = calendar.get(Calendar.DATE);
+
+            calendar.setTime(sdf.parse(birthday));
+
+            int birthYear = calendar.get(Calendar.YEAR);
+            int birthMonth = calendar.get(Calendar.MONTH) + 1;
+            int birthDay = calendar.get(Calendar.DATE);
+
+            int year = theYear - birthYear; //获得年
+            int month = theMonth - birthMonth; //获得月
+            int day = theDay - birthDay;   //获得天
+            int week = day % 7;          //获得周
+            //str=year+"岁"+month+"月"+week+"周"+day;
+            str = "" + year;
+        } catch (ParseException e) {
+
+        }
+
+        return str;
+
+    }
+
+    /**
+     * 当前时间加上几分钟后得到的时间
+     *
+     * @param format
+     * @param minu
+     * @return
+     */
+    public static String getDateAddMinue(String format, Integer minu) {
+
+
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.add(Calendar.MINUTE, minu);
+
+        String date = DateToString(nowTime.getTime(), format);
+        return date;
     }
 
     // 计算当月最后一天,返回字符串
@@ -1047,16 +1261,6 @@ public class DateUtil {
         return 0;
     }
 
-
-    public static Date getTomorrow() {
-        Calendar current = Calendar.getInstance();
-        current.add(Calendar.DATE, 1);// 加一天
-        Date tomorrow = current.getTime();
-        System.out.println(tomorrow);
-        return tomorrow;
-
-    }
-
     /**
      * 是否闰年
      *
@@ -1065,207 +1269,5 @@ public class DateUtil {
      */
     public boolean isLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-    }
-
-    public static void main(String[] args) {
-
-        DateUtil du = new DateUtil();
-        System.out.println("获取当天日期:" + du.getNowTime("yyyy-MM-dd"));
-        System.out.println("获取本周一日期:" + du.getMondayOFWeek());
-        System.out.println("获取本周日的日期~:" + du.getCurrentWeekday());
-        System.out.println("获取上周一日期:" + du.getPreviousWeekday());
-        System.out.println("获取上周日日期:" + du.getPreviousWeekSunday());
-        System.out.println("获取下周一日期:" + du.getNextMonday());
-        System.out.println("获取下周日日期:" + du.getNextSunday());
-        System.out.println("获得相应周的周六的日期:" + du.getNowTime("yyyy-MM-dd"));
-        System.out.println("获取本月第一天日期:" + du.getFirstDayOfMonth());
-        System.out.println("获取本月最后一天日期:" + du.getDefaultDay());
-        System.out.println("获取上月第一天日期:" + du.getPreviousMonthFirst());
-        System.out.println("获取上月最后一天的日期:" + du.getPreviousMonthEnd());
-        System.out.println("获取下月第一天日期:" + du.getNextMonthFirst());
-        System.out.println("获取下月最后一天日期:" + du.getNextMonthEnd());
-        System.out.println("获取本年的第一天日期:" + du.getCurrentYearFirst());
-        System.out.println("获取本年最后一天日期:" + du.getCurrentYearEnd());
-        System.out.println("获取去年的第一天日期:" + du.getPreviousYearFirst());
-        System.out.println("获取去年的最后一天日期:" + du.getPreviousYearEnd());
-        System.out.println("获取明年第一天日期:" + du.getNextYearFirst());
-        System.out.println("获取明年最后一天日期:" + du.getNextYearEnd());
-        System.out.println("获取本季度第一天到最后一天:" + du.getThisSeasonTime(11));
-        System.out.println("获取本季度第一天:" + du.getThisSeasonTime(DateUtil.getToMonth()).split(";"));
-        System.out.println("获取两个日期之间间隔天数2008-12-1~2008-9.29:"
-                + DateUtil.getTwoDay("2008-12-1", "2008-9-29"));
-
-        String birth = "2008-02-31";
-        Date tomorrow = getTomorrow();
-        Date now = new Date();
-        System.out.println("当前天:" + DateUtil.DateToString(now, DateUtil.LONG_DATE_FORMAT));
-        System.out.println(tomorrow.after(now));
-
-    }
-
-
-    /**
-     * 获取参数月的上 12个月的 起始时间,返回值是从最远的时间点开始，比如当前为2012年9月，那么则返回[2011/9,2011/10,....2012/8]
-     *
-     * @param year
-     * @param month
-     * @return list[i][0] = start; list[i][1] = end; list[i][2] = year+"/"+month;
-     */
-    public static String[][] getPreTwelveList(int year, int month) {
-        String[][] list = new String[12][3];
-
-        String start = "";
-        String end = "";
-        for (int i = 0; i < 12; i++) {
-
-            int days = DateUtil.getDaysOfMonth(year, month);
-
-            if (month >= 1) {
-
-                start = year + "-" + month + "-01 00:00:00";
-                end = year + "-" + month + "-" + days + " 00:00:00";
-
-            } else {
-                month = 12;
-
-                start = year - 1 + "-" + month + "-01 00:00:00";
-                end = year - 1 + "-" + month + "-" + days + " 00:00:00";
-                year--;
-            }
-
-            list[12 - i - 1][0] = start;
-            list[12 - i - 1][1] = end;
-            list[12 - i - 1][2] = year + "/" + month;
-
-            month--;
-        }
-
-        return list;
-    }
-
-
-    /**
-     * 获取 在指定年份 的 指定月份之前的 月份
-     * 例如：2012年8月之前的月份 包含8月,最近的月份放在第一个element中
-     *
-     * @param month
-     * @return list[i][0] = start; list[i][1] = end; list[i][2] = year+"/"+month;
-     */
-    public static String[][] getPreMonthList(int month, int year) {
-        String[][] list = new String[12][3];
-
-        String start = "";
-        String end = "";
-        for (int i = 0; i < 12; i++) {
-
-            if (month >= 1) {
-                int days = DateUtil.getDaysOfMonth(year, month);
-
-                start = year + "-" + month + "-01 00:00:00";
-                end = year + "-" + month + "-" + days + " 00:00:00";
-
-                list[12 - i - 1][0] = start;
-                list[12 - i - 1][1] = end;
-                list[12 - i - 1][2] = year + "/" + month;
-
-                month--;
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * 返回从beginYear年开始到去年的所有年份，最近的年份放在list的最开始处。
-     * 例如beginYear2009，今年是2012年，则返回[2011,2010,2009]
-     *
-     * @param beginYear
-     * @return
-     */
-    public static List<Integer> getPreYear(int beginYear) {
-        int preYear = DateUtil.getToYear() - 1;  //去年
-        int noOfYear = preYear - beginYear + 1;
-
-        List<Integer> yearList = new ArrayList<Integer>(noOfYear);
-
-        for (int year = preYear; year >= beginYear; year--) {
-            yearList.add(year);
-        }
-
-        return yearList;
-    }
-
-    /**
-     * 包括beginYear年。
-     * 返回从beginYear年开始到去年的所有年份，最近的年份放在list的最开始处。
-     * 例如beginYear2009，今年是2012年，则返回[2012,2011,2010,2009]
-     *
-     * @param beginYear
-     * @return
-     */
-    public static List<Integer> getBeginYearToPreYear(int beginYear) {
-        int curyear = DateUtil.getToYear();  //去年
-        int noOfYear = curyear - beginYear + 1;
-
-        List<Integer> yearList = new ArrayList<Integer>(noOfYear);
-
-        for (int year = curyear; year >= beginYear; year--) {
-            yearList.add(year);
-        }
-
-        return yearList;
-    }
-
-    /**
-     * @param date     现在日期
-     * @param birthday 出生日期
-     * @return
-     * @throws Exception
-     */
-    public static String getAge(Date date, String birthday) throws Exception {
-        String str = "";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar calendar = GregorianCalendar.getInstance();
-        try {
-            calendar.setTime(date);
-            int theYear = calendar.get(Calendar.YEAR);
-            int theMonth = calendar.get(Calendar.MONTH) + 1;
-            int theDay = calendar.get(Calendar.DATE);
-
-            calendar.setTime(sdf.parse(birthday));
-
-            int birthYear = calendar.get(Calendar.YEAR);
-            int birthMonth = calendar.get(Calendar.MONTH) + 1;
-            int birthDay = calendar.get(Calendar.DATE);
-
-            int year = theYear - birthYear; //获得年
-            int month = theMonth - birthMonth; //获得月
-            int day = theDay - birthDay;   //获得天
-            int week = day % 7;          //获得周
-            //str=year+"岁"+month+"月"+week+"周"+day;
-            str = "" + year;
-        } catch (ParseException e) {
-
-        }
-
-        return str;
-
-    }
-
-    /**
-     * 当前时间加上几分钟后得到的时间
-     *
-     * @param format
-     * @param minu
-     * @return
-     */
-    public static String getDateAddMinue(String format, Integer minu) {
-
-
-        Calendar nowTime = Calendar.getInstance();
-        nowTime.add(Calendar.MINUTE, minu);
-
-        String date = DateToString(nowTime.getTime(), format);
-        return date;
     }
 }
