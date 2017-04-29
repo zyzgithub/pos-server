@@ -1,207 +1,133 @@
 package com.dianba.pos.menu.po;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name="order")
 public class Order {
-
-    @Id
-    @GeneratedValue
-    @Column(name="id")
     private Long id;
 
-    @Column(name="pay_id")
     private String payId;
 
-    @Column(name="pay_type")
     private String payType;
 
-    @Column(name="user_id")
     private Long userId;
 
-    @Column(name="courier_id")
     private Long courierId;
 
-
-    @Column(name = "city_id")
     private Long cityId;
 
-
-    @Column(name = "card_id")
     private String cardId;
 
-    @Column(name="status")
     private String status;
 
-    @Column(name="state")
     private String state;
 
-    @Column(name = "retate")
     private String rstate;
 
-    @Column(name = "retime")
     private Integer retime;
 
-    @Column(name="realname")
     private String realname;
 
-    @Column(name = "mobile")
     private String mobile;
 
-    @Column(name = "address")
     private String address;
 
-    @Column(name = "onlineMoney")
     private Double onlineMoney;
 
-    @Column(name = "origin")
     private Double origin;
 
-    @Column(name = "credit")
     private Double credit;
 
-    @Column(name = "card")
     private Double card;
 
-    @Column(name = "createTime")
     private Integer createTime;
 
-    @Column(name = "payTime")
     private Integer payTime;
 
-    @Column(name = "payTime")
     private String commentDisplay;
 
-    @Column(name = "commentTaste")
     private Float commentTaste;
 
-    @Column(name = "commentSpeed")
     private Float commentSpeed;
 
-    @Column(name = "commentService")
     private Float commentService;
 
-    @Column(name = "commentCourier")
     private Float commentCourier;
 
-    @Column(name = "commentTime")
     private Integer commentTime;
 
-    @Column(name = "merchantId")
     private Integer merchantId;
 
-    @Column(name = "scoreMoney")
     private Double scoreMoney;
 
-    @Column(name = "score")
     private Integer score;
 
-    @Column(name = "orderType")
     private String orderType;
 
-    @Column(name = "accessTime")
     private Integer accessTime;
 
-    @Column(name = "deliveryTime")
     private Integer deliveryTime;
 
-    @Column(name = "completeTime")
     private Integer completeTime;
 
-    @Column(name = "urgentTime")
     private Integer urgentTime;
 
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "ifcourier")
     private String ifcourier;
 
-    @Column(name = "deliveryDoneTime")
     private Integer deliveryDoneTime;
 
-    @Column(name = "payState")
     private String payState;
 
-    @Column(name = "saleType")
     private Integer saleType;
 
-    @Column(name = "orderNum")
     private String orderNum;
 
-    @Column(name = "outTraceId")
     private String outTraceId;
 
-    @Column(name = "timeRemark")
     private String timeRemark;
 
-    @Column(name = "cookDoneTime")
     private Integer cookDoneTime;
 
-    @Column(name = "cookDoneCode")
     private String cookDoneCode;
 
-    @Column(name = "startTime")
     private Integer startTime;
 
-    @Column(name = "commentCourierContent")
     private String commentCourierContent;
 
-    @Column(name = "startSendTime")
     private Integer startSendTime;
 
-    @Column(name = "endSendTime")
     private Integer endSendTime;
 
-    @Column(name = "userAddressId")
     private Integer userAddressId;
 
-    @Column(name = "invoice")
     private String invoice;
 
-    @Column(name = "fromType")
     private String fromType;
 
-    @Column(name = "deliveryFee")
     private Double deliveryFee;
 
-    @Column(name = "costLunchBox")
     private Double costLunchBox;
 
-    @Column(name = "memberDiscountMoney")
     private Double memberDiscountMoney;
 
-    @Column(name = "merchantMemberDiscountMoney")
     private Double merchantMemberDiscountMoney;
 
-    @Column(name = "dineInDiscountMoney")
     private Double dineInDiscountMoney;
 
-    @Column(name = "rechargeSrc")
     private Integer rechargeSrc;
 
-    @Column(name = "inviteId")
     private Long inviteId;
 
-    @Column(name = "agentId")
     private Integer agentId;
 
-    @Column(name = "isMerchantDelivery")
     private String isMerchantDelivery;
 
-    @Column(name = "lwkId")
     private String lwkId;
 
-    @Column(name = "lwkMark")
     private String lwkMark;
 
-    @Column(name = "lwkFlag")
     private String lwkFlag;
 
-    @Column(name = "flashOrderId")
     private Long flashOrderId;
-
 
     public Long getId() {
         return id;
