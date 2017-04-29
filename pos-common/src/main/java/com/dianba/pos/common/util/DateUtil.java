@@ -71,8 +71,7 @@ public class DateUtil {
 
     private int MaxYear;// 一年最大天数
 
-    public DateUtil() {
-    }
+
 
     /**
      * 把符合日期格式的字符串转换为日期类型
@@ -345,18 +344,33 @@ public class DateUtil {
         Date afterDay = StringtoDate(after, LONG_DATE_FORMAT);
         return getMonth(afterDay) - getMonth(beforeDay);
     }
+    /*
+        * 将时间戳转换为时间
+        */
+    public static String stampToDate(Long lt){
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        Date date = new Date(lt);
+        res = simpleDateFormat.format(lt*1000l);
+        return res;
+    }
     /**
      * 比较两个日期的月差
      *
-     * @param currentDate 当前时间
-     * @param yueNum      相差的月差
+     * @param
+     * @param
      * @return
      */
-    public static String getDateByYueDiff(String currentDate, int yueNum) {
+    public static Integer getDateByYueDiff(Long createTime) {
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        //转换为时间
+        String d = stampToDate(createTime);
+        String nowTime=getCurrDate("yyyy-MM-dd HH:mm:ss");
+        int num=   yueDiff(d,nowTime);
 
-        return "";
+        return num;
     }
 
     /**
@@ -515,6 +529,33 @@ public class DateUtil {
         return DateUtil.DateToString(new Date(), DateUtil.LONG_DATE_FORMAT);
     }
 
+    /**
+     * 获取当前的时间戳
+     * @return
+     */
+    public static Long currentTimeMillis(){return  System.currentTimeMillis();}
+
+    /**
+     *  获取前几个月的时间戳
+     * -1 前一个月
+     */
+    public static Long getMillisByMonth(Integer month){
+
+        Date dNow = new Date();   //当前时间
+        Date dBefore = new Date();
+        Calendar calendar = Calendar.getInstance(); //得到日历
+        calendar.setTime(dNow);//把当前时间赋给日历
+        calendar.add(calendar.MONTH, month);  //设置为前3月
+        dBefore = calendar.getTime();
+        Long a= dBefore.getTime();
+        Long time=Long.parseLong(a.toString().substring(0,10));
+        return  time;
+    }
+//    public static boolean getMillisByTwo(Long millis  ){
+//
+//        Long s = (System.currentTimeMillis() - hqtime) / (1000 * 60*60*24);
+//
+//    }
     /**
      * 获取昨天的日期
      *

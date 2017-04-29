@@ -1352,23 +1352,29 @@
   <!-- 定义返回参数-->
 
   <!-- 封装Order查询信息-->
-  <select id="queryOrderList" resultMap="queryOrderListMap">
-   SELECT FROM_UNIXTIME(o.create_time) ,
-    FROM_UNIXTIME(o.access_time ) ,
-    FROM_UNIXTIME(o.complete_time ),
-    FROM_UNIXTIME(m.create_time ) ,
-    o.origin ,
-    os.stock_price,-
-    om.total_price ,
-    om.price  ,
-    me.name
-
-
-  FROM  `order` o
+  <select id="queryOrderList" resultType="java.util.HashMap">
+SELECT
+  sum(om.price-os.stock_price) sum_money,
+  us.id user_id,
+  us.mobile user_mobile,
+  ca.name name,
+  ca.id_card card,
+  ca.create_time create_time
+FROM  `order` o
   INNER JOIN merchant m  ON o.merchant_id=m.id
+  JOIN user us ON us.id=m.user_id
+  JOIN `0085_cashier` ca on ca.merchant_id=m.id
   INNER JOIN order_menu om on om.order_id =o.id
   INNER JOIN  menu me on me.id=om.menu_id
   INNER JOIN `0085_stock` AS os ON os.menu_id=me.id
-WHERE m.id=69524 AND FROM_UNIXTIME(o.complete_time ) BETWEEN  "2016-04-28" AND "2017-04-28"
+ WHERE m.id=#{id} AND  ca.create_time BETWEEN   #{create_time} AND #{now_time}
+  </select>
+  <select id="getPosStrtTimeByMerchant" resultType="java.lang.Long">
+
+    SELECT cas.create_time
+    FROM 0085_cashier cas
+    JOIN merchant me on cas.merchant_id=me.id
+    WHERE me.id=#{id}
+
   </select>
 </mapper>
