@@ -23,6 +23,8 @@
         <module>pos-payment</module>
         <module>pos-web</module>
         <module>pos-menu</module>
+        <module>pos-merchant</module>
+        <module>pos-order</module>
     </modules>
 
     <dependencies>

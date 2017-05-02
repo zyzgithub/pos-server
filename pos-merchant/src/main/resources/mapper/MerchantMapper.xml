@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dianba.pos.merchant.mapper.MerchantMapper">
+
+    <!--商家进货总金额-->
+    <select id="getMerchantProfit" resultType="java.util.Map">
+
+    SELECT  si.createTime create_time
+   ,sum(si.total_money) total_money
+   ,us.id user_id
+   ,us.mobile user_mobile
+   ,ca.name user_name
+   ,ca.id_card id_card
+   FROM merchant m
+   JOIN supply_chain_order_info si   on m.id = si.dest_Id
+   JOIN user us ON us.id=m.user_id
+   JOIN `0085_cashier` ca on ca.merchant_id=m.id
+   WHERE dest_Id=#{merchant_id}
+    AND si.createTime BETWEEN #{create_time} and #{now_time}
+
+  </select>
+    <!--商家进货总次数-->
+    <select id="getMerchantStockCount" resultType="java.util.Map">
+
+    SELECT  si.createTime create_time
+   ,count(1) stock_count
+   ,us.id user_id
+   ,us.mobile user_mobile
+   ,ca.name user_name
+   ,ca.id_card id_card
+    FROM merchant m
+    JOIN supply_chain_order_info si   on m.id = si.dest_Id
+    JOIN user us ON us.id=m.user_id
+    JOIN `0085_cashier` ca on ca.merchant_id=m.id
+    WHERE dest_Id=#{merchant_id}
+ AND si.createTime BETWEEN #{create_time} and #{now_time}
+  </select>
+    <select id="getMerchantCreate" resultType="java.lang.Long">
+
+    SELECT me.create_time
+    FROM merchant me
+    WHERE id=#{id};
+
+  </select>
+</mapper>

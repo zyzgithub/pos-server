@@ -1,10 +1,18 @@
-package com.dianba.pos.menu.po;
+package com.dianba.pos.merchant.po;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 //商家注册信息表
-public class Merchant {
+@Entity
+@Table(name = "merchant")
+public class Merchant implements Serializable{
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userId;

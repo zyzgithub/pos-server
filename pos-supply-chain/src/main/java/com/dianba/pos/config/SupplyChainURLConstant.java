@@ -1,4 +1,4 @@
-package com.dianba.pos.supplychain.config;
+package com.dianba.pos.config;
 
 public class SupplyChainURLConstant {
 
