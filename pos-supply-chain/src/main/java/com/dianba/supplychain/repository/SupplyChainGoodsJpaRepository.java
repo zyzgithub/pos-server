@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface SupplyChainGoodsJpaRepository extends JpaRepository<Goods, Integer> {
 
-    List<Goods> findByBarcode(List<String> barcodes);
+    List<Goods> findByBarcodeIn(List<String> barcodes);
 }

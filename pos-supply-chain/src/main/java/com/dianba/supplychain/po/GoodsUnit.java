@@ -5,16 +5,20 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "supply_chain_goods_unit")
-public class GoodsUnit implements Serializable{
+public class GoodsUnit implements Serializable {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "sort")
     private Byte sort;
 
+    @Column(name = "status")
     private Byte status;
 
     public Integer getId() {

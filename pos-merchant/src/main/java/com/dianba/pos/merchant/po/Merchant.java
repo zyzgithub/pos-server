@@ -15,86 +15,127 @@ public class Merchant implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "group_id")
     private Long groupId;
 
+    @Column(name = "city_id")
     private Long cityId;
 
+    @Column(name = "bank_name")
     private String bankName;
 
+    @Column(name = "bank_no")
     private String bankNo;
 
+    @Column(name = "bank_user")
     private String bankUser;
 
+    @Column(name = "address")
     private String address;
 
+    @Column(name = "contact")
     private String contact;
 
+    @Column(name = "phone")
     private String phone;
 
+    @Column(name = "location")
     private String location;
 
+    @Column(name = "mobile")
     private String mobile;
 
+    @Column(name = "create_time")
     private Integer createTime;
 
+    @Column(name = "longitude")
     private BigDecimal longitude;
 
+    @Column(name = "latitude")
     private BigDecimal latitude;
 
+    @Column(name = "display")
     private String display;
 
+    @Column(name = "notice")
     private String notice;
 
+    @Column(name = "start_time")
     private Integer startTime;
 
+    @Column(name = "end_time")
     private Integer endTime;
 
+    @Column(name = "delivery_time")
     private Integer deliveryTime;
 
+    @Column(name = "business_license")
     private String businessLicense;
 
+    @Column(name = "operating_permit")
     private String operatingPermit;
 
+    @Column(name = "print_code")
     private String printCode;
 
+    @Column(name = "card_money")
     private Double cardMoney;
 
+    @Column(name = "card_activity")
     private String cardActivity;
 
+    @Column(name = "bidding_money")
     private Double biddingMoney;
 
+    @Column(name = "logo_url")
     private String logoUrl;
 
+    @Column(name = "promotion")
     private String promotion;
 
+    @Column(name = "cost_delivery")
     private Double costDelivery;
 
+    @Column(name = "type")
     private String type;
 
+    @Column(name = "delivery_begin")
     private Double deliveryBegin;
 
+    @Column(name = "deduction")
     private Double deduction;
 
+    @Column(name = "order_num")
     private Integer orderNum;
 
+    @Column(name = "income_date")
     private Integer incomeDate;
 
+    @Column(name = "dine_order_print")
     private String dineOrderPrint;
 
+    @Column(name = "notice_time")
     private Date noticeTime;
 
+    @Column(name = "is_delete")
     private Byte isDelete;
 
+    @Column(name = "mobile_update_time")
     private Date mobileUpdateTime;
 
+    @Column(name = "delivery_begin_update_time")
     private Date deliveryBeginUpdateTime;
 
+    @Column(name = "alipay_limit")
     private Integer alipayLimit;
 
+    @Column(name = "wechat_limit")
     private Integer wechatLimit;
 
     public Long getId() {

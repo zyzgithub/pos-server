@@ -14,24 +14,63 @@ public class Warehouse implements Serializable{
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "handler")
     private Integer handler;
+
+    @Column(name = "user_mobile")
     private String userMobile;
+
+    @Column(name = "user_name")
     private String userName;
+
+    @Column(name = "status")
     private Byte status;
+
+    @Column(name = "type")
     private Byte type;
+
+    @Column(name = "longitude")
     private BigDecimal longitude;
+
+    @Column(name = "latitude")
     private BigDecimal latitude;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "img")
     private String img;
+
+    @Column(name = "printer_number")
     private String printerNumber;
+
+    @Column(name = "scope_type")
     private Byte scopeType;
+
+    @Column(name = "pid")
     private Integer pid;
+
+    @Column(name = "owner_area")
     private String ownerArea;
+
+    @Column(name = "shared_stock")
     private Byte sharedStock;
+
+    @Column(name = "create_time")
     private Timestamp createTime;
+
+    @Column(name = "delivery_scope")
     private Double deliveryScope;
+
+    @Column(name = "delivery_price")
     private Double deliveryPrice;
+
+    @Column(name = "channelId")
+    private Long channelId;
 
     public Integer getId() {
         return id;
@@ -167,6 +206,14 @@ public class Warehouse implements Serializable{
 
     public void setPrinterNumber(String printerNumber) {
         this.printerNumber = printerNumber;
+    }
+
+    public Long getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(Long channelId) {
+        this.channelId = channelId;
     }
 
     @Override

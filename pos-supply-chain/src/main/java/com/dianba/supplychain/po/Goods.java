@@ -14,25 +14,38 @@ public class Goods implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "product_id")
     private String productId;
 
+    @Column(name = "barcode")
     private String barcode;
 
+    @Column(name = "type_id")
     private Integer typeId;
 
+    @Column(name = "type_name")
     private String typeName;
 
+    @Column(name = "unit_id")
     private Integer unitId;
 
+    @Column(name = "market_price")
     private Double marketPrice;
 
+    @Column(name = "cost_price")
     private Double costPrice;
 
+    @Column(name = "img")
     private String img;
 
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "goods_banner")
+    private String goods_banner;
 
     public Integer getId() {
         return id;
@@ -120,6 +133,14 @@ public class Goods implements Serializable{
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    public String getGoods_banner() {
+        return goods_banner;
+    }
+
+    public void setGoods_banner(String goods_banner) {
+        this.goods_banner = goods_banner;
     }
 
     public String getFormatName(WarehouseGoods item) {

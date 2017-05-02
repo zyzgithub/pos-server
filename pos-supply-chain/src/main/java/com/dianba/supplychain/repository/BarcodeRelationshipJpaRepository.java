@@ -10,5 +10,5 @@ import java.util.List;
 public interface BarcodeRelationshipJpaRepository
         extends JpaRepository<BarcodeRelationship, Integer> {
 
-    List<BarcodeRelationship> findByTargetBarcode(List<String> targetBarcodes);
+    List<BarcodeRelationship> findByTargetBarcodeIn(List<String> targetBarcodes);
 }

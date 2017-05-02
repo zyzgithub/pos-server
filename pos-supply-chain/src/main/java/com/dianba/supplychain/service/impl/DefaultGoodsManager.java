@@ -51,7 +51,7 @@ public class DefaultGoodsManager implements GoodsManager {
 
         // 获取本次目标的内容对应于供应链端中存在的记录
         List<BarcodeRelationship> batchBarcodeRelationships
-                = barcodeRelationshipJpaRepository.findByTargetBarcode(Arrays.asList(barcodes.split(",")));
+                = barcodeRelationshipJpaRepository.findByTargetBarcodeIn(Arrays.asList(barcodes.split(",")));
         if (batchBarcodeRelationships == null || batchBarcodeRelationships.isEmpty()) {
             // 供应链没有对应的商品可以出售
             return relationships;
@@ -73,7 +73,7 @@ public class DefaultGoodsManager implements GoodsManager {
         sourceBarcodes = sourceBarcodes.delete(sourceBarcodes.length() - 1, sourceBarcodes.length());
         // 获取供应链中所有出售中的商品模版
         List<Goods> itemTemplates = supplyChainGoodsJpaRepository
-                .findByBarcode(Arrays.asList(sourceBarcodes.toString().split(",")));
+                .findByBarcodeIn(Arrays.asList(sourceBarcodes.toString().split(",")));
         Map<String, Goods> itemTemplateMap = new HashMap<String, Goods>();
         StringBuilder builder = new StringBuilder();
         // 重组为映射表关系

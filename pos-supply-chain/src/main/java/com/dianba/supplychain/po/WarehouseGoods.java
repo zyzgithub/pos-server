@@ -13,33 +13,64 @@ public class WarehouseGoods implements Serializable{
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "goods_id")
     private Integer goodsId;
+
+    @Column(name = "warehouse_id")
     private Integer warehouseId;
 
+    @Column(name = "inventory")
     private Integer inventory;
+
+    @Column(name = "inventory_alarm")
     private Integer inventoryAlarm;
+
+    @Column(name = "wait_for_delivery")
     private Integer waitForDelivery = 0;
+
+    @Column(name = "safety_threshold")
     private Integer safetyThreshold;
+
+    @Column(name = "oversold_number")
     private Integer oversoldNumber = 0;
 
+    @Column(name = "create_time")
     private Timestamp createTime;
 
+    @Column(name = "status")
     private Byte status;
+
+    @Column(name = "is_delete")
     private Byte isDelete;
 
+    @Column(name = "cost_price")
     private Double costPrice;
+
+    @Column(name = "market_price")
     private Double marketPrice;
+
+    @Column(name = "retail_price")
     private Double retailPrice;
+
+    @Column(name = "discount_price")
     private Double discountPrice;
 
+    @Column(name = "discount_limit")
     private Integer discountLimit;
+
+    @Column(name = "normal_limit")
     private Integer normalLimit;
+
+    @Column(name = "delivery_delay")
     private Integer deliveryDelay;
 
+    @Column(name = "sales")
     private Integer sales;
     /**
      * 最低采购量
      */
+    @Column(name = "min_sales")
     private Integer minSales;
 
     /**
