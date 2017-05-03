@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-core</artifactId>
+            <artifactId>pos-supply-chain</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

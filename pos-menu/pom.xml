@@ -8,13 +8,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>pos-menu</artifactId>
-    <dependencies>
+    <packaging>jar</packaging>
 
+    <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-core</artifactId>
+            <artifactId>pos-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

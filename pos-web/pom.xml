@@ -28,6 +28,11 @@
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
+            <artifactId>pos-order</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dianba</groupId>
             <artifactId>pos-payment</artifactId>
             <version>${project.version}</version>
         </dependency>
