@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.dianba.pos.merchant.mapper.MerchantMapper">
-
     <!--商家进货总金额-->
     <select id="getMerchantProfit" resultType="java.util.Map">
 
@@ -36,6 +34,7 @@
     WHERE dest_Id=#{merchant_id}
  AND si.createTime BETWEEN #{create_time} and #{now_time}
   </select>
+    <!--获取商家注册时间-->
     <select id="getMerchantCreate" resultType="java.lang.Long">
 
     SELECT me.create_time
@@ -43,4 +42,12 @@
     WHERE id=#{id};
 
   </select>
+    <!--查询是否是pos机商家用户-->
+     <select id="verifyMerchantUser" resultType="java.util.HashMap">
+    SELECT count(1) num
+    ,merchant_id merchant_id
+    FROM `0085_cashier`
+    where name=#{user_name}  AND id_card=#{card} AND mobile=#{phone}
+     </select>
+
 </mapper>
