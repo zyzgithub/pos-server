@@ -2,7 +2,7 @@ package com.dianba.supplychain.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.dianba.pos.common.exception.lang.AbstractApiController;
-import com.dianba.pos.config.SupplyChainURLConstant;
+import com.dianba.supplychain.config.SupplyChainURLConstant;
 import com.dianba.supplychain.service.GoodsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,10 +20,10 @@ public class MerchantGoodsController extends AbstractApiController {
 
     @RequestMapping("matchItems")
     @ResponseBody
-    public void matchItems(HttpServletRequest request) {
+    public JSONArray matchItems(HttpServletRequest request) {
         String barcodes = mustText("barcodes");
         Integer userId = mustInt("userId");
         JSONArray response = goodsManager.matchItems(userId, barcodes);
-        addResponse("result", response);
+        return response;
     }
 }
