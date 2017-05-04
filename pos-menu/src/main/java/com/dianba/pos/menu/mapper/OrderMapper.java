@@ -7,38 +7,41 @@ import java.util.Map;
 import com.dianba.pos.menu.po.Order;
 import com.dianba.pos.menu.po.OrderExample;
 import com.dianba.pos.menu.po.OrderWithBLOBs;
+import com.dianba.pos.order.vo.PosProfitByDayEntity;
 import org.apache.ibatis.annotations.Param;
 
 public interface OrderMapper {
-    long countByExample(OrderExample example);
 
-    int deleteByExample(OrderExample example);
 
-    int deleteByPrimaryKey(Long id);
-
-    int insert(OrderWithBLOBs record);
-
-    int insertSelective(OrderWithBLOBs record);
-
-    List<OrderWithBLOBs> selectByExampleWithBLOBs(OrderExample example);
-
-    List<Order> selectByExample(OrderExample example);
-
-    OrderWithBLOBs selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") OrderWithBLOBs record, @Param("example") OrderExample example);
-
-    int updateByExampleWithBLOBs(@Param("record") OrderWithBLOBs record, @Param("example") OrderExample example);
-
-    int updateByExample(@Param("record") Order record, @Param("example") OrderExample example);
-
-    int updateByPrimaryKeySelective(OrderWithBLOBs record);
-
-    int updateByPrimaryKeyWithBLOBs(OrderWithBLOBs record);
-
-    int updateByPrimaryKey(Order record);
-
+    /**
+     *  查询商家使用商米pos每个月的盈利信息
+     * @param id
+     * @param start_time
+     * @param now_time
+     * @return
+     */
    Map<String, Object> queryOrderList(@Param ("id") Long id,@Param("create_time")Long start_time,@Param("now_time")Long now_time);
 
+    /**
+     * 获取商家使用pos机的时间
+     * @param id
+     * @return
+     */
    Long getPosStrtTimeByMerchant(Long id);
+
+    /**
+     * 查询商家每天营业数据
+     * @param id
+     * @return
+     */
+     List<PosProfitByDayEntity> selectPosProfitByDay(Long id);
+
+    /**
+     * 获取商家注册时间
+     * @param id
+     * @return
+     */
+    Long getMerchantCreate(Long id);
+     Map<String,Object> verifyMerchantUser(@Param("user_name") String user_name,@Param("card")
+            String card ,@Param("phone") String phone);
 }
