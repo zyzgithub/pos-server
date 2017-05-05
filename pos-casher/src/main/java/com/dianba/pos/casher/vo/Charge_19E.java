@@ -1,7 +1,16 @@
 package com.dianba.pos.casher.vo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.casher.util.Charge19EApi;
+import com.dianba.pos.casher.util.Charge19EUtil;
 import com.dianba.pos.common.util.DateUtil;
+import com.dianba.pos.common.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * Created by Administrator on 2017/5/4 0004.
@@ -25,7 +34,7 @@ public class Charge_19E {
     private String chargeType;
 
     /***商户id（为19e平台注册的商户的id 长度40位）--必填**/
-    private String merchantId;
+    private String merchantId=Charge19EUtil.MERCHANT_ID;
 
     /**订单id长度50位**/
     private String merchantOrderId ;
@@ -42,7 +51,7 @@ public class Charge_19E {
     /*****************************协议参数***********************************/
 
     /****签名**/
-    private String sing;
+    private String sign=sign();
 
     /****签名方式*****/
     private String signType="MD5";
@@ -60,6 +69,53 @@ public class Charge_19E {
     private String version="1.0";
 
 
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSing(String sing) {
+        this.sign= sing;
+    }
+
+    public String getSignType() {
+        return signType;
+    }
+
+    public void setSignType(String signType) {
+        this.signType = signType;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getInputCharset() {
+        return inputCharset;
+    }
+
+    public void setInputCharset(String inputCharset) {
+        this.inputCharset = inputCharset;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getChargeNumber() {
         return chargeNumber;
@@ -118,7 +174,9 @@ public class Charge_19E {
     }
 
     public String getIspId() {
-        return ispId;
+
+
+            return ispId;
     }
 
     public void setIspId(String ispId) {
@@ -126,6 +184,7 @@ public class Charge_19E {
     }
 
     public String getProvinceId() {
+
         return provinceId;
     }
 
@@ -151,7 +210,7 @@ public class Charge_19E {
     public String sign(){
 
         return
-                "chargeNumber=" + chargeNumber + '&' +
+                       "chargeNumber=" + chargeNumber + '&' +
                         "chargeMoney=" + chargeMoney + '&' +
                         "fileType=" + fileType + '&' +
                         "chargeType=" + chargeType + '&' +
@@ -161,12 +220,36 @@ public class Charge_19E {
                         "ispId=" + ispId + '&' +
                         "provinceId=" + provinceId + '&' +
                         "timestamp=" + timestamp + '&' +
-                        "key=" + "";
+                        "key=" + Charge19EUtil.KEY;
+    }
+    public String params(String signp){
+
+        return
+
+                "signType=" + signType + '&' +
+                "timestamp=" + timestamp + '&' +
+                "dataType=" + dataType + '&' +
+                "inputCharset=" + inputCharset + '&' +
+                "version=" + version + '&' +
+                "chargeNumber=" + chargeNumber + '&' +
+                "chargeMoney=" + chargeMoney + '&' +
+                "fileType=" + fileType + '&' +
+                "chargeType=" + chargeType + '&' +
+                "merchantId=" + merchantId + '&' +
+                "merchantOrderId=" + merchantOrderId + '&' +
+                "sendNotifyUrl=" + sendNotifyUrl + '&' +
+                "ispId=" + ispId + '&' +
+                "provinceId=" + provinceId+"&"+
+                "sign=" + signp ;
+
     }
 /**********************************19充值返回参数***********************************/
 
 public static void main(String[] args) {
 
+    Charge_19E ch=new Charge_19E();
+    String ss=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
 
+    System.out.println(ss);
 }
 }

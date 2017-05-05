@@ -13,7 +13,7 @@ FROM  `order` o
   INNER JOIN order_menu om on om.order_id =o.id
   INNER JOIN  menu me on me.id=om.menu_id
   INNER JOIN `0085_stock` AS os ON os.menu_id=me.id
- WHERE m.id=#{id} AND  ca.create_time BETWEEN   #{create_time} AND #{now_time}
+ WHERE m.id=#{id} AND o.state='confirm' AND  ca.create_time BETWEEN   #{create_time} AND #{now_time}
   </select>
   <!--获取商家使用pos机的时间-->
   <select id="getPosStrtTimeByMerchant" resultType="java.lang.Long">

@@ -17,10 +17,5 @@
             <artifactId>pos-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-order</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>

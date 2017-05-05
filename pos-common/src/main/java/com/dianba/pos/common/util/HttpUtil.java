@@ -3,10 +3,9 @@ package com.dianba.pos.common.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -154,17 +153,17 @@ public class HttpUtil {
      * @param param   请求数据
      * @param charset 编码方式
      */
-    public static String sendPost(String url, Map<String, String> param, String charset) {
+    public static String sendPost(HttpServletResponse response, String url, Map<String, String> param, String charset) {
         StringBuffer buffer = new StringBuffer();
-        if (param != null && !param.isEmpty()) {
-            for (Map.Entry<String, String> entry : param.entrySet()) {
-                buffer.append(entry.getKey()).append("=")
-                        .append(URLEncoder.encode(entry.getValue()))
-                        .append("&");
-
-            }
-        }
-        buffer.deleteCharAt(buffer.length() - 1);
+//        if (param != null && !param.isEmpty()) {
+//            for (Map.Entry<String, String> entry : param.entrySet()) {
+//                buffer.append(entry.getKey()).append("=")
+//                        .append(URLEncoder.encode(entry.getValue()))
+//                        .append("&");
+//
+//            }
+//        }
+//        buffer.deleteCharAt(buffer.length() - 1);
 
         PrintWriter out = null;
         BufferedReader in = null;
@@ -182,6 +181,8 @@ public class HttpUtil {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             // 获取URLConnection对象对应的输出流
+            response.setCharacterEncoding("utf-8");
+            out = response.getWriter();
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
             out.print(buffer);
@@ -190,6 +191,8 @@ public class HttpUtil {
             // 定义BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(
                     conn.getInputStream(), charset));
+
+
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
@@ -213,4 +216,6 @@ public class HttpUtil {
         }
         return result;
     }
+
+
 }

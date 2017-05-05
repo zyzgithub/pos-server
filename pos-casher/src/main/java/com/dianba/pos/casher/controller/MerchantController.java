@@ -2,6 +2,9 @@ package com.dianba.pos.casher.controller;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.dianba.pos.casher.util.Charge19EApi;
+import com.dianba.pos.casher.util.Charge19EUtil;
+import com.dianba.pos.casher.vo.Charge_19E;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.HttpUtil;
@@ -9,7 +12,7 @@ import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.menu.mapper.OrderMapper;
 
 import com.dianba.pos.merchant.mapper.MerchantMapper;
-import com.dianba.pos.order.vo.PosProfitByDayEntity;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +56,7 @@ public class MerchantController {
 
         JSONObject jo=new JSONObject();
 
+        System.out.println("name"+name);
         if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(id_card)) {
             flag = false;
             msg = "参数输入有误!";
@@ -111,7 +116,7 @@ public class MerchantController {
                         if (time >= posCreateTime) {//判断使用商米pos的时间是否在预算的范围之内
                             //商米pos盈利平均金额
                             Double value = orderMoney.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
-                            jo.put("posProfitMoney",value);
+                            jo.put("posProfitMoney",value.toString());
                         } else {
 //                         //查询使用了几个月
                             Integer iv = DateUtil.getDateByYueDiff(posCreateTime);
@@ -120,9 +125,9 @@ public class MerchantController {
                             if (!"0".equals(iv) || "1".equals(iv)) {
                                 //商米pos平均金额
                                 Double db = orderMoney.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
-                                jo.put("posProfitMoney",db);
+                                jo.put("posProfitMoney",db.toString());
                             }else{
-                                jo.put("posProfitMoney",orderMoney);
+                                jo.put("posProfitMoney",orderMoney.toString());
                             }
 
                         }
@@ -133,7 +138,7 @@ public class MerchantController {
 
                             //商家进货平均金额
                             Double db = a2.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
-                           jo.put("mStockMoney",db);
+                           jo.put("mStockMoney",db.toString());
 
                         } else {
                             //查询商家使用了几个月
@@ -144,16 +149,16 @@ public class MerchantController {
                                 BigDecimal ivb = new BigDecimal(Double.toString(num));
                                 //商家进货平均金额
                                 Double db = a2.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
-                                jo.put("mStockMoney",db);
+                                jo.put("mStockMoney",db.toString());
                             }else{
-                                jo.put("mStockMoney",mStockMoney);
+                                jo.put("mStockMoney",mStockMoney.toString());
                             }
                         }
                         if (time >= mCreateTime) {//判断注册商家的时间是否在预算的范围之内
                             BigDecimal bd = new BigDecimal(mStockCouont);
                            //进货平均数
                             int count = (bd.divide(monthb, 0).intValue());
-                            jo.put("mStockCount",count);
+                            jo.put("mStockCount",""+""+count);
                        } else {
 
                            //查询商家进货了几个月
@@ -163,9 +168,9 @@ public class MerchantController {
                                 BigDecimal bb = new BigDecimal(num);
                                 //进货平均数
                                 int count = (bd.divide(bb, 0).intValue());
-                                jo.put("mStockCount",count);
+                                jo.put("mStockCount",""+""+count);
                             }else{
-                                jo.put("mStockCount",mStockCouont);
+                                jo.put("mStockCount",""+""+mStockCouont);
                             }
                             jo.put("user_id",user_id);
                             jo.put("user_name",name);
@@ -210,7 +215,7 @@ public class MerchantController {
      */
     @ResponseBody
     @RequestMapping(value="hfChargeBy19e")
-    public AjaxJson hfChargeBy19e() {
+    public AjaxJson hfChargeBy19e(HttpServletResponse response) {
 
         Map map=new HashMap();
         //HttpUtil.sendPost(casherUtil.HF_CHARGE_IP_PORT,map,"utf-8");
@@ -218,6 +223,18 @@ public class MerchantController {
         String msg = "";
         Object obj = null;
         String stateCode = "00";
+        Charge_19E ch=new Charge_19E();
+        ch.setChargeNumber("17052933333");
+        ch.setChargeMoney("10");
+        ch.setChargeType("0");
+        ch.setMerchantOrderId("eqwewqewqeqwewqewqeqwewqeqweqweqweqweqweqwewqeqweqweqwe");
+        ch.setSendNotifyUrl("32423423");
+        ch.setIspId("0");
+        ch.setProvinceId("");
+        ch.setFileType("0");
+
+        String ss=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
+        System.out.println(ss);
         return new AjaxJson(flag, msg, obj, stateCode);
     }
 

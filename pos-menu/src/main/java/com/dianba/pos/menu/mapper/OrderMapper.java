@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.dianba.pos.menu.po.Order;
-import com.dianba.pos.menu.po.OrderExample;
+
 import com.dianba.pos.menu.po.OrderWithBLOBs;
-import com.dianba.pos.order.vo.PosProfitByDayEntity;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface OrderMapper {
@@ -34,7 +34,7 @@ public interface OrderMapper {
      * @param id
      * @return
      */
-     List<PosProfitByDayEntity> selectPosProfitByDay(Long id);
+     //List<PosProfitByDayEntity> selectPosProfitByDay(Long id);
 
     /**
      * 获取商家注册时间
