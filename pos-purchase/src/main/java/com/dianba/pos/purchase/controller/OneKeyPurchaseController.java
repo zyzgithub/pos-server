@@ -1,10 +1,10 @@
 package com.dianba.pos.purchase.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.HttpProxy;
 import com.dianba.pos.purchase.config.PurchaseURLConstant;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
+import com.dianba.supplychain.vo.MatchItems;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,23 +30,16 @@ public class OneKeyPurchaseController {
     public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request)
             throws HttpProxy.HttpAccessException, IOException {
         AjaxJson j = AjaxJson.successJson("请求成功");
-        Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(552, 91174);
-        if (map == null || map.isEmpty()) {
+        Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(merchantId, userId);
+        List<MatchItems> preferentialList = (List<MatchItems>) map.get("preferentialList");
+        List<MatchItems> externalList = (List<MatchItems>) map.get("externalList");
+        if (map.isEmpty()) {
             j.setType("2");
-        } else if (null == map.get("preferentialList") && null == map.get("externalList")) {
+        } else if (preferentialList.isEmpty() && externalList.isEmpty()) {
             j.setType("3");
-        } else if (null != map.get("preferentialList") && null != map.get("externalList")) {
-            JSONArray parray = (JSONArray) map.get("preferentialList");
-            JSONArray earray = (JSONArray) map.get("externalList");
-            if (parray.isEmpty() && earray.isEmpty()) {
-                j.setType("3");
-            } else {
-                j.setType("1");
-            }
         } else {
             j.setType("1");
         }
-
         j.setObj(map);
         return j;
     }

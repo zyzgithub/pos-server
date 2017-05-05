@@ -30,7 +30,7 @@ public class Menu implements Serializable {
     @Column(name = "IMAGE", nullable = true, length = 100)
     private String image;
 
-    @Column(name = "TYPE_ID",insertable = false,updatable = false)
+    @Column(name = "TYPE_ID")
     private Integer typeId;
     /**
      * 商家id
@@ -155,14 +155,6 @@ public class Menu implements Serializable {
     private Integer productionDate;
 
     /**
-     * 菜单类型id
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TYPE_ID")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private MenuType menuType;
-
-    /**
      * 保质期-天
      */
     @Column(name = "shelf_life")
@@ -258,6 +250,9 @@ public class Menu implements Serializable {
     }
 
     public Integer getRepertory() {
+        if (repertory == null) {
+            repertory = 0;
+        }
         return repertory;
     }
 
@@ -439,14 +434,6 @@ public class Menu implements Serializable {
 
     public void setProductionDate(Integer productionDate) {
         this.productionDate = productionDate;
-    }
-
-    public MenuType getMenuType() {
-        return menuType;
-    }
-
-    public void setMenuType(MenuType menuType) {
-        this.menuType = menuType;
     }
 
     public Integer getShelfLife() {

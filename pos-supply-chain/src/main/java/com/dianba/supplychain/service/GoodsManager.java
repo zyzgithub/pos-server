@@ -1,8 +1,10 @@
 package com.dianba.supplychain.service;
 
-import com.alibaba.fastjson.JSONArray;
+import com.dianba.supplychain.vo.MatchItems;
+
+import java.util.List;
 
 public interface GoodsManager {
 
-    JSONArray matchItems(int userId, String barcodes);
+    List<MatchItems> matchItemsByBarcode(int userId, String barcodes);
 }
