@@ -2,7 +2,7 @@ package com.dianba.pos.purchase.service.impl;
 
 import com.dianba.pos.common.util.HttpProxy;
 import com.dianba.pos.menu.po.MenuType;
-import com.dianba.pos.menu.repository.MenuTypeJpaRepository;
+import com.dianba.pos.menu.service.MenuTypeManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
@@ -29,7 +29,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     @Autowired
     private GoodsManager goodsManager;
     @Autowired
-    private MenuTypeJpaRepository menuTypeJpaRepository;
+    private MenuTypeManager menuTypeManager;
 
     public Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId)
             throws HttpProxy.HttpAccessException, IOException {
@@ -51,10 +51,10 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             typeIds.add(purchase.getTypeId());
         }
         sb = sb.delete(sb.length() - 1, sb.length());
-        List<MenuType> menutypeEntites = menuTypeJpaRepository.findAll(typeIds);
 
         // 用 barcodes 去 供应链查找可进货的商品,极其规格.
         List<MatchItems> matchItemsList = goodsManager.matchItemsByBarcode(userId, sb.toString());
+        List<MenuType> menutypeEntites = menuTypeManager.findMenuTypeByIds(typeIds);
         //系统内建议采购
         for (MatchItems matchItems : matchItemsList) {
             OneKeyPurchase menuEntity = menuEntityMap.get(matchItems.getBarcode());
@@ -83,6 +83,9 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                     remainder = 1;
                 }
                 int defaultPurchase = need / item.getStandard() + remainder;
+                if (defaultPurchase < item.getMinSales()) {
+                    defaultPurchase = item.getMinSales();
+                }
                 item.setDefaultPurchase(defaultPurchase);
                 item.setName(name);
             }

@@ -1,5 +1,7 @@
 package com.dianba.supplychain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 
 /**
@@ -15,6 +17,9 @@ public class Items {
     private String unit;
     private Integer standard;
     private Integer defaultPurchase;
+
+    @JsonIgnore
+    private Integer minSales;
 
     public Integer getId() {
         return id;
@@ -78,5 +83,13 @@ public class Items {
 
     public void setDefaultPurchase(Integer defaultPurchase) {
         this.defaultPurchase = defaultPurchase;
+    }
+
+    public Integer getMinSales() {
+        return minSales == null ? 0 : minSales;
+    }
+
+    public void setMinSales(Integer minSales) {
+        this.minSales = minSales;
     }
 }

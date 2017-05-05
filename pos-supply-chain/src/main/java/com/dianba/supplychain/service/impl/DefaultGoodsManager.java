@@ -116,6 +116,7 @@ public class DefaultGoodsManager implements GoodsManager {
                 }
                 int stock = warehouseGood.getInventory() + (parentStock < 0 ? 0 : parentStock);
                 Items items = new Items();
+                items.setMinSales(warehouseGood.getMinSales());
                 items.setId(warehouseGood.getId());
                 items.setName(goods.getName());
                 items.setImage(goods.getImg());

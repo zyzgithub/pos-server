@@ -30,7 +30,7 @@ public class OneKeyPurchaseController {
     public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request)
             throws HttpProxy.HttpAccessException, IOException {
         AjaxJson j = AjaxJson.successJson("请求成功");
-        Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(552, 91174);
+        Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(merchantId, userId);
         List<MatchItems> preferentialList = (List<MatchItems>) map.get("preferentialList");
         List<MatchItems> externalList = (List<MatchItems>) map.get("externalList");
         if (map.isEmpty()) {
