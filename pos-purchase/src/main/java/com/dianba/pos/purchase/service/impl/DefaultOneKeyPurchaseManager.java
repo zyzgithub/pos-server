@@ -1,7 +1,6 @@
 package com.dianba.pos.purchase.service.impl;
 
 import com.dianba.pos.common.util.HttpProxy;
-import com.dianba.pos.menu.po.Menu;
 import com.dianba.pos.menu.po.MenuType;
 import com.dianba.pos.menu.service.MenuTypeManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
@@ -70,8 +69,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 if (item.getStandard() == null) {
                     item.setStandard(12);
                 }
-                int defaultPurchase=calculationNeed(menuEntity.getDaySale()
-                        ,todayRepertory,matchItems.getWarnInventory(),item.getStandard());
+                int defaultPurchase = calculationNeed(menuEntity.getDaySale()
+                        , todayRepertory, matchItems.getWarnInventory(), item.getStandard(), true);
                 if (defaultPurchase < item.getMinSales()) {
                     defaultPurchase = item.getMinSales();
                 }
@@ -104,7 +103,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 items.setImage(menuEntity.getImage());
                 items.setUnit(menuEntity.getUnit());
                 items.setDefaultPurchase(calculationNeed(menuEntity.getDaySale()
-                        ,todayRepertory,matchItems.getWarnInventory(),items.getStandard()));
+                        , todayRepertory, matchItems.getWarnInventory(), items.getStandard(), false));
                 items.setPrice(new BigDecimal(menuEntity.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
                 items.setName(menuEntity.getName());
                 items.setId(menuEntity.getId());
@@ -119,7 +118,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         return resultMap;
     }
 
-    private int calculationNeed(int daySale,int todayRepertory,int warnInventory,int standard){
+    private int calculationNeed(int daySale, int todayRepertory, int warnInventory, int standard, boolean haveStandard) {
         int need = 0;
         if (daySale > 0) {
             // 所需补充的库存=上周（日平均销量）*3-剩余库存
@@ -129,8 +128,14 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             // 所需补充的库存=预警库存-剩余库存
             need = warnInventory - todayRepertory;
         }
+        if (!haveStandard) {
+            return need;
+        }
         // 设置默认采购数量
         // 设置默认采购数量=所需补充库/供应链商品规格（如一箱12个），除不尽且大于规格一半的话采购数量加1
+        if (need <= standard) {
+            return 1;
+        }
         int remainder = need % standard;
         if (remainder != 0 && remainder > (standard / 2)) {
             remainder = 1;
