@@ -17,5 +17,10 @@
             <artifactId>pos-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>json-lib-2.3-jdk15</groupId>
+            <artifactId>json-lib-2.3-jdk15</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>
