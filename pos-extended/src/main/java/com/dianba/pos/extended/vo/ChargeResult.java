@@ -1,4 +1,4 @@
-package com.dianba.pos.casher.vo;
+package com.dianba.pos.extended.vo;
 
 import java.io.Serializable;
 

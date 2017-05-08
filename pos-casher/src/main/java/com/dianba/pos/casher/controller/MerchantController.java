@@ -1,21 +1,19 @@
 package com.dianba.pos.casher.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import com.dianba.pos.casher.util.Charge19EApi;
-import com.dianba.pos.casher.util.Charge19EUtil;
-import com.dianba.pos.casher.vo.Charge_19E;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.common.util.StringUtil;
+
 import com.dianba.pos.menu.mapper.OrderMapper;
+
 
 import com.dianba.pos.merchant.mapper.MerchantMapper;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -37,6 +34,7 @@ import java.util.Map;
 @RequestMapping("/merchant")
 @SuppressWarnings("all")
 public class MerchantController {
+
 
 
     @Autowired
@@ -78,7 +76,7 @@ public class MerchantController {
 
                     String user_id=map.get("user_id").toString();
                     //获取要查询的月数
-                    String month = request.getParameter("month");
+                        String month = request.getParameter("month");
                         Integer months = Integer.parseInt(month);
                         //先获取商家开始使用pos的时间
                        Long createTime = orderMapper.getPosStrtTimeByMerchant(Long.parseLong(merchant_id));
@@ -172,14 +170,15 @@ public class MerchantController {
                             }else{
                                 jo.put("mStockCount",""+""+mStockCouont);
                             }
-                            jo.put("user_id",user_id);
-                            jo.put("user_name",name);
-                            jo.put("id_card",id_card);
-                            jo.put("phone",phone);
-                            flag=true;
-                            msg="获取信息成功！";
-                            obj=jo;
+
               }
+                    jo.put("user_id",user_id);
+                    jo.put("user_name",name);
+                    jo.put("id_card",id_card);
+                    jo.put("phone",phone);
+                    flag=true;
+                    msg="获取信息成功！";
+                    obj=jo;
                     }
                 }
 
@@ -209,33 +208,5 @@ public class MerchantController {
         return m.toString();
     }
 
-    /**
-     * 19e 话费充值平台
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value="hfChargeBy19e")
-    public AjaxJson hfChargeBy19e(HttpServletResponse response) {
-
-        Map map=new HashMap();
-        //HttpUtil.sendPost(casherUtil.HF_CHARGE_IP_PORT,map,"utf-8");
-        boolean flag = true;
-        String msg = "";
-        Object obj = null;
-        String stateCode = "00";
-        Charge_19E ch=new Charge_19E();
-        ch.setChargeNumber("17052933333");
-        ch.setChargeMoney("10");
-        ch.setChargeType("0");
-        ch.setMerchantOrderId("eqwewqewqeqwewqewqeqwewqeqweqweqweqweqweqwewqeqweqweqwe");
-        ch.setSendNotifyUrl("32423423");
-        ch.setIspId("0");
-        ch.setProvinceId("");
-        ch.setFileType("0");
-
-        String ss=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
-        System.out.println(ss);
-        return new AjaxJson(flag, msg, obj, stateCode);
-    }
 
 }

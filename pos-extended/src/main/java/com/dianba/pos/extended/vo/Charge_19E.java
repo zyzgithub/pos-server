@@ -1,16 +1,8 @@
-package com.dianba.pos.casher.vo;
+package com.dianba.pos.extended.vo;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.dianba.pos.casher.util.Charge19EApi;
-import com.dianba.pos.casher.util.Charge19EUtil;
-import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.common.util.HttpUtil;
-import org.apache.commons.codec.digest.DigestUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import com.dianba.pos.extended.config.Charge19EApi;
+import com.dianba.pos.extended.config.Charge19EUtil;
 
 /**
  * Created by Administrator on 2017/5/4 0004.
@@ -28,13 +20,13 @@ public class Charge_19E {
     private String chargeMoney;
 
     /**到账类型（0 快充 24-24 慢充 48-48 慢充）--必填**/
-    private String fileType;
+    private String fillType;
 
     /**充值类型（0 手机 1 固话 2 小灵通 3 宽带） --必填**/
     private String chargeType;
 
     /***商户id（为19e平台注册的商户的id 长度40位）--必填**/
-    private String merchantId=Charge19EUtil.MERCHANT_ID;
+    private String merchantId= Charge19EUtil.MERCHANT_ID;
 
     /**订单id长度50位**/
     private String merchantOrderId ;
@@ -57,7 +49,7 @@ public class Charge_19E {
     private String signType="MD5";
 
     /******访问时间戳yyyyMMddHHmmss****/
-    private String timestamp= DateUtil.getCurrDate("yyyyMMddHHmmss");
+    private String timestamp="20160406175304";
 
     /****数据格式类型 KEYVALUE**/
     private String dataType="KEYVALUE";
@@ -133,12 +125,12 @@ public class Charge_19E {
         this.chargeMoney = chargeMoney;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getFillType() {
+        return fillType;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setFillType(String fillType) {
+        this.fillType = fillType;
     }
 
     public String getChargeType() {
@@ -197,7 +189,7 @@ public class Charge_19E {
         return "Charge_19E{" +
                 "chargeNumber='" + chargeNumber + '\'' +
                 ", chargeMoney='" + chargeMoney + '\'' +
-                ", fileType='" + fileType + '\'' +
+                ", fileType='" + fillType + '\'' +
                 ", chargeType='" + chargeType + '\'' +
                 ", merchantId='" + merchantId + '\'' +
                 ", merchantOrderId='" + merchantOrderId + '\'' +
@@ -212,7 +204,7 @@ public class Charge_19E {
         return
                        "chargeNumber=" + chargeNumber + '&' +
                         "chargeMoney=" + chargeMoney + '&' +
-                        "fileType=" + fileType + '&' +
+                        "fillType=" + fillType + '&' +
                         "chargeType=" + chargeType + '&' +
                         "merchantId=" + merchantId + '&' +
                         "merchantOrderId=" + merchantOrderId + '&' +
@@ -226,30 +218,40 @@ public class Charge_19E {
 
         return
 
-                "signType=" + signType + '&' +
-                "timestamp=" + timestamp + '&' +
-                "dataType=" + dataType + '&' +
-                "inputCharset=" + inputCharset + '&' +
-                "version=" + version + '&' +
+
                 "chargeNumber=" + chargeNumber + '&' +
                 "chargeMoney=" + chargeMoney + '&' +
-                "fileType=" + fileType + '&' +
+                "fillType=" + fillType + '&' +
                 "chargeType=" + chargeType + '&' +
                 "merchantId=" + merchantId + '&' +
                 "merchantOrderId=" + merchantOrderId + '&' +
                 "sendNotifyUrl=" + sendNotifyUrl + '&' +
                 "ispId=" + ispId + '&' +
                 "provinceId=" + provinceId+"&"+
-                "sign=" + signp ;
+                "sign=" + signp+"&"+
+                "signType=" + signType + '&' +
+                "timestamp=" + timestamp + '&' +
+                "dataType=" + dataType + '&' +
+                "inputCharset=" + inputCharset + '&' +
+                "version=" + version ;
 
     }
 /**********************************19充值返回参数***********************************/
 
 public static void main(String[] args) {
-
     Charge_19E ch=new Charge_19E();
-    String ss=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
+    ch.setChargeNumber("17052912345");
+    ch.setChargeMoney("10");
+    ch.setChargeType("0");
+    ch.setMerchantOrderId("4234234324");
+    ch.setSendNotifyUrl("http://10.1.1.1:8080");
+    ch.setIspId("");
+    ch.setProvinceId("");
+    ch.setFillType("0");
+    String result=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
 
-    System.out.println(ss);
+
+    System.out.println(result);
+
 }
 }

@@ -42,6 +42,7 @@ public interface OrderMapper {
      * @return
      */
     Long getMerchantCreate(Long id);
+
      Map<String,Object> verifyMerchantUser(@Param("user_name") String user_name,@Param("card")
             String card ,@Param("phone") String phone);
 }

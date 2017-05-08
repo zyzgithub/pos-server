@@ -13,8 +13,13 @@
 
     <dependencies>
         <dependency>
+        <groupId>com.dianba</groupId>
+        <artifactId>pos-common</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+        <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-common</artifactId>
+            <artifactId>pos-menu</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
