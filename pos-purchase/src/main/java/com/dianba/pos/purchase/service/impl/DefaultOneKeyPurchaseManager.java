@@ -74,6 +74,9 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 if (defaultPurchase < item.getMinSales()) {
                     defaultPurchase = item.getMinSales();
                 }
+                if (item.getStock() < defaultPurchase) {
+                    defaultPurchase = item.getStock();
+                }
                 item.setDefaultPurchase(defaultPurchase);
                 item.setName(name);
             }

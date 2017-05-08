@@ -46,6 +46,9 @@ public class Items {
     }
 
     public Integer getStock() {
+        if (stock == null) {
+            stock = 0;
+        }
         return stock;
     }
 
