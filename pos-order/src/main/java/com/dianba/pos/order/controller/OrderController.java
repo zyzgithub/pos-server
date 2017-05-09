@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping(OrderURLConstant.ORDER)
@@ -24,8 +25,8 @@ public class OrderController {
     @Autowired
     private OrderManager orderManager;
 
-    @RequestMapping(params = "create_order")
     @ResponseBody
+    @RequestMapping("create_order")
     public AjaxJson createOrderFromSuperMarket(HttpServletRequest request, Integer merchantId
             , Integer cashierId, String params, String version, String uuid) {
         AjaxJson j = new AjaxJson();

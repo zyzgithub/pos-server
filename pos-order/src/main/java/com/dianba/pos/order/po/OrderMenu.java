@@ -2,7 +2,6 @@ package com.dianba.pos.order.po;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "ORDER_MENU")
@@ -11,30 +10,41 @@ public class OrderMenu implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private Integer menuId;  //商品id
-    private String name; //商品名称
-    private Integer count;//数量
-    private double price;//单价
-    private double promotionPrice;//促销价格
-    private double discountMoney;//优惠金额
-    private double total;//总价
-    private String salesPromotion;//是否促销
-    private String unit = "";//单位
-    private String errMsg = "";
-
+    private Long id;
     @Column(name = "ORDER_ID")
     private Long orderId;
-
-    private Integer quantity;
-
-    private Double totalPrice;
-
+    @Column(name = "MENU_ID")
+    private Integer menuId;  //商品id
+    @Column(name = "PRICE")
+    private double price;//单价
+    @Transient
+    private double promotionPrice;//促销价格
+    @Transient
+    private double total;//总价
+    @Column(name = "SALES_PROMOTION")
+    private String salesPromotion;//是否促销
+    @Transient
+    private double discountMoney;//优惠金额
+    @Transient
+    private String unit = "";//单位
+    @Transient
+    private String errMsg = "";
+    @Transient
+    private String name; //商品名称
+    @Transient
+    private Integer count;//数量
+    @Transient
     private String state;
 
+    @Column(name = "QUANTITY")
+    private Integer quantity;
+    @Column(name = "total_price")
+    private Double totalPrice;
+    @Column(name = "PROMOTION_MONEY")
     private Double promotionMoney;
-
+    @Column(name = "MENU_PROMOTION_ID")
     private Integer menuPromotionId;
-
+    @Column(name = "ORIGINAL_PRICE")
     private Double originalPrice;
 
     public Long getOrderId() {
@@ -171,5 +181,13 @@ public class OrderMenu implements Serializable{
 
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

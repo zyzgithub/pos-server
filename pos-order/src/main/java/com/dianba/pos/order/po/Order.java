@@ -1,12 +1,17 @@
 package com.dianba.pos.order.po;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "ORDER")
-public class Order implements Serializable{
+@Table(name = "`ORDER`")
+@DynamicInsert
+@DynamicUpdate
+public class Order implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,104 +24,162 @@ public class Order implements Serializable{
     @Column(name = "CITY_ID")
     private Long cityId;
 
+    @Column(name = "COURIER_ID")
     private Long courierId;
 
+    @Column(name = "CARD_ID")
     private String cardId;
 
+    @Column(name = "STATUS")
     private String status;
 
+    @Column(name = "state")
     private String state;
 
+    @Column(name = "rstate")
     private String rstate;
 
+    @Column(name = "retime")
     private Integer retime;
 
+    @Column(name = "realname")
     private String realname;
 
+    @Column(name = "mobile")
     private String mobile;
 
+    @Column(name = "address")
     private String address;
 
+    @Column(name = "online_money")
     private Double onlineMoney;
 
+    @Column(name = "origin")
     private Double origin;
 
+    @Column(name = "credit")
     private Double credit;
 
+    @Column(name = "pay_time")
     private Integer payTime;
 
+    @Column(name = "comment_display")
     private String commentDisplay;
 
+    @Column(name = "comment_taste")
     private Float commentTaste;
 
+    @Column(name = "comment_speed")
     private Float commentSpeed;
 
+    @Column(name = "comment_service")
     private Float commentService;
 
+    @Column(name = "comment_courier")
     private Float commentCourier;
 
+    @Column(name = "comment_time")
     private Integer commentTime;
 
+    @Column(name = "merchant_id")
     private Integer merchantId;
 
+    @Column(name = "score")
     private Integer score;
 
+    @Column(name = "access_time")
     private Integer accessTime;
 
+    @Column(name = "delivery_time")
     private Integer deliveryTime;
 
+    @Column(name = "urgent_time")
     private Integer urgentTime;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "ifCourier")
     private String ifcourier;
 
+    @Column(name = "delivery_done_time")
     private Integer deliveryDoneTime;
 
+    @Column(name = "pay_state")
     private String payState;
 
+    @Column(name = "sale_type")
     private String outTraceId;
 
+    @Column(name = "time_remark")
     private String timeRemark;
 
+    @Column(name = "cook_done_time")
     private Integer cookDoneTime;
 
+    @Column(name = "cook_done_code")
     private String cookDoneCode;
 
+    @Column(name = "start_time")
     private Integer startTime;
 
+    @Column(name = "comment_courier_content")
     private String commentCourierContent;
 
+    @Column(name = "start_send_time")
     private Integer startSendTime;
 
+    @Column(name = "end_send_time")
     private Integer endSendTime;
 
+    @Column(name = "user_address_id")
     private Integer userAddressId;
 
+    @Column(name = "invoice")
     private String invoice;
 
+    @Column(name = "from_type")
     private String fromType;
 
+    @Column(name = "recharge_src")
     private Integer rechargeSrc;
 
+    @Column(name = "invite_id")
     private Long inviteId;
 
+    @Column(name = "agent_id")
     private Integer agentId;
 
+    @Column(name = "is_merchant_delivery")
     private String isMerchantDelivery;
 
+    @Column(name = "lwk_id")
     private String lwkId;
 
+    @Column(name = "lwk_mark")
     private String lwkMark;
 
+    @Column(name = "lwk_flag")
     private String lwkFlag;
 
+    @Column(name = "flash_order_id")
     private Long flashOrderId;
 
-
-
-    @Transient
+    @Column(name = "pay_id")
     private String payId; //pay_id
+
+    @Column(name = "pay_type")
+    private String payType;//支付类型
+
+    @Column(name = "remark")
+    private String remark;//备注
+
+    @Column(name = "complete_time")
+    private String completeTime; //完成时间
+
+    @Column(name = "create_time")
+    private String createTime;
+
     @Transient
     private double totalOrigin; //订单原价总金额
     @Transient
@@ -126,13 +189,7 @@ public class Order implements Serializable{
     @Transient
     private Integer totalCount; //商品总数量
     @Transient
-    private String payType;//支付类型
-    @Transient
-    private String remark;//备注
-    @Transient
     private String payTypeName; //支付类型名称
-    @Transient
-    private String completeTime; //完成时间
     @Transient
     private String merchantName; //商店名称
     @Transient
@@ -151,13 +208,17 @@ public class Order implements Serializable{
     private double minusDiscountMoney = 0.00;//立减优惠
     @Transient
     private double dineInDiscountMoney = 0.00;//立减优惠
-    @Transient
-    private String createTime;
     /**
      * 订单类型,
      */
-    @Transient
+    @Column(name = "order_type")
     private String orderType;
+    /**
+     * 订单排号
+     */
+    @Column(name = "order_num")
+    private String orderNum;
+
     /**
      * 抵金卷金额
      */
@@ -173,12 +234,6 @@ public class Order implements Serializable{
      */
     @Transient
     private String saleType;
-    /**
-     * 订单排号
-     */
-    @Transient
-    private String orderNum;
-
     @Transient
     private String merchantAddress;
     @Transient

@@ -113,7 +113,7 @@ public class DefaultOrderManager implements OrderManager {
                     salesPromotion = "N";
                     menuId = Integer.valueOf(m.get("menuId").toString());
                     num = Integer.valueOf(m.get("num").toString());
-                    Menu menuInfo = menuJpaRepository.findOne((long) menuId);
+                    Menu menuInfo = menuJpaRepository.findOne(menuId);
                     price = menuInfo.getPrice();
 
                     if (m.get("menuPromotionId") != null && !"".equals(m.get("menuPromotionId").toString())) {
@@ -172,6 +172,12 @@ public class DefaultOrderManager implements OrderManager {
                 order.setTitle("超市订单");
                 order.setSaleType("2");
                 order.setRemark(uuid);
+                // make not null
+                order.setCommentCourierContent("");
+                order.setCommentDisplay("Y");
+                order.setCredit(0.00);
+                order.setEndSendTime(0);
+
                 order = orderJpaRepository.save(order);
                 orderId = order.getOrderId();
                 logger.info("========================orderid=" + orderId);
@@ -221,7 +227,7 @@ public class DefaultOrderManager implements OrderManager {
                     menuId = Integer.valueOf(m.get("menuId").toString());
                     num = Integer.valueOf(m.get("num").toString());
                     // 根据菜单id获取单价
-                    Menu menu = menuJpaRepository.findOne((long) menuId);
+                    Menu menu = menuJpaRepository.findOne(menuId);
                     price = menu.getPrice();
                     menuPromotionId = 0;
                     salesPromotion = "N";// 是否促销，默认为不促销
@@ -321,7 +327,7 @@ public class DefaultOrderManager implements OrderManager {
                 double priceOnPos = Double.parseDouble(m.get("price").toString());
 
                 // 根据菜单id获取单价
-                Menu menuInfo = menuJpaRepository.findOne((long) menuId);
+                Menu menuInfo = menuJpaRepository.findOne(menuId);
                 Map<String, Object> menuErrorDescription = new HashMap<String, Object>();
                 menuErrorDescription.put("menuId", menuId);
                 if (menuInfo == null) {

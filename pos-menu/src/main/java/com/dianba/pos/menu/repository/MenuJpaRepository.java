@@ -9,7 +9,7 @@ import java.util.List;
 
 @Transactional
 @Repository
-public interface MenuJpaRepository extends JpaRepository<Menu, Long> {
+public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
 
 
     List<Menu> findAllByIsFlashAndMerchantId(Integer is_flash,Integer merchant_id);
