@@ -24,10 +24,8 @@
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-extended</artifactId>
+            <artifactId>pos-order</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
     </dependencies>
 </project>
