@@ -42,7 +42,8 @@ public class DefaultWarehouseOrgManager implements WarehouseOrgManager{
                 continue;
             }
             // 计算商家到仓库的距离
-            double distance = LocationUtil.distanceSimplify(warehouseLatitude.doubleValue(), warehouseLongitude.doubleValue(), latitude, longitude);
+            double distance = LocationUtil.distanceSimplify(warehouseLatitude.doubleValue()
+                    , warehouseLongitude.doubleValue(), latitude, longitude);
             // 获取仓库的配送距离(数据库中以千米为单位，而此处以米为单位)
             double deliverRange = supplyChainWarehouse.getDeliveryScope() * 1000;
 

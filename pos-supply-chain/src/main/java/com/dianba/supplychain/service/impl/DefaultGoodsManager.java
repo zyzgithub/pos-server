@@ -4,11 +4,11 @@ import com.dianba.pos.merchant.po.Merchant;
 import com.dianba.pos.merchant.repository.MerchantJpaRepository;
 import com.dianba.supplychain.mapper.WarehouseGoodsMapper;
 import com.dianba.supplychain.po.*;
-import com.dianba.supplychain.vo.Items;
-import com.dianba.supplychain.vo.MatchItems;
 import com.dianba.supplychain.repository.*;
 import com.dianba.supplychain.service.GoodsManager;
 import com.dianba.supplychain.service.WarehouseOrgManager;
+import com.dianba.supplychain.vo.Items;
+import com.dianba.supplychain.vo.MatchItems;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +62,8 @@ public class DefaultGoodsManager implements GoodsManager {
         StringBuilder sourceBarcodes = new StringBuilder();
         // 按目标进行分组
         for (BarcodeRelationship barcodeRelationship : batchBarcodeRelationships) {
-            List<BarcodeRelationship> barcodeRelationships = matchSourceBarcodes.get(barcodeRelationship.getTargetBarcode());
+            List<BarcodeRelationship> barcodeRelationships
+                    = matchSourceBarcodes.get(barcodeRelationship.getTargetBarcode());
             if (barcodeRelationships == null) {
                 barcodeRelationships = new ArrayList<BarcodeRelationship>();
                 matchSourceBarcodes.put(barcodeRelationship.getTargetBarcode(), barcodeRelationships);
@@ -84,7 +85,8 @@ public class DefaultGoodsManager implements GoodsManager {
         }
         builder = builder.delete(builder.length() - 1, builder.length());
 
-        List<WarehouseGoods> warehouseGoods = warehouseGoodsMapper.getItemsByTemplate(nearbyWarehouseId, builder.toString());
+        List<WarehouseGoods> warehouseGoods
+                = warehouseGoodsMapper.getItemsByTemplate(nearbyWarehouseId, builder.toString());
         Map<Integer, WarehouseGoods> warehouseGoodsMap = new HashMap<Integer, WarehouseGoods>();
         for (WarehouseGoods item : warehouseGoods) {
             warehouseGoodsMap.put(item.getGoodsId(), item);
@@ -93,7 +95,7 @@ public class DefaultGoodsManager implements GoodsManager {
         Warehouse warehouse = warehouseJpaRepository.findOne(nearbyWarehouseId);
         Iterator<Entry<String, List<BarcodeRelationship>>> entrys = matchSourceBarcodes.entrySet().iterator();
         while (entrys.hasNext()) {
-            MatchItems matchItems=new MatchItems();
+            MatchItems matchItems = new MatchItems();
             Entry<String, List<BarcodeRelationship>> entry = entrys.next();
             List<BarcodeRelationship> barcodeRelationships = entry.getValue();
             for (BarcodeRelationship barcodeRelationship : barcodeRelationships) {

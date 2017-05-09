@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WarehouseOrgJpaRepository extends JpaRepository<WarehouseOrg,WarehouseOrgPK>{
+public interface WarehouseOrgJpaRepository extends JpaRepository<WarehouseOrg, WarehouseOrgPK> {
 
     @Query("select w from WarehouseOrg w where w.warehouseOrgPK.orgId=:orgId")
-    List<WarehouseOrg> findByOrgId(@Param("orgId")Integer orgId);
+    List<WarehouseOrg> findByOrgId(@Param("orgId") Integer orgId);
 }

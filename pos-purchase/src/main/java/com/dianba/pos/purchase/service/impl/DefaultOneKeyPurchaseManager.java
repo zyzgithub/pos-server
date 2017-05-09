@@ -62,7 +62,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             String name = menuEntity.getName();
             // 设置当前库存，标准库存，预警库存
             matchItems.setRepertory(menuEntity.getTodayRepertory());
-            matchItems.setStandardInventory(menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
+            matchItems.setStandardInventory(
+                    menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
             matchItems.setWarnInventory(menuEntity.getWarnInventory() == null ? 20 : menuEntity.getWarnInventory());
             matchItems.setMenuTypeId(menuEntity.getTypeId());
             for (Items item : matchItems.getItems()) {
@@ -97,7 +98,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 int todayRepertory = menuEntity.getTodayRepertory() == null ? 0 : menuEntity.getTodayRepertory();
                 Integer standard = menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory();
                 matchItems.setRepertory(menuEntity.getTodayRepertory());
-                matchItems.setStandardInventory(menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
+                matchItems.setStandardInventory(
+                        menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
                 matchItems.setWarnInventory(menuEntity.getWarnInventory() == null ? 0 : menuEntity.getWarnInventory());
                 matchItems.setBarcode(menuEntity.getBarcode());
                 matchItems.setMenuTypeId(menuEntity.getTypeId());
@@ -121,7 +123,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         return resultMap;
     }
 
-    private int calculationNeed(int daySale, int todayRepertory, int warnInventory, int standard, boolean haveStandard) {
+    private int calculationNeed(int daySale
+            , int todayRepertory, int warnInventory, int standard, boolean haveStandard) {
         int need = 0;
         if (daySale > 0) {
             // 所需补充的库存=上周（日平均销量）*3-剩余库存

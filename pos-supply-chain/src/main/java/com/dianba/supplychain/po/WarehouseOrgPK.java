@@ -2,11 +2,10 @@ package com.dianba.supplychain.po;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 @Embeddable
-public class WarehouseOrgPK implements Serializable{
+public class WarehouseOrgPK implements Serializable {
 
     @Column(name = "warehouse_id")
     private Integer warehouseId;

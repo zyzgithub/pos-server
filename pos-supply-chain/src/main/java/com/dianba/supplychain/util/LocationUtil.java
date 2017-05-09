@@ -10,8 +10,8 @@ public class LocationUtil {
 
     private static Logger logger = LogManager.getLogger(LocationUtil.class);
 
-    private static double R = 6367000.0;
-    private static final String url = "http://api.map.baidu.com/geocoder/v2/";
+    private static final double R = 6367000.0;
+    private static final String URL = "http://api.map.baidu.com/geocoder/v2/";
 
 
     private static double rad(double d) {
@@ -31,9 +31,9 @@ public class LocationUtil {
         double dx = lng1 - lng2; // 经度差值
         double dy = lat1 - lat2; // 纬度差值
         double b = (lat1 + lat2) / 2.0; // 平均纬度
-        double Lx = rad(dx) * R * Math.cos(rad(b)); // 东西距离
-        double Ly = R * rad(dy); // 南北距离
-        return Math.sqrt(Lx * Lx + Ly * Ly); // 用平面的矩形对角距离公式计算总距离
+        double lx = rad(dx) * R * Math.cos(rad(b)); // 东西距离
+        double ly = R * rad(dy); // 南北距离
+        return Math.sqrt(lx * lx + ly * ly); // 用平面的矩形对角距离公式计算总距离
     }
 
     public static Integer getAdcode(String latStr, String lngStr) {
@@ -47,8 +47,10 @@ public class LocationUtil {
             params.put("output", "json");
             params.put("pois", 0);
 
-            JSONObject retJson = HttpUtil.sendGet(url + "?", params);
-            if (null == retJson) logger.warn("解析经纬度[{}]失败," + latStr + "," + lngStr);
+            JSONObject retJson = HttpUtil.sendGet(URL + "?", params);
+            if (null == retJson) {
+                logger.warn("解析经纬度[{}]失败," + latStr + "," + lngStr);
+            }
             if (0 == retJson.getIntValue("status")) {
                 return retJson.getJSONObject("result").getJSONObject("addressComponent").getInteger("adcode");
             }

@@ -45,7 +45,7 @@ public class Goods implements Serializable{
     private String description;
 
     @Column(name = "goods_banner")
-    private String goods_banner;
+    private String goodsBanner;
 
     public Integer getId() {
         return id;
@@ -135,12 +135,12 @@ public class Goods implements Serializable{
         this.description = description == null ? null : description.trim();
     }
 
-    public String getGoods_banner() {
-        return goods_banner;
+    public String getGoodsBanner() {
+        return goodsBanner;
     }
 
-    public void setGoods_banner(String goods_banner) {
-        this.goods_banner = goods_banner;
+    public void setGoodsBanner(String goodsBanner) {
+        this.goodsBanner = goodsBanner;
     }
 
     public String getFormatName(WarehouseGoods item) {

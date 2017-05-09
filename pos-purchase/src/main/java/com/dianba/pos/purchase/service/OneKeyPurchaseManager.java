@@ -7,5 +7,6 @@ import java.util.Map;
 
 public interface OneKeyPurchaseManager {
 
-    Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId) throws HttpProxy.HttpAccessException, IOException;
+    Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId)
+            throws HttpProxy.HttpAccessException, IOException;
 }
