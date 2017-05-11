@@ -25,6 +25,7 @@
         <module>pos-menu</module>
         <module>pos-merchant</module>
         <module>pos-order</module>
+        <module>pos-scheduler</module>
     </modules>
 
     <dependencies>

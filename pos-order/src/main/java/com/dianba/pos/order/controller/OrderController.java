@@ -11,10 +11,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 @Controller
 @RequestMapping(OrderURLConstant.ORDER)
@@ -27,8 +27,11 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("create_order")
-    public AjaxJson createOrderFromSuperMarket(HttpServletRequest request, Integer merchantId
-            , Integer cashierId, String params, String version, String uuid) {
+    public AjaxJson createOrderFromSuperMarket(HttpServletRequest request
+            , @RequestParam(value = "merchantId") Integer merchantId
+            , @RequestParam(value = "cashierId") Integer cashierId
+            , @RequestParam(value = "mobile", required = false) String mobile
+            , String params, String version, String uuid) {
         AjaxJson j = new AjaxJson();
         logger.info("开始创建超市订单, merchentId :" + merchantId + ", cashierId:" + cashierId + ", params:" + params);
         try {
@@ -37,8 +40,8 @@ public class OrderController {
                 return j;
             }
             String remark = orderManager.superMarketOrderPrefix;
-            Order oDto = orderManager.createOrderFromSuperMarket(merchantId
-                    , cashierId, params, null, remark + uuid);
+            Order oDto = orderManager.createOrderFromSuperMarket(merchantId, cashierId, mobile
+                    , params, null, remark + uuid);
             if (oDto == null || oDto.getOrderId() == null) {
                 j.setMsg("创建订单失败");
                 j.setStateCode("01");
