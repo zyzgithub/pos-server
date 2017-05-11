@@ -2,10 +2,19 @@ package com.dianba.pos.purchase.pojo;
 
 import com.dianba.pos.menu.po.Menu;
 
-public class OneKeyPurchase extends Menu{
+public class OneKeyPurchase extends Menu {
 
+    private boolean isCanBuy = false;
     private Integer totalSale;
     private Integer daySale;
+
+    public boolean isCanBuy() {
+        return isCanBuy;
+    }
+
+    public void setCanBuy(boolean canBuy) {
+        isCanBuy = canBuy;
+    }
 
     public Integer getTotalSale() {
         return totalSale;

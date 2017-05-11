@@ -10,10 +10,9 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <outputDirectory>WEB-INF/lib</outputDirectory>
-            <excludes>
-                <exclude>servlet-api*.jar</exclude>
-                <exclude>pos-web-*.war</exclude>
-            </excludes>
+            <includes>
+                <include>*.jar</include>
+            </includes>
         </dependencySet>
     </dependencySets>
     <fileSets>
@@ -23,14 +22,14 @@
         </fileSet>
         <fileSet>
             <directory>target/classes</directory>
-            <excludes>
-                <exclude>db.properties</exclude>
-            </excludes>
             <outputDirectory>/WEB-INF/classes/</outputDirectory>
+            <excludes>
+                <exclude>application.properties</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
-            <directory>src/main/webapp</directory>
-            <outputDirectory>/</outputDirectory>
+            <directory>target/pos/WEB-INF/lib</directory>
+            <outputDirectory>WEB-INF/lib</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

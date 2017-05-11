@@ -54,8 +54,8 @@ public class DefaultOrderManager implements OrderManager {
     private CashierOrderJpaRepository cashierOrderJpaRepository;
 
     @Transactional
-    public Order createOrderFromSuperMarket(Integer merchantId
-            , Integer cashierId, String params, Integer createTime, String uuid) throws BusinessException {
+    public Order createOrderFromSuperMarket(Integer merchantId, Integer cashierId, String mobile
+            , String params, Integer createTime, String uuid) throws BusinessException {
         // 离线订单 校验 "[offline_order] 离线订单:"/ "[market_order]  超市订单:"
         if (StringUtils.isNotBlank(uuid) && uuid.startsWith(offlineOrderPrefix)) {
             List<String> remarks = new ArrayList<>();
@@ -172,6 +172,7 @@ public class DefaultOrderManager implements OrderManager {
                 order.setTitle("超市订单");
                 order.setSaleType("2");
                 order.setRemark(uuid);
+                order.setMobile(mobile);
                 // make not null
                 order.setCommentCourierContent("");
                 order.setCommentDisplay("Y");

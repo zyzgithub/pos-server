@@ -1,8 +1,5 @@
 package com.dianba.pos.menu.po;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -261,6 +258,9 @@ public class Menu implements Serializable {
     }
 
     public Integer getTodayRepertory() {
+        if (todayRepertory == null) {
+            todayRepertory = 0;
+        }
         return todayRepertory;
     }
 
