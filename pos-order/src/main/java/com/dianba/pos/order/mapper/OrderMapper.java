@@ -1,12 +1,11 @@
 package com.dianba.pos.order.mapper;
 
 
+import com.dianba.pos.order.vo.Order19EDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
-
 @Mapper
 public interface OrderMapper {
 
@@ -48,4 +47,22 @@ public interface OrderMapper {
             String card, @Param("phone") String phone);
 
     Integer getRemarkCount(List<String> remark);
+
+    /**
+     * 获取未充值订单
+     * @param merchantId
+     * @param payState
+     * @return
+     */
+    List<Order19EDto> getOrderListBy19EMenu(@Param("merchantId") Integer merchantId, @Param("payState") String payState);
+
+    /**
+     * 更新增值服务订单信息为成功状态
+     * @param payState
+     * @param
+     * @return
+     */
+    void  editOrderInfoBy19e(@Param("chargeState") String payState,@Param("orderNum") Long orderNum,@Param("completeTime") int timestamp);
+
+    Object getByPayId(@Param("orderNum") Long orderNum);
 }

@@ -1,8 +1,6 @@
 package com.dianba.pos.extended.vo;
-
-
-import com.dianba.pos.extended.config.Charge19EApi;
-import com.dianba.pos.extended.config.Charge19EUtil;
+import com.dianba.pos.extended.util.HfCharge19EApi;
+import com.dianba.pos.extended.util.HfCharge19EUtil;
 
 /**
  * Created by Administrator on 2017/5/4 0004.
@@ -10,7 +8,7 @@ import com.dianba.pos.extended.config.Charge19EUtil;
  * 19e话费充值平台
  * */
 
-public class Charge_19E {
+public class Charge19E {
 
     /*************************************19充值请求参数****************************************/
     /**充值手机号码-必填**/
@@ -26,7 +24,7 @@ public class Charge_19E {
     private String chargeType;
 
     /***商户id（为19e平台注册的商户的id 长度40位）--必填**/
-    private String merchantId= Charge19EUtil.MERCHANT_ID;
+    private String merchantId= HfCharge19EUtil.MERCHANT_ID;
 
     /**订单id长度50位**/
     private String merchantOrderId ;
@@ -212,7 +210,7 @@ public class Charge_19E {
                         "ispId=" + ispId + '&' +
                         "provinceId=" + provinceId + '&' +
                         "timestamp=" + timestamp + '&' +
-                        "key=" + Charge19EUtil.KEY;
+                        "key=" + HfCharge19EUtil.KEY;
     }
     public String params(String signp){
 
@@ -239,19 +237,22 @@ public class Charge_19E {
 /**********************************19充值返回参数***********************************/
 
 public static void main(String[] args) {
-    Charge_19E ch=new Charge_19E();
+    Charge19E ch=new Charge19E();
     ch.setChargeNumber("17052912345");
     ch.setChargeMoney("10");
     ch.setChargeType("0");
-    ch.setMerchantOrderId("4234234324");
-    ch.setSendNotifyUrl("http://10.1.1.1:8080");
+    ch.setMerchantOrderId("testRollbackOrder11");
+    ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
     ch.setIspId("");
     ch.setProvinceId("");
     ch.setFillType("0");
-    String result=   Charge19EApi.hfCharge(Charge19EUtil.HF_CHARGE_19E_URL,ch);
-
-
+    String result=   HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL,ch);
     System.out.println(result);
+    HfOrderQuery hq=new HfOrderQuery();
+    hq.setMerchantOrderId("testRollbackOrder11");
+    hq.setMerchantId(HfCharge19EUtil.MERCHANT_ID);
+    String resultq=   HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY,hq);
+    System.out.println(resultq);
 
 }
 }

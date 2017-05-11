@@ -1,10 +1,7 @@
 package com.dianba.pos.menu.mapper;
+import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-
-import com.dianba.pos.menu.po.User;
-import org.apache.ibatis.annotations.Param;
-
+@Mapper
 public interface UserMapper {
 
 }

@@ -22,6 +22,11 @@ public class PhoneInfo implements Serializable{
     @Column(name = "COMPANY")
     private String company;
 
+    @Column(name = "code")
+    private Integer code;
+
+    @Column(name = "print_type")
+    private Integer printType;
     public long getId() {
         return id;
     }
@@ -68,5 +73,21 @@ public class PhoneInfo implements Serializable{
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public Integer getPrintType() {
+        return printType;
+    }
+
+    public void setPrintType(Integer printType) {
+        this.printType = printType;
     }
 }

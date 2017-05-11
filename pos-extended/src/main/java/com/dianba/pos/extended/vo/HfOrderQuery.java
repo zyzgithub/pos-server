@@ -1,7 +1,8 @@
 package com.dianba.pos.extended.vo;
 
-import com.dianba.pos.extended.config.Charge19EApi;
-import com.dianba.pos.extended.config.Charge19EUtil;
+
+import com.dianba.pos.extended.util.HfCharge19EApi;
+import com.dianba.pos.extended.util.HfCharge19EUtil;
 
 /**
  * Created by Administrator on 2017/5/8 0008.
@@ -113,7 +114,7 @@ public class HfOrderQuery {
                     "ehfOrderId=" + ehfOrderId + '&' +
                         "merchantId=" + merchantId +"&"+
                         "timestamp=" + timestamp + '&' +
-                            "key=" + Charge19EUtil.KEY;
+                            "key=" + HfCharge19EUtil.KEY;
 
 
 
@@ -139,7 +140,7 @@ public class HfOrderQuery {
         ho.setMerchantId("AA0b0192015072415092542712");
         ho.setEhfOrderId("ESSOD02141011705081347128037");
         ho.setMerchantOrderId("4234234324");
-        String aaa=  Charge19EApi.hfOrderQuery(Charge19EUtil.HT_ORDER_INFO_QUERY,ho);
+        String aaa=  HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY,ho);
         System.out.println(aaa);
 
 

@@ -1,8 +1,10 @@
 package com.dianba.pos.extended.vo;
 
 import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.extended.config.Charge19EApi;
-import com.dianba.pos.extended.config.Charge19EUtil;
+import com.dianba.pos.extended.util.FlowCharge19EApi;
+import com.dianba.pos.extended.util.FlowCharge19EUtil;
+import com.mysql.fabric.FabricConnection;
+
 
 /**
  * Created by Administrator on 2017/5/6 0006.
@@ -118,26 +120,27 @@ public class Product {
     public String sign(){
 
         return
-                "signType=" + signType + '&' +
-                "timestamp=" + timestamp + '&' +
-                "dataType=" + dataType + '&' +
-                "inputCharset=" + inputCharset + '&' +
-                "version=" + version +'&'+
-                "merchantId=" + merchantId + '&' +
-                "mobile=" + mobile ;
+
+                     "dataType=" + dataType + '&' +
+                     "inputCharset=" + inputCharset + '&' +
+                      "merchantId=" + merchantId + '&' +
+                      "mobile=" + mobile +"&"+
+                      "signType=" + signType + '&' +
+                      "timestamp=" + timestamp + '&' +
+                      "version=" + version ;
+
     }
 
     public String params(String signp){
 
         return
-                        "sign=" + signp+"&"+
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
                         "dataType=" + dataType + '&' +
                         "inputCharset=" + inputCharset + '&' +
-                        "version=" + version +'&'+
                         "merchantId=" + merchantId + '&' +
-                         "mobile=" + mobile ;
+                        "mobile=" + mobile +"&"+
+                        "signType=" + signType + '&' +
+                        "timestamp=" + timestamp + '&' +
+                        "version=" + version +"&"+ "sign="+signp;
 
 
     }
@@ -145,9 +148,9 @@ public class Product {
     public static void main(String[] args) {
 
         Product pd=new Product();
-        pd.setMerchantId(Charge19EUtil.MERCHANT_ID);
-        pd.setMobile("13249196270");
-        String result=Charge19EApi.queryProduct(Charge19EUtil.QUERY_PRODUCT,pd);
+        pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+        pd.setMobile("13249196272");
+        String result= FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
         System.out.println(result);
     }
 }

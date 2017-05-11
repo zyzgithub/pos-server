@@ -1,11 +1,9 @@
 package com.dianba.pos.order.vo;
 
 /**
- * Created by Administrator on 2017/5/2 0002.
- * 封装商家每天营业数据
+ * Created by Administrator on 2017/5/10 0010.
  */
-public class PosProfitByDayEntity
-{
+public class posProfitDto {
 
     private Integer id;
 

@@ -1,10 +1,7 @@
 package com.dianba.pos.menu.mapper;
+import org.apache.ibatis.annotations.Mapper;
 
-import com.dianba.pos.menu.po.Stock;
-
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
-
+@Mapper
 public interface StockMapper {
 
 }

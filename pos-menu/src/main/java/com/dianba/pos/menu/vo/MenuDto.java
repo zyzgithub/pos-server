@@ -5,30 +5,30 @@ package com.dianba.pos.menu.vo;
  */
 public class MenuDto {
 
-    private Integer menu_id;
+    private String menuId;
 
-    private String menu_name;
+    private String menuName;
 
     private Double price;
 
-    private Double stock_price;
+    private Double stockPrice;
 
     private Integer type;
 
-    public Integer getMenu_id() {
-        return menu_id;
+    public String getMenuId() {
+        return menuId;
     }
 
-    public void setMenu_id(Integer menu_id) {
-        this.menu_id = menu_id;
+    public void setMenuId(String menuId) {
+        this.menuId = menuId;
     }
 
-    public String getMenu_name() {
-        return menu_name;
+    public String getMenuName() {
+        return menuName;
     }
 
-    public void setMenu_name(String menu_name) {
-        this.menu_name = menu_name;
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
     }
 
     public Double getPrice() {
@@ -39,12 +39,12 @@ public class MenuDto {
         this.price = price;
     }
 
-    public Double getStock_price() {
-        return stock_price;
+    public Double getStockPrice() {
+        return stockPrice;
     }
 
-    public void setStock_price(Double stock_price) {
-        this.stock_price = stock_price;
+    public void setStockPrice(Double stockPrice) {
+        this.stockPrice = stockPrice;
     }
 
     public Integer getType() {

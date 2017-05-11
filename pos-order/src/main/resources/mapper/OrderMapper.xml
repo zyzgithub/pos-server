@@ -25,7 +25,7 @@
     </select>
 
     <!--查詢商家每天的盈利數據-->
-    <select id="selectPosProfitByDay" resultType="com.dianba.pos.order.vo.PosProfitByDayEntity">
+    <select id="selectPosProfitByDay" resultType="com.dianba.pos.order.vo.posProfitDto">
         SELECT o.id,
         sum( om.price) sale_price，
         sum(os.stock_price) stock_price,
@@ -58,6 +58,7 @@
         where ca.name=#{user_name}  AND ca.id_card=#{card} AND ca.mobile=#{phone}
     </select>
 
+
     <!--获取商家注册时间-->
     <select id="getMerchantCreate" resultType="java.lang.Long">
       SELECT me.create_time FROM merchant me WHERE id=#{id}
@@ -68,5 +69,27 @@
         <foreach collection="remarks" item="remark" open="(" close=")" separator=",">
           #{remark}
         </foreach>
+    </select>
+    <!--获取增值服务平台订单支付成功,未请求第三方服务type：3话费充值4流量充值-->
+    <select id="getOrderListBy19EMenu" resultType="com.dianba.pos.order.vo.Order19EDto" >
+          SELECT
+             o.id orderId,
+             o.pay_id orderNum,
+             m.price price,
+             o.mobile mobile,
+             o.pay_state payState,
+             m.is_flash type
+          FROM `order` o
+          JOIN order_menu om on om.order_id=o.id
+          JOIN  menu m on m.id=om.menu_id
+          WHERE m.merchant_id=#{merchantId}
+          AND o.pay_state=#{payState} and o.charge_state=#{chargeState};
+    </select>
+
+    <update id="editOrderInfoBy19e" parameterType="java.util.Map">
+        UPDATE `order` o SET o.complete_time=#{completeTime} ,o.charge_state=#{chargeState} WHERE o.pay_id=#{orderNum} ;
+    </update>
+    <select id="getByPayId" resultType="java.lang.Object">
+        SELECT charge_state FROM  'order' WHERE pay_id=#{orderNum};
     </select>
 </mapper>

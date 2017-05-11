@@ -2,15 +2,15 @@ package com.dianba.pos.extended.vo;
 
 
 import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.extended.config.Charge19EApi;
-import com.dianba.pos.extended.config.Charge19EUtil;
+import com.dianba.pos.extended.util.FlowCharge19EApi;
+import com.dianba.pos.extended.util.FlowCharge19EUtil;
 
 
 /**
  * Created by Administrator on 2017/5/6 0006.
  * 流量充值类
  */
-public class Charge_Flow {
+public class ChargeFlow {
 
     /*****************************协议参数***********************************/
 
@@ -159,14 +159,14 @@ public class Charge_Flow {
     public String sign(){
 
         return
-                "signType=" + signType + '&' +
-                "timestamp=" + timestamp + '&' +
                 "dataType=" + dataType + '&' +
                 "inputCharset=" + inputCharset + '&' +
-                "version=" + version +"&"+
                 "mobile=" + mobile + '&' +
                 "merOrderNo=" + merOrderNo + '&' +
                 "merchantId=" + merchantId + '&' +
+                "signType=" + signType + '&' +
+                "timestamp=" + timestamp + '&' +
+                "version=" + version +"&"+
                 "remark=" + remark;
     }
     public String params(String signp){
@@ -185,20 +185,20 @@ public class Charge_Flow {
     }
 
     public static void main(String[] args) {
-        Charge_Flow cf=new Charge_Flow();
-        cf.setMerchantId("AA0ae02017050816303689733");
+
+
+//     Product pd=new Product();
+//     pd.setMobile("15001000000");
+//     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+//     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
+//     System.out.println(bb);
+        ChargeFlow cf=new ChargeFlow();
+        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
         cf.setMerOrderNo("11111111");
-        cf.setProductId("GAME60560");
+        cf.setProductId("110000");
         cf.setMobile("15001000000");
         cf.setRemark("流量充值!");
-      String aaa=  Charge19EApi.flowCharge(Charge19EUtil.FLOW_CHARGE_URL,cf);
+        String aaa= FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL,cf);
         System.out.println(aaa);
-
-     Product pd=new Product();
-     pd.setMobile("15001000000");
-     pd.setMerchantId("AA0ae02017050816303689733");
-     String bb=  Charge19EApi.queryProduct(Charge19EUtil.QUERY_PRODUCT,pd);
-        System.out.println(bb);
-
     }
 }

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderStateJpaRepository extends JpaRepository<OrderState, Integer> {
+
+
 }
