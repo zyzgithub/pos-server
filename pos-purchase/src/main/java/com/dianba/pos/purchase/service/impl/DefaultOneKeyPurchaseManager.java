@@ -82,18 +82,19 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 item.setName(name);
             }
         }
-
         //系统外建议采购
-        List<MatchItems> externalList = new ArrayList<>();
-        boolean isNotExists = true;
-        for (OneKeyPurchase menuEntity : menuEntityMap.values()) {
+        for (OneKeyPurchase menuEntity : menuEntities) {
             for (MatchItems items : matchItemsList) {
                 if (menuEntity.getBarcode().equals(items.getBarcode())) {
-                    isNotExists = false;
+                    menuEntity.setCanBuy(true);
                     break;
                 }
             }
-            if (isNotExists) {
+        }
+        List<MatchItems> externalList = new ArrayList<>();
+        boolean isNotExists = true;
+        for (OneKeyPurchase menuEntity : menuEntities) {
+            if (!menuEntity.isCanBuy()) {
                 MatchItems matchItems = new MatchItems();
                 int todayRepertory = menuEntity.getTodayRepertory() == null ? 0 : menuEntity.getTodayRepertory();
                 Integer standard = menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory();
