@@ -47,9 +47,9 @@
                             <version>${project.version}</version>
                         </manifestEntries>
                     </archive>
-                    <!--<excludes>-->
-                        <!--<exclude>**/*.properties</exclude>-->
-                    <!--</excludes>-->
+                    <excludes>
+                        <exclude>application.properties</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -66,7 +66,8 @@
                 </executions>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/main/assembly/pos-dev.xml</descriptor>
+                        <descriptor>src/main/assembly/ctc-dev.xml</descriptor>
+                        <descriptor>src/main/assembly/ctc-prod.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
