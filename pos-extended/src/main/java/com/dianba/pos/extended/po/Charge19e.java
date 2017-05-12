@@ -40,7 +40,7 @@ public class Charge19e implements Serializable {
     private String merchantOrderId;
     @Column(name = "queryResultUrl")
     private String queryResultUrl;
-    @Column(name = "resultTest")
+    @Column(name = "resultText")
     private String resultText;
     @Column(name = "type")
     private Integer type;

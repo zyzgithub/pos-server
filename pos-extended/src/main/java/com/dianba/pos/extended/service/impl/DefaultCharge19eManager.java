@@ -1,6 +1,7 @@
 package com.dianba.pos.extended.service.impl;
 
 import com.dianba.pos.common.util.DateUtil;
+import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
 import com.dianba.pos.extended.po.Charge19e;
 import com.dianba.pos.extended.repository.Charge19eJpaRepository;
@@ -56,15 +57,19 @@ public class DefaultCharge19eManager implements Charge19eManager {
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
+
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
-        //保存话费充值订单信息
-        saveHfChargeTable(or, cr);
-        if (cr.getResultCode().equals("success")) {
-            logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile() +
-                    ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
-            //修改订单信息为confirm状态
-            flag = true;
+        if(cr.getResultCode().equals("SUCCESS")){
+            //保存话费充值订单信息
+            saveHfChargeTable(or, cr);
+            if (cr.getResultCode().equals("success")) {
+                logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile() +
+                        ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
+                //修改订单信息为confirm状态
+                flag = true;
+            }
         }
+
         return flag;
 
     }
@@ -78,18 +83,21 @@ public class DefaultCharge19eManager implements Charge19eManager {
                 3);
         for (Order19EDto od : list) {
 
-            //查询此订单的充值次数
-            Integer count = charge19eMapper.chargeCountByOrder(od.getOrderId());
-            if (count < 3) { //没有充值3次
+            if(!StringUtil.isEmpty(od.getMobile())){
+                //查询此订单的充值次数
+                Integer count = charge19eMapper.chargeCountByOrder(od.getOrderId());
+                if (count < 3) { //没有充值3次
 
-                boolean flag = hfCharge(od);
-                if (flag) {
-                    logger.info("话费充值下订单成功！" + "orderNum" + od.getOrderNum() + "phone" + od.getMobile()
-                            + "money"
-                            + od.getPrice());
+                    boolean flag = hfCharge(od);
+                    if (flag) {
+                        logger.info("话费充值下订单成功！" + "orderNum" + od.getOrderNum() + "phone" + od.getMobile()
+                                + "money"
+                                + od.getPrice());
+                    }
+
                 }
-
             }
+
 
         }
 
@@ -160,6 +168,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ct.setResultDesc(cr.getResultDesc());
         ct.setQueryResultUrl(cr.getQueryResultUrl());
         //第三方订单id
+
         ct.seteOrderId(cr.getEhfOrderId());
         ct.setMerchantOrderId(cr.getMerchantOrderId());
 
@@ -185,6 +194,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ct.seteOrderId(chargeFlowResult.getOrderNo());
         ct.setMerchantOrderId(chargeFlowResult.getMerOrderId());
 
+        ct.seteOrderId(chargeFlowResult.getOrderNo());
         //关联order表id
         ct.setOrderId(order19EDto.getOrderId());
         //此单为流量充值订单

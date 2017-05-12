@@ -87,6 +87,7 @@ public class FlowCharge19EApi {
             }
             cf= JSON.parseObject(result,ChargeFlowResult.class);
 
+            System.out.println(cf);
 
         } catch (IOException e) {
             e.printStackTrace();

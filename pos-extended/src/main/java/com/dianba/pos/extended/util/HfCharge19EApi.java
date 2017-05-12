@@ -51,6 +51,7 @@ public class HfCharge19EApi {
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
             String params = param.params(MD5);
+            System.out.println(params);
             out.print(params);
             // flush输出流的缓冲
             out.flush();

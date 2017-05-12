@@ -257,21 +257,21 @@ public class Charge19E {
 
     public static void main(String[] args) {
         Charge19E ch = new Charge19E();
-        ch.setChargeNumber("17052912345");
+        ch.setChargeNumber("17052923456");
         ch.setChargeMoney("10");
         ch.setChargeType("0");
-        ch.setMerchantOrderId("testRollbackOrder115");
+        ch.setMerchantOrderId("testRollbackOrder115446645");
         ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
         ch.setIspId("");
         ch.setProvinceId("");
         ch.setFillType("0");
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, ch);
         //System.out.println(cr.toString());
-        HfOrderQuery hq = new HfOrderQuery();
-        hq.setMerchantOrderId("testRollbackOrder113");
-        hq.setMerchantId(HfCharge19EUtil.MERCHANT_ID);
-        String resultq = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, hq);
-        System.out.println(resultq);
+//        HfOrderQuery hq = new HfOrderQuery();
+//        hq.setMerchantOrderId("testRollbackOrder113");
+//        hq.setMerchantId(HfCharge19EUtil.MERCHANT_ID);
+//        String resultq = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, hq);
+       // System.out.println(resultq);
 
     }
 }
