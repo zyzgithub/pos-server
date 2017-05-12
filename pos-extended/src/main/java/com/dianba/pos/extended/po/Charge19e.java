@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Charge19e implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chargeId")
     private Integer chargeId;
     @Column(name = "orderId")
