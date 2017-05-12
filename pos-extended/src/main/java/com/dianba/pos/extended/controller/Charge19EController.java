@@ -204,9 +204,10 @@ public class Charge19EController {
                             menuDto.setMenuName(menu.getName());
                             menuDto.setPrice(menu.getPrice());
                             menuDto.setStockPrice(menu.getOriginalPrice());
+                            menulst.add(menuDto);
                         }
 
-                        menulst.add(menuDto);
+
 
 
                     }

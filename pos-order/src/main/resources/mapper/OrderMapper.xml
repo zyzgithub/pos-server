@@ -78,12 +78,13 @@
              m.price price,
              o.mobile mobile,
              o.pay_state payState,
-             m.is_flash type
+             m.is_flash type,
+             m.menu_key menuKey
           FROM `order` o
           JOIN order_menu om on om.order_id=o.id
           JOIN  menu m on m.id=om.menu_id
           WHERE m.merchant_id=#{merchantId}
-          AND o.pay_state=#{payState} and o.charge_state=#{chargeState}
+          AND o.pay_state=#{payState} and o.charge_state!=#{chargeState}
           and m.is_flash=#{type};
     </select>
     <!--根据商家订单号更新原订单信息-->

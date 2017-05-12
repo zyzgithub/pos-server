@@ -198,18 +198,18 @@ public class ChargeFlow {
     public static void main(String[] args) {
 
 
-//     Product pd=new Product();
-//     pd.setMobile("15001000000");
-//     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-//     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
-//     System.out.println(bb);
-        ChargeFlow cf = new ChargeFlow();
-        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-        cf.setMerOrderNo("2222222");
-        cf.setProductId("RF0116111310421001");
-
-        cf.setMobile("15001000000");
-        cf.setRemark("流量充值!");
+     Product pd=new Product();
+     pd.setMobile("15001000000");
+     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
+     System.out.println(bb);
+//        ChargeFlow cf = new ChargeFlow();
+//        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+//        cf.setMerOrderNo("2222222");
+//        cf.setProductId("RF0116111310421001");
+//
+//        cf.setMobile("15001000000");
+//        cf.setRemark("流量充值!");
         // ChargeFlow chargeFlow= FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
         //  System.out.println(chargeFlow.toString());
     }
