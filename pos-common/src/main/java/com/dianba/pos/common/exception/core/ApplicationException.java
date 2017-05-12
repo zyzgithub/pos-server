@@ -1,11 +1,11 @@
 package com.dianba.pos.common.exception.core;
 
-public abstract interface ApplicationException {
-    public abstract ExceptionContent getContent();
+public interface ApplicationException {
+    ExceptionContent getContent();
 
-    public abstract Integer getCode();
+    Integer getCode();
 
-    public abstract String getMsg();
+    String getMsg();
 
-    public abstract Object getTag();
+    Object getTag();
 }

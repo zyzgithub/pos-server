@@ -1,10 +1,12 @@
 package com.dianba.pos.menu.po;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "menu_type")
-public class MenuType implements java.io.Serializable {
+public class MenuType implements Serializable {
+
     /**
      * id
      */
@@ -107,15 +109,6 @@ public class MenuType implements java.io.Serializable {
     public void setMerchantId(Integer merchantId) {
         this.merchantId = merchantId;
     }
-/*	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MERCHANT_ID", nullable = true)
-	public MerchantEntity getMerchant() {
-		return merchant;
-	}
-
-	public void setMerchant(MerchantEntity merchant) {
-		this.merchant = merchant;
-	}*/
 
     /**
      * 方法: 取得Integer

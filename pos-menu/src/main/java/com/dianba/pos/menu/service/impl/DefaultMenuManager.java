@@ -19,8 +19,10 @@ public class DefaultMenuManager implements MenuManager {
 
 
     @Override
-    public List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash, Integer merchantId, Integer printTypeId, Integer codeId) {
-        return menuJpaRepository.findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(isFlash,merchantId,printTypeId,codeId);
+    public List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash
+            , Integer merchantId, Integer printTypeId, Integer codeId) {
+        return menuJpaRepository.findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(
+                isFlash, merchantId, printTypeId, codeId);
     }
 
     @Override

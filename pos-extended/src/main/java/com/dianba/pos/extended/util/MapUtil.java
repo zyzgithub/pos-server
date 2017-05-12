@@ -13,6 +13,7 @@ class MapKeyComparator implements Comparator<String> {
         return str1.compareTo(str2);
     }
 }
+
 class MapValueComparator implements Comparator<Map.Entry<String, String>> {
 
     @Override
@@ -21,11 +22,13 @@ class MapValueComparator implements Comparator<Map.Entry<String, String>> {
         return me1.getValue().compareTo(me2.getValue());
     }
 }
+
 @SuppressWarnings("all")
 public class MapUtil {
 
     /**
      * 使用 Map按key进行排序
+     *
      * @param map
      * @return
      */
@@ -41,8 +44,10 @@ public class MapUtil {
 
         return sortMap;
     }
+
     /**
      * 使用 Map按value进行排序
+     *
      * @param
      * @return
      */
@@ -63,8 +68,10 @@ public class MapUtil {
         }
         return sortedMap;
     }
+
     /**
      * 使用 Map按value进行排序
+     *
      * @param
      * @return
      */
@@ -72,7 +79,7 @@ public class MapUtil {
         Set<Map.Entry<String, String>> set = map.entrySet();
         StringBuffer sb = new StringBuffer();
         //取出排序后的参数，逐一连接起来
-        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext(); ) {
             Map.Entry<String, String> me = it.next();
             sb.append(me.getValue() + "|");
         }
@@ -80,8 +87,10 @@ public class MapUtil {
         return sb.toString();//返回最终排序后的结果，这里key不参与排序中，具体看接口规约
         //return (Md5Encrypt.encrypt(sb.toString())).toUpperCase();//这个带有md5加密的，算法就不贴了，网上很多
     }
+
     /**
      * 把数组所有元素排序，并按照“参数=参数值”的模式用“&”字符拼接成字符串
+     *
      * @param params 需要排序并参与字符拼接的参数组
      * @return 拼接后字符串
      */

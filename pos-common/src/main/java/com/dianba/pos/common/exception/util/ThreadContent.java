@@ -17,7 +17,7 @@ public class ThreadContent {
     private static final Log LOG = LogFactory.getLog(ThreadContent.class);
 
     public static HttpServletRequest getHttpServletRequest() {
-        return (HttpServletRequest) HTTP_SERVLET_REQUESTS.get();
+        return HTTP_SERVLET_REQUESTS.get();
     }
 
     public static void setHttpServletRequest(HttpServletRequest request) {
@@ -25,7 +25,7 @@ public class ThreadContent {
     }
 
     public static HttpServletResponse getHttpServletResponse() {
-        return (HttpServletResponse) HTTP_SERVLET_RESPONSES.get();
+        return HTTP_SERVLET_RESPONSES.get();
     }
 
     public static void setHttpServletResponse(HttpServletResponse response) {
@@ -33,7 +33,7 @@ public class ThreadContent {
     }
 
     public static ResponseContent getResponseContent() {
-        return (ResponseContent) RESPONSE_CONTENTS.get();
+        return RESPONSE_CONTENTS.get();
     }
 
     public static void setResponseContent(ResponseContent content) {
@@ -41,7 +41,7 @@ public class ThreadContent {
     }
 
     public static ResponseContent setResponse(HashMap<String, Object> map) {
-        ResponseContent content = (ResponseContent) RESPONSE_CONTENTS.get();
+        ResponseContent content = RESPONSE_CONTENTS.get();
         content.addAllResponse(map);
         return content;
     }
@@ -67,12 +67,12 @@ public class ThreadContent {
     }
 
     public static String getSerialVersionMsg() {
-        return (String) SERIAL_VERSION_MSG.get();
+        return SERIAL_VERSION_MSG.get();
     }
 
     public static void println(Object obj) {
         try {
-            HttpServletResponse response = (HttpServletResponse) HTTP_SERVLET_RESPONSES.get();
+            HttpServletResponse response = HTTP_SERVLET_RESPONSES.get();
             if (response == null) {
                 LOG.info("HttpServletResponse is null ");
                 return;

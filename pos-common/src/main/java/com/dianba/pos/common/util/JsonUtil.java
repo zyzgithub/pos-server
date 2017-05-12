@@ -14,15 +14,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class JsonUtil {
-    public static String toJsonString(Object returnValue) {
-        return JSONObject.toJSONString(returnValue, new SerializerFeature[]{SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullBooleanAsFalse});
-    }
-
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static Logger logger = LogManager.getLogger(JsonUtil.class);
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static String toJsonString(Object returnValue) {
+        return JSONObject.toJSONString(returnValue, SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty,
+                SerializerFeature.WriteNullBooleanAsFalse);
+    }
 
     /**
      * 转换String格式的Json数据为指定类型的Bean

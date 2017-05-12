@@ -24,8 +24,28 @@ public class AjaxJson {
     private Integer affectedRows; // 受影响的行数
     private Map<String, Object> attributes;
     private String sessionkey = null;
-    private String state="success";//sessionkey状态
+    private String state = "success";//sessionkey状态
     private String stateCode = "00";//状态码  00正常 01异常
+
+    public AjaxJson(boolean success, String msg, String stateCode) {
+        super();
+        this.success = success;
+        this.msg = msg;
+        this.stateCode = stateCode;
+    }
+
+    public AjaxJson(boolean success, String msg, Object obj, String stateCode) {
+        super();
+        this.success = success;
+        this.msg = msg;
+        this.obj = obj;
+        this.stateCode = stateCode;
+    }
+
+    public AjaxJson() {
+        super();
+        arrayAjaxJson = new HashMap<String, AjaxJson>();
+    }
 
     public static AjaxJson successJson(String msg) {
         AjaxJson ajaxJson = new AjaxJson();
@@ -57,26 +77,6 @@ public class AjaxJson {
 
     public void setStateCode(String stateCode) {
         this.stateCode = stateCode;
-    }
-
-    public AjaxJson(boolean success, String msg, String stateCode) {
-        super();
-        this.success = success;
-        this.msg = msg;
-        this.stateCode = stateCode;
-    }
-
-    public AjaxJson(boolean success, String msg, Object obj, String stateCode) {
-        super();
-        this.success = success;
-        this.msg = msg;
-        this.obj = obj;
-        this.stateCode = stateCode;
-    }
-
-    public AjaxJson() {
-        super();
-        arrayAjaxJson = new HashMap<String, AjaxJson>();
     }
 
     public Map<String, AjaxJson> getArrayAjaxJson() {

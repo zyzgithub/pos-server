@@ -39,7 +39,7 @@ public class OrderController {
                 j = AjaxJson.failJson("您的版本号过低, 请先安装最新版本后使用!");
                 return j;
             }
-            String remark = orderManager.superMarketOrderPrefix;
+            String remark = OrderManager.SUPERMARKET_ORDER_PREFIX;
             Order oDto = orderManager.createOrderFromSuperMarket(merchantId, cashierId, mobile
                     , params, null, remark + uuid);
             if (oDto == null || oDto.getOrderId() == null) {

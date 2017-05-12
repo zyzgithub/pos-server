@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "tsm_country_area")
-public class TsmCountryArea implements Serializable{
+public class TsmCountryArea implements Serializable {
 
 
     @Id
@@ -16,13 +16,13 @@ public class TsmCountryArea implements Serializable{
     @Column(name = "code")
     private Integer code;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
     @Column(name = "all_pin_yin")
     private String allPinYin;
 
-    @Column(name="parent_code")
+    @Column(name = "parent_code")
     private Integer parent_code;
 
     public Integer getCode() {

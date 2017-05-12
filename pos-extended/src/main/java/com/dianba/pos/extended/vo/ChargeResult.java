@@ -6,15 +6,19 @@ import java.io.Serializable;
  * Created by Administrator on 2017/5/4 0004.
  * 话费充值返回结果
  */
-public class ChargeResult implements Serializable{
+public class ChargeResult implements Serializable {
 
     /***返回结果码**/
     private String resultCode;
 
-    /**返回结果描述**/
+    /**
+     * 返回结果描述
+     **/
     private String resultDesc;
 
-    /**商户订单Id**/
+    /**
+     * 商户订单Id
+     **/
     private String merchantOrderId;
 
     /***19e 话费订单号**/
@@ -23,7 +27,9 @@ public class ChargeResult implements Serializable{
     /***结果查询url**/
     private String queryResultUrl;
 
-    /**该订单扣款金额***/
+    /**
+     * 该订单扣款金额
+     ***/
     private String payMoney;
 
     public String getResultCode() {

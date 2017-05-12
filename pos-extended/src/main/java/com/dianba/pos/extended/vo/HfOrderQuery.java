@@ -15,25 +15,40 @@ public class HfOrderQuery {
     private String sign;
 
     /****签名方式*****/
-    private String signType="MD5";
+    private String signType = "MD5";
 
     /******访问时间戳yyyyMMddHHmmss****/
-    private String timestamp="20160406175304";
+    private String timestamp = "20160406175304";
 
     /****数据格式类型 KEYVALUE**/
-    private String dataType="KEYVALUE";
+    private String dataType = "KEYVALUE";
 
-    /**参数编码字符串**/
-    private  String  inputCharset="UTF-8";
+    /**
+     * 参数编码字符串
+     **/
+    private String inputCharset = "UTF-8";
 
-    /**版本号*/
-    private String version="1.0";
-    private  String ehfOrderId;
+    /**
+     * 版本号
+     */
+    private String version = "1.0";
+    private String ehfOrderId;
 
-    private  String merchantId;
+    private String merchantId;
 
     private String merchantOrderId;
 
+    public static void main(String[] args) {
+
+        HfOrderQuery ho = new HfOrderQuery();
+        ho.setMerchantId("AA0b0192015072415092542712");
+        ho.setEhfOrderId("ESSOD02141011705081347128037");
+        ho.setMerchantOrderId("4234234324");
+        String aaa = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, ho);
+        System.out.println(aaa);
+
+
+    }
 
     public String getSign() {
         return sign;
@@ -107,42 +122,32 @@ public class HfOrderQuery {
         this.merchantOrderId = merchantOrderId;
     }
 
-    /**签名拼接字符串*/
-    public String sign(){
+    /**
+     * 签名拼接字符串
+     */
+    public String sign() {
 
         return
-                    "ehfOrderId=" + ehfOrderId + '&' +
-                        "merchantId=" + merchantId +"&"+
+                "ehfOrderId=" + ehfOrderId + '&' +
+                        "merchantId=" + merchantId + "&" +
                         "timestamp=" + timestamp + '&' +
-                            "key=" + HfCharge19EUtil.KEY;
-
+                        "key=" + HfCharge19EUtil.KEY;
 
 
     }
-    public String params(String signp){
+
+    public String params(String signp) {
 
         return
-                       "sign=" + signp+"&"+
+                "sign=" + signp + "&" +
                         "signType=" + signType + '&' +
                         "timestamp=" + timestamp + '&' +
                         "dataType=" + dataType + '&' +
                         "inputCharset=" + inputCharset + '&' +
-                        "version=" + version +"&"+
-                       "ehfOrderId=" + ehfOrderId + '&' +
-                       "merchantId=" + merchantId +"&"+
-                               "merchantOrderId"+merchantOrderId;
-
-
-    }
-    public static void main(String[] args) {
-
-        HfOrderQuery ho=new HfOrderQuery();
-        ho.setMerchantId("AA0b0192015072415092542712");
-        ho.setEhfOrderId("ESSOD02141011705081347128037");
-        ho.setMerchantOrderId("4234234324");
-        String aaa=  HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY,ho);
-        System.out.println(aaa);
-
+                        "version=" + version + "&" +
+                        "ehfOrderId=" + ehfOrderId + '&' +
+                        "merchantId=" + merchantId + "&" +
+                        "merchantOrderId" + merchantOrderId;
 
 
     }

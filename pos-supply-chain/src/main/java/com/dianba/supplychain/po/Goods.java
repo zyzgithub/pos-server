@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 @Entity
-@Table(name="supply_chain_goods")
-public class Goods implements Serializable{
+@Table(name = "supply_chain_goods")
+public class Goods implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -147,7 +147,7 @@ public class Goods implements Serializable{
         String formatName = name;
         if (item.getDeliveryDelay() == 1 && !name.contains("次日达")) {
             formatName = "(次日达)" + formatName;
-        } else if(item.getDeliveryDelay() > 1 && !name.contains("日达")) {
+        } else if (item.getDeliveryDelay() > 1 && !name.contains("日达")) {
             formatName = "(" + item.getDeliveryDelay() + "日达)" + formatName;
         }
         if (item.getDiscountLimit() == -2) {

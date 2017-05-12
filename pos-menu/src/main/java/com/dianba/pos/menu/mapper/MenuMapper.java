@@ -1,4 +1,5 @@
 package com.dianba.pos.menu.mapper;
+
 import com.dianba.pos.menu.vo.MenuDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,6 +17,7 @@ public interface MenuMapper {
      * @param type
      * @return
      */
-    List<MenuDto> getMenuListByPhoneAndType(@Param("merchantId") Long merchantId, @Param("phone") Long phone, @Param("type") int type);
+    List<MenuDto> getMenuListByPhoneAndType(
+            @Param("merchantId") Long merchantId, @Param("phone") Long phone, @Param("type") int type);
 }
 

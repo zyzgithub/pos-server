@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "ORDER_MENU")
-public class OrderMenu implements Serializable{
+public class OrderMenu implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

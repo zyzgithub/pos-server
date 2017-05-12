@@ -33,14 +33,6 @@ public class HttpProxy {
     private final List<Header> headers;
     private final List<NameValuePair> params;
 
-    public static HttpProxy createInstance(String url, List<Header> headers, List<NameValuePair> params) {
-        return new HttpProxy(url, headers, params);
-    }
-
-    public static HttpProxy createInstance(String url, List<Header> headers, Map<String, Object> params) {
-        return new HttpProxy(url, headers, params);
-    }
-
     public HttpProxy(String url, List<Header> headers, List<NameValuePair> params) {
         this.url = url;
         this.headers = headers;
@@ -49,7 +41,7 @@ public class HttpProxy {
 
     public HttpProxy(String url, List<Header> headers, Map<String, Object> params) {
         List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-        if(params != null){
+        if (params != null) {
             Iterator<Map.Entry<String, Object>> iterator = params.entrySet().iterator();
 
             while (iterator.hasNext()) {
@@ -61,6 +53,14 @@ public class HttpProxy {
         this.url = url;
         this.headers = headers;
         this.params = paramList;
+    }
+
+    public static HttpProxy createInstance(String url, List<Header> headers, List<NameValuePair> params) {
+        return new HttpProxy(url, headers, params);
+    }
+
+    public static HttpProxy createInstance(String url, List<Header> headers, Map<String, Object> params) {
+        return new HttpProxy(url, headers, params);
     }
 
     public String getUrl() {
@@ -139,7 +139,7 @@ public class HttpProxy {
                     return responseText;
                 }
             } else {
-                logger.info("url:{}, statusCode:{}", new Object[] { url, statusCode });
+                logger.info("url:{}, statusCode:{}", new Object[]{url, statusCode});
             }
         } catch (Exception e) {
             if (e instanceof ClientProtocolException || e instanceof IOException) {
@@ -162,7 +162,7 @@ public class HttpProxy {
             }
             if (httpClient != null) {
                 try {
-                    ((CloseableHttpClient)httpClient).close();
+                    ((CloseableHttpClient) httpClient).close();
                 } catch (IOException e2) {
                 }
             }
@@ -196,7 +196,7 @@ public class HttpProxy {
                     return reponseText;
                 }
             } else {
-                logger.info("url:{}, params:{}, statusCode:{}", new Object[] { url, params, statusCode });
+                logger.info("url:{}, params:{}, statusCode:{}", url, params, statusCode);
             }
 
         } catch (Exception e) {
@@ -221,7 +221,7 @@ public class HttpProxy {
             }
             if (httpClient != null) {
                 try {
-                    ((CloseableHttpClient)httpClient).close();
+                    ((CloseableHttpClient) httpClient).close();
                 } catch (IOException e2) {
                 }
             }

@@ -3,12 +3,13 @@ package com.dianba.pos.common.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class HttpUtil {
     /**
      * 使用Get方式获取数据
      *
-     * @param url     URL包括参数，http://HOST/XX?XX=XX&XXX=XXX
+     * @param url URL包括参数，http://HOST/XX?XX=XX&XXX=XXX
      * @param
      * @return
      */
@@ -92,8 +93,8 @@ public class HttpUtil {
     /**
      * POST请求，字符串形式数据
      *
-     * @param url     请求地址
-     * @param param   请求数据
+     * @param url   请求地址
+     * @param param 请求数据
      * @param
      */
     public static String sendPostUrl(String url, String param) {
@@ -169,7 +170,7 @@ public class HttpUtil {
         BufferedReader in = null;
         String result = "";
         try {
-             URL realUrl = new URL(url);
+            URL realUrl = new URL(url);
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
             // 设置通用的请求属性

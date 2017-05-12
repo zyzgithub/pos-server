@@ -1,8 +1,6 @@
 package com.dianba.pos.common.util;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Administrator on 2017/5/5 0005.

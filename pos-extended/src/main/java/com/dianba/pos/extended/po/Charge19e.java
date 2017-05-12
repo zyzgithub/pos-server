@@ -7,46 +7,45 @@ import java.io.Serializable;
  * Created by Administrator on 2017/5/9 0009.
  */
 @Entity
-@Table(name="charge_19e")
-public class Charge19eTable implements Serializable{
+@Table(name = "charge_19e")
+public class Charge19e implements Serializable {
     @Id
     @Column(name = "charge_id")
     @GeneratedValue
-    private Integer chargeId ;
-
+    private Integer chargeId;
 
     @Column(name = "resultCode")
-    private String resultCode ;
+    private String resultCode;
 
-    @Column(name="resultDesc")
-    private String  resultDesc;
+    @Column(name = "resultDesc")
+    private String resultDesc;
 
     @Column(name = "eOrderId")
-    private String eOrderId ;
+    private String eOrderId;
 
     @Column(name = "productName")
-    private String productName ;
+    private String productName;
 
     @Column(name = "createTime")
-    private String createTime ;
+    private String createTime;
 
     @Column(name = "chargePhone")
-    private String chargePhone ;
+    private String chargePhone;
 
     @Column(name = "chargeNumber")
-    private String chargeNumber ;
+    private String chargeNumber;
 
     @Column(name = "orderStatus")
-    private String orderStatus ;
+    private String orderStatus;
 
     @Column(name = "merchantId")
     private String merchantId;
 
     @Column(name = "finishTime")
-    private String finishTime ;
+    private String finishTime;
 
     @Column(name = "merchantOrderId")
-    private String merchantOrderId ;
+    private String merchantOrderId;
 
     @Column(name = "queryResultUrl")
     private String queryResultUrl;

@@ -75,11 +75,12 @@ public class ChargeCallBack {
                 ", statusDesc='" + statusDesc + '\'' +
                 '}';
     }
+
     public String callback() {
         return
 
                 "resultCode=" + chargeStatus + '&' +
-                "resultDesc=" + statusDesc ;
+                        "resultDesc=" + statusDesc;
 
     }
 }

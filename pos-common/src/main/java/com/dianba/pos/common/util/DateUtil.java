@@ -549,7 +549,7 @@ public class DateUtil {
         Date dBefore = new Date();
         Calendar calendar = Calendar.getInstance(); //得到日历
         calendar.setTime(dNow);//把当前时间赋给日历
-        calendar.add(calendar.MONTH, month);  //设置为前3月
+        calendar.add(Calendar.MONTH, month);  //设置为前3月
         dBefore = calendar.getTime();
         Long a = dBefore.getTime();
         Long time = Long.parseLong(a.toString().substring(0, 10));

@@ -8,11 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 public class LocationUtil {
 
-    private static Logger logger = LogManager.getLogger(LocationUtil.class);
-
     private static final double R = 6367000.0;
     private static final String URL = "http://api.map.baidu.com/geocoder/v2/";
-
+    private static Logger logger = LogManager.getLogger(LocationUtil.class);
 
     private static double rad(double d) {
         return d * Math.PI / 180.0;

@@ -12,8 +12,6 @@ import java.util.List;
 public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
 
 
-
-
     /**
      * 获取增值服务商品信息
      *
@@ -23,7 +21,7 @@ public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
      * @return
      */
     List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash, Integer merchantId,
-                                                                  Integer printTypeId,Integer codeId);
+                                                                  Integer printTypeId, Integer codeId);
 
     Menu findByPrintType(Integer printType);
 }

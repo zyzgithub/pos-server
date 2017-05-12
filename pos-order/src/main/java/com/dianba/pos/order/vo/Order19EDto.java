@@ -16,6 +16,7 @@ public class Order19EDto {
     private Integer type;
 
     private String mobile;
+
     public Long getOrderId() {
         return orderId;
     }

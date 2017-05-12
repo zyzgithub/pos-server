@@ -1,22 +1,16 @@
 package com.dianba.pos.common.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.logging.log4j.LogManager;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.*;
 
 
 public class JsonHelper {
@@ -186,7 +180,7 @@ public class JsonHelper {
      * @param object
      * @return
      */
-	/*
+    /*
 	 * public static Collection toCollection(Object object) { JSONArray
 	 * jsonArray = JSONArray.fromObject(object);
 	 *
@@ -251,7 +245,7 @@ public class JsonHelper {
             while (it.hasNext()) {
                 String key = (String) it.next();
                 Object value = jsonObject.get(key);
-                map.put((String) key, value);
+                map.put(key, value);
             }
             list.add(map);
         }
@@ -457,7 +451,7 @@ public class JsonHelper {
         T mainEntity = toBean(jsonObject, mainClass);
         for (Object key : detailClass.keySet()) {
             try {
-                Class value = (Class) detailClass.get(key);
+                Class value = detailClass.get(key);
                 BeanUtils.setProperty(mainEntity, key.toString(), value);
             } catch (Exception ex) {
                 throw new RuntimeException("主从关系JSON反序列化实体失败！");

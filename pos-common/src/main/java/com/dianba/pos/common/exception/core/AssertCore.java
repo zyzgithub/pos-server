@@ -50,7 +50,7 @@ public enum AssertCore implements ExceptionCode {
     public int code;
     private String msg;
 
-    private AssertCore(String msg) {
+    AssertCore(String msg) {
         this.msg = msg;
         this.code = Integer.parseInt(this.toString().replace("G", ""));
     }

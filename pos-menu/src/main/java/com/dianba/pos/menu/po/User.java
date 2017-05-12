@@ -1,4 +1,5 @@
 package com.dianba.pos.menu.po;
+
 //用户信息表
 public class User {
     private Long id;
