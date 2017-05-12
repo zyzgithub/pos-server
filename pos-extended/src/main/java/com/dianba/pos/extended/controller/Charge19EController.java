@@ -188,19 +188,24 @@ public class Charge19EController {
 
                     JSONArray ja = jb.getJSONArray("productList");
 
-                    List<ProductListDto> lst = JSONObject.parseArray(ja.toString(),ProductListDto.class);
+                    List<ProductListDto> lst = JSONArray.parseArray(ja.toString(),ProductListDto.class);
 
                     List<MenuDto> menulst = new ArrayList<>();
                     for (ProductListDto pl : lst) {
 
                         //根据第三方商品id获取本地商品信息
-                        Menu menu=menuManager.findByMenuKey(Integer.parseInt(pl.getProductId()));
+                        String productId=pl.getProductId();
+
+                        Menu menu=menuManager.findByMenuKey(productId);
                         MenuDto menuDto = new MenuDto();
-                        menuDto.setMenuId(menu.getId().toString());
-                        menuDto.setType(4);
-                        menuDto.setMenuName(menu.getName());
-                        menuDto.setPrice(menu.getPrice());
-                        menuDto.setStockPrice(menu.getOriginalPrice());
+                        if(menu!=null){
+                            menuDto.setMenuId(menu.getId().toString());
+                            menuDto.setType(4);
+                            menuDto.setMenuName(menu.getName());
+                            menuDto.setPrice(menu.getPrice());
+                            menuDto.setStockPrice(menu.getOriginalPrice());
+                        }
+
                         menulst.add(menuDto);
 
 

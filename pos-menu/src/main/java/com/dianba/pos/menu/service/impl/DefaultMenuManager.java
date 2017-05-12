@@ -32,7 +32,7 @@ public class DefaultMenuManager implements MenuManager {
     }
 
     @Override
-    public Menu findByMenuKey(Integer menuKey) {
+    public Menu findByMenuKey(String menuKey) {
         return menuJpaRepository.findByMenuKey(menuKey);
     }
 
