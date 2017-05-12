@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "supply_chain_warehouse_org")
-public class WarehouseOrg implements Serializable{
+public class WarehouseOrg implements Serializable {
 
     @EmbeddedId
     private WarehouseOrgPK warehouseOrgPK;

@@ -12,6 +12,7 @@ public interface OrderJpaRepository extends JpaRepository<Order, Integer> {
 
     /**
      * 根据订单号获取订单信息
+     *
      * @param orderNum
      * @return
      */

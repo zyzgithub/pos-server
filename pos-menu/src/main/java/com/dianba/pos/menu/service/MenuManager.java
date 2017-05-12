@@ -1,7 +1,6 @@
 package com.dianba.pos.menu.service;
 
 import com.dianba.pos.menu.po.Menu;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -11,18 +10,25 @@ import java.util.List;
 public interface MenuManager {
 
 
-
     /**
      * 获取增值服务商品信息
+     *
      * @param isFlash
      * @param merchantId
      * @param
      * @return
      */
     List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash, Integer merchantId,
-      Integer printTypeId,Integer codeId);
+                                                                  Integer printTypeId, Integer codeId);
 
     Menu findByPrintType(Integer printType);
+
+    /**
+     * 获取商品信息根据 第三方商品id
+     * @param menuKey
+     * @return
+     */
+    Menu findByMenuKey(Integer menuKey);
 
 
 }

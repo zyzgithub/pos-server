@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DefaultMenuTypeManager implements MenuTypeManager{
+public class DefaultMenuTypeManager implements MenuTypeManager {
 
     @Autowired
     private MenuTypeJpaRepository menuTypeJpaRepository;
 
-    public List<MenuType> findMenuTypeByIds(List<Integer> typeIds){
+    public List<MenuType> findMenuTypeByIds(List<Integer> typeIds) {
         return menuTypeJpaRepository.findAll(typeIds);
     }
 }

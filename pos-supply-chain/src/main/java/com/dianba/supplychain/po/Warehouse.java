@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "supply_chain_warehouse")
 @Cacheable
-public class Warehouse implements Serializable{
+public class Warehouse implements Serializable {
 
     @Id
     @Column(name = "id")

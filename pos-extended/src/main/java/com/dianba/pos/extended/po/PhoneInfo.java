@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "PHONE_INFO")
-public class PhoneInfo implements Serializable{
+public class PhoneInfo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,7 @@ public class PhoneInfo implements Serializable{
 
     @Column(name = "print_type")
     private Integer printType;
+
     public long getId() {
         return id;
     }

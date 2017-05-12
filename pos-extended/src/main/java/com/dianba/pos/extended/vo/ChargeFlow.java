@@ -18,23 +18,29 @@ public class ChargeFlow {
     private String sign;
 
     /****签名方式*****/
-    private String signType="MD5";
+    private String signType = "MD5";
 
     /******访问时间戳yyyyMMddHHmmss****/
-    private String timestamp= DateUtil.getCurrDate("yyyyMMddHHHmmss");
+    private String timestamp = DateUtil.getCurrDate("yyyyMMddHHHmmss");
 
     /****数据格式类型 KEYVALUE**/
-    private String dataType="KEYVALUE";
+    private String dataType = "JSON";
 
-    /**参数编码字符串**/
-    private  String  inputCharset="UTF-8";
+    /**
+     * 参数编码字符串
+     **/
+    private String inputCharset = "UTF-8";
 
-    /**版本号*/
-    private String version="1.0";
+    /**
+     * 版本号
+     */
+    private String version = "1.0";
 
     /**********************************业务请求参数***************************************/
 
-    /**产品id*/
+    /**
+     * 产品id
+     */
     private String productId;
 
     /***手机号码**/
@@ -46,7 +52,9 @@ public class ChargeFlow {
     /***商户id**/
     private String merchantId;
 
-    /**备注---可不填*/
+    /**
+     * 备注---可不填
+     */
     private String remark;
 
 
@@ -155,33 +163,36 @@ public class ChargeFlow {
                 '}';
     }
 
-    /**签名拼接字符串*/
-    public String sign(){
+    /**
+     * 签名拼接字符串
+     */
+    public String sign() {
 
         return
                 "dataType=" + dataType + '&' +
-                "inputCharset=" + inputCharset + '&' +
-                "mobile=" + mobile + '&' +
-                "merOrderNo=" + merOrderNo + '&' +
-                "merchantId=" + merchantId + '&' +
-                "signType=" + signType + '&' +
-                "timestamp=" + timestamp + '&' +
-                "version=" + version +"&"+
-                "remark=" + remark;
+                        "inputCharset=" + inputCharset + '&' +
+                        "mobile=" + mobile + '&' +
+                        "merOrderNo=" + merOrderNo + '&' +
+                        "merchantId=" + merchantId + '&' +
+                        "signType=" + signType + '&' +
+                        "timestamp=" + timestamp + '&' +
+                        "version=" + version + "&" +
+                        "remark=" + remark;
     }
-    public String params(String signp){
+
+    public String params(String signp) {
 
         return
-                "sign=" + signp+"&"+
-                "signType=" + signType + '&' +
-                "timestamp=" + timestamp + '&' +
-                "dataType=" + dataType + '&' +
-                "inputCharset=" + inputCharset + '&' +
-                "version=" + version +"&"+
-                "mobile=" + mobile + '&' +
-                "merOrderNo=" + merOrderNo + '&' +
-                "merchantId=" + merchantId + '&' +
-                "remark=" + remark;
+                "sign=" + signp + "&" +
+                        "signType=" + signType + '&' +
+                        "timestamp=" + timestamp + '&' +
+                        "dataType=" + dataType + '&' +
+                        "inputCharset=" + inputCharset + '&' +
+                        "version=" + version + "&" +
+                        "mobile=" + mobile + '&' +
+                        "merOrderNo=" + merOrderNo + '&' +
+                        "merchantId=" + merchantId + '&' +
+                        "remark=" + remark;
     }
 
     public static void main(String[] args) {
@@ -192,13 +203,14 @@ public class ChargeFlow {
 //     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
 //     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
 //     System.out.println(bb);
-        ChargeFlow cf=new ChargeFlow();
+        ChargeFlow cf = new ChargeFlow();
         cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-        cf.setMerOrderNo("11111111");
-        cf.setProductId("110000");
+        cf.setMerOrderNo("2222222");
+        cf.setProductId("RF0116111310421001");
+
         cf.setMobile("15001000000");
         cf.setRemark("流量充值!");
-        String aaa= FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL,cf);
-        System.out.println(aaa);
+       // ChargeFlow chargeFlow= FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
+      //  System.out.println(chargeFlow.toString());
     }
 }

@@ -157,6 +157,8 @@ public class Menu implements Serializable {
     @Column(name = "shelf_life")
     private Integer shelfLife;
 
+    @Column(name = "menu_key")
+    private Integer menuKey;
 
     public Integer getId() {
         return id;
@@ -442,5 +444,13 @@ public class Menu implements Serializable {
 
     public void setShelfLife(Integer shelfLife) {
         this.shelfLife = shelfLife;
+    }
+
+    public Integer getMenuKey() {
+        return menuKey;
+    }
+
+    public void setMenuKey(Integer menuKey) {
+        this.menuKey = menuKey;
     }
 }

@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class DefaultWarehouseOrgManager implements WarehouseOrgManager{
+public class DefaultWarehouseOrgManager implements WarehouseOrgManager {
 
-    private Logger logger= LogManager.getLogger(DefaultWarehouseOrgManager.class);
+    private Logger logger = LogManager.getLogger(DefaultWarehouseOrgManager.class);
 
     @Autowired
     private WarehouseJpaRepository warehouseJpaRepository;

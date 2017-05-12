@@ -12,9 +12,9 @@ public class posProfitDto {
 
     private Double sale_price;
 
-    private  Double stock_price;
+    private Double stock_price;
 
-    private  Double order_profit;
+    private Double order_profit;
 
     private String order_type;
 

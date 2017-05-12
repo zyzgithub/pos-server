@@ -7,21 +7,24 @@ import java.security.MessageDigest;
  */
 public class FlowCharge19EUtil {
 
-    /**流量充值请求地址**/
-    public static final String FLOW_CHARGET_IP_PORT="http://114.247.40.65:10000/";
+    /**
+     * 流量充值请求地址
+     **/
+    public static final String FLOW_CHARGET_IP_PORT = "http://114.247.40.65:10000/";
 
     /***流量充值*/
-    public  static final String FLOW_CHARGE_URL=FLOW_CHARGET_IP_PORT+
+    public static final String FLOW_CHARGE_URL = FLOW_CHARGET_IP_PORT +
             "flow_center/createOrder/createOrder.jhtml";
 
     /******根据手机号等参数获取产品信息***/
-    public  static final String QUERY_PRODUCT=FLOW_CHARGET_IP_PORT+
+    public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
             "flow_center/queryProduct/queryProductInfo.jhtml";
 
-    public  static final String MERCHANT_ID="DL20130318104801102044";
+    public static final String MERCHANT_ID = "DL20130318104801102044";
 
-    public static final String KEY="123456789";
+    public static final String KEY = "123456789";
 
+    
     public static String getKeyedDigest(String paramsStr, String key) {
 
         MessageDigest md5 = null;
@@ -30,8 +33,7 @@ public class FlowCharge19EUtil {
             md5 = MessageDigest.getInstance("MD5");
             md5.update(paramsStr.getBytes("UTF-8"));
 
-            byte[] temp;
-            temp = md5.digest(key.getBytes("UTF-8"));
+            byte[] temp= md5.digest(key.getBytes("UTF-8"));
             for (int i = 0; i < temp.length; i++) {
                 result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
             }

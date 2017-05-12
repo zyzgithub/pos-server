@@ -11,6 +11,6 @@ public interface OrderManager {
     /**
      * 创建订单
      */
-    Order createOrderFromSuperMarket(Integer merchantId, Integer cashierId,String mobile
+    Order createOrderFromSuperMarket(Integer merchantId, Integer cashierId, String mobile
             , String params, Integer createTime, String uuid) throws BusinessException;
 }

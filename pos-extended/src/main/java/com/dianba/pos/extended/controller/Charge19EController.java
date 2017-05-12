@@ -1,26 +1,25 @@
 package com.dianba.pos.extended.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
-
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.po.PhoneInfo;
 import com.dianba.pos.extended.service.PhoneInfoManager;
 import com.dianba.pos.extended.service.TsmCountryAreaManager;
-import com.dianba.pos.extended.util.FlowCharge19EApi;
-import com.dianba.pos.extended.util.FlowCharge19EUtil;
-import com.dianba.pos.extended.vo.*;
+import com.dianba.pos.extended.util.*;
+import com.dianba.pos.extended.vo.FlowChargeCallBack;
+import com.dianba.pos.extended.vo.HfChargeCallBack;
+import com.dianba.pos.extended.vo.Product;
+import com.dianba.pos.extended.vo.ProductListDto;
 import com.dianba.pos.menu.mapper.MenuMapper;
 import com.dianba.pos.menu.po.Menu;
 import com.dianba.pos.menu.service.MenuManager;
 import com.dianba.pos.menu.vo.MenuDto;
 import com.dianba.pos.order.mapper.OrderMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +30,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/5/8 0008.
@@ -39,7 +40,7 @@ import java.util.List;
 
 @Controller
 @SuppressWarnings("all")
-@RequestMapping(ExtendedUrlConstant.Charge19E_INFO)
+@RequestMapping(ExtendedUrlConstant.CHARGE_19E_INFO)
 public class Charge19EController {
 
     private static Logger logger = LogManager.getLogger(Charge19EController.class);
@@ -64,7 +65,9 @@ public class Charge19EController {
      */
     @ResponseBody
     @RequestMapping(value = "hfChargeBy19e")
-    public AjaxJson hfChargeBy19e(HttpServletResponse response, String chargeNumber, String chargeMoney, String fillType, String chargeType) {
+    public AjaxJson hfChargeBy19e(HttpServletResponse response, String chargeNumber, String chargeMoney,
+                                  String fillType, String chargeType) {
+
         AjaxJson aj = new AjaxJson();
 
 
@@ -90,18 +93,19 @@ public class Charge19EController {
      **/
     @RequestMapping("hfChargeBack")
     @ResponseBody
-    public String hfChargeBack(ChargeCallBack chargeCallBack) {
+    public String hfChargeBack(HfChargeCallBack chargeCallBack) {
 
         logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
 
         if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
-            Long orderId = Long.parseLong(chargeCallBack.getMerchantOrderId());
+            Long merchantOrderId = Long.parseLong(chargeCallBack.getMerchantOrderId());
             //查询此订单是否更新完毕
-            Object ob = orderMapper.getByPayId(orderId);
+            Object ob = orderMapper.getByPayId(merchantOrderId);
             if (!ob.equals("success")) {
                 //修改订单信息为success
                 Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
-                orderMapper.editOrderInfoBy19e("success", orderId, times);
+                orderMapper.editOrderInfoBy19e("success", merchantOrderId, times);
+                logger.info("话费订单充值成功!"+",订单号为："+chargeCallBack.getMerchantOrderId()+",充值金额为：");
             }
 
         }
@@ -109,15 +113,43 @@ public class Charge19EController {
 
 
     }
+    @ResponseBody
+    @RequestMapping("flowChargeCallBack")
+    public String flowChargeCallBack(FlowChargeCallBack chargeCallBack){
+        Map map = new HashMap<>();
+        String result="";
+        map.put("merOrderNo",chargeCallBack.getMerOrderNo());
+        map.put("orderNo",chargeCallBack.getOrderNo());
+        map.put("orderStatus",chargeCallBack.getOrderStatus());
+        String sign=FlowChargeSign.getSignByMap(map);
+        if(chargeCallBack.getSign().equals(sign)){ //签名认证通过
+            //充值成功
+            if(FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())){
+                //修改订单信息为success
+                Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+                Long merOrderNo=Long.parseLong(chargeCallBack.getMerOrderNo());
+                Object ob = orderMapper.getByPayId(merOrderNo);
+                if (!ob.equals("success")) {
+                    orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
+                }
+                result="resultCode=SUCCESS";
+
+            }else {
+                result="resultCode=ERROR";
+            }
+
+        }
+        return result;
+    }
 
     /**
      * 增值服务商品信息
      *
      * @param type
      */
-    @RequestMapping("chargeMenu")
     @ResponseBody
-    public AjaxJson ChargeMenu(String type, String phone) {
+    @RequestMapping("chargeMenu")
+    public AjaxJson chargeMenu(String type, String phone) {
         AjaxJson aj = new AjaxJson();
         JSONObject jo = new JSONObject();
         if (StringUtil.isEmpty(type) || StringUtil.isEmpty(phone)) {
@@ -156,21 +188,24 @@ public class Charge19EController {
                 if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
 
                     JSONArray ja = jb.getJSONArray("productList");
-                    Gson gson = new Gson();
-                    List<ProductListDto> lst  = gson.fromJson(ja.toString(), new TypeToken<List<ProductListDto>>() {
-                    }.getType());
-                    List<MenuDto> menulst =new ArrayList<>();
-                    for(ProductListDto pl : lst){
-                        MenuDto menuDto=new MenuDto();
-                        menuDto.setMenuId(pl.getProductId());
+
+                    List<ProductListDto> lst = JSONObject.parseArray(ja.toString(),ProductListDto.class);
+
+                    List<MenuDto> menulst = new ArrayList<>();
+                    for (ProductListDto pl : lst) {
+
+                        //根据第三方商品id获取本地商品信息
+                        Menu menu=menuManager.findByMenuKey(Integer.parseInt(pl.getProductId()));
+                        MenuDto menuDto = new MenuDto();
+                        menuDto.setMenuId(menu.getId().toString());
                         menuDto.setType(4);
-                        menuDto.setMenuName(pl.getFlowValue()+"M");
-                        menuDto.setPrice(Double.parseDouble(pl.getProductPrice()));
-                        menuDto.setStockPrice(Double.parseDouble(pl.getSalePrice()));
+                        menuDto.setMenuName(menu.getName());
+                        menuDto.setPrice(menu.getPrice());
+                        menuDto.setStockPrice(menu.getOriginalPrice());
                         menulst.add(menuDto);
 
 
-                     }
+                    }
 
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);

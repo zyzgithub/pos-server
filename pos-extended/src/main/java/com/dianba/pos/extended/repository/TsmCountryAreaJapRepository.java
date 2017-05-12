@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * Created by Administrator on 2017/5/10 0010.
  */
 @Repository
-public interface TsmCountryAreaJapRepository extends JpaRepository<TsmCountryArea,Long> {
+public interface TsmCountryAreaJapRepository extends JpaRepository<TsmCountryArea, Long> {
 
 
 }

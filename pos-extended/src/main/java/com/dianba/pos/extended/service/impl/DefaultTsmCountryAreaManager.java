@@ -14,6 +14,7 @@ public class DefaultTsmCountryAreaManager implements TsmCountryAreaManager {
 
     @Autowired
     private TsmCountryAreaJapRepository tsmCountryAreaJapRepository;
+
     @Override
     public TsmCountryArea getInfoById(Integer id) {
         return tsmCountryAreaJapRepository.getOne(Long.parseLong(id.toString()));

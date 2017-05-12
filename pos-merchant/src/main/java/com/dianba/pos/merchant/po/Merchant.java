@@ -8,7 +8,7 @@ import java.util.Date;
 //商家注册信息表
 @Entity
 @Table(name = "merchant")
-public class Merchant implements Serializable{
+public class Merchant implements Serializable {
 
     @Id
     @Column(name = "id")

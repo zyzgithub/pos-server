@@ -196,7 +196,7 @@ public class HttpProxy {
                     return reponseText;
                 }
             } else {
-                logger.info("url:{}, params:{}, statusCode:{}", new Object[] { url, params, statusCode });
+                logger.info("url:{}, params:{}, statusCode:{}", new Object[]{url, params, statusCode});
             }
 
         } catch (Exception e) {
@@ -221,7 +221,7 @@ public class HttpProxy {
             }
             if (httpClient != null) {
                 try {
-                    ((CloseableHttpClient)httpClient).close();
+                    ((CloseableHttpClient) httpClient).close();
                 } catch (IOException e2) {
                 }
             }
