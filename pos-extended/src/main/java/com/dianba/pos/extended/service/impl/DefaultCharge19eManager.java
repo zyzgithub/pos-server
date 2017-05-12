@@ -2,7 +2,7 @@ package com.dianba.pos.extended.service.impl;
 
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
-import com.dianba.pos.extended.po.Charge19eTable;
+import com.dianba.pos.extended.po.Charge19e;
 import com.dianba.pos.extended.repository.Charge19eJpaRepository;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
@@ -115,7 +115,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         saveFlowChargeTable(order19EDto, chargeFlowResult);
         if (chargeFlowResult.getResultCode().equals("success")) {
             logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderId() + ",充值手机："
-            + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号：" + chargeFlowResult.getOrderNo());
+                    + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号：" + chargeFlowResult.getOrderNo());
 
             //修改订单信息为confirm状态
             flag = true;
@@ -151,7 +151,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
     @Override
     public void saveHfChargeTable(Order19EDto or, ChargeResult cr) {
-        Charge19eTable ct = new Charge19eTable();
+        Charge19e ct = new Charge19e();
         ct.setChargeNumber(or.getPrice().toString());
         ct.setChargePhone(or.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));
@@ -173,7 +173,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
     @Override
     public void saveFlowChargeTable(Order19EDto order19EDto, ChargeFlowResult chargeFlowResult) {
-        Charge19eTable ct = new Charge19eTable();
+        Charge19e ct = new Charge19e();
         ct.setChargeNumber(order19EDto.getPrice().toString());
         ct.setChargePhone(order19EDto.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));

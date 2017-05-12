@@ -5,7 +5,7 @@ package com.dianba.pos.extended.vo;
  * 话费充值回调
  */
 
-public class HfChargeCallBack {
+public class ChargeCallBack {
 
     private String ehfOrderId;
     private String merchantOrderId;

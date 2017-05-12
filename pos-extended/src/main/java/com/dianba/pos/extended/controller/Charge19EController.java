@@ -12,7 +12,7 @@ import com.dianba.pos.extended.service.PhoneInfoManager;
 import com.dianba.pos.extended.service.TsmCountryAreaManager;
 import com.dianba.pos.extended.util.*;
 import com.dianba.pos.extended.vo.FlowChargeCallBack;
-import com.dianba.pos.extended.vo.HfChargeCallBack;
+import com.dianba.pos.extended.vo.ChargeCallBack;
 import com.dianba.pos.extended.vo.Product;
 import com.dianba.pos.extended.vo.ProductListDto;
 import com.dianba.pos.menu.mapper.MenuMapper;
@@ -20,7 +20,6 @@ import com.dianba.pos.menu.po.Menu;
 import com.dianba.pos.menu.service.MenuManager;
 import com.dianba.pos.menu.vo.MenuDto;
 import com.dianba.pos.order.mapper.OrderMapper;
-import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +92,7 @@ public class Charge19EController {
      **/
     @RequestMapping("hfChargeBack")
     @ResponseBody
-    public String hfChargeBack(HfChargeCallBack chargeCallBack) {
+    public String hfChargeBack(ChargeCallBack chargeCallBack) {
 
         logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
 
