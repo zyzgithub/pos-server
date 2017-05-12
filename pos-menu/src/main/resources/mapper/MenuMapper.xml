@@ -40,20 +40,20 @@
 
     <select id="getMenuListByPhoneAndType" resultType="com.dianba.pos.menu.vo.MenuDto">
 
-    SELECT me.id menuId,
-    me.name menuName,
-    me.price price,
-    me.original_price stockPrice,
-    me.is_flash type
-    FROM menu me
-    INNER JOIN phone_info pi
-      on pi.code=me.code_id and
-      pi.print_type=me.print_type
-    where me.merchant_id=#{merchantId}
-    and pi.id=#{phone}
-    and me.is_flash=#{type}
-    and me.display='Y' and me.is_delete='N';
+        SELECT me.id menuId,
+        me.name menuName,
+        me.price price,
+        me.original_price stockPrice,
+        me.is_flash type
+        FROM menu me
+        INNER JOIN phone_info pi
+        on pi.code=me.code_id and
+        pi.print_type=me.print_type
+        where me.merchant_id=#{merchantId}
+        and pi.id=#{phone}
+        and me.is_flash=#{type}
+        and me.display='Y' and me.is_delete='N';
 
 
-  </select>
+    </select>
 </mapper>

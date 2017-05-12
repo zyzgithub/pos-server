@@ -24,28 +24,28 @@
         WHERE me.id=#{id}
     </select>
 
-    <!--查詢商家每天的盈利數據-->
-    <select id="selectPosProfitByDay" resultType="com.dianba.pos.order.vo.posProfitDto">
-        SELECT o.id,
-        sum( om.price) sale_price，
-        sum(os.stock_price) stock_price,
-        om.price-os.stock_price order_profit,
-        us.id user_id user_id,
-        us.mobile user_mobile,
-        ca.name user_name,
-        FROM_UNIXTIME( o.complete_time,'%Y-%m-%d') ,
-        ca.id_card id_card,
-        us.first_order_time firest_time,
-        ca.create_time
-        FROM  `order` o
-        INNER JOIN merchant m  ON o.merchant_id=m.id
-        JOIN user us ON us.id=m.user_id
-        JOIN `0085_cashier` ca on ca.merchant_id=m.id
-        INNER JOIN order_menu om on om.order_id =o.id
-        INNER JOIN  menu me on me.id=om.menu_id
-        INNER JOIN `0085_stock` AS os ON os.menu_id=me.id
-        WHERE m.id=#merchant_id# AND o.state ='confirm'  GROUP BY  FROM_UNIXTIME( o.complete_time,'%Y-%m-%d')
-    </select>
+    <!--&lt;!&ndash;查詢商家每天的盈利數據&ndash;&gt;-->
+    <!--<select id="selectPosProfitByDay" resultType="com.dianba.pos.order.vo.posProfitDto">-->
+    <!--SELECT o.id,-->
+    <!--sum( om.price) sale_price，-->
+    <!--sum(os.stock_price) stock_price,-->
+    <!--om.price-os.stock_price order_profit,-->
+    <!--us.id user_id user_id,-->
+    <!--us.mobile user_mobile,-->
+    <!--ca.name user_name,-->
+    <!--FROM_UNIXTIME( o.complete_time,'%Y-%m-%d') ,-->
+    <!--ca.id_card id_card,-->
+    <!--us.first_order_time firest_time,-->
+    <!--ca.create_time-->
+    <!--FROM  `order` o-->
+    <!--INNER JOIN merchant m  ON o.merchant_id=m.id-->
+    <!--JOIN user us ON us.id=m.user_id-->
+    <!--JOIN `0085_cashier` ca on ca.merchant_id=m.id-->
+    <!--INNER JOIN order_menu om on om.order_id =o.id-->
+    <!--INNER JOIN  menu me on me.id=om.menu_id-->
+    <!--INNER JOIN `0085_stock` AS os ON os.menu_id=me.id-->
+    <!--WHERE m.id=#merchant_id# AND o.state ='confirm'  GROUP BY  FROM_UNIXTIME( o.complete_time,'%Y-%m-%d')-->
+    <!--</select>-->
 
     <!--查询是否是pos机商家用户-->
     <select id="verifyMerchantUser" resultType="java.util.HashMap">

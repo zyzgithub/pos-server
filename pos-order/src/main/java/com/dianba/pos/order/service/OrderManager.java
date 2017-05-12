@@ -5,8 +5,8 @@ import com.dianba.pos.order.po.Order;
 
 public interface OrderManager {
 
-    String offlineOrderPrefix = "[offline_order] 离线订单:";
-    String superMarketOrderPrefix = "[market_order]  超市订单:";
+    String OFFLINE_ORDER_PREFIX = "[offline_order] 离线订单:";
+    String SUPERMARKET_ORDER_PREFIX = "[market_order]  超市订单:";
 
     /**
      * 创建订单

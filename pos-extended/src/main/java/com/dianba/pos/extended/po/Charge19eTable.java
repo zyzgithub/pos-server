@@ -11,8 +11,8 @@ import java.io.Serializable;
 public class Charge19eTable implements Serializable {
 
     @Id
-    @Column(name = "chargeId")
     @GeneratedValue
+    @Column(name = "chargeId")
     private Integer chargeId;
     @Column(name = "orderId")
     private Long orderId;

@@ -830,10 +830,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isFine(String str) {
-        if (str == null || str.trim().length() == 0) {
-            return false;
-        }
-        return true;
+        return !(str == null || str.trim().length() == 0);
     }
 
 //  /**

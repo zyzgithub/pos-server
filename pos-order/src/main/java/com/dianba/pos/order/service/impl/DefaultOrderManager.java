@@ -57,9 +57,9 @@ public class DefaultOrderManager implements OrderManager {
     public Order createOrderFromSuperMarket(Integer merchantId, Integer cashierId, String mobile
             , String params, Integer createTime, String uuid) throws BusinessException {
         // 离线订单 校验 "[offline_order] 离线订单:"/ "[market_order]  超市订单:"
-        if (StringUtils.isNotBlank(uuid) && uuid.startsWith(offlineOrderPrefix)) {
+        if (StringUtils.isNotBlank(uuid) && uuid.startsWith(OFFLINE_ORDER_PREFIX)) {
             List<String> remarks = new ArrayList<>();
-            remarks.add(uuid.replace(offlineOrderPrefix, superMarketOrderPrefix));
+            remarks.add(uuid.replace(OFFLINE_ORDER_PREFIX, SUPERMARKET_ORDER_PREFIX));
             remarks.add(uuid);
             Integer count = orderMapper.getRemarkCount(remarks);
             if (count != null && count > 0) {
@@ -184,7 +184,8 @@ public class DefaultOrderManager implements OrderManager {
                 logger.info("========================orderid=" + orderId);
 
                 long time = System.currentTimeMillis();
-                String payId = RandomStringUtils.random(4, "0123456789") + Long.toString(time + orderId).substring(2);
+                String payId = RandomStringUtils.random(4, "0123456789")
+                        + Long.toString(time + orderId).substring(2);
                 logger.info("========================payId=" + payId);
 
                 order.setPayId(payId);
@@ -259,9 +260,11 @@ public class DefaultOrderManager implements OrderManager {
                     BigDecimal bigdecimalTotalPrice = new BigDecimal(total);
                     BigDecimal bigdecimalTotalPromotionPrice = new BigDecimal(totalPromotionPrice);
                     total = bigdecimalTotalPrice.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    totalPromotionPrice = bigdecimalTotalPromotionPrice.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    totalPromotionPrice = bigdecimalTotalPromotionPrice
+                            .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                     if (promotionPrice != 0.0) {
-                        discountMoney = bigdecimalTotalPrice.subtract(bigdecimalTotalPromotionPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        discountMoney = bigdecimalTotalPrice.subtract(bigdecimalTotalPromotionPrice)
+                                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                     } else {
                         totalPromotionPrice = total;
                     }

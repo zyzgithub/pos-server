@@ -9,6 +9,7 @@ import com.dianba.pos.order.mapper.OrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,8 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping(value = "getMerchantProfitInfo")
-    public AjaxJson getMerchantProfitInfo(String name, String phone, String id_card, HttpServletRequest request) {
+    public AjaxJson getMerchantProfitInfo(String name, String phone
+            , @RequestParam(name = "id_card") String idCard, HttpServletRequest request) {
         boolean flag = true;
         String msg = "";
         Object obj = null;
@@ -46,14 +48,14 @@ public class MerchantController {
         JSONObject jo = new JSONObject();
 
         System.out.println("name" + name);
-        if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(id_card)) {
+        if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(idCard)) {
             flag = false;
             msg = "参数输入有误!";
             stateCode = "01";
 
         } else {
 
-            Map<String, Object> map = orderMapper.verifyMerchantUser(name, id_card, phone);
+            Map<String, Object> map = orderMapper.verifyMerchantUser(name, idCard, phone);
 
             //说明是不是pos商家用户
 
@@ -63,30 +65,32 @@ public class MerchantController {
                 stateCode = "01";
             } else {
                 //取得商家id
-                String merchant_id = map.get("merchant_id").toString();
+                String merchantId = map.get("merchant_id").toString();
 
-                String user_id = map.get("user_id").toString();
+                String userId = map.get("user_id").toString();
                 //获取要查询的月数
                 String month = request.getParameter("month");
                 Integer months = Integer.parseInt(month);
                 //先获取商家开始使用pos的时间
-                Long createTime = orderMapper.getPosStrtTimeByMerchant(Long.parseLong(merchant_id));
+                Long createTime = orderMapper.getPosStrtTimeByMerchant(Long.parseLong(merchantId));
                 //获取商家注册时间
-                Long createTime2 = merchantMapper.getMerchantCreate(Long.parseLong(merchant_id));
+                Long createTime2 = merchantMapper.getMerchantCreate(Long.parseLong(merchantId));
                 //获取当前时间戳
                 Long nowTime = Long.parseLong(DateUtil.currentTimeMillis().toString().substring(0, 10));
                 //获取最近几个月的时间戳
-                Integer month_ = Integer.parseInt("-" + month);
-                Long time = DateUtil.getMillisByMonth(month_);
+                Long time = DateUtil.getMillisByMonth(Integer.parseInt("-" + month));
 
                 //查询使用商米pos每个月的盈利信息
-                Map<String, Object> ordermap = orderMapper.queryOrderList(Long.parseLong(merchant_id), createTime, nowTime);
+                Map<String, Object> ordermap = orderMapper
+                        .queryOrderList(Long.parseLong(merchantId), createTime, nowTime);
                 //先获取商家注册的时间
-                // Long createTime3 = merchantMapper.getMerchantCreate(Long.parseLong(merchant_id));
+                // Long createTime3 = merchantMapper.getMerchantCreate(Long.parseLong(merchantId));
                 //商家每个月的进货的金额信息
-                Map<String, Object> merchantmap = merchantMapper.getMerchantProfit(Long.parseLong(merchant_id), createTime2, nowTime);
+                Map<String, Object> merchantmap = merchantMapper
+                        .getMerchantProfit(Long.parseLong(merchantId), createTime2, nowTime);
                 //商家每个月的进货的次数
-                Map<String, Object> merchantStockCount = merchantMapper.getMerchantStockCount(Long.parseLong(merchant_id), createTime2, nowTime);
+                Map<String, Object> merchantStockCount = merchantMapper
+                        .getMerchantStockCount(Long.parseLong(merchantId), createTime2, nowTime);
 
                 //商米pos盈利金额
                 Double money = Double.parseDouble(ordermap.get("sum_money").toString());
@@ -163,9 +167,9 @@ public class MerchantController {
                     }
 
                 }
-                jo.put("user_id", user_id);
+                jo.put("user_id", userId);
                 jo.put("user_name", name);
-                jo.put("id_card", id_card);
+                jo.put("id_card", idCard);
                 jo.put("phone", phone);
                 flag = true;
                 msg = "获取信息成功！";
@@ -184,10 +188,10 @@ public class MerchantController {
      */
     @ResponseBody
     @RequestMapping(value = "getMerchantBusinessByEvery")
-    public String getMerchantBusinessByEvery(String merchant_id) {
+    public String getMerchantBusinessByEvery(@RequestParam(name = "merchant_id") String merchantId) {
 
 
-        Long posProfitByDayEntity = orderMapper.getPosStrtTimeByMerchant(75392l);
+        Long posProfitByDayEntity = orderMapper.getPosStrtTimeByMerchant(Long.parseLong(merchantId));
 
         Map m = new HashMap();
         m.put("data", posProfitByDayEntity);

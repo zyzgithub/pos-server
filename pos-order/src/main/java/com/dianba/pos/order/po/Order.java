@@ -868,33 +868,4 @@ public class Order implements Serializable {
     public void setFlashOrderId(Long flashOrderId) {
         this.flashOrderId = flashOrderId;
     }
-
-    @Override
-    public String toString() {
-        return "OrderFromSuperMarketDTO{" +
-                "orderId=" + orderId +
-                ", payId='" + payId + '\'' +
-                ", totalPrice=" + totalPrice +
-                ", totalCount=" + totalCount +
-                ", payType='" + payType + '\'' +
-                ", payTypeName='" + payTypeName + '\'' +
-                ", completeTime='" + completeTime + '\'' +
-                ", merchantName='" + merchantName + '\'' +
-                ", change=" + change +
-                ", actuallyPaid=" + actuallyPaid +
-                ", menuList=" + menuList +
-                ", memberDiscountMoney=" + memberDiscountMoney +
-                ", minusDiscountMoney=" + minusDiscountMoney +
-                ", createTime='" + createTime + '\'' +
-                ", orderType='" + orderType + '\'' +
-                ", card='" + card + '\'' +
-                ", scoreMoney='" + scoreMoney + '\'' +
-                ", saleType='" + saleType + '\'' +
-                ", orderNum='" + orderNum + '\'' +
-                ", merchantAddress='" + merchantAddress + '\'' +
-                ", merchantMobile='" + merchantMobile + '\'' +
-                ", platform='" + platform + '\'' +
-                ", guestPhone='" + guestPhone + '\'' +
-                '}';
-    }
 }
