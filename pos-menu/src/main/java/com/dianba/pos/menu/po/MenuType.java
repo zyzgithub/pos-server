@@ -1,12 +1,10 @@
 package com.dianba.pos.menu.po;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "menu_type")
-public class MenuType implements Serializable {
-
+public class MenuType implements java.io.Serializable {
     /**
      * id
      */
@@ -109,6 +107,7 @@ public class MenuType implements Serializable {
     public void setMerchantId(Integer merchantId) {
         this.merchantId = merchantId;
     }
+
 
     /**
      * 方法: 取得Integer

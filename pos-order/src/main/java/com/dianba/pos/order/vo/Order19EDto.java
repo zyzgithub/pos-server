@@ -17,6 +17,8 @@ public class Order19EDto {
 
     private String mobile;
 
+    /**第三方商品id**/
+    private String menuKey;
     public Long getOrderId() {
         return orderId;
     }
@@ -63,5 +65,13 @@ public class Order19EDto {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getMenuKey() {
+        return menuKey;
+    }
+
+    public void setMenuKey(String menuKey) {
+        this.menuKey = menuKey;
     }
 }

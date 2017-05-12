@@ -52,12 +52,16 @@ public class Charge19E {
     private String provinceId;
 
     /*****************************协议参数***********************************/
-    /****签名方式*****/
-    private String signType = "MD5";
-    /******访问时间戳yyyyMMddHHmmss****/
-    private String timestamp = "20160406175304";
+
     /****签名**/
     private String sign = sign();
+
+    /****签名方式*****/
+    private String signType = "MD5";
+
+    /******访问时间戳yyyyMMddHHmmss****/
+    private String timestamp = "20160406175304";
+
     /****数据格式类型 KEYVALUE**/
     private String dataType = "KEYVALUE";
 
@@ -71,27 +75,6 @@ public class Charge19E {
      */
     private String version = "1.0";
 
-    /**********************************19充值返回参数***********************************/
-
-    public static void main(String[] args) {
-        Charge19E ch = new Charge19E();
-        ch.setChargeNumber("17052912345");
-        ch.setChargeMoney("10");
-        ch.setChargeType("0");
-        ch.setMerchantOrderId("testRollbackOrder11");
-        ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
-        ch.setIspId("");
-        ch.setProvinceId("");
-        ch.setFillType("0");
-        String result = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, ch);
-        System.out.println(result);
-        HfOrderQuery hq = new HfOrderQuery();
-        hq.setMerchantOrderId("testRollbackOrder11");
-        hq.setMerchantId(HfCharge19EUtil.MERCHANT_ID);
-        String resultq = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, hq);
-        System.out.println(resultq);
-
-    }
 
     public String getSign() {
         return sign;
@@ -199,7 +182,6 @@ public class Charge19E {
 
     public String getIspId() {
 
-
         return ispId;
     }
 
@@ -225,9 +207,10 @@ public class Charge19E {
                 ", chargeType='" + chargeType + '\'' +
                 ", merchantId='" + merchantId + '\'' +
                 ", merchantOrderId='" + merchantOrderId + '\'' +
-                ", sendNotifyUrl='" + sendNotifyUrl + '\'' +
-                ", ispId='" + ispId + '\'' +
-                ", provinceId='" + provinceId + '\'' +
+                ", sendNotifyUrl='" + sendNotifyUrl + '\''
+                + ", ispId='" + ispId + '\''
+                + ", provinceId='" + provinceId + '\'' +
+
                 '}';
     }
 
@@ -267,6 +250,28 @@ public class Charge19E {
                         "dataType=" + dataType + '&' +
                         "inputCharset=" + inputCharset + '&' +
                         "version=" + version;
+
+    }
+
+    /**********************************19充值返回参数***********************************/
+
+    public static void main(String[] args) {
+        Charge19E ch = new Charge19E();
+        ch.setChargeNumber("17052912345");
+        ch.setChargeMoney("10");
+        ch.setChargeType("0");
+        ch.setMerchantOrderId("testRollbackOrder115");
+        ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
+        ch.setIspId("");
+        ch.setProvinceId("");
+        ch.setFillType("0");
+        ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, ch);
+        //System.out.println(cr.toString());
+        HfOrderQuery hq = new HfOrderQuery();
+        hq.setMerchantOrderId("testRollbackOrder113");
+        hq.setMerchantId(HfCharge19EUtil.MERCHANT_ID);
+        String resultq = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, hq);
+        System.out.println(resultq);
 
     }
 }

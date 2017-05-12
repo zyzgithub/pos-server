@@ -18,10 +18,10 @@
 
     <!--获取商家使用pos机的时间-->
     <select id="getPosStrtTimeByMerchant" resultType="java.lang.Long">
-      SELECT cas.create_time
-      FROM 0085_cashier cas
-      JOIN merchant me on cas.merchant_id=me.id
-      WHERE me.id=#{id}
+        SELECT cas.create_time
+        FROM 0085_cashier cas
+        JOIN merchant me on cas.merchant_id=me.id
+        WHERE me.id=#{id}
     </select>
 
     <!--&lt;!&ndash;查詢商家每天的盈利數據&ndash;&gt;-->
@@ -55,13 +55,13 @@
         FROM `0085_cashier` ca
         JOIN merchant me on ca.merchant_id=me.id
         JOIN user us on us.id=me.user_id
-        where ca.name=#{user_name}  AND ca.id_card=#{card} AND ca.mobile=#{phone}
+        where ca.name=#{user_name} AND ca.id_card=#{card} AND ca.mobile=#{phone}
     </select>
 
 
     <!--获取商家注册时间-->
     <select id="getMerchantCreate" resultType="java.lang.Long">
-      SELECT me.create_time FROM merchant me WHERE id=#{id}
+        SELECT me.create_time FROM merchant me WHERE id=#{id}
     </select>
 
     <select id="getRemarkCount" parameterType="java.util.List" resultType="java.lang.Integer">
@@ -83,13 +83,19 @@
           JOIN order_menu om on om.order_id=o.id
           JOIN  menu m on m.id=om.menu_id
           WHERE m.merchant_id=#{merchantId}
-          AND o.pay_state=#{payState} and o.charge_state=#{chargeState};
+          AND o.pay_state=#{payState} and o.charge_state=#{chargeState}
+          and m.is_flash=#{type};
+    </select>
+    <!--根据商家订单号更新原订单信息-->
+    <update id="editOrderInfoBy19e" parameterType="java.util.Map">
+        UPDATE `order` o
+        SET o.complete_time=#{completeTime}
+        ,o.charge_state=#{chargeState}
+        WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum};
+    </update>
+    <!--查询此订单号是否被更新过了-->
+    <select id="getByPayId" resultType="java.lang.Object">
+        SELECT charge_state FROM 'order' WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum};
     </select>
 
-    <update id="editOrderInfoBy19e" parameterType="java.util.Map">
-        UPDATE `order` o SET o.complete_time=#{completeTime} ,o.charge_state=#{chargeState} WHERE o.pay_id=#{orderNum} ;
-    </update>
-    <select id="getByPayId" resultType="java.lang.Object">
-        SELECT charge_state FROM  'order' WHERE pay_id=#{orderNum};
-    </select>
 </mapper>

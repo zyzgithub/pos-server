@@ -3,6 +3,7 @@ package com.dianba.pos.extended.vo;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
+import com.mysql.fabric.FabricConnection;
 
 
 /**
@@ -42,15 +43,6 @@ public class Product {
     private String merchantId;
 
     private String mobile;
-
-    public static void main(String[] args) {
-
-        Product pd = new Product();
-        pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-        pd.setMobile("13249196272");
-        String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
-        System.out.println(result);
-    }
 
     public String getSign() {
         return sign;
@@ -156,5 +148,14 @@ public class Product {
                         "version=" + version + "&" + "sign=" + signp;
 
 
+    }
+
+    public static void main(String[] args) {
+
+        Product pd = new Product();
+        pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+        pd.setMobile("13249196272");
+        String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
+        System.out.println(result);
     }
 }

@@ -9,53 +9,47 @@ import java.io.Serializable;
 @Entity
 @Table(name = "charge_19e")
 public class Charge19e implements Serializable {
-    @Id
-    @Column(name = "charge_id")
-    @GeneratedValue
-    private Integer chargeId;
 
+    @Id
+    @GeneratedValue
+    @Column(name = "chargeId")
+    private Integer chargeId;
+    @Column(name = "orderId")
+    private Long orderId;
     @Column(name = "resultCode")
     private String resultCode;
-
     @Column(name = "resultDesc")
     private String resultDesc;
-
     @Column(name = "eOrderId")
     private String eOrderId;
-
     @Column(name = "productName")
     private String productName;
-
     @Column(name = "createTime")
     private String createTime;
-
     @Column(name = "chargePhone")
     private String chargePhone;
-
     @Column(name = "chargeNumber")
     private String chargeNumber;
-
     @Column(name = "orderStatus")
     private String orderStatus;
-
     @Column(name = "merchantId")
     private String merchantId;
-
     @Column(name = "finishTime")
     private String finishTime;
-
     @Column(name = "merchantOrderId")
     private String merchantOrderId;
-
     @Column(name = "queryResultUrl")
     private String queryResultUrl;
-
     @Column(name = "resultTest")
     private String resultText;
-
     @Column(name = "type")
     private Integer type;
 
+
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
     public Integer getChargeId() {
         return chargeId;

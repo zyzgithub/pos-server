@@ -24,6 +24,7 @@ public class FlowCharge19EUtil {
 
     public static final String KEY = "123456789";
 
+
     public static String getKeyedDigest(String paramsStr, String key) {
 
         MessageDigest md5 = null;
@@ -32,8 +33,7 @@ public class FlowCharge19EUtil {
             md5 = MessageDigest.getInstance("MD5");
             md5.update(paramsStr.getBytes("UTF-8"));
 
-            byte[] temp;
-            temp = md5.digest(key.getBytes("UTF-8"));
+            byte[] temp= md5.digest(key.getBytes("UTF-8"));
             for (int i = 0; i < temp.length; i++) {
                 result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
             }

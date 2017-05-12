@@ -23,7 +23,7 @@ public class TsmCountryArea implements Serializable {
     private String allPinYin;
 
     @Column(name = "parent_code")
-    private Integer parent_code;
+    private Integer parentCode;
 
     public Integer getCode() {
         return code;
@@ -49,11 +49,11 @@ public class TsmCountryArea implements Serializable {
         this.allPinYin = allPinYin;
     }
 
-    public Integer getParent_code() {
-        return parent_code;
+    public Integer getParentCode() {
+        return parentCode;
     }
 
-    public void setParent_code(Integer parent_code) {
-        this.parent_code = parent_code;
+    public void setParentCode(Integer parentCode) {
+        this.parentCode = parentCode;
     }
 }

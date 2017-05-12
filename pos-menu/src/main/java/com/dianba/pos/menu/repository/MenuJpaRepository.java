@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.util.List;
 
+
 @Transactional
 @Repository
 public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
@@ -24,4 +25,11 @@ public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
                                                                   Integer printTypeId, Integer codeId);
 
     Menu findByPrintType(Integer printType);
+
+    /**
+     * 获取商品信息根据 第三方商品id
+     * @param menuKey
+     * @return
+     */
+    Menu findByMenuKey(Integer menuKey);
 }

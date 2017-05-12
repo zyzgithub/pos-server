@@ -24,7 +24,7 @@ public class ChargeFlow {
     private String timestamp = DateUtil.getCurrDate("yyyyMMddHHHmmss");
 
     /****数据格式类型 KEYVALUE**/
-    private String dataType = "KEYVALUE";
+    private String dataType = "JSON";
 
     /**
      * 参数编码字符串
@@ -57,23 +57,6 @@ public class ChargeFlow {
      */
     private String remark;
 
-    public static void main(String[] args) {
-
-
-//     Product pd=new Product();
-//     pd.setMobile("15001000000");
-//     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-//     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
-//     System.out.println(bb);
-        ChargeFlow cf = new ChargeFlow();
-        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-        cf.setMerOrderNo("11111111");
-        cf.setProductId("110000");
-        cf.setMobile("15001000000");
-        cf.setRemark("流量充值!");
-        String aaa = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
-        System.out.println(aaa);
-    }
 
     public String getSign() {
         return sign;
@@ -210,5 +193,24 @@ public class ChargeFlow {
                         "merOrderNo=" + merOrderNo + '&' +
                         "merchantId=" + merchantId + '&' +
                         "remark=" + remark;
+    }
+
+    public static void main(String[] args) {
+
+
+//     Product pd=new Product();
+//     pd.setMobile("15001000000");
+//     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+//     String bb=  FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT,pd);
+//     System.out.println(bb);
+        ChargeFlow cf = new ChargeFlow();
+        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+        cf.setMerOrderNo("2222222");
+        cf.setProductId("RF0116111310421001");
+
+        cf.setMobile("15001000000");
+        cf.setRemark("流量充值!");
+        // ChargeFlow chargeFlow= FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
+        //  System.out.println(chargeFlow.toString());
     }
 }

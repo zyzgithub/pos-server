@@ -3,6 +3,8 @@ package com.dianba.pos.extended.util;
 
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 
+import java.security.MessageDigest;
+
 /**
  * Created by Administrator on 2017/5/3 0003.
  */
@@ -30,7 +32,7 @@ public class HfCharge19EUtil
     public static final String MERCHANT_ID = "AA0b0192015072415092542712";
 
     public static final String POS_TEST_URL = "http://apptest.0085.com/pos/";
-    public static final String NOTIFY_URL = POS_TEST_URL + ExtendedUrlConstant.Charge19E_INFO + "hfChargeBack";
+    public static final String NOTIFY_URL = POS_TEST_URL + ExtendedUrlConstant.CHARGE_19E_INFO + "hfChargeBack";
 
     public static String toJson(String result) {
 

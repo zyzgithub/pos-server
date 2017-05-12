@@ -38,17 +38,6 @@ public class HfOrderQuery {
 
     private String merchantOrderId;
 
-    public static void main(String[] args) {
-
-        HfOrderQuery ho = new HfOrderQuery();
-        ho.setMerchantId("AA0b0192015072415092542712");
-        ho.setEhfOrderId("ESSOD02141011705081347128037");
-        ho.setMerchantOrderId("4234234324");
-        String aaa = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, ho);
-        System.out.println(aaa);
-
-
-    }
 
     public String getSign() {
         return sign;
@@ -148,6 +137,18 @@ public class HfOrderQuery {
                         "ehfOrderId=" + ehfOrderId + '&' +
                         "merchantId=" + merchantId + "&" +
                         "merchantOrderId" + merchantOrderId;
+
+
+    }
+
+    public static void main(String[] args) {
+
+        HfOrderQuery ho = new HfOrderQuery();
+        ho.setMerchantId("AA0b0192015072415092542712");
+        ho.setEhfOrderId("ESSOD02141011705081347128037");
+        ho.setMerchantOrderId("4234234324");
+        String aaa = HfCharge19EApi.hfOrderQuery(HfCharge19EUtil.HT_ORDER_INFO_QUERY, ho);
+        System.out.println(aaa);
 
 
     }

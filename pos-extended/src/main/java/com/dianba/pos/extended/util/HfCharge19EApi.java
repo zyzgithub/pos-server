@@ -1,9 +1,9 @@
 package com.dianba.pos.extended.util;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.common.util.Md5Util;
-import com.dianba.pos.extended.vo.Charge19E;
-import com.dianba.pos.extended.vo.HfOrderQuery;
+import com.dianba.pos.extended.vo.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,19 +20,20 @@ import java.net.URLDecoder;
 public class HfCharge19EApi {
 
     /**
-     * 话费充值方法
+     * 话费充值下单
      *
      * @param chargeUrl
      * @param param
      * @return
      */
-    public static String hfCharge(String chargeUrl, Charge19E param) {
+    public static ChargeResult hfCharge(String chargeUrl, Charge19E param) {
         String sign = param.sign();
         String MD5 = Md5Util.HEXAndMd5(sign).toUpperCase();
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
         String tojson = "";
+        ChargeResult cr=new ChargeResult();
         try {
             URL realUrl = new URL(chargeUrl);
             // 打开和URL之间的连接
@@ -62,6 +63,8 @@ public class HfCharge19EApi {
             }
             String urlStr = URLDecoder.decode(result, "UTF-8");
             tojson = HfCharge19EUtil.toJson(urlStr);
+            System.out.println(tojson);
+           cr=(ChargeResult)JSONObject.parseObject(tojson,ChargeResult.class);
         } catch (IOException e) {
             e.printStackTrace();
         } // 使用finally块来关闭输出流、输入流
@@ -78,7 +81,7 @@ public class HfCharge19EApi {
             }
 
         }
-        return tojson;
+        return cr;
     }
 
 

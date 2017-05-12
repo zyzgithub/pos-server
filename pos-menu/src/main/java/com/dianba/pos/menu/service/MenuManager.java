@@ -18,10 +18,17 @@ public interface MenuManager {
      * @param
      * @return
      */
-    List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash, Integer merchantId
-            , Integer printTypeId, Integer codeId);
+    List<Menu> findAllByIsFlashAndMerchantIdAndPrintTypeAndCodeId(Integer isFlash, Integer merchantId,
+                                                                  Integer printTypeId, Integer codeId);
 
     Menu findByPrintType(Integer printType);
+
+    /**
+     * 获取商品信息根据 第三方商品id
+     * @param menuKey
+     * @return
+     */
+    Menu findByMenuKey(Integer menuKey);
 
 
 }
