@@ -1,5 +1,6 @@
 package com.dianba.pos.extended.vo;
 
+import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.extended.util.HfCharge19EApi;
 import com.dianba.pos.extended.util.HfCharge19EUtil;
 
@@ -60,7 +61,7 @@ public class Charge19E {
     private String signType = "MD5";
 
     /******访问时间戳yyyyMMddHHmmss****/
-    private String timestamp = "20160406175304";
+    private String timestamp = DateUtil.getCurrDate("yyyyMMddHHmmss");
 
     /****数据格式类型 KEYVALUE**/
     private String dataType = "KEYVALUE";
