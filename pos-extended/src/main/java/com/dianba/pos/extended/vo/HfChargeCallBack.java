@@ -2,8 +2,10 @@ package com.dianba.pos.extended.vo;
 
 /**
  * Created by Administrator on 2017/5/10 0010.
+ * 话费充值回调
  */
-public class ChargeCallBack {
+
+public class HfChargeCallBack {
 
     private String ehfOrderId;
     private String merchantOrderId;
@@ -75,11 +77,12 @@ public class ChargeCallBack {
                 ", statusDesc='" + statusDesc + '\'' +
                 '}';
     }
+
     public String callback() {
         return
 
                 "resultCode=" + chargeStatus + '&' +
-                "resultDesc=" + statusDesc ;
+                        "resultDesc=" + statusDesc;
 
     }
 }
