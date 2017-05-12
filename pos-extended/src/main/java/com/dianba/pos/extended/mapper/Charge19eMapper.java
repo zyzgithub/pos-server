@@ -15,4 +15,13 @@ public interface Charge19eMapper {
      * @return
      */
     Integer chargeCountByOrder(@Param("orderId") Long orderId);
+
+    /**
+     * 更新第三方订单为成功状态
+     * @param chargeState
+     * @param finishTime
+     * @param merchantOrderId
+     */
+    void editCharge19e(@Param("chargeState") String chargeState,@Param("finishTime") String finishTime,
+                       @Param("merchantOrderId") String merchantOrderId);
 }

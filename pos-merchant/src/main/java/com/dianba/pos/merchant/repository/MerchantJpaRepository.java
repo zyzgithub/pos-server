@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface MerchantJpaRepository extends JpaRepository<Merchant, Long> {
 
     Merchant findByUserId(Long userId);
+
+    Merchant findById(Long merchantId);
 }

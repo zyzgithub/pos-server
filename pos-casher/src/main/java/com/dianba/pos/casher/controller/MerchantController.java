@@ -5,6 +5,8 @@ import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.merchant.mapper.MerchantMapper;
+import com.dianba.pos.merchant.po.Merchant;
+import com.dianba.pos.merchant.service.MerchantManager;
 import com.dianba.pos.order.mapper.OrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,11 +37,12 @@ public class MerchantController {
     @Autowired
     private MerchantMapper merchantMapper;
 
-
+    @Autowired
+    private MerchantManager merchantManager;
     @ResponseBody
     @RequestMapping(value = "getMerchantProfitInfo")
     public AjaxJson getMerchantProfitInfo(String name, String phone
-            , @RequestParam(name = "id_card") String idCard, HttpServletRequest request) {
+            , String merchantId, HttpServletRequest request) {
         boolean flag = true;
         String msg = "";
         Object obj = null;
@@ -48,14 +51,16 @@ public class MerchantController {
         JSONObject jo = new JSONObject();
 
         System.out.println("name" + name);
-        if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(idCard)) {
+        if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(merchantId)) {
             flag = false;
             msg = "参数输入有误!";
             stateCode = "01";
 
         } else {
 
-            Map<String, Object> map = orderMapper.verifyMerchantUser(name, idCard, phone);
+
+            Long merId=Long.parseLong(merchantId);
+            Map<String, Object> map = orderMapper.verifyMerchantUser(name, merId, phone);
 
             //说明是不是pos商家用户
 
@@ -65,8 +70,8 @@ public class MerchantController {
                 stateCode = "01";
             } else {
                 //取得商家id
-                String merchantId = map.get("merchant_id").toString();
 
+                 Merchant merchantTab= merchantManager.findById(merId);
                 String userId = map.get("user_id").toString();
                 //获取要查询的月数
                 String month = request.getParameter("month");
@@ -83,94 +88,105 @@ public class MerchantController {
                 //查询使用商米pos每个月的盈利信息
                 Map<String, Object> ordermap = orderMapper
                         .queryOrderList(Long.parseLong(merchantId), createTime, nowTime);
+                BigDecimal monthb = new BigDecimal(Double.toString(months));
+
+                if(ordermap!=null){
+                    String moneypos=ordermap.get("sum_money").toString();
+                    Double money = Double.parseDouble(moneypos);
+                    BigDecimal orderMoney = new BigDecimal(Double.toString(money));
+                    Long posCreateTime = Long.parseLong(ordermap.get("create_time").toString());
+
+                    if (time >= posCreateTime) {//判断使用商米pos的时间是否在预算的范围之内
+                        //商米pos盈利平均金额
+                        Double value = orderMoney.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
+                        jo.put("posProfitMoney", value.toString());
+                    } else {
+//                         //查询使用了几个月
+                        Integer iv = DateUtil.getDateByYueDiff(posCreateTime);
+                        BigDecimal ivb = new BigDecimal(Double.toString(iv));
+                        Map m = new HashMap();
+                        if (!"0".equals(iv) || "1".equals(iv)) {
+                            //商米pos平均金额
+                            Double db = orderMoney.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
+                            jo.put("posProfitMoney", db.toString());
+                        } else {
+                            jo.put("posProfitMoney", orderMoney.toString());
+                        }
+                    }
+                }else{
+                    jo.put("posProfitMoney", "");
+
+                }
                 //先获取商家注册的时间
-                // Long createTime3 = merchantMapper.getMerchantCreate(Long.parseLong(merchantId));
+                Long mCreateTime =Long.parseLong(merchantTab.getCreateTime().toString());
                 //商家每个月的进货的金额信息
                 Map<String, Object> merchantmap = merchantMapper
                         .getMerchantProfit(Long.parseLong(merchantId), createTime2, nowTime);
-                //商家每个月的进货的次数
+                if(merchantmap!=null){
+
+                    //商家每个月的进货的次数
+
+                    //商家进货金额
+                    String mStockMoney = merchantmap.get("total_money").toString();
+                    BigDecimal a2 = new BigDecimal(mStockMoney);
+
+                    if (time >= mCreateTime) {//判断注册商家的时间是否在预算的范围之内
+
+                        //商家进货平均金额
+                        Double db = a2.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
+                        jo.put("mStockMoney", db.toString());
+
+                    } else {
+                        //查询商家使用了几个月
+                        Integer num = DateUtil.getDateByYueDiff(mCreateTime);
+
+
+                        if (!"1".equals(num) || !"0".equals(num)) {
+                            BigDecimal ivb = new BigDecimal(Double.toString(num));
+                            //商家进货平均金额
+                            Double db = a2.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
+                            jo.put("mStockMoney", db.toString());
+                        } else {
+                            jo.put("mStockMoney", mStockMoney.toString());
+                        }
+                    }
+                }else {
+                    jo.put("mStockMoney", "");
+                }
                 Map<String, Object> merchantStockCount = merchantMapper
                         .getMerchantStockCount(Long.parseLong(merchantId), createTime2, nowTime);
 
-                //商米pos盈利金额
-                Double money = Double.parseDouble(ordermap.get("sum_money").toString());
-                Long posCreateTime = Long.parseLong(ordermap.get("create_time").toString());
-                //商家进货金额
-                String mStockMoney = merchantmap.get("total_money").toString();
-                Long mCreateTime = Long.parseLong(ordermap.get("create_time").toString());
-                //商家进货次数
-                String mStockCouont = merchantStockCount.get("stock_count").toString();
-
-
-                BigDecimal orderMoney = new BigDecimal(Double.toString(money));
-                //查询yuef月份
-                BigDecimal monthb = new BigDecimal(Double.toString(months));
-                //  Double AS=Double.parseDouble(b);
-                if (time >= posCreateTime) {//判断使用商米pos的时间是否在预算的范围之内
-                    //商米pos盈利平均金额
-                    Double value = orderMoney.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
-                    jo.put("posProfitMoney", value.toString());
-                } else {
-//                         //查询使用了几个月
-                    Integer iv = DateUtil.getDateByYueDiff(posCreateTime);
-                    BigDecimal ivb = new BigDecimal(Double.toString(iv));
-                    Map m = new HashMap();
-                    if (!"0".equals(iv) || "1".equals(iv)) {
-                        //商米pos平均金额
-                        Double db = orderMoney.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
-                        jo.put("posProfitMoney", db.toString());
-                    } else {
-                        jo.put("posProfitMoney", orderMoney.toString());
-                    }
-
-                }
-
-                BigDecimal a2 = new BigDecimal(mStockMoney);
-
-                if (time >= mCreateTime) {//判断注册商家的时间是否在预算的范围之内
-
-                    //商家进货平均金额
-                    Double db = a2.divide(monthb, 2, BigDecimal.ROUND_UP).doubleValue();
-                    jo.put("mStockMoney", db.toString());
-
-                } else {
-                    //查询商家使用了几个月
-                    Integer num = DateUtil.getDateByYueDiff(mCreateTime);
-
-
-                    if (!"1".equals(num) || !"0".equals(num)) {
-                        BigDecimal ivb = new BigDecimal(Double.toString(num));
-                        //商家进货平均金额
-                        Double db = a2.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
-                        jo.put("mStockMoney", db.toString());
-                    } else {
-                        jo.put("mStockMoney", mStockMoney.toString());
-                    }
-                }
-                if (time >= mCreateTime) {//判断注册商家的时间是否在预算的范围之内
-                    BigDecimal bd = new BigDecimal(mStockCouont);
-                    //进货平均数
-                    int count = (bd.divide(monthb, 0).intValue());
-                    jo.put("mStockCount", "" + "" + count);
-                } else {
-
-                    //查询商家进货了几个月
-                    Integer num = DateUtil.getDateByYueDiff(mCreateTime);
-                    if (!"0".equals(num) && !"1".equals(num)) {
+                if(merchantStockCount!=null){
+                    //商家进货次数
+                    String mStockCouont = merchantStockCount.get("stock_count").toString();
+                    if (time >= mCreateTime) {//判断注册商家的时间是否在预算的范围之内
                         BigDecimal bd = new BigDecimal(mStockCouont);
-                        BigDecimal bb = new BigDecimal(num);
                         //进货平均数
-                        int count = (bd.divide(bb, 0).intValue());
+                        int count = (bd.divide(monthb, 0).intValue());
                         jo.put("mStockCount", "" + "" + count);
                     } else {
-                        jo.put("mStockCount", "" + "" + mStockCouont);
-                    }
+
+                        //查询商家进货了几个月
+                        Integer num = DateUtil.getDateByYueDiff(mCreateTime);
+                        if (!"0".equals(num) && !"1".equals(num)) {
+                            BigDecimal bd = new BigDecimal(mStockCouont);
+                            BigDecimal bb = new BigDecimal(num);
+                            //进货平均数
+                            int count = (bd.divide(bb, 0).intValue());
+                            jo.put("mStockCount", "" + "" + count);
+                        } else {
+                            jo.put("mStockCount", "" + "" + mStockCouont);
+                        }
+                }
+
+                }else {
+                    jo.put("mStockCount", "");
 
                 }
                 jo.put("user_id", userId);
                 jo.put("user_name", name);
-                jo.put("id_card", idCard);
                 jo.put("phone", phone);
+                jo.put("merchantId",merchantId);
                 flag = true;
                 msg = "获取信息成功！";
                 obj = jo;

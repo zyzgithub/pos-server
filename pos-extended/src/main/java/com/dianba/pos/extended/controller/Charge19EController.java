@@ -7,7 +7,9 @@ import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
+import com.dianba.pos.extended.mapper.Charge19eMapper;
 import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PhoneInfoManager;
 import com.dianba.pos.extended.service.TsmCountryAreaManager;
 import com.dianba.pos.extended.util.*;
@@ -57,6 +59,8 @@ public class Charge19EController {
     @Autowired
     private TsmCountryAreaManager tsmCountryAreaManager;
 
+    @Autowired
+    private Charge19eMapper charge19eMapper;
     /**
      * 19e 话费充值平台
      *
@@ -97,13 +101,16 @@ public class Charge19EController {
         logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
 
         if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
-            Long merchantOrderId = Long.parseLong(chargeCallBack.getMerchantOrderId());
+            String merchantOrderId = chargeCallBack.getMerchantOrderId();
             //查询此订单是否更新完毕
             Object ob = orderMapper.getByPayId(merchantOrderId);
             if (!ob.equals("success")) {
                 //修改订单信息为success
                 Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+                String date=DateUtil.getCurrDate("yyyyMMddHHmmss");
                 orderMapper.editOrderInfoBy19e("success", merchantOrderId, times);
+                //改变第三方订单状态
+                charge19eMapper.editCharge19e("success",date,merchantOrderId);
                 logger.info("话费订单充值成功!"+",订单号为："+chargeCallBack.getMerchantOrderId()+",充值金额为：");
             }
 
@@ -126,10 +133,14 @@ public class Charge19EController {
             if(FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())){
                 //修改订单信息为success
                 Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
-                Long merOrderNo=Long.parseLong(chargeCallBack.getMerOrderNo());
+                String date=DateUtil.getCurrDate("yyyyMMddHHmmss");
+                String merOrderNo=chargeCallBack.getMerOrderNo();
                 Object ob = orderMapper.getByPayId(merOrderNo);
                 if (!ob.equals("success")) {
+                    //改变原订单状态
                     orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
+                    //改变第三方订单状态
+                    charge19eMapper.editCharge19e("success",date,merOrderNo);
                 }
                 result="resultCode=SUCCESS";
 

@@ -5,14 +5,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
-public class ExtendedScheduler {
+/**
+ * Created by Administrator on 2017/5/12 0012.
+ */
+public class FlowChargeScheduler {
 
-    private Logger logger = LogManager.getLogger(ExtendedScheduler.class);
+    private Logger logger = LogManager.getLogger(FlowChargeScheduler.class);
 
     @Autowired
     private Charge19eManager charge19eManager;
@@ -21,7 +22,8 @@ public class ExtendedScheduler {
     public void hfCharge() {
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString().substring(0, 6);
-        logger.info(id + "########话费充值定时任务开始#############");
-        logger.info(id + "########话费充值定时任务结束#############");
+        logger.info(id + "########流量充值定时任务开始#############");
+        charge19eManager.orderListFlowCharge();
+        logger.info(id + "########流量充值定时任务结束#############");
     }
 }

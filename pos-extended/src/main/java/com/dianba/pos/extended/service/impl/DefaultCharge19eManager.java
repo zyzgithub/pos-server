@@ -57,7 +57,6 @@ public class DefaultCharge19eManager implements Charge19eManager {
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
-
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
         if(cr.getResultCode().equals("SUCCESS")){
             //保存话费充值订单信息
@@ -69,7 +68,6 @@ public class DefaultCharge19eManager implements Charge19eManager {
                 flag = true;
             }
         }
-
         return flag;
 
     }
@@ -91,8 +89,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     boolean flag = hfCharge(od);
                     if (flag) {
                         logger.info("话费充值下订单成功！" + "orderNum" + od.getOrderNum() + "phone" + od.getMobile()
-                                + "money"
-                                + od.getPrice());
+                                + "money" + od.getPrice());
                     }
 
                 }
@@ -148,8 +145,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
                 boolean flag = flowCharge(od);
                 if (flag) {
                     logger.info("流量充值下订单成功！" + "orderNum" + od.getOrderNum() + "phone" + od.getMobile()
-                            + "money"
-                            + od.getPrice());
+                            + "money" + od.getPrice());
                 }
 
             }

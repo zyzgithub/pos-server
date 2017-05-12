@@ -27,8 +27,8 @@ public interface OrderMapper {
      */
     Long getMerchantCreate(Long id);
 
-    Map<String, Object> verifyMerchantUser(@Param("user_name") String userName, @Param("card")
-            String card, @Param("phone") String phone);
+    Map<String, Object> verifyMerchantUser(@Param("user_name") String userName, @Param("merchantId")
+            Long merchantId, @Param("phone") String phone);
 
     Integer getRemarkCount(List<String> remark);
 
@@ -42,7 +42,7 @@ public interface OrderMapper {
      * 更新增值服务订单信息为成功状态
      */
     void editOrderInfoBy19e(@Param("chargeState") String payState
-            , @Param("orderNum") Long orderNum, @Param("completeTime") int timestamp);
+            , @Param("orderNum") String orderNum, @Param("completeTime") int timestamp);
 
-    Object getByPayId(@Param("orderNum") Long orderNum);
+    Object getByPayId(@Param("orderNum") String orderNum);
 }

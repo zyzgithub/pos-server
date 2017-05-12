@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface Charge19eJpaRepository extends JpaRepository<Charge19e, Long> {
 
 
+
 }

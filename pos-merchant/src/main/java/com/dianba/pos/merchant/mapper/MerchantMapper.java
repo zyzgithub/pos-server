@@ -11,9 +11,9 @@ public interface MerchantMapper {
     /**
      * 获取商家进货额度
      *
-     * @param merchant_id
-     * @param start_time
-     * @param now_time
+     * @param
+     * @param
+     * @param
      * @return
      */
     Map<String, Object> getMerchantProfit(@Param("merchant_id") Long merchantId
@@ -22,9 +22,9 @@ public interface MerchantMapper {
     /**
      * 获取商家进货总次数
      *
-     * @param merchant_id
-     * @param start_time
-     * @param now_time
+     * @param
+     * @param
+     * @param
      * @return
      */
     Map<String, Object> getMerchantStockCount(@Param("merchant_id") Long merchantId
