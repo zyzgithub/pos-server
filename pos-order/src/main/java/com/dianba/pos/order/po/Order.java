@@ -180,6 +180,22 @@ public class Order implements Serializable {
     @Column(name = "create_time")
     private String createTime;
 
+    /**
+     * 订单类型,
+     */
+    @Column(name = "order_type")
+    private String orderType;
+    /**
+     * 订单排号
+     */
+    @Column(name = "order_num")
+    private String orderNum;
+    /**
+     * 订单类型: '1.为外卖订单，2为堂食订单',
+     */
+    @Column(name = "SALE_TYPE")
+    private String saleType;
+
     @Transient
     private double totalOrigin; //订单原价总金额
     @Transient
@@ -209,17 +225,6 @@ public class Order implements Serializable {
     @Transient
     private double dineInDiscountMoney = 0.00;//立减优惠
     /**
-     * 订单类型,
-     */
-    @Column(name = "order_type")
-    private String orderType;
-    /**
-     * 订单排号
-     */
-    @Column(name = "order_num")
-    private String orderNum;
-
-    /**
      * 抵金卷金额
      */
     @Transient
@@ -229,11 +234,6 @@ public class Order implements Serializable {
      */
     @Transient
     private String scoreMoney;
-    /**
-     * 订单类型: '1.为外卖订单，2为堂食订单',
-     */
-    @Transient
-    private String saleType;
     @Transient
     private String merchantAddress;
     @Transient
