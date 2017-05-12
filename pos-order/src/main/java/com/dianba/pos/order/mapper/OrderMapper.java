@@ -36,7 +36,7 @@ public interface OrderMapper {
      * 获取未充值订单
      */
     List<Order19EDto> getOrderListBy19EMenu(@Param("merchantId") Integer merchantId
-            , @Param("payState") String payState);
+            , @Param("payState") String payState,@Param("chargeState") String chargeState ,@Param("type") Integer type);
 
     /**
      * 更新增值服务订单信息为成功状态
