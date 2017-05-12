@@ -196,6 +196,12 @@ public class Order implements Serializable {
     @Column(name = "SALE_TYPE")
     private String saleType;
 
+    @Column(name = "FUND_TYPE")
+    private String fundType;
+
+    @Column(name = "CHARGE_STATE")
+    private String chargeState; //话费，流量充值订单状态
+
     @Transient
     private double totalOrigin; //订单原价总金额
     @Transient
@@ -867,5 +873,21 @@ public class Order implements Serializable {
 
     public void setFlashOrderId(Long flashOrderId) {
         this.flashOrderId = flashOrderId;
+    }
+
+    public String getFundType() {
+        return fundType;
+    }
+
+    public void setFundType(String fundType) {
+        this.fundType = fundType;
+    }
+
+    public String getChargeState() {
+        return chargeState;
+    }
+
+    public void setChargeState(String chargeState) {
+        this.chargeState = chargeState;
     }
 }

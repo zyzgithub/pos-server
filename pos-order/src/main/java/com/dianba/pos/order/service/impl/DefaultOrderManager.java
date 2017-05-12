@@ -8,6 +8,7 @@ import com.dianba.pos.menu.po.PromotionMenu;
 import com.dianba.pos.menu.repository.MenuJpaRepository;
 import com.dianba.pos.merchant.po.Merchant;
 import com.dianba.pos.merchant.repository.MerchantJpaRepository;
+import com.dianba.pos.order.config.OrderStateConstant;
 import com.dianba.pos.order.exception.BusinessException;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.po.CashierOrder;
@@ -172,7 +173,10 @@ public class DefaultOrderManager implements OrderManager {
                 order.setTitle("超市订单");
                 order.setSaleType("2");
                 order.setRemark(uuid);
-                order.setMobile(mobile);
+                if (StringUtils.isNotBlank(mobile)){
+                    order.setFundType(OrderStateConstant.UN_SUPPORT_REFUND);
+                    order.setMobile(mobile);
+                }
                 // make not null
                 order.setCommentCourierContent("");
                 order.setCommentDisplay("Y");
