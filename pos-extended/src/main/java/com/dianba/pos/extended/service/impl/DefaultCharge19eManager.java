@@ -109,7 +109,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
-                + RandomStringUtils.random(4, "0123456789") + "hfcharge" + order19EDto.getOrderId();
+                + RandomStringUtils.random(4, "0123456789")+ order19EDto.getOrderId();
 
         cf.setMerOrderNo(orderNum);
         cf.setProductId(order19EDto.getMenuKey());
@@ -130,13 +130,16 @@ public class DefaultCharge19eManager implements Charge19eManager {
     @Override
     public void orderListFlowCharge() {
 
+        logger.info("获取查询订单集合，并进行充值业务!");
         /**
          * 如果订单为为成功状态都去充值
          */
         List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(-1, "pay",
                 4);
+        logger.info("获取要充值订单个数:"+list.size());
         for (Order19EDto od : list) {
 
+            logger.info("要进行充值的订单号码为："+od.getOrderNum()+",商品订单号为"+od.getMenuKey());
             //查询此订单的充值次数
             Integer count = charge19eMapper.chargeCountByOrder(od.getOrderId());
             if (count < 3) { //没有充值3次
@@ -186,10 +189,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         //第三方订单id
         ct.seteOrderId(chargeFlowResult.getOrderNo());
         ct.setMerchantOrderId(chargeFlowResult.getMerOrderId());
-
-
-
-        ct.seteOrderId(chargeFlowResult.getOrderNo());
+      ct.seteOrderId(chargeFlowResult.getOrderNo());
         //关联order表id
         ct.setOrderId(order19EDto.getOrderId());
         //此单为流量充值订单

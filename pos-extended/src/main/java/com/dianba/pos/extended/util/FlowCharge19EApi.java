@@ -1,10 +1,12 @@
 package com.dianba.pos.extended.util;
 
 import com.alibaba.fastjson.JSON;
+import com.dianba.pos.extended.service.impl.DefaultCharge19eManager;
 import com.dianba.pos.extended.vo.ChargeFlow;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.Product;
-import com.dianba.pos.extended.vo.ProductListDto;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,12 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Created by Administrator on 2017/5/9 0009.
  */
 @SuppressWarnings("all")
 public class FlowCharge19EApi {
 
+    private static Logger logger= LogManager.getLogger(FlowCharge19EApi.class);
     /***流量充值**/
     public static ChargeFlowResult flowCharge(String chargeUrl, ChargeFlow flow) {
 
@@ -39,6 +43,7 @@ public class FlowCharge19EApi {
         // map.put("remake",flow.getRemark());
 
         String md5 = FlowChargeSign.getSignByMap(map);
+
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -75,6 +80,7 @@ public class FlowCharge19EApi {
             String params = MapUtil.createLinkString(pdmapar);
             // 发送请求参数
 
+            logger.info("流量充值请求参数:"+params);
             out.print(params);
             // flush输出流的缓冲
             out.flush();
@@ -86,6 +92,7 @@ public class FlowCharge19EApi {
                 result += line;
             }
             System.out.println(result);
+            logger.info("流量充值请求结果:"+result);
             cf= JSON.parseObject(result,ChargeFlowResult.class);
 
             System.out.println(cf);
