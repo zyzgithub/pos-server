@@ -85,6 +85,7 @@ public class FlowCharge19EApi {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
+            System.out.println(result);
             cf= JSON.parseObject(result,ChargeFlowResult.class);
 
             System.out.println(cf);

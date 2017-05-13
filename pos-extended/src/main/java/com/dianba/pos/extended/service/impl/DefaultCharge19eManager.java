@@ -77,7 +77,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态都去充值
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(-1, "pay", "success",
+        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(-1, "pay",
                 3);
         for (Order19EDto od : list) {
 
@@ -133,7 +133,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态都去充值
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(-1, "pay", "success",
+        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(-1, "pay",
                 4);
         for (Order19EDto od : list) {
 
