@@ -172,14 +172,15 @@ public class Charge19EController {
             String mobilePrefix = phone.substring(0, 7);
             Long phonel = Long.parseLong(mobilePrefix);
             PhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phonel);
-            if (type.equals("3")) {
+            if (phoneInfo == null) {
+
+                aj.setMsg("手机号码不存在!");
+                aj.setSuccess(false);
+            } else {
+                if (type.equals("3")) {
 
 
-                if (phoneInfo == null) {
 
-                    aj.setMsg("手机号码不存在!");
-                    aj.setSuccess(false);
-                } else {
                     // 关联menu表中的print_type ; 1.电信2.联通3.移动;
                     Long id = Long.parseLong(phoneInfo.getPrintType().toString());
 
@@ -187,41 +188,45 @@ public class Charge19EController {
 
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
-                }
-            } else if (type.equals("4")) {
-                Product pd = new Product();
-                pd.setMobile(phone);
-                pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-                String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
-                JSONObject jb = JSON.parseObject(result);
-                List<MenuDto> menulst = new ArrayList<>();
-                if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
 
-                    JSONArray ja = jb.getJSONArray("productList");
+                } else if (type.equals("4")) {
+                    Product pd = new Product();
+                    pd.setMobile(phone);
+                    pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+                    String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
+                    JSONObject jb = JSON.parseObject(result);
+                    List<MenuDto> menulst = new ArrayList<>();
+                    if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
 
-                    List<ProductListDto> lst = JSONArray.parseArray(ja.toString(),ProductListDto.class);
+                        JSONArray ja = jb.getJSONArray("productList");
+
+                        List<ProductListDto> lst = JSONArray.parseArray(ja.toString(),ProductListDto.class);
 
 
-                    for (ProductListDto pl : lst) {
+                        for (ProductListDto pl : lst) {
 
-                        //根据第三方商品id获取本地商品信息
-                        String productId=pl.getProductId();
+                            //根据第三方商品id获取本地商品信息
+                            String productId=pl.getProductId();
 
-                        Menu menu=menuManager.findByMenuKey(productId);
-                        MenuDto menuDto = new MenuDto();
-                        if(menu!=null){
-                            menuDto.setMenuId(menu.getId().toString());
-                            menuDto.setType(4);
-                            menuDto.setMenuName(menu.getName());
-                            menuDto.setPrice(menu.getPrice());
-                            menuDto.setStockPrice(menu.getOriginalPrice());
-                            menulst.add(menuDto);
+                            Menu menu=menuManager.findByMenuKey(productId);
+                            MenuDto menuDto = new MenuDto();
+                            if(menu!=null){
+                                menuDto.setMenuId(menu.getId().toString());
+                                menuDto.setType(4);
+                                menuDto.setMenuName(menu.getName());
+                                menuDto.setPrice(menu.getPrice());
+                                menuDto.setStockPrice(menu.getOriginalPrice());
+                                menulst.add(menuDto);
 
+                            }
                         }
                     }
-                }
-                jo.put("phoneInfo", phoneInfo);
-                jo.put("menuList", menulst);
+                    jo.put("phoneInfo", phoneInfo);
+                    jo.put("menuList", menulst);
+
+            }
+
+
             }
 
         }
