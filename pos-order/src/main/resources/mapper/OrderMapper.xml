@@ -21,7 +21,7 @@
         SELECT cas.create_time
         FROM 0085_cashier cas
         JOIN merchant me on cas.merchant_id=me.id
-        WHERE me.id=#{id}
+        WHERE me.id=#{id} ORDER BY cas.create_time limit 1;
     </select>
 
     <!--&lt;!&ndash;查詢商家每天的盈利數據&ndash;&gt;-->

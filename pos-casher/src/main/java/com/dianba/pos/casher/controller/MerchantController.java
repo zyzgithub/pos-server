@@ -102,15 +102,16 @@ public class MerchantController {
                         jo.put("posProfitMoney", value.toString());
                     } else {
 //                         //查询使用了几个月
-                        Integer iv = DateUtil.getDateByYueDiff(posCreateTime);
+                        int iv = DateUtil.getDateByYueDiff(posCreateTime);
                         BigDecimal ivb = new BigDecimal(Double.toString(iv));
                         Map m = new HashMap();
-                        if (!"0".equals(iv) || "1".equals(iv)) {
+                        if (iv==0 || iv==1) {
+                            jo.put("posProfitMoney", orderMoney.toString());
+
+                        } else {
                             //商米pos平均金额
                             Double db = orderMoney.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
                             jo.put("posProfitMoney", db.toString());
-                        } else {
-                            jo.put("posProfitMoney", orderMoney.toString());
                         }
                     }
                 }else{
@@ -138,16 +139,17 @@ public class MerchantController {
 
                     } else {
                         //查询商家使用了几个月
-                        Integer num = DateUtil.getDateByYueDiff(mCreateTime);
+                        int num = DateUtil.getDateByYueDiff(mCreateTime);
 
 
-                        if (!"1".equals(num) || !"0".equals(num)) {
+                        if (num==0 || num==1) {
+                            jo.put("mStockMoney", mStockMoney.toString());
+
+                        } else {
                             BigDecimal ivb = new BigDecimal(Double.toString(num));
                             //商家进货平均金额
                             Double db = a2.divide(ivb, 2, BigDecimal.ROUND_UP).doubleValue();
                             jo.put("mStockMoney", db.toString());
-                        } else {
-                            jo.put("mStockMoney", mStockMoney.toString());
                         }
                     }
                 }else {
@@ -167,15 +169,17 @@ public class MerchantController {
                     } else {
 
                         //查询商家进货了几个月
-                        Integer num = DateUtil.getDateByYueDiff(mCreateTime);
-                        if (!"0".equals(num) && !"1".equals(num)) {
+                        int num = DateUtil.getDateByYueDiff(mCreateTime);
+                        if (num==0|| num==1) {
+                            jo.put("mStockCount", "" + "" + mStockCouont);
+
+
+                        } else {
                             BigDecimal bd = new BigDecimal(mStockCouont);
                             BigDecimal bb = new BigDecimal(num);
                             //进货平均数
                             int count = (bd.divide(bb, 0).intValue());
                             jo.put("mStockCount", "" + "" + count);
-                        } else {
-                            jo.put("mStockCount", "" + "" + mStockCouont);
                         }
                 }
 
