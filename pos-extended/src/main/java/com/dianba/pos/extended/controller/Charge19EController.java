@@ -194,14 +194,14 @@ public class Charge19EController {
                 pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
                 String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
                 JSONObject jb = JSON.parseObject(result);
-
+                List<MenuDto> menulst = new ArrayList<>();
                 if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
 
                     JSONArray ja = jb.getJSONArray("productList");
 
                     List<ProductListDto> lst = JSONArray.parseArray(ja.toString(),ProductListDto.class);
 
-                    List<MenuDto> menulst = new ArrayList<>();
+
                     for (ProductListDto pl : lst) {
 
                         //根据第三方商品id获取本地商品信息
@@ -216,17 +216,12 @@ public class Charge19EController {
                             menuDto.setPrice(menu.getPrice());
                             menuDto.setStockPrice(menu.getOriginalPrice());
                             menulst.add(menuDto);
+
                         }
-
-
-
-
                     }
-
-                    jo.put("phoneInfo", phoneInfo);
-                    jo.put("menuList", menulst);
                 }
-
+                jo.put("phoneInfo", phoneInfo);
+                jo.put("menuList", menulst);
             }
 
         }
