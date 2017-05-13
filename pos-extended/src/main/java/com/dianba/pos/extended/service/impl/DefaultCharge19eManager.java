@@ -119,7 +119,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         //保存流量充值订单信息
         saveFlowChargeTable(order19EDto, chargeFlowResult);
         if (chargeFlowResult.getResultCode().equals("00000")) {
-            logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderId() + ",充值手机："
+            logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderNo() + ",充值手机："
                     + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号：" + chargeFlowResult.getOrderNo());
             orderMapper.editOrderInfoBy19e("processing", orderNum, 0);
             flag = true;
@@ -188,8 +188,8 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ct.setQueryResultUrl("");
         //第三方订单id
         ct.seteOrderId(chargeFlowResult.getOrderNo());
-        ct.setMerchantOrderId(chargeFlowResult.getMerOrderId());
-      ct.seteOrderId(chargeFlowResult.getOrderNo());
+        ct.setMerchantOrderId(chargeFlowResult.getMerOrderNo());
+        ct.seteOrderId(chargeFlowResult.getOrderNo());
         //关联order表id
         ct.setOrderId(order19EDto.getOrderId());
         //此单为流量充值订单

@@ -19,7 +19,7 @@ public class ChargeFlowResult {
     /**
      * 商户订单号
      **/
-    private String merOrderId;
+    private String merOrderNo;
 
     /*****/
     private String mobile;
@@ -56,12 +56,12 @@ public class ChargeFlowResult {
         this.orderNo = orderNo;
     }
 
-    public String getMerOrderId() {
-        return merOrderId;
+    public String getMerOrderNo() {
+        return merOrderNo;
     }
 
-    public void setMerOrderId(String merOrderId) {
-        this.merOrderId = merOrderId;
+    public void setMerOrderNo(String merOrderNo) {
+        this.merOrderNo = merOrderNo;
     }
 
     public String getMobile() {
