@@ -89,14 +89,12 @@
     </select>
     <!--根据商家订单号更新原订单信息-->
     <update id="editOrderInfoBy19e" parameterType="java.util.Map">
-        UPDATE `order` o
-        SET o.complete_time=#{completeTime}
-        ,o.charge_state=#{chargeState}
-        WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum};
+        UPDATE `order` o SET o.complete_time=#{completeTime},o.charge_state=#{chargeState}
+        WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
     </update>
     <!--查询此订单号是否被更新过了-->
     <select id="getByPayId" resultType="java.lang.Object">
-        SELECT charge_state FROM 'order' WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum};
+        SELECT charge_state FROM 'order' WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum}
     </select>
 
 </mapper>
