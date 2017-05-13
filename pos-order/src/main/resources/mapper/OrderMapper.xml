@@ -84,8 +84,8 @@
           JOIN order_menu om on om.order_id=o.id
           JOIN  menu m on m.id=om.menu_id
           WHERE m.merchant_id=#{merchantId}
-          AND o.pay_state=#{payState} and o.charge_state!=#{chargeState}
-          and m.is_flash=#{type};
+          AND o.pay_state=#{payState} and o.charge_state in ('undefined','error')
+          and m.is_flash=#{type}
     </select>
     <!--根据商家订单号更新原订单信息-->
     <update id="editOrderInfoBy19e" parameterType="java.util.Map">

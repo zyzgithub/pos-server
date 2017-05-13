@@ -12,8 +12,8 @@ public class HfCharge19EUtil
     /**
      * 19e话费充值测试平台
      **/
-//    public static final String HF_CHARGE_IP_PORT = "http://114.247.40.65:8093/";
-    public static final String HF_CHARGE_IP_PORT = "http://edx.19ego.cn:8080";
+//  public static final String HF_CHARGE_IP_PORT = "http://114.247.40.65:8093/";
+    public static final String HF_CHARGE_IP_PORT = "http://edx.19ego.cn:8080/";
 
     /**
      * 充值url
@@ -32,7 +32,7 @@ public class HfCharge19EUtil
 
     public static final String KEY = "CXRJSnB9fFqKxXEpQ7H0nub7f0c1EakZ9CBH0zcGcWbRHgttGc";
     public static final String MERCHANT_ID = "AA0ae02017050816303689733";
-    //    public static final String POS_TEST_URL = "http://apptest.0085.com/pos/";
+//        public static final String POS_TEST_URL = "http://apptest.0085.com/pos/";
     public static final String POS_TEST_URL = "http://no1.0085.com/pos/";
 
     public static final String NOTIFY_URL = POS_TEST_URL + ExtendedUrlConstant.CHARGE_19E_INFO + "hfChargeBack";

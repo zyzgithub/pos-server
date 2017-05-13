@@ -64,7 +64,8 @@ public class DefaultCharge19eManager implements Charge19eManager {
             if (cr.getResultCode().equals("success")) {
                 logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile() +
                         ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
-                //修改订单信息为confirm状态
+                //修改订单信息状态
+                orderMapper.editOrderInfoBy19e("processing", orderNum,0);
                 flag = true;
             }
         }
@@ -121,8 +122,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         if (chargeFlowResult.getResultCode().equals("success")) {
             logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderId() + ",充值手机："
                     + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号：" + chargeFlowResult.getOrderNo());
-
-            //修改订单信息为confirm状态
+            orderMapper.editOrderInfoBy19e("processing", orderNum,0);
             flag = true;
         }
         return flag;

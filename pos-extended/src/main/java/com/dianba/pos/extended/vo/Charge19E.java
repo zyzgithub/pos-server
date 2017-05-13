@@ -258,10 +258,10 @@ public class Charge19E {
 
     public static void main(String[] args) {
         Charge19E ch = new Charge19E();
-        ch.setChargeNumber("17052923456");
+        ch.setChargeNumber("13249196270");
         ch.setChargeMoney("10");
         ch.setChargeType("0");
-        ch.setMerchantOrderId("testRollbackOrder115446645");
+        ch.setMerchantOrderId("111111111111111");
         ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
         ch.setIspId("");
         ch.setProvinceId("");

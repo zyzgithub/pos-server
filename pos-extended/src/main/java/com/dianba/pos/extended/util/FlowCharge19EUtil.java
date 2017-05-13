@@ -18,13 +18,13 @@ public class FlowCharge19EUtil {
 //    public static final String FLOW_CHARGE_URL = FLOW_CHARGET_IP_PORT +
 //           "flow_center/createOrder/createOrder.jhtml";
    public static final String FLOW_CHARGE_URL = FLOW_CHARGET_IP_PORT +
-         "flow_chargecente/createOrder/createOrder.jhtml";
+         "createOrder/createOrder.jhtml";
 
     /******根据手机号等参数获取产品信息***/
-//   public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
-//            "flow_center/queryProduct/queryProductInfo.jhtml";
+ //  public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
+  //          "flow_center/queryProduct/queryProductInfo.jhtml";
     public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
-            "queryProduct/getGasCardInfo.jhtml";
+            "queryProduct/queryProductInfo.jhtml";
 //    public static final String MERCHANT_ID = "DL20130318104801102044";
    public static final String MERCHANT_ID = "AA0ae02017050816303689733";
 //    public static final String KEY = "123456789";

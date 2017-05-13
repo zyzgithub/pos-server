@@ -9,12 +9,14 @@ import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
 import com.dianba.pos.extended.po.PhoneInfo;
-import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PhoneInfoManager;
 import com.dianba.pos.extended.service.TsmCountryAreaManager;
-import com.dianba.pos.extended.util.*;
-import com.dianba.pos.extended.vo.FlowChargeCallBack;
+import com.dianba.pos.extended.util.FlowCharge19EApi;
+import com.dianba.pos.extended.util.FlowCharge19EUtil;
+import com.dianba.pos.extended.util.FlowChargeSign;
+import com.dianba.pos.extended.util.FlowOrderStatus;
 import com.dianba.pos.extended.vo.ChargeCallBack;
+import com.dianba.pos.extended.vo.FlowChargeCallBack;
 import com.dianba.pos.extended.vo.Product;
 import com.dianba.pos.extended.vo.ProductListDto;
 import com.dianba.pos.menu.mapper.MenuMapper;
@@ -61,6 +63,7 @@ public class Charge19EController {
 
     @Autowired
     private Charge19eMapper charge19eMapper;
+
     /**
      * 19e 话费充值平台
      *
@@ -98,57 +101,73 @@ public class Charge19EController {
     @ResponseBody
     public String hfChargeBack(ChargeCallBack chargeCallBack) {
 
-        logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
 
-        if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
+        if(!StringUtil.isEmpty(chargeCallBack.getChargeStatus())){
+            logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
-            //查询此订单是否更新完毕
-            Object ob = orderMapper.getByPayId(merchantOrderId);
-            if (!ob.equals("success")) {
-                //修改订单信息为success
-                Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
-                String date=DateUtil.getCurrDate("yyyyMMddHHmmss");
-                orderMapper.editOrderInfoBy19e("success", merchantOrderId, times);
-                //改变第三方订单状态
-                charge19eMapper.editCharge19e("success",date,merchantOrderId);
-                logger.info("话费订单充值成功!"+",订单号为："+chargeCallBack.getMerchantOrderId()+",充值金额为：");
-            }
+            Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+            if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
 
+                //查询此订单是否更新完毕
+                Object ob = orderMapper.getByPayId(merchantOrderId);
+                if (!ob.equals("success")) {
+                    //修改订单信息为success
+
+                    String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
+                    orderMapper.editOrderInfoBy19e("success", merchantOrderId, times);
+                    //改变第三方订单状态
+                    charge19eMapper.editCharge19e("success", date, merchantOrderId);
+                    logger.info("话费订单充值成功!" + ",订单号为：" + chargeCallBack.getMerchantOrderId() + ",充值金额为：");
+                }
+
+            }else{
+                orderMapper.editOrderInfoBy19e("error", merchantOrderId, times);
+            }
         }
+
+
         return chargeCallBack.callback();
 
 
     }
+
     @ResponseBody
     @RequestMapping("flowChargeCallBack")
-    public String flowChargeCallBack(FlowChargeCallBack chargeCallBack){
-        Map map = new HashMap<>();
-        String result="";
-        map.put("merOrderNo",chargeCallBack.getMerOrderNo());
-        map.put("orderNo",chargeCallBack.getOrderNo());
-        map.put("orderStatus",chargeCallBack.getOrderStatus());
-        String sign=FlowChargeSign.getSignByMap(map);
-        if(chargeCallBack.getSign().equals(sign)){ //签名认证通过
-            //充值成功
-            if(FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())){
-                //修改订单信息为success
+    public String flowChargeCallBack(FlowChargeCallBack chargeCallBack) {
+        String result = "";
+        if(!StringUtil.isEmpty(chargeCallBack.getOrderNo())){
+            Map map = new HashMap<>();
+
+            map.put("merOrderNo", chargeCallBack.getMerOrderNo());
+            map.put("orderNo", chargeCallBack.getOrderNo());
+            map.put("orderStatus", chargeCallBack.getOrderStatus());
+            String sign = FlowChargeSign.getSignByMap(map);
+            if (chargeCallBack.getSign().equals(sign)) { //签名认证通过
+                //充值成功
+                String merOrderNo = chargeCallBack.getMerOrderNo();
                 Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
-                String date=DateUtil.getCurrDate("yyyyMMddHHmmss");
-                String merOrderNo=chargeCallBack.getMerOrderNo();
-                Object ob = orderMapper.getByPayId(merOrderNo);
-                if (!ob.equals("success")) {
-                    //改变原订单状态
-                    orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
-                    //改变第三方订单状态
-                    charge19eMapper.editCharge19e("success",date,merOrderNo);
+                if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
+                    //修改订单信息为success
+
+                    String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
+
+                    Object ob = orderMapper.getByPayId(merOrderNo);
+                    if (!ob.equals("success")) {
+                        //改变原订单状态
+                        orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
+                        //改变第三方订单状态
+                        charge19eMapper.editCharge19e("success", date, merOrderNo);
+                    }
+                    result = "resultCode=SUCCESS";
+
+                } else {
+                    orderMapper.editOrderInfoBy19e("error", merOrderNo, times);
+                    result = "resultCode=ERROR";
                 }
-                result="resultCode=SUCCESS";
 
-            }else {
-                result="resultCode=ERROR";
             }
-
         }
+
         return result;
     }
 
@@ -180,7 +199,6 @@ public class Charge19EController {
                 if (type.equals("3")) {
 
 
-
                     // 关联menu表中的print_type ; 1.电信2.联通3.移动;
                     Long id = Long.parseLong(phoneInfo.getPrintType().toString());
 
@@ -200,17 +218,17 @@ public class Charge19EController {
 
                         JSONArray ja = jb.getJSONArray("productList");
 
-                        List<ProductListDto> lst = JSONArray.parseArray(ja.toString(),ProductListDto.class);
+                        List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
 
 
                         for (ProductListDto pl : lst) {
 
                             //根据第三方商品id获取本地商品信息
-                            String productId=pl.getProductId();
+                            String productId = pl.getProductId();
 
-                            Menu menu=menuManager.findByMenuKey(productId);
+                            Menu menu = menuManager.findByMenuKey(productId);
                             MenuDto menuDto = new MenuDto();
-                            if(menu!=null){
+                            if (menu != null) {
                                 menuDto.setMenuId(menu.getId().toString());
                                 menuDto.setType(4);
                                 menuDto.setMenuName(menu.getName());
@@ -224,7 +242,7 @@ public class Charge19EController {
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
 
-            }
+                }
 
 
             }
