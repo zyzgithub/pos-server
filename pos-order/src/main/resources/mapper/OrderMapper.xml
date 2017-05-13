@@ -94,7 +94,7 @@
     </update>
     <!--查询此订单号是否被更新过了-->
     <select id="getByPayId" resultType="java.lang.Object">
-        SELECT charge_state FROM 'order' WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum}
+        SELECT charge_state FROM 'order' WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
     </select>
 
 </mapper>
