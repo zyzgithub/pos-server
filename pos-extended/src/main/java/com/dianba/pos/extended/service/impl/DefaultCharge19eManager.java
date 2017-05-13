@@ -158,8 +158,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ct.setChargeNumber(or.getPrice().toString());
         ct.setChargePhone(or.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));
-
-        ct.setResultCode(cr.getResultCode());
+        ct.setResultCode("");
         ct.setResultDesc(cr.getResultDesc());
         ct.setQueryResultUrl(cr.getQueryResultUrl());
         //第三方订单id
@@ -181,13 +180,14 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ct.setChargeNumber(order19EDto.getPrice().toString());
         ct.setChargePhone(order19EDto.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));
-
-        ct.setResultCode(chargeFlowResult.getResultCode());
+        ct.setResultCode("");
         ct.setResultDesc(chargeFlowResult.getResultDesc());
         ct.setQueryResultUrl("");
         //第三方订单id
         ct.seteOrderId(chargeFlowResult.getOrderNo());
         ct.setMerchantOrderId(chargeFlowResult.getMerOrderId());
+
+
 
         ct.seteOrderId(chargeFlowResult.getOrderNo());
         //关联order表id
