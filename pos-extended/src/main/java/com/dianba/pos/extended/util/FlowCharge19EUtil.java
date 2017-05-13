@@ -11,7 +11,7 @@ public class FlowCharge19EUtil {
      * 流量充值请求地址
      **/
 //   public static final String FLOW_CHARGET_IP_PORT = "http://114.247.40.65:10000/";
-   public static final String FLOW_CHARGET_IP_PORT = " http://epublic.19e.cn/flow_chargecenter/";
+   public static final String FLOW_CHARGET_IP_PORT = "http://epublic.19e.cn/flow_chargecenter/";
 
 
     /***流量充值*/
