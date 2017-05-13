@@ -58,16 +58,15 @@ public class DefaultCharge19eManager implements Charge19eManager {
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
-        if(cr.getResultCode().equals("SUCCESS")){
+        if (cr.getResultCode().equals("SUCCESS")) {
             //保存话费充值订单信息
             saveHfChargeTable(or, cr);
-            if (cr.getResultCode().equals("success")) {
-                logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile() +
-                        ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
-                //修改订单信息状态
-                orderMapper.editOrderInfoBy19e("processing", orderNum,0);
-                flag = true;
-            }
+            logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile() +
+                    ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
+            //修改订单信息状态
+            orderMapper.editOrderInfoBy19e("processing", orderNum, 0);
+            flag = true;
+
         }
         return flag;
 
@@ -82,7 +81,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
                 3);
         for (Order19EDto od : list) {
 
-            if(!StringUtil.isEmpty(od.getMobile())){
+            if (!StringUtil.isEmpty(od.getMobile())) {
                 //查询此订单的充值次数
                 Integer count = charge19eMapper.chargeCountByOrder(od.getOrderId());
                 if (count < 3) { //没有充值3次
@@ -119,10 +118,10 @@ public class DefaultCharge19eManager implements Charge19eManager {
         ChargeFlowResult chargeFlowResult = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
         //保存流量充值订单信息
         saveFlowChargeTable(order19EDto, chargeFlowResult);
-        if (chargeFlowResult.getResultCode().equals("success")) {
+        if (chargeFlowResult.getResultCode().equals("00000")) {
             logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderId() + ",充值手机："
                     + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号：" + chargeFlowResult.getOrderNo());
-            orderMapper.editOrderInfoBy19e("processing", orderNum,0);
+            orderMapper.editOrderInfoBy19e("processing", orderNum, 0);
             flag = true;
         }
         return flag;
