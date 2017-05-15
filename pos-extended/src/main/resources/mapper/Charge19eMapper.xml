@@ -3,7 +3,7 @@
 <mapper namespace="com.dianba.pos.extended.mapper.Charge19eMapper">
 
     <select id="chargeCountByOrder" resultType="java.lang.Integer">
-        SELECT count(1) from charge_19e WHERE orderId=#{orderId};
+        SELECT count(1) from charge_19e WHERE orderId=#{orderId}
     </select>
     <update id="editCharge19e" parameterType="java.util.Map">
         UPDATE charge_19e SET chargeState=#{chargeState},finishTime=#{finishTime} WHERE merchantOrderId=#{merchantOrderId}

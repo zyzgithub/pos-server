@@ -53,7 +53,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         charge19E.setChargeMoney(or.getPrice().toString());
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
-                + RandomStringUtils.random(4, "0123456789") + "hfcharge" + or.getOrderId();
+                + RandomStringUtils.random(4, "0123456789") + or.getOrderId();
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
