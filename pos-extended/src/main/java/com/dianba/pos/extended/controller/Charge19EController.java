@@ -111,7 +111,7 @@ public class Charge19EController {
         if (!StringUtil.isEmpty(chargeCallBack.getChargeStatus())) {
             logger.info("话费充值回调类：========");
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
-            Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+           // Long times = Long.parseInt(DateUtil.currentTimeMillis().toString());
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
 
                 //查询此订单是否更新完毕
@@ -119,7 +119,7 @@ public class Charge19EController {
                 if (!ob.equals("success")) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
-                    orderMapper.editOrderInfoBy19e("success", merchantOrderId, times);
+                    orderMapper.editOrderInfoBy19e("success", merchantOrderId, 0);
                     //改变第三方订单状态
                     charge19eMapper.editCharge19e("success", date, merchantOrderId);
                     logger.info("话费订单充值成功!" + ",订单号为：" + chargeCallBack.getMerchantOrderId() + ",充值金额为：");
@@ -127,7 +127,7 @@ public class Charge19EController {
 
             } else {
                 logger.info("话费充值回调返回：ERROR=====================");
-                orderMapper.editOrderInfoBy19e("error", merchantOrderId, times);
+                orderMapper.editOrderInfoBy19e("error", merchantOrderId, 0);
             }
         }
 
