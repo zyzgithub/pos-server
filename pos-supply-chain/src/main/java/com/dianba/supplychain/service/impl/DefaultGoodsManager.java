@@ -123,6 +123,7 @@ public class DefaultGoodsManager implements GoodsManager {
                 items.setName(goods.getName());
                 items.setImage(goods.getImg());
                 items.setStock(stock < 0 ? 0 : stock);
+                items.setRetailPrice(BigDecimal.valueOf(warehouseGood.getRetailPrice()));
                 items.setPrice(new BigDecimal(warehouseGood.getMarketPrice())
                         .setScale(2, BigDecimal.ROUND_HALF_UP));
                 GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());

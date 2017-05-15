@@ -75,9 +75,19 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 if (defaultPurchase < item.getMinSales()) {
                     defaultPurchase = item.getMinSales();
                 }
-                if (item.getStock() < defaultPurchase) {
-                    defaultPurchase = item.getStock();
-                }
+                BigDecimal buyRate = item.getRetailPrice().subtract(item.getPrice())
+                        .divide(item.getRetailPrice(), BigDecimal.ROUND_HALF_UP)
+                        .multiply(new BigDecimal(100))
+                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+                item.setBuyRate(buyRate + "%");
+                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
+                        .subtract(item.getPrice())
+                        .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
+                        .multiply(new BigDecimal(100))
+                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+                item.setSaleRate(saleRate + "%");
+                //一键采购不限制仓库是否有货,无货一样可以采购
+                item.setStock(defaultPurchase * 10000);
                 item.setDefaultPurchase(defaultPurchase);
                 item.setName(name);
             }
@@ -114,6 +124,12 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 items.setName(menuEntity.getName());
                 items.setId(menuEntity.getId());
                 items.setStock(todayRepertory);
+                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
+                        .subtract(items.getPrice())
+                        .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
+                        .multiply(new BigDecimal(100))
+                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+                items.setSaleRate(saleRate + "%");
                 matchItems.getItems().add(items);
                 externalList.add(matchItems);
             }
