@@ -56,7 +56,7 @@ public class HfCharge19EApi {
             String params = param.params(MD5);
             System.out.println(params);
 
-            logger.info("获取流量充值请求参数:========"+params);
+            logger.info("获取话费充值请求参数:========"+params);
             out.print(params);
             // flush输出流的缓冲
             out.flush();
@@ -71,7 +71,7 @@ public class HfCharge19EApi {
 
             tojson = HfCharge19EUtil.toJson(urlStr);
 
-            logger.info("流量充值返回结果：======"+tojson);
+            logger.info("话费充值返回结果：======"+tojson);
             System.out.println(tojson);
            cr=(ChargeResult)JSONObject.parseObject(tojson,ChargeResult.class);
         } catch (IOException e) {

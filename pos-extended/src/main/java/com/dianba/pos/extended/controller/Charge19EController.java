@@ -14,7 +14,6 @@ import com.dianba.pos.extended.service.PhoneInfoManager;
 import com.dianba.pos.extended.service.TsmCountryAreaManager;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
-import com.dianba.pos.extended.util.FlowChargeSign;
 import com.dianba.pos.extended.util.FlowOrderStatus;
 import com.dianba.pos.extended.vo.ChargeCallBack;
 import com.dianba.pos.extended.vo.FlowChargeCallBack;
@@ -85,6 +84,7 @@ public class Charge19EController {
 
         return new AjaxJson();
     }
+
     /**
      * 19e 话费充值平台
      *
@@ -93,7 +93,7 @@ public class Charge19EController {
     @ResponseBody
     @RequestMapping(value = "flowChargeBy19e")
     public AjaxJson flowChargeBy19e(HttpServletResponse response, String chargeNumber, String chargeMoney,
-                                  String fillType, String chargeType) {
+                                    String fillType, String chargeType) {
 
         AjaxJson aj = new AjaxJson();
 
@@ -101,16 +101,15 @@ public class Charge19EController {
 
         return new AjaxJson();
     }
+
     /**
      * 话费充值回调方法
      **/
     @RequestMapping("hfChargeBack")
     @ResponseBody
     public String hfChargeBack(ChargeCallBack chargeCallBack) {
-
-
-        if(!StringUtil.isEmpty(chargeCallBack.getChargeStatus())){
-            logger.info("话费充值回调类：" + chargeCallBack.callback().toString());
+        if (!StringUtil.isEmpty(chargeCallBack.getChargeStatus())) {
+            logger.info("话费充值回调类：========");
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
             Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
@@ -126,54 +125,50 @@ public class Charge19EController {
                     logger.info("话费订单充值成功!" + ",订单号为：" + chargeCallBack.getMerchantOrderId() + ",充值金额为：");
                 }
 
-            }else{
+            } else {
+                logger.info("话费充值回调返回：ERROR=====================");
                 orderMapper.editOrderInfoBy19e("error", merchantOrderId, times);
             }
         }
 
-
         return chargeCallBack.callback();
-
 
     }
 
     @ResponseBody
     @RequestMapping("flowChargeCallBack")
     public String flowChargeCallBack(FlowChargeCallBack chargeCallBack) {
+        logger.info("进入流量充值回调：");
         String result = "";
-        if(!StringUtil.isEmpty(chargeCallBack.getOrderNo())){
+        if (!StringUtil.isEmpty(chargeCallBack.getOrderNo())) {
             Map map = new HashMap<>();
-
             map.put("merOrderNo", chargeCallBack.getMerOrderNo());
             map.put("orderNo", chargeCallBack.getOrderNo());
             map.put("orderStatus", chargeCallBack.getOrderStatus());
-              //签名认证通过
-                //充值成功
-                String merOrderNo = chargeCallBack.getMerOrderNo();
-                Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
-                if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
-                    //修改订单信息为success
-
-                    String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
-
-                    Object ob = orderMapper.getByPayId(merOrderNo);
-                    if (!ob.equals("success")) {
-                        //改变原订单状态
-                        orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
-                        //改变第三方订单状态
-                        charge19eMapper.editCharge19e("success", date, merOrderNo);
-                    }
-                    result = "resultCode=SUCCESS";
-
-                } else {
-                    orderMapper.editOrderInfoBy19e("error", merOrderNo, times);
-
+            //签名认证通过
+            //充值成功
+            String merOrderNo = chargeCallBack.getMerOrderNo();
+            Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+            if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
+                //修改订单信息为success
+                String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
+                Object ob = orderMapper.getByPayId(merOrderNo);
+                if (!ob.equals("success")) {
+                    //改变原订单状态
+                    orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
+                    //改变第三方订单状态
+                    charge19eMapper.editCharge19e("success", date, merOrderNo);
                 }
+                result = "resultCode=SUCCESS";
+                logger.info("流量充值回调操作成功!SUCCESS，");
+            } else {
+                orderMapper.editOrderInfoBy19e("error", merOrderNo, times);
+                logger.info("流量充值回调返回充值失败!ERROR");
+            }
 
-            }else {
+        } else {
             result = "resultCode=ERROR";
         }
-
 
         return result;
     }
@@ -206,7 +201,6 @@ public class Charge19EController {
                     // 关联menu表中的print_type ; 1.电信2.联通3.移动;
                     Long id = Long.parseLong(phoneInfo.getPrintType().toString());
                     List<MenuDto> menulst = menuMapper.getMenuListByPhoneAndType(-1L, phonel, isFlash);
-     //               List<MenuDto> mdlst=new ArrayList<>();
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
 
@@ -220,16 +214,14 @@ public class Charge19EController {
                     if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
 
                         JSONArray ja = jb.getJSONArray("productList");
-
                         List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
-
-                        logger.info("流量充值商品列表信息：===="+ja.toString());
+                        logger.info("流量充值商品列表信息：====" + ja.toString());
                         for (ProductListDto pl : lst) {
 
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
-                           logger.info("根据第三方商品id获取本地商品:===="+productId);
-                            Menu menu = menuManager.findByMenuKeyAndDisplayAndIsDelete(productId,"Y","N");
+                            logger.info("根据第三方商品id获取本地商品:====" + productId);
+                            Menu menu = menuManager.findByMenuKeyAndDisplayAndIsDelete(productId, "Y", "N");
                             MenuDto menuDto = new MenuDto();
                             if (menu != null) {
                                 menuDto.setMenuId(menu.getId().toString());
