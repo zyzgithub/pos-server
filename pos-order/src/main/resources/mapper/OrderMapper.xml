@@ -76,6 +76,7 @@
              o.id orderId,
              o.pay_id orderNum,
              m.price price,
+             m.name menuName,
              o.mobile mobile,
              o.pay_state payState,
              m.is_flash type,
@@ -89,7 +90,9 @@
     </select>
     <!--根据商家订单号更新原订单信息-->
     <update id="editOrderInfoBy19e" parameterType="java.util.Map">
-        UPDATE `order` o SET o.complete_time=#{completeTime},o.charge_state=#{chargeState}
+        UPDATE `order` o
+        SET o.complete_time=#{completeTime}
+        ,o.charge_state=#{chargeState}
         WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
     </update>
     <!--查询此订单号是否被更新过了-->

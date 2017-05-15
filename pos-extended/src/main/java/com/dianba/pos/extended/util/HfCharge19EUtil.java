@@ -34,7 +34,7 @@ public class HfCharge19EUtil
     public static final String MERCHANT_ID = "AA0ae02017050816303689733";
 //        public static final String POS_TEST_URL = "http://apptest.0085.com/pos/";
     public static final String POS_TEST_URL = "http://no1.0085.com/pos/";
-
+//
     public static final String NOTIFY_URL = POS_TEST_URL + ExtendedUrlConstant.CHARGE_19E_INFO + "hfChargeBack";
 
     public static String toJson(String result) {

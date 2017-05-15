@@ -51,33 +51,31 @@ public class MerchantController {
         JSONObject jo = new JSONObject();
 
         System.out.println("name" + name);
-        if (StringUtil.isEmpty(name) || StringUtil.isEmpty(phone) || StringUtil.isEmpty(merchantId)) {
+        if (StringUtil.isEmpty(phone) || StringUtil.isEmpty(merchantId)) {
             flag = false;
             msg = "参数输入有误!";
             stateCode = "01";
 
         } else {
 
-
-            Long merId=Long.parseLong(merchantId);
-            Map<String, Object> map = orderMapper.verifyMerchantUser(name, merId, phone);
+            Map<String, Object> map = merchantMapper.verifyMerchantUser(merchantId, phone);
 
             //说明是不是pos商家用户
 
-            if (map.get("num").toString().equals("0")) {
+
+            if (map==null) {
                 flag = false;
                 msg = "该用户不是pos商家用户!";
                 stateCode = "01";
             } else {
                 //取得商家id
-
-                 Merchant merchantTab= merchantManager.findById(merId);
-                String userId = map.get("user_id").toString();
+                 Merchant merchantTab= merchantManager.findById(Long.parseLong(merchantId));
+                String userId = map.get("userId").toString();
                 //获取要查询的月数
                 String month = request.getParameter("month");
                 Integer months = Integer.parseInt(month);
                 //先获取商家开始使用pos的时间
-                Long createTime = orderMapper.getPosStrtTimeByMerchant(Long.parseLong(merchantId));
+                Long createTime = Long.parseLong(map.get("posCreateDate").toString());
                 //获取商家注册时间
                 Long createTime2 = merchantMapper.getMerchantCreate(Long.parseLong(merchantId));
                 //获取当前时间戳
@@ -188,7 +186,13 @@ public class MerchantController {
 
                 }
                 jo.put("user_id", userId);
-                jo.put("user_name", name);
+
+                if(StringUtil.isEmpty(map.get("userName").toString())){
+
+                    jo.put("user_name","未知姓名");
+                }else{
+                    jo.put("user_name",map.get("userName"));
+                }
                 jo.put("phone", phone);
                 jo.put("merchantId",merchantId);
                 flag = true;

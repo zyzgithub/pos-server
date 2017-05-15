@@ -41,10 +41,15 @@
     </select>
     <!--查询是否是pos机商家用户-->
     <select id="verifyMerchantUser" resultType="java.util.HashMap">
-        SELECT count(1) num
-        ,merchant_id merchant_id
-        FROM `0085_cashier`
-        where name=#{user_name} AND id_card=#{card} AND mobile=#{phone}
+        SELECT pos.create_time  posCreateDate
+          ,me.id merchantId
+          ,us.id userId
+          ,us.nickname userName
+          from `0085_merchant_pos` pos
+          LEFT JOIN  merchant me
+          LEFT JOIN user us
+          on us.id=me.user_id
+          on pos.merchant_id=me.id WHERE me.id=#{merchantId} AND me.mobile=#{phone};
     </select>
 
 </mapper>

@@ -19,5 +19,7 @@ public interface MenuMapper {
      */
     List<MenuDto> getMenuListByPhoneAndType(
             @Param("merchantId") Long merchantId, @Param("phone") Long phone, @Param("type") int type);
+
+
 }
 

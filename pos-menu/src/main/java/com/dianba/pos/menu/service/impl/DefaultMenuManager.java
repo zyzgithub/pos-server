@@ -32,8 +32,8 @@ public class DefaultMenuManager implements MenuManager {
     }
 
     @Override
-    public Menu findByMenuKey(String menuKey) {
-        return menuJpaRepository.findByMenuKey(menuKey);
+    public Menu findByMenuKeyAndDisplayAndIsDelete(String menuKey,String display,String isDelete) {
+        return menuJpaRepository.findByMenuKeyAndDisplayAndIsDelete(menuKey,display,isDelete);
     }
 
 

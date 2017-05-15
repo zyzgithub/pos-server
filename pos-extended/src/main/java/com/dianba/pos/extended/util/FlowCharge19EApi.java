@@ -137,6 +137,8 @@ public class FlowCharge19EApi {
         String tojson = "";
         try {
             URL realUrl = new URL(chargeUrl);
+            logger.info("获取流量商品信息Url：====="+chargeUrl);
+
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
             // 设置通用的请求属性
@@ -164,6 +166,7 @@ public class FlowCharge19EApi {
             Map<String, String> mapparsSort = MapUtil.sortMapByKey(mappars);
             String params = MapUtil.createLinkString(mapparsSort);
             String urlStr = URLDecoder.decode(params, "UTF-8");
+            logger.info("获取流量商品列表参数:=========="+urlStr);
             out.print(params);
             // flush输出流的缓冲
             out.flush();
@@ -175,6 +178,7 @@ public class FlowCharge19EApi {
                 result += line;
             }
 
+            logger.info("获取流量商品列表返回信息:========="+result);
 
         } catch (IOException e) {
             e.printStackTrace();

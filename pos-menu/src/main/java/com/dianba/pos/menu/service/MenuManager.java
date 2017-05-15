@@ -28,7 +28,7 @@ public interface MenuManager {
      * @param menuKey
      * @return
      */
-    Menu findByMenuKey(String menuKey);
+    Menu findByMenuKeyAndDisplayAndIsDelete(String menuKey,String display,String isDelete);
 
 
 }

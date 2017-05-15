@@ -27,8 +27,6 @@ public interface OrderMapper {
      */
     Long getMerchantCreate(Long id);
 
-    Map<String, Object> verifyMerchantUser(@Param("user_name") String userName, @Param("merchantId")
-            Long merchantId, @Param("phone") String phone);
 
     Integer getRemarkCount(List<String> remark);
 

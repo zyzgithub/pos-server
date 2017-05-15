@@ -31,5 +31,5 @@ public interface MenuJpaRepository extends JpaRepository<Menu, Integer> {
      * @param menuKey
      * @return
      */
-    Menu findByMenuKey(String menuKey);
+    Menu findByMenuKeyAndDisplayAndIsDelete(String menuKey,String display,String isDelete);
 }

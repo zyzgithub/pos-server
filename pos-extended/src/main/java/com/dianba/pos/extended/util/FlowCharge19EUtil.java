@@ -10,6 +10,7 @@ public class FlowCharge19EUtil {
     /**
      * 流量充值请求地址
      **/
+
 //   public static final String FLOW_CHARGET_IP_PORT = "http://114.247.40.65:10000/";
    public static final String FLOW_CHARGET_IP_PORT = "http://epublic.19e.cn/flow_chargecenter/";
 
@@ -21,8 +22,8 @@ public class FlowCharge19EUtil {
          "createOrder/createOrder.jhtml";
 
     /******根据手机号等参数获取产品信息***/
- //  public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
-  //          "flow_center/queryProduct/queryProductInfo.jhtml";
+//   public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
+//            "flow_center/queryProduct/queryProductInfo.jhtml";
     public static final String QUERY_PRODUCT = FLOW_CHARGET_IP_PORT +
             "queryProduct/queryProductInfo.jhtml";
 //    public static final String MERCHANT_ID = "DL20130318104801102044";

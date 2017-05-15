@@ -38,7 +38,7 @@ public interface MerchantMapper {
      */
     Long getMerchantCreate(Long id);
 
-    Map<String, Object> verifyMerchantUser(@Param("user_name") String userName
-            , @Param("card") String card, @Param("phone") String phone);
+    Map<String, Object> verifyMerchantUser(@Param("merchantId") String merchantId,
+           @Param("phone") String phone);
 
 }
