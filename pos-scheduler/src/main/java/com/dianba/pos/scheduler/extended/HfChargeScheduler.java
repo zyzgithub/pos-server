@@ -17,7 +17,7 @@ public class HfChargeScheduler {
     @Autowired
     private Charge19eManager charge19eManager;
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void hfCharge() {
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString().substring(0, 6);
