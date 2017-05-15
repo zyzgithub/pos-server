@@ -148,21 +148,21 @@ public class Charge19EController {
             //签名认证通过
             //充值成功
             String merOrderNo = chargeCallBack.getMerOrderNo();
-            Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
+            //Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
             if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = orderMapper.getByPayId(merOrderNo);
                 if (!ob.equals("success")) {
                     //改变原订单状态
-                    orderMapper.editOrderInfoBy19e("success", merOrderNo, times);
+                    orderMapper.editOrderInfoBy19e("success", merOrderNo, 0);
                     //改变第三方订单状态
                     charge19eMapper.editCharge19e("success", date, merOrderNo);
                 }
                 result = "resultCode=SUCCESS";
                 logger.info("流量充值回调操作成功!SUCCESS，");
             } else {
-                orderMapper.editOrderInfoBy19e("error", merOrderNo, times);
+                orderMapper.editOrderInfoBy19e("error", merOrderNo, 0);
                 logger.info("流量充值回调返回充值失败!ERROR");
             }
 
