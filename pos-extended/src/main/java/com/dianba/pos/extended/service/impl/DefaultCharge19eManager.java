@@ -59,6 +59,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
+        charge19E.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
         if (cr.getResultCode().equals("SUCCESS")) {
             //保存话费充值订单信息
