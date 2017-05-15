@@ -86,8 +86,12 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 item.setSaleRate(saleRate + "%");
+                //限制采购数量为仓库库存数量
+                if (item.getStock() < defaultPurchase) {
+                    defaultPurchase = item.getStock();
+                }
                 //一键采购不限制仓库是否有货,无货一样可以采购
-                item.setStock(defaultPurchase * 10000);
+//                item.setStock(defaultPurchase * 10000);
                 item.setDefaultPurchase(defaultPurchase);
                 item.setName(name);
             }
