@@ -49,6 +49,7 @@
                     </archive>
                     <excludes>
                         <exclude>application.properties</exclude>
+                        <exclude>extended.properties</exclude>
                     </excludes>
                 </configuration>
             </plugin>

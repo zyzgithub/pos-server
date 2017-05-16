@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.report.mapper.PosReportMapper">
+
+    <resultMap id="PosStatistics" type="com.dianba.pos.report.pojo.PosStatistics">
+        <result column="used_merchant" property="usedMerchant"/>
+        <result column="added_merchant" property="addedMerchant"/>
+        <result column="order_count" property="orderCount"/>
+        <result column="total_merchant" property="totalMerchant"/>
+        <result column="total_order_count" property="totalOrderCount"/>
+        <result column="total_turnover" property="totalTurnover"/>
+    </resultMap>
+    
+    <resultMap id="TopMerchant" type="com.dianba.pos.report.pojo.TopMerchant">
+        <result column="title" property="merchantName"/>
+        <result column="today_origin" property="turnover"/>
+    </resultMap>
+
+    <!--今日新增商家数，今日使用商家数，今日订单数，累计商家，累计订单，累计营业额-->
+    <select id="statisticsPosMerchantOrder" resultMap="PosStatistics">
+        select * from (
+            select count(1) added_merchant
+            from 0085_merchant_pos t
+            where t.`edition_code_value`!=0 and t.`create_time`>UNIX_TIMESTAMP(curdate())
+        ) a
+        inner join (
+            select count(1) used_merchant from(
+            select t.`merchant_id` from `0085_cashier_login_log` t
+            where t.`create_time`>UNIX_TIMESTAMP(curdate())
+            group by t.`merchant_id`) a
+        ) b on 1=1
+        inner join (
+            select count(1) order_count from `order` t
+            where t.state in('pay','confirm') and t.pay_state in('pay','success')
+            and t.`order_type`='supermarket'
+            and t.pay_type in('supermarkt_cash','supermarkt_alibarcode','supermarkt_wxbarcode')
+            and t.`create_time`>UNIX_TIMESTAMP(curdate())
+        ) c on 1=1
+        inner join (
+            select count(1) total_merchant from(
+            select t.`merchant_id` from `0085_cashier_login_log` t
+            group by t.`merchant_id`) a
+        ) d on 1=1
+        inner join (
+            select count(1) total_order_count,sum(t.`origin`) total_turnover from `order` t
+            where t.state in('pay','confirm') and t.pay_state in('pay','success')
+            and t.`order_type`='supermarket'
+            and t.pay_type in('supermarkt_cash','supermarkt_alibarcode','supermarkt_wxbarcode')
+        ) e on 1=1
+    </select>
+
+    <!--今日营业额-->
+    <select id="statisticsPosTurnover" resultType="java.util.Map">
+        select t.pay_type
+        ,sum(if(t.pay_type='supermarkt_cash',t.`origin`,0)) cash_turnover
+        ,sum(if(t.pay_type='supermarkt_alibarcode',t.`origin`,0)) ali_turnover
+        ,sum(if(t.pay_type='supermarkt_wxbarcode',t.`origin`,0)) wechat_turnover
+        from `order` t
+        where t.state in('pay','confirm') and t.pay_state in('pay','success')
+        and t.`order_type`='supermarket'
+        and t.pay_type in('supermarkt_cash','supermarkt_alibarcode','supermarkt_wxbarcode')
+        and t.`create_time` > UNIX_TIMESTAMP(curdate())
+        group by t.pay_type
+    </select>
+
+    <!-- 今日营业额前10的商家 -->
+    <select id="statisticsPosMerchantTopTen" resultMap="TopMerchant">
+        select b.*,c.`title` from (
+        select * from (
+        select t.`merchant_id`,sum(t.`origin`) today_origin
+        from `order` t
+        where t.state in('pay','confirm') and t.pay_state in('pay','success')
+        and t.`order_type`='supermarket'
+        and t.pay_type in('supermarkt_cash','supermarkt_alibarcode','supermarkt_wxbarcode')
+        and t.`create_time` > UNIX_TIMESTAMP(curdate())
+        group by t.merchant_id
+        ) a order by a.today_origin desc
+        ) b
+        inner join merchant c on c.id=b.merchant_id
+        limit 10
+    </select>
+</mapper>

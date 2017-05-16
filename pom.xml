@@ -26,6 +26,7 @@
         <module>pos-merchant</module>
         <module>pos-order</module>
         <module>pos-scheduler</module>
+        <module>pos-report-form</module>
     </modules>
 
     <dependencies>
