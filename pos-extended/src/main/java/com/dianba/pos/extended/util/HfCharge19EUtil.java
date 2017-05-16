@@ -6,9 +6,8 @@ import com.dianba.pos.extended.config.ExtendedUrlConstant;
 /**
  * Created by Administrator on 2017/5/3 0003.
  */
-public class HfCharge19EUtil
+public class HfCharge19EUtil{
 
-{
     /**
      * 19e话费充值测试平台
      **/
@@ -18,8 +17,7 @@ public class HfCharge19EUtil
     /**
      * 充值url
      **/
-    public static final String HF_CHARGE_19E_URL = HF_CHARGE_IP_PORT +
-            "hfCharge/requestCharge3In1KvDealer/deal";
+    public static final String HF_CHARGE_19E_URL = HF_CHARGE_IP_PORT +"hfCharge/requestCharge3In1KvDealer/deal";
 
     public static final String HT_ORDER_INFO_QUERY = HF_CHARGE_IP_PORT + "hfCharge/orderInfoQueryKvDealer/deal";
 

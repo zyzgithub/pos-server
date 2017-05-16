@@ -78,7 +78,7 @@ public class HttpProxy {
     /**
      * 设置header
      *
-     * @param request
+     * @param 
      * @return
      */
     public void setHeader(AbstractHttpMessage httpRequest) {

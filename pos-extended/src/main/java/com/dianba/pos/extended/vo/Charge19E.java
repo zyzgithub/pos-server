@@ -199,59 +199,29 @@ public class Charge19E {
         this.provinceId = provinceId;
     }
 
-    @Override
-    public String toString() {
-        return "Charge_19E{" +
-                "chargeNumber='" + chargeNumber + '\'' +
-                ", chargeMoney='" + chargeMoney + '\'' +
-                ", fileType='" + fillType + '\'' +
-                ", chargeType='" + chargeType + '\'' +
-                ", merchantId='" + merchantId + '\'' +
-                ", merchantOrderId='" + merchantOrderId + '\'' +
-                ", sendNotifyUrl='" + sendNotifyUrl + '\''
-                + ", ispId='" + ispId + '\''
-                + ", provinceId='" + provinceId + '\'' +
-
-                '}';
-    }
 
     public String sign() {
 
         return
-                "chargeNumber=" + chargeNumber + '&' +
-                        "chargeMoney=" + chargeMoney + '&' +
-                        "fillType=" + fillType + '&' +
-                        "chargeType=" + chargeType + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "merchantOrderId=" + merchantOrderId + '&' +
-                        "sendNotifyUrl=" + sendNotifyUrl + '&' +
-                        "ispId=" + ispId + '&' +
-                        "provinceId=" + provinceId + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "key=" + HfCharge19EUtil.KEY;
+                "chargeNumber=" + chargeNumber + '&' + "chargeMoney=" + chargeMoney + '&'
+                        + "fillType=" + fillType + '&' + "chargeType=" + chargeType + '&'
+                        + "merchantId=" + merchantId + '&' + "merchantOrderId=" + merchantOrderId + '&'
+                        + "sendNotifyUrl=" + sendNotifyUrl + '&' + "ispId=" + ispId + '&'
+                        + "provinceId=" + provinceId + '&' + "timestamp=" + timestamp + '&'
+                        + "key=" + HfCharge19EUtil.KEY;
+
+
     }
 
     public String params(String signp) {
 
         return
-
-
-                "chargeNumber=" + chargeNumber + '&' +
-                        "chargeMoney=" + chargeMoney + '&' +
-                        "fillType=" + fillType + '&' +
-                        "chargeType=" + chargeType + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "merchantOrderId=" + merchantOrderId + '&' +
-                        "sendNotifyUrl=" + sendNotifyUrl + '&' +
-                        "ispId=" + ispId + '&' +
-                        "provinceId=" + provinceId + "&" +
-                        "sign=" + signp + "&" +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "version=" + version;
-
+                "chargeNumber=" + chargeNumber + '&' + "chargeMoney=" + chargeMoney + '&' + "fillType=" + fillType + '&'
+                        + "chargeType=" + chargeType + '&' + "merchantId=" + merchantId + '&' + "merchantOrderId="
+                        + merchantOrderId + '&' + "sendNotifyUrl=" + sendNotifyUrl + '&' + "ispId=" + ispId + '&'
+                        + "provinceId=" + provinceId + "&" + "sign=" + signp + "&" + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&' + "dataType=" + dataType + '&' + "inputCharset="
+                        + inputCharset + '&' + "version=" + version;
     }
 
     /**********************************19充值返回参数***********************************/

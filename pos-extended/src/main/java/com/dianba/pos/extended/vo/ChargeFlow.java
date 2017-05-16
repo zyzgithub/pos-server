@@ -146,22 +146,6 @@ public class ChargeFlow {
         this.remark = remark;
     }
 
-    @Override
-    public String toString() {
-        return "Charge_Flow{" +
-                "sign='" + sign + '\'' +
-                ", signType='" + signType + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", dataType='" + dataType + '\'' +
-                ", inputCharset='" + inputCharset + '\'' +
-                ", version='" + version + '\'' +
-                ", productId='" + productId + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", merOrderNo='" + merOrderNo + '\'' +
-                ", merchantId='" + merchantId + '\'' +
-
-                '}';
-    }
 
     /**
      * 签名拼接字符串
@@ -169,30 +153,30 @@ public class ChargeFlow {
     public String sign() {
 
         return
-                "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "mobile=" + mobile + '&' +
-                        "merOrderNo=" + merOrderNo + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "version=" + version + "&" +
-                        "remark=" + remark;
+                "dataType=" + dataType + '&'
+                        + "inputCharset=" + inputCharset + '&'
+                        + "mobile=" + mobile + '&'
+                        + "merOrderNo=" + merOrderNo + '&'
+                        + "merchantId=" + merchantId + '&'
+                        + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&'
+                        + "version=" + version + "&"
+                        + "remark=" + remark;
     }
 
     public String params(String signp) {
 
         return
-                "sign=" + signp + "&" +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "version=" + version + "&" +
-                        "mobile=" + mobile + '&' +
-                        "merOrderNo=" + merOrderNo + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "remark=" + remark;
+                "sign=" + signp + "&"
+                        + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&'
+                        + "dataType=" + dataType + '&'
+                        + "inputCharset=" + inputCharset + '&'
+                        + "version=" + version + "&"
+                        + "mobile=" + mobile + '&'
+                        + "merOrderNo=" + merOrderNo + '&'
+                        + "merchantId=" + merchantId + '&'
+                        + "remark=" + remark;
     }
 
     public static void main(String[] args) {

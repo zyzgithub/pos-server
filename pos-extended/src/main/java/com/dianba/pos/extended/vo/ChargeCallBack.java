@@ -66,23 +66,8 @@ public class ChargeCallBack {
         this.statusDesc = statusDesc;
     }
 
-    @Override
-    public String toString() {
-        return "ChargeCallBack{" +
-                "ehfOrderId='" + ehfOrderId + '\'' +
-                ", merchantOrderId='" + merchantOrderId + '\'' +
-                ", chargeMoney='" + chargeMoney + '\'' +
-                ", finishTime='" + finishTime + '\'' +
-                ", chargeStatus='" + chargeStatus + '\'' +
-                ", statusDesc='" + statusDesc + '\'' +
-                '}';
-    }
 
     public String callback() {
-        return
-
-                "resultCode=" + chargeStatus + '&' +
-                        "resultDesc=" + statusDesc;
-
+        return "resultCode=" + chargeStatus + '&' + "resultDesc=" + statusDesc;
     }
 }

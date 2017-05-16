@@ -117,10 +117,8 @@ public class HfOrderQuery {
     public String sign() {
 
         return
-                "ehfOrderId=" + ehfOrderId + '&' +
-                        "merchantId=" + merchantId + "&" +
-                        "timestamp=" + timestamp + '&' +
-                        "key=" + HfCharge19EUtil.KEY;
+                "ehfOrderId=" + ehfOrderId + '&' + "merchantId=" + merchantId + "&" + "timestamp=" + timestamp + '&'
+                        + "key=" + HfCharge19EUtil.KEY;
 
 
     }
@@ -128,15 +126,15 @@ public class HfOrderQuery {
     public String params(String signp) {
 
         return
-                "sign=" + signp + "&" +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "version=" + version + "&" +
-                        "ehfOrderId=" + ehfOrderId + '&' +
-                        "merchantId=" + merchantId + "&" +
-                        "merchantOrderId" + merchantOrderId;
+                "sign=" + signp + "&"
+                        + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&'
+                        + "dataType=" + dataType + '&'
+                        + "inputCharset=" + inputCharset + '&'
+                        + "version=" + version + "&"
+                        + "ehfOrderId=" + ehfOrderId + '&'
+                        + "merchantId=" + merchantId + "&"
+                        + "merchantOrderId" + merchantOrderId;
 
 
     }

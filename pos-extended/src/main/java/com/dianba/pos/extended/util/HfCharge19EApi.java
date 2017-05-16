@@ -3,7 +3,9 @@ package com.dianba.pos.extended.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.common.util.Md5Util;
-import com.dianba.pos.extended.vo.*;
+import com.dianba.pos.extended.vo.Charge19E;
+import com.dianba.pos.extended.vo.ChargeResult;
+import com.dianba.pos.extended.vo.HfOrderQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +32,7 @@ public class HfCharge19EApi {
      */
     public static ChargeResult hfCharge(String chargeUrl, Charge19E param) {
         String sign = param.sign();
-        String MD5 = Md5Util.HEXAndMd5(sign).toUpperCase();
+        String md5 = Md5Util.HEXAndMd5(sign).toUpperCase();
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -53,7 +55,7 @@ public class HfCharge19EApi {
             // 获取URLConnection对象对应的输出流
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
-            String params = param.params(MD5);
+            String params = param.params(md5);
             System.out.println(params);
 
             logger.info("获取话费充值请求参数:========"+params);
@@ -76,8 +78,7 @@ public class HfCharge19EApi {
            cr=(ChargeResult)JSONObject.parseObject(tojson,ChargeResult.class);
         } catch (IOException e) {
             e.printStackTrace();
-        } // 使用finally块来关闭输出流、输入流
-        finally {
+        } finally {
             try {
                 if (out != null) {
                     out.close();
@@ -90,6 +91,7 @@ public class HfCharge19EApi {
             }
 
         }
+
         return cr;
     }
 
@@ -98,7 +100,7 @@ public class HfCharge19EApi {
     public static String hfOrderQuery(String chargeUrl, HfOrderQuery ho) {
 
         String sign = ho.sign();
-        String MD5 = Md5Util.HEXAndMd5(sign).toUpperCase();
+        String md5 = Md5Util.HEXAndMd5(sign).toUpperCase();
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -121,7 +123,7 @@ public class HfCharge19EApi {
             // 获取URLConnection对象对应的输出流
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
-            String params = ho.params(MD5);
+            String params = ho.params(md5);
             String urlStr = URLDecoder.decode(params, "UTF-8");
             out.print(params);
             logger.info("获取话费订单信息参数：======"+params);
@@ -140,8 +142,7 @@ public class HfCharge19EApi {
             logger.info("获取话费订单信息：========"+tojson);
         } catch (IOException e) {
             e.printStackTrace();
-        } // 使用finally块来关闭输出流、输入流
-        finally {
+        } finally {
             try {
                 if (out != null) {
                     out.close();
@@ -154,6 +155,7 @@ public class HfCharge19EApi {
             }
 
         }
+
         return tojson;
     }
 }

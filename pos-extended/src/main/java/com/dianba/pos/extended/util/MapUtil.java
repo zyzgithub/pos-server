@@ -79,7 +79,7 @@ public class MapUtil {
         Set<Map.Entry<String, String>> set = map.entrySet();
         StringBuffer sb = new StringBuffer();
         //取出排序后的参数，逐一连接起来
-        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext(); ) {
+        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
             Map.Entry<String, String> me = it.next();
             sb.append(me.getValue() + "|");
         }

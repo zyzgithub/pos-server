@@ -3,7 +3,6 @@ package com.dianba.pos.extended.vo;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
-import com.mysql.fabric.FabricConnection;
 
 
 /**
@@ -108,44 +107,30 @@ public class Product {
         this.mobile = mobile;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "sign='" + sign + '\'' +
-                ", signType='" + signType + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", dataType='" + dataType + '\'' +
-                ", inputCharset='" + inputCharset + '\'' +
-                ", version='" + version + '\'' +
-                ", merchantId='" + merchantId + '\'' +
-                ", mobile='" + mobile + '\'' +
-                '}';
-    }
 
     public String sign() {
 
         return
-
-                "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "mobile=" + mobile + "&" +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "version=" + version;
+                "dataType=" + dataType + '&'
+                        + "inputCharset=" + inputCharset + '&'
+                        + "merchantId=" + merchantId + '&'
+                        + "mobile=" + mobile + "&"
+                        + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&'
+                        + "version=" + version;
 
     }
 
     public String params(String signp) {
 
         return
-                "dataType=" + dataType + '&' +
-                        "inputCharset=" + inputCharset + '&' +
-                        "merchantId=" + merchantId + '&' +
-                        "mobile=" + mobile + "&" +
-                        "signType=" + signType + '&' +
-                        "timestamp=" + timestamp + '&' +
-                        "version=" + version + "&" + "sign=" + signp;
+                "dataType=" + dataType + '&'
+                        + "inputCharset=" + inputCharset + '&'
+                        + "merchantId=" + merchantId + '&'
+                        + "mobile=" + mobile + "&"
+                        + "signType=" + signType + '&'
+                        + "timestamp=" + timestamp + '&'
+                        + "version=" + version + "&" + "sign=" + signp;
 
 
     }

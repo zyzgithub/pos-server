@@ -1,7 +1,6 @@
 package com.dianba.pos.extended.util;
 
 import com.alibaba.fastjson.JSON;
-import com.dianba.pos.extended.service.impl.DefaultCharge19eManager;
 import com.dianba.pos.extended.vo.ChargeFlow;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.Product;
@@ -16,7 +15,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -99,8 +97,7 @@ public class FlowCharge19EApi {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } // 使用finally块来关闭输出流、输入流
-        finally {
+        } finally {
             try {
                 if (out != null) {
                     out.close();
@@ -113,6 +110,7 @@ public class FlowCharge19EApi {
             }
 
         }
+
         return cf;
 
 
@@ -130,7 +128,7 @@ public class FlowCharge19EApi {
         map.put("mobile", pd.getMobile());
         Map<String, String> pdmap = MapUtil.sortMapByKey(map);
         String sign = MapUtil.createLinkString(pdmap);
-        String Md5 = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.KEY);
+        String md5 = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.KEY);
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -162,7 +160,7 @@ public class FlowCharge19EApi {
             mappars.put("version", pd.getVersion());
             mappars.put("merchantId", pd.getMerchantId());
             mappars.put("mobile", pd.getMobile());
-            mappars.put("sign", Md5);
+            mappars.put("sign", md5);
             Map<String, String> mapparsSort = MapUtil.sortMapByKey(mappars);
             String params = MapUtil.createLinkString(mapparsSort);
             String urlStr = URLDecoder.decode(params, "UTF-8");
@@ -182,8 +180,7 @@ public class FlowCharge19EApi {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } // 使用finally块来关闭输出流、输入流
-        finally {
+        } finally {
             try {
                 if (out != null) {
                     out.close();
@@ -196,6 +193,7 @@ public class FlowCharge19EApi {
             }
 
         }
+
         return result;
 
 
