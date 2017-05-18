@@ -52,8 +52,8 @@
         where me.merchant_id=#{merchantId}
         and pi.id=#{phone}
         and me.is_flash=#{type}
-        and me.display='Y' and me.is_delete='N';
-
+        and me.display='Y' and me.is_delete='N'
+        ORDER BY me.price
 
     </select>
 </mapper>

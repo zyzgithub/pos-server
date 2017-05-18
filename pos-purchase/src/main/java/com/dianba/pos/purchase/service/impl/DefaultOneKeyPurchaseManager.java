@@ -11,6 +11,8 @@ import com.dianba.supplychain.vo.Items;
 import com.dianba.supplychain.vo.MatchItems;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
 
+
+    private  static Logger logger= LogManager.getLogger(DefaultOneKeyPurchaseManager.class);
     @Autowired
     private OneKeyPurchaseMapper oneKeyPurchaseMapper;
     @Autowired
@@ -75,16 +80,34 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 if (defaultPurchase < item.getMinSales()) {
                     defaultPurchase = item.getMinSales();
                 }
-                BigDecimal buyRate = item.getRetailPrice().subtract(item.getPrice())
+                BigDecimal buyRate = item.getRetailPrice()
+                        .subtract(item.getPrice())
                         .divide(item.getRetailPrice(), BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
+
+                logger.info("进价毛利率："+buyRate);
+                System.out.println("进价毛利率："+buyRate);
                 item.setBuyRate(buyRate + "%");
+                //商品规格也为数量。
+                BigDecimal standard=BigDecimal.valueOf(item
+                        .getStandard());
+
+                System.out.println("商品数量："+standard);
+                //进货价格
+                BigDecimal price=item.getPrice();
+                //进货单价
+                BigDecimal unitPrice=price.divide(standard, BigDecimal.ROUND_HALF_UP);
                 BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
-                        .subtract(item.getPrice())
+                        .subtract(unitPrice)
                         .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
+
+
+                System.out.println("商品售价："+menuEntity.getPrice()+",,进价："+item.getPrice());
+                logger.info("售价毛利率："+saleRate);
+                System.out.println("售价毛利率："+saleRate);
                 item.setSaleRate(saleRate + "%");
                 //限制采购数量为仓库库存数量
                 if (item.getStock() < defaultPurchase) {
