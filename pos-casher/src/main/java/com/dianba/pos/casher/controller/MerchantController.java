@@ -58,7 +58,7 @@ public class MerchantController {
 
         } else {
 
-            Map<String, Object> map = merchantMapper.verifyMerchantUser(merchantId, phone);
+            Map<String, Object> map = merchantMapper.verifyMerchantUser(merchantId);
 
             //说明是不是pos商家用户
 

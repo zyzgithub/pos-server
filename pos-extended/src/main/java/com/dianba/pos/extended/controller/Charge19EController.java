@@ -116,7 +116,7 @@ public class Charge19EController {
 
                 //查询此订单是否更新完毕
                 Object ob = orderMapper.getByPayId(merchantOrderId);
-                if (!ob.equals("success")) {
+                if (ob!=null&!ob.equals("success")) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     orderMapper.editOrderInfoBy19e("success", merchantOrderId, 0);
@@ -140,7 +140,7 @@ public class Charge19EController {
     public String flowChargeCallBack(FlowChargeCallBack chargeCallBack) {
         logger.info("进入流量充值回调：");
         String result = "";
-        if (!StringUtil.isEmpty(chargeCallBack.getOrderNo())) {
+        if (!StringUtil.isEmpty(chargeCallBack.getMerOrderNo())) {
             Map map = new HashMap<>();
             map.put("merOrderNo", chargeCallBack.getMerOrderNo());
             map.put("orderNo", chargeCallBack.getOrderNo());
@@ -150,10 +150,11 @@ public class Charge19EController {
             String merOrderNo = chargeCallBack.getMerOrderNo();
             //Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
             if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
+                logger.info("流量充值回调返回为SUCCESS状态：==========");
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = orderMapper.getByPayId(merOrderNo);
-                if (!ob.equals("success")) {
+                if (ob!=null&!ob.equals("success")) {
                     //改变原订单状态
                     orderMapper.editOrderInfoBy19e("success", merOrderNo, 0);
                     //改变第三方订单状态
