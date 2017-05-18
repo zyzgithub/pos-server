@@ -82,7 +82,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 }
                 BigDecimal buyRate = item.getRetailPrice()
                         .subtract(item.getPrice())
-                        .divide(item.getRetailPrice(), BigDecimal.ROUND_HALF_UP)
+                        .divide(item.getRetailPrice(),4, BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
 
@@ -97,18 +97,17 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 //进货价格
                 BigDecimal price=item.getPrice();
                 //进货单价
-                BigDecimal unitPrice=price.divide(standard, BigDecimal.ROUND_HALF_UP);
-                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
+                BigDecimal unitPrice=price.divide(standard,2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal shoujiamaoli = BigDecimal.valueOf(menuEntity.getPrice())
                         .subtract(unitPrice)
-                        .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
+                         .divide(BigDecimal.valueOf(menuEntity.getPrice()),4
+                        ,BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
-
-
                 System.out.println("商品售价："+menuEntity.getPrice()+",,进价："+item.getPrice());
-                logger.info("售价毛利率："+saleRate);
-                System.out.println("售价毛利率："+saleRate);
-                item.setSaleRate(saleRate + "%");
+                logger.info("售价毛利率："+shoujiamaoli);
+                System.out.println("售价毛利率："+shoujiamaoli);
+                item.setSaleRate(shoujiamaoli + "%");
                 //限制采购数量为仓库库存数量
                 if (item.getStock() < defaultPurchase) {
                     defaultPurchase = item.getStock();
