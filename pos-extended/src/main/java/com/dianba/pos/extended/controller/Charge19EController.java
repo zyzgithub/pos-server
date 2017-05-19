@@ -204,7 +204,6 @@ public class Charge19EController {
                     List<MenuDto> menulst = menuMapper.getMenuListByPhoneAndType(-1L, phonel, isFlash);
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
-
                 } else if (type.equals("4")) {
                     Product pd = new Product();
                     pd.setMobile(phone);
@@ -213,12 +212,10 @@ public class Charge19EController {
                     JSONObject jb = JSON.parseObject(result);
                     List<MenuDto> menulst = new ArrayList<>();
                     if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
-
                         JSONArray ja = jb.getJSONArray("productList");
                         List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
                         logger.info("流量充值商品列表信息：====" + ja.toString());
                         for (ProductListDto pl : lst) {
-
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
                             logger.info("根据第三方商品id获取本地商品:====" + productId);
@@ -231,21 +228,15 @@ public class Charge19EController {
                                 menuDto.setPrice(menu.getPrice());
                                 menuDto.setStockPrice(menu.getOriginalPrice());
                                 menulst.add(menuDto);
-
                             }
                         }
                     }
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
-
                 }
-
-
             }
-
         }
         aj.setObj(jo);
-
         return aj;
     }
 }
