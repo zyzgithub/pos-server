@@ -1,0 +1,1 @@
+package com.dianba.pos.base.config;/** * Created by zhangyong on 2017/5/23. */public class BaseUrlConstant {    public static final String BASE_URL="base/";    public static final String LOGIN_URL=BASE_URL+"login/";}

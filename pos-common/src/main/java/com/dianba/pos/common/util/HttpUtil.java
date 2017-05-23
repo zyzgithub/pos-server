@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -154,17 +155,18 @@ public class HttpUtil {
      * @param param   请求数据
      * @param charset 编码方式
      */
-    public static String sendPost(HttpServletResponse response, String url, Map<String, String> param, String charset) {
+    public static String sendPost(HttpServletResponse response, String url,
+                                  Map<String, Object> param, String charset) {
         StringBuffer buffer = new StringBuffer();
-//        if (param != null && !param.isEmpty()) {
-//            for (Map.Entry<String, String> entry : param.entrySet()) {
-//                buffer.append(entry.getKey()).append("=")
-//                        .append(URLEncoder.encode(entry.getValue()))
-//                        .append("&");
-//
-//            }
-//        }
-//        buffer.deleteCharAt(buffer.length() - 1);
+        if (param != null && !param.isEmpty()) {
+            for (Map.Entry<String, Object> entry : param.entrySet()) {
+                buffer.append(entry.getKey()).append("=")
+                        .append(URLEncoder.encode(entry.getValue().toString()))
+                        .append("&");
+
+            }
+        }
+        buffer.deleteCharAt(buffer.length() - 1);
 
         PrintWriter out = null;
         BufferedReader in = null;

@@ -1,6 +1,7 @@
 package com.dianba.pos.extended.util;
 
 import com.alibaba.fastjson.JSON;
+import com.dianba.pos.common.util.MapUtil;
 import com.dianba.pos.extended.vo.ChargeFlow;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.Product;
