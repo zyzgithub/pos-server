@@ -1,0 +1,1 @@
+package com.dianba.pos.menu.service;import java.util.List;import java.util.Map;/** * Created by zhangyong on 2017/5/24. */public interface ItemTypeManager {    List<Map<String, String>> getItemList(Long passportId);}
