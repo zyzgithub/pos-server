@@ -1,8 +1,8 @@
 package com.dianba.pos.config;
 
 
+import com.dianba.pos.base.druid.config.AbstractDruidDataSource;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.dianba.pos.foundation.druid.config.AbstractDruidDataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

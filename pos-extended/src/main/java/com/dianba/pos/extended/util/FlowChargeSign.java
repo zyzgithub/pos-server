@@ -1,5 +1,6 @@
 package com.dianba.pos.extended.util;
 
+import com.dianba.pos.common.util.MapUtil;
 import java.util.Map;
 
 /**
