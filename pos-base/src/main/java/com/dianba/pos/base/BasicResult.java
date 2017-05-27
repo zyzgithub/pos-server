@@ -3,6 +3,8 @@ package com.dianba.pos.base;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 public class BasicResult {
 
     private String code;
@@ -38,6 +40,46 @@ public class BasicResult {
 
     public void setResponse(JSONObject response) {
         this.response = response;
+    }
+
+    public List getResponseDatas() {
+        if (response != null) {
+            return response.getJSONArray("datas");
+        }
+        return null;
+    }
+
+    public void setResponseDatas(Object datas) {
+        if (response == null) {
+            response = new JSONObject();
+        }
+        response.put("datas", datas);
+    }
+
+    public static BasicResult createSuccessResult(String msg, JSONObject response) {
+        BasicResult basicResult = createSuccessResult();
+        basicResult.setMsg(msg);
+        basicResult.setResponse(response);
+        return basicResult;
+    }
+
+    public static BasicResult createSuccessResultWithDatas(String msg, Object datas) {
+        BasicResult basicResult = createSuccessResult();
+        basicResult.setMsg(msg);
+        basicResult.setResponseDatas(datas);
+        return basicResult;
+    }
+
+    public static BasicResult createSuccessResult(String msg) {
+        BasicResult basicResult = createSuccessResult();
+        basicResult.setMsg(msg);
+        return basicResult;
+    }
+
+    public static BasicResult createFailResult(String msg) {
+        BasicResult basicResult = createFailResult();
+        basicResult.setMsg(msg);
+        return basicResult;
     }
 
     public static BasicResult createSuccessResult() {
