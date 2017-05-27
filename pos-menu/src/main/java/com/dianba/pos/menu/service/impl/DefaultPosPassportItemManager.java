@@ -1,1 +1,0 @@
-package com.dianba.pos.menu.service.impl;import com.dianba.pos.menu.service.PosPassportItemManager;/** * Created by zhangyong on 2017/5/24. */public class DefaultPosPassportItemManager implements PosPassportItemManager {}

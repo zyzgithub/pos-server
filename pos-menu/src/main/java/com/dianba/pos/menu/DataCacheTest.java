@@ -2,6 +2,7 @@ package com.dianba.pos.menu;
 
 import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 
 import java.util.List;
@@ -17,7 +18,14 @@ public class DataCacheTest {
         //从内存中读取
         List<ItemType> itemTypes = ItemDataCacheService.getItemTypes();
         for (ItemType itemType : itemTypes) {
-            System.out.println(itemType.getId());
+            System.out.println(itemType.getId()+""+itemType.getTitle());
         }
+
+        List<ItemTemplate> itemTemplates=ItemDataCacheService.appointItemType(
+                90018L);
+        for (ItemTemplate itemType : itemTemplates) {
+            System.out.println(itemType.getId()+""+itemType.getName());
+        }
+
     }
 }
