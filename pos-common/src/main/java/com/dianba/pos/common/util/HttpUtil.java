@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -160,13 +159,17 @@ public class HttpUtil {
         StringBuffer buffer = new StringBuffer();
         if (param != null && !param.isEmpty()) {
             for (Map.Entry<String, Object> entry : param.entrySet()) {
-                buffer.append(entry.getKey()).append("=")
-                        .append(URLEncoder.encode(entry.getValue().toString()))
-                        .append("&");
+                System.out.println(entry.getValue());
+//                if(!entry.getValue().equals("null")){
+//                    buffer.append(entry.getKey()).append("=")
+//                            .append(URLEncoder.encode(entry.getValue().toString()))
+//                            .append("&");
+//                }
+
 
             }
         }
-        buffer.deleteCharAt(buffer.length() - 1);
+//        buffer.deleteCharAt(buffer.length() - 1);
 
         PrintWriter out = null;
         BufferedReader in = null;
@@ -200,6 +203,7 @@ public class HttpUtil {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
+            System.out.println(result);
         } catch (Exception e) {
             System.out.println("发送 POST 请求出现异常！" + e);
             e.printStackTrace();

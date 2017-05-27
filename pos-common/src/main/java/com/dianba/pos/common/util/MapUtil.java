@@ -35,12 +35,12 @@ public class MapUtil {
      * @param map
      * @return
      */
-    public static Map<String, String> sortMapByKey(Map<String, String> map) {
+    public static Map<String, Object> sortMapByKey(Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             return null;
         }
 
-        Map<String, String> sortMap = new TreeMap<String, String>(
+        Map<String, Object> sortMap = new TreeMap<String, Object>(
                 new MapKeyComparator());
 
         sortMap.putAll(map);
@@ -97,7 +97,7 @@ public class MapUtil {
      * @param params 需要排序并参与字符拼接的参数组
      * @return 拼接后字符串
      */
-    public static String createLinkString(Map<String, String> params) {
+    public static String createLinkString(Map<String, Object> params) {
 
         List<String> keys = new ArrayList<String>(params.keySet());
         Collections.sort(keys);
@@ -106,8 +106,7 @@ public class MapUtil {
 
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
-            String value = params.get(key);
-
+            Object value = params.get(key);
             if (i == keys.size() - 1) {//拼接时，不包括最后一个&字符
                 prestr = prestr + key + "=" + value;
             } else {
@@ -122,10 +121,11 @@ public class MapUtil {
         try {
             PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
             PropertyDescriptor[] descriptors = propertyUtilsBean.getPropertyDescriptors(obj);
+
             for (int i = 0; i < descriptors.length; i++) {
                 String name = descriptors[i].getName();
                 if (!"class".equals(name)) {
-                    params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
+                    params.put(name, propertyUtilsBean.getNestedProperty(obj,name));
                 }
             }
         } catch (Exception e) {
