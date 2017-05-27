@@ -1,1 +1,0 @@
-package com.dianba.pos.menu.service;/** * Created by zhangyong on 2017/5/24. */public interface PosPassportItemManager {}
