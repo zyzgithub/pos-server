@@ -45,7 +45,7 @@ public class LocationUtil {
             params.put("output", "json");
             params.put("pois", 0);
 
-            JSONObject retJson = HttpUtil.sendGet(URL + "?", params);
+            JSONObject retJson = HttpUtil.get(URL, params);
             if (null == retJson) {
                 logger.warn("解析经纬度[{}]失败," + latStr + "," + lngStr);
             }

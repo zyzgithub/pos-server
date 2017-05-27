@@ -1,6 +1,8 @@
 package com.dianba.pos.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.menu.mapper.PromotionMenuMapper;
 import com.dianba.pos.menu.po.Menu;
@@ -20,6 +22,10 @@ import com.dianba.pos.order.repository.OrderJpaRepository;
 import com.dianba.pos.order.repository.OrderMenuJpaRepository;
 import com.dianba.pos.order.repository.OrderStateJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.support.OrderRemoteService;
+import com.xlibao.common.constant.device.DeviceTypeEnum;
+import com.xlibao.common.constant.order.OrderTypeEnum;
+import com.xlibao.metadata.order.OrderEntry;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +39,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Service
-public class DefaultOrderManager implements OrderManager {
+public class DefaultOrderManager extends OrderRemoteService implements OrderManager {
 
     private static Logger logger = LogManager.getLogger(DefaultOrderManager.class);
 
@@ -173,7 +179,7 @@ public class DefaultOrderManager implements OrderManager {
                 order.setTitle("超市订单");
                 order.setSaleType("2");
                 order.setRemark(uuid);
-                if (StringUtils.isNotBlank(mobile)){
+                if (StringUtils.isNotBlank(mobile)) {
                     order.setFundType(OrderStateConstant.UN_SUPPORT_REFUND);
                     order.setMobile(mobile);
                 }
@@ -382,5 +388,58 @@ public class DefaultOrderManager implements OrderManager {
         }
         logger.info("errorMsg:{}", JSON.toJSONString(errMsgs));
         return errMsgs.size() == 0;
+    }
+
+    public OrderEntry getOrder(long orderId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("orderId", orderId + "");
+        BasicResult basicResult = postOrder(GET_ORDER, params);
+        if (basicResult.isSuccess()) {
+            JSONObject jsonObject = basicResult.getResponse();
+            OrderEntry orderEntry = jsonObject.toJavaObject(OrderEntry.class);
+            return orderEntry;
+        }
+        return null;
+    }
+
+
+    public BasicResult prepareCreateOrder(long passportId, String orderType) {
+        Map<String, String> params = new HashMap<>();
+        params.put("partnerUserId", passportId + "");
+        params.put("orderType", orderType);
+        return postOrder(PREPARE_CREATE_ORDER, params);
+    }
+
+    public BasicResult generateOrder(long passportId, String sequenceNumber
+            , OrderTypeEnum orderType, long actualPrice, long totalPrice
+            , List<Map<String, Object>> orderItems) {
+        Map<String, String> params = new HashMap<>();
+        params.put("sequenceNumber", sequenceNumber);
+        params.put("partnerUserId", passportId + "");
+
+        params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
+//        params.put("transType", TransTypeEnum.PAYMENT.getKey() + "");
+        params.put("shippingPassportId", passportId + "");
+        params.put("shippingNickName", "");
+        params.put("receiptUserId", passportId + "");
+        params.put("totalAmount", totalPrice+"");
+        params.put("actualAmount", actualPrice+"");
+        params.put("discountAmount", "0");
+        params.put("priceLogger", "0");
+        return postOrder(GENERATE_ORDER, params);
+    }
+
+    public BasicResult paymentOrder(long orderId, int transType) {
+        Map<String, String> params = new HashMap<>();
+        params.put("orderId", orderId + "");
+        params.put("transType", transType + "");
+        return postOrder(PAYMENT_ORDER, params);
+    }
+
+    public BasicResult confirmOrder(long passportId, long orderId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("orderId", orderId + "");
+        params.put("partnerUserId", passportId + "");
+        return postOrder(CONFIRM_ORDER, params);
     }
 }

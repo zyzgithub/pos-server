@@ -1,6 +1,5 @@
 package com.dianba.pos.purchase.service.impl;
 
-import com.dianba.pos.common.util.HttpProxy;
 import com.dianba.pos.menu.po.MenuType;
 import com.dianba.pos.menu.service.MenuTypeManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
@@ -16,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +35,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     private MenuTypeManager menuTypeManager;
 
     public Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId)
-            throws HttpProxy.HttpAccessException, IOException {
+            throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         // 查询库存小于预警库存/当前库存小于周销量的日平均值的商品,且不在进货中的商品
         List<OneKeyPurchase> menuEntities = oneKeyPurchaseMapper.queryWarnInvenstory(merchantId, null);

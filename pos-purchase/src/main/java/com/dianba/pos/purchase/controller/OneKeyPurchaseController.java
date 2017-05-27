@@ -1,7 +1,6 @@
 package com.dianba.pos.purchase.controller;
 
 import com.dianba.pos.common.util.AjaxJson;
-import com.dianba.pos.common.util.HttpProxy;
 import com.dianba.pos.purchase.config.PurchaseURLConstant;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
 import com.dianba.supplychain.vo.MatchItems;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +25,7 @@ public class OneKeyPurchaseController {
      **/
     @ResponseBody
     @RequestMapping("warnInventoryList")
-    public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request)
-            throws HttpProxy.HttpAccessException, IOException {
+    public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request) throws Exception {
         AjaxJson j = AjaxJson.successJson("请求成功");
         Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(merchantId, userId);
         List<MatchItems> preferentialList = (List<MatchItems>) map.get("preferentialList");
