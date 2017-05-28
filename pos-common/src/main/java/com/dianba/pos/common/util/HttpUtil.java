@@ -16,16 +16,17 @@ public class HttpUtil {
         return HttpUtils.get(url, params);
     }
 
-    public static JSONObject get(String url, Object... objects){
+    public static JSONObject get(String url, Object objects){
         String requestJson = JSONObject.toJSON(objects).toString();
         JSONObject jsonObject = HttpUtils.get(url, JSON.parseObject(requestJson));
         return jsonObject;
     }
 
 
-    public static JSONObject post(String url, Object... objects) {
+    public static JSONObject post(String url, Object  objects) {
         String requestJson = JSONObject.toJSON(objects).toString();
-        JSONObject jsonObject = HttpUtils.postBody(url, JSON.parseObject(requestJson));
+        JSONObject par=JSON.parseObject(requestJson);
+        JSONObject jsonObject = HttpUtils.postForm(url,par);
         return jsonObject;
     }
 }

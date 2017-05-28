@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.GeneratedValue;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
      */
     @Query("select pi from PosItem  pi where pi.passportId=:passportId order by pi"
             +".buyCount desc")
-    List<PosItem> getAllByPassportId(Long passportId);
+    List<PosItem> getAllByPassportId(@Param("passportId") Long passportId);
 
     /**
      * 获取商家商品分类所有
@@ -55,6 +56,13 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
 
 
 
-}
+    PosItem getPosItemById(Long id);
+
+    @Query("SELECT pi FROM PosItem  pi WHERE pi.barcode LIKE :barcode and pi.passportId=:passportId")
+    List<PosItem> findAllByBarcodeLikeAndPassportId(@Param("barcode") String barcode,@Param("passportId") Long passportId);
+
+    @Query("SELECT pi FROM PosItem  pi WHERE pi.itemName LIKE CONCAT('%',:itemName,'%')  and pi.passportId=:passportId")
+    List<PosItem> findAllByItemNameLikeAndPassportId(@Param("itemName") String itemName,@Param("passportId") Long passportId);
+  }
 
 

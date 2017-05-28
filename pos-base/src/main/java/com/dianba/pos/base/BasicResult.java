@@ -1,9 +1,9 @@
 package com.dianba.pos.base;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 
 public class BasicResult {
 
@@ -11,6 +11,7 @@ public class BasicResult {
     private String msg;
     private JSONObject response;
 
+    @JsonIgnore
     public boolean isSuccess() {
         if (!StringUtils.isEmpty(code) && code.trim().equals("0")) {
             return true;
@@ -42,12 +43,6 @@ public class BasicResult {
         this.response = response;
     }
 
-    public List getResponseDatas() {
-        if (response != null) {
-            return response.getJSONArray("datas");
-        }
-        return null;
-    }
 
     public void setResponseDatas(Object datas) {
         if (response == null) {

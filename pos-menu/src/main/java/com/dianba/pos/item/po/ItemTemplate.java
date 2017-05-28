@@ -35,9 +35,11 @@ public class ItemTemplate implements Serializable{
     @Column(name = "unit_id")
     private Long unitId;
 
+    /**商品成本价**/
     @Column(name = "cost_price")
     private Long costPrice;
 
+    /**商品零售价**/
     @Column(name ="default_price")
     private Long defaultPrice;
 

@@ -13,4 +13,6 @@ import javax.transaction.Transactional;
 @Transactional
 @Repository
 public interface ItemUnitJpaRepository extends JpaRepository<ItemUnit,Integer> {
+
+    ItemUnit getItemUnitById(Long id);
 }
