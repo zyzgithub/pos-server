@@ -120,17 +120,10 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         Page<Map<String, Object>> mapPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
         BasicResult basicResult = BasicResult.createSuccessResult();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("order", mapPage);
-//        JSONObject jsonObject = new JSONObject();
-//        Map<String,String> orderItems=new HashMap<>();
-//        for (Map<String, String> map : mapPage) {
-//            if (orderItems.get(map.get("sequence_number"))!=null){
-//                List<O>
-//                orderItems.put()
-//            }
-//        }
-        basicResult.setResponse(jsonObject);
+        basicResult.setResponseDatas(mapPage);
+        basicResult.getResponse().put("pageNum",pageNum);
+        basicResult.getResponse().put("pageSize",pageSize);
+        basicResult.getResponse().put("total",mapPage.getTotal());
         return basicResult;
     }
 }
