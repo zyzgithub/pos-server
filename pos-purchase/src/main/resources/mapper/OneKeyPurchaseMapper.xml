@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper">
 
-    <resultMap id="OneKeyPurchaseMap" type="com.dianba.pos.purchase.pojo.OneKeyPurchase"
-               extends="com.dianba.pos.menu.mapper.MenuMapper.BaseResultMap">
+    <resultMap id="OneKeyPurchaseMap" type="com.dianba.pos.purchase.pojo.OneKeyPurchase">
+               <!--extends="com.dianba.pos.menu.mapper.MenuMapper.BaseResultMap">-->
         <result column="total_sale" property="totalSale"/>
         <result column="day_sale" property="daySale"/>
     </resultMap>

@@ -43,4 +43,11 @@ public interface OrderMapper {
             , @Param("orderNum") String orderNum, @Param("completeTime") int timestamp);
 
     Object getByPayId(@Param("orderNum") String orderNum);
+
+    /**
+     * 根据商家ID获取订单
+     * @param merchantPassportId 商家ID
+     * @return
+     */
+    List<Map<String,Object>> findOrderForMerchant(long merchantPassportId);
 }

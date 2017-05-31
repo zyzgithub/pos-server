@@ -100,4 +100,31 @@
         SELECT charge_state FROM `order`  WHERE id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
     </select>
 
+    <!--2.0分界线-->
+    <!--2.0分界线-->
+    <!--2.0分界线-->
+    <resultMap id="merchantOrderResultMap" type="java.util.Map">
+        <result column="show_name" property="show_name"/>
+        <result column="sequence_number" property="sequence_number"/>
+        <result column="create_time" property="create_time"/>
+        <result column="total_price" property="total_price"/>
+        <result column="status" property="status"/>
+        <collection property="item_snapshot" ofType="java.util.Map">
+            <result column="item_name" property="item_name"/>
+            <result column="normal_quantity" property="normal_quantity"/>
+            <result column="normal_price" property="normal_price"/>
+        </collection>
+    </resultMap>
+    
+    <select id="findOrderForMerchant" resultMap="merchantOrderResultMap">
+        select p.show_name,o.sequence_number,concat(o.create_time,'') create_time
+          ,item_snapshot.item_name,item_snapshot.normal_quantity,item_snapshot.normal_price
+          ,o.total_price,o.status
+        from life_order.order_entry o
+        inner join life_passport.passport p on p.id=o.shipping_passport_id
+        inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
+        where o.shipping_passport_id=#{merchantPassportId} and o.status in(1,8)
+        order by o.create_time desc
+    </select>
+
 </mapper>

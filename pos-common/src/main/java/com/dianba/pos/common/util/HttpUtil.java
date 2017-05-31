@@ -23,10 +23,9 @@ public class HttpUtil {
     }
 
 
-    public static JSONObject post(String url, Object  objects) {
+    public static JSONObject post(String url, Object objects) {
         String requestJson = JSONObject.toJSON(objects).toString();
-        JSONObject par=JSON.parseObject(requestJson);
-        JSONObject jsonObject = HttpUtils.postForm(url,par);
+        JSONObject jsonObject = HttpUtils.postForm(url, JSON.parseObject(requestJson));
         return jsonObject;
     }
 }
