@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +68,13 @@ public class PosItemController extends BaseController {
                 posItemVo.setPosTypeName(itemType.getTitle());
                 posItemVo.setItemTemplateId(itemTemplate.getId());
                 posItemVo.setItemName(itemTemplate.getName());
-                posItemVo.setStockPrice(posItem.getStockPrice()/100);
-                posItemVo.setSalesPrice(posItem.getSalesPrice()/100);
+                BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
+                BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
+                BigDecimal a = new BigDecimal(100);
+                Double sPrice=sMoney.divide(a,2,BigDecimal.ROUND_UP).doubleValue();
+                Double saPrice=saMoney.divide(a,2,BigDecimal.ROUND_UP).doubleValue();
+                posItemVo.setStockPrice(sPrice);
+                posItemVo.setSalesPrice(saPrice);
                 posItemVo.setBuyCount(posItem.getBuyCount());
                 posItemVo.setCreateDate(posItem.getCreateTime());
                 posItemVo.setBarcode(itemTemplate.getBarcode());
