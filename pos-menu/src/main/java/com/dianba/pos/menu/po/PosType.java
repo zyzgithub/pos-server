@@ -21,6 +21,8 @@ public class PosType implements Serializable{
     @Column(name = "item_type_id")
     private Long itemTypeId;
 
+    @Column(name = "item_type_title")
+    private String itemTypeTitle;
     public Long getId() {
         return id;
     }
@@ -43,5 +45,13 @@ public class PosType implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getItemTypeTitle() {
+        return itemTypeTitle;
+    }
+
+    public void setItemTypeTitle(String itemTypeTitle) {
+        this.itemTypeTitle = itemTypeTitle;
     }
 }

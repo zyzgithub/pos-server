@@ -56,7 +56,6 @@ public class PosItemController extends BaseController {
 
             }
 
-
             List<PosItemVo> posItemVos=new ArrayList<>();
             for(PosItem posItem:posItems){
 
@@ -68,8 +67,8 @@ public class PosItemController extends BaseController {
                 posItemVo.setPosTypeName(itemType.getTitle());
                 posItemVo.setItemTemplateId(itemTemplate.getId());
                 posItemVo.setItemName(itemTemplate.getName());
-                posItemVo.setStockPrice(posItem.getStockPrice());
-                posItemVo.setSalesPrice(posItem.getSalesPrice());
+                posItemVo.setStockPrice(posItem.getStockPrice()/100);
+                posItemVo.setSalesPrice(posItem.getSalesPrice()/100);
                 posItemVo.setBuyCount(posItem.getBuyCount());
                 posItemVo.setCreateDate(posItem.getCreateTime());
                 posItemVo.setBarcode(itemTemplate.getBarcode());
@@ -112,7 +111,7 @@ public class PosItemController extends BaseController {
             for (PosType posType : posTypes) {
                 ItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
                 PosTypeVo posTypeVo = new PosTypeVo();
-                posTypeVo.setId(itemType.getId());
+                posTypeVo.setId(posType.getId());
                 posTypeVo.setTitle(itemType.getTitle());
                 List<PosItem> posItems = posItemManager.getAllByPosTypeId(posType.getId());
                 posTypeVo.setType_count(posItems.size());
@@ -130,37 +129,6 @@ public class PosItemController extends BaseController {
 
     }
 
-    /**
-     * 新增商家商品分类
-     *
-     * @param passportId
-     * @param title
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "addPosType")
-    public BasicResult addPosType(String passportId, String title) {
-
-        if(StringUtil.isEmpty(passportId)||StringUtil.isEmpty(title)){
-
-            return BasicResult.createFailResult("参数输入有误，或者参数值为空");
-        }else {
-
-            ItemType itemType = new ItemType();
-            itemType.setTitle(title);
-            itemType.setAscriptionType(1);
-            itemTypeJpaRepository.save(itemType);
-
-            PosType posType = new PosType();
-            posType.setPassportId(Long.parseLong(passportId));
-            posType.setItemTypeId(itemType.getId());
-
-            posTypeJpaRepository.save(posType);
-            return BasicResult.createSuccessResult();
-        }
-
-
-    }
 
 
     /***
@@ -211,39 +179,51 @@ public class PosItemController extends BaseController {
     }
 
 
+
+
     /**
-     * 添加商家商品
+     * 删除商家商品信息
+     * @param posItemId
+     * @param passportId
+     * @return
      */
     @ResponseBody
-    @RequestMapping("addPosItem")
-    public BasicResult addPosItem(PosItemVo posItemVo) {
+    @RequestMapping("deletePosItem")
+    public BasicResult deletePosItem(Long posItemId,Long passportId){
 
-       ItemTemplate itemTemplate=itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
-       if(itemTemplate!=null){
+        PosItem posItem=posItemManager.getPosItemById(posItemId);
+        if(posItem!=null&&posItem.getPassportId()==passportId){
+            //删除商品
+            posItemJpaRepository.delete(posItem);
 
-           return BasicResult.createFailResult("商品名字重复了~😬~");
-       }else {
+            return BasicResult.createSuccessResult("删除商家商品成功!");
 
-           itemTemplate=new ItemTemplate();
-           itemTemplate.setName(posItemVo.getItemName());
-           itemTemplate.setImageUrl(posItemVo.getItem_img());
-           //销售单价
-           itemTemplate.setDefaultPrice(posItemVo.getSalesPrice());
-           itemTemplateJpaRepository.save(itemTemplate);
-           PosItem posItem=new PosItem();
-           posItem.setItemName(posItemVo.getItemName());
+        }else {
+            return BasicResult.createFailResult("没有此商家商品信息!");
 
-       }
-        return BasicResult.createSuccessResult();
+        }
+
     }
 
     @ResponseBody
     @RequestMapping("editPosItem")
     public BasicResult editPosItem(PosItemVo posItemVo){
 
+        posItemManager.editPosItem(posItemVo);
 
+        Map<String,Object> map=posItemManager.editPosItem(posItemVo);
 
-        return BasicResult.createSuccessResult();
+        String result=map.get("result").toString();
+
+        String msg=map.get("msg").toString();
+
+        if(result.equals("false")){
+
+            return BasicResult.createFailResult(msg);
+        }else{
+            return BasicResult.createSuccessResult(msg);
+        }
+
 
     }
 
@@ -255,20 +235,40 @@ public class PosItemController extends BaseController {
     @RequestMapping("itemIsShelve")
     public BasicResult itemIsShelve(PosItemVo posItemVo){
 
+        logger.info("====================商品上下架============================");
         PosItem posItem=posItemManager.getPosItemById(posItemVo.getId());
-
+        logger.info("商家id:"+posItemVo.getPassportId());
+        logger.info("商家商品id:"+posItemVo.getId());
         if(posItem==null){
+
+            logger.info("=======================没有此商品信息=================================");
             return BasicResult.createFailResult("数据出现异常,请联系管理员!");
         }else if(posItem.getPassportId()==posItemVo.getPassportId()){
-            posItem.setItemName(posItemVo.getItemName());
-            posItem.setStockPrice(posItemVo.getStockPrice());
-            posItem.setSalesPrice(posItemVo.getSalesPrice());
+            logger.info("商品isShelve:"+posItemVo.getIsShelve());
+            posItem.setIsShelve(posItemVo.getIsShelve());
+            if(!StringUtil.isEmpty(posItemVo.getItemName())){
+                posItem.setItemName(posItemVo.getItemName());
+            }
+            if(posItemVo.getStockPrice()!=0.0){
+                posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
+            }
+            if(posItemVo.getSalesPrice()!=0.0){
+                posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+
+            }
+            if(posItemVo.getRepertory()!=null){
+
+                posItem.setRepertory(posItemVo.getRepertory());
+            }
+
             posItemJpaRepository.save(posItem);
             return BasicResult.createSuccessResult();
         }else {
             return BasicResult.createFailResult("数据出现异常,请联系管理员!");
+
         }
     }
+
 
     @ResponseBody
     @RequestMapping("getListBySearchText")
@@ -279,5 +279,6 @@ public class PosItemController extends BaseController {
         return BasicResult.createSuccessResultWithDatas("搜索成功!",posItems);
 
     }
+
 
 }

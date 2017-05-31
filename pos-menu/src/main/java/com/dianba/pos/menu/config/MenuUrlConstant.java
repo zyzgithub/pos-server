@@ -5,10 +5,12 @@ package com.dianba.pos.menu.config;
  */
 public class MenuUrlConstant {
 
-    public static final String BASE_URL="item/";
+    public static final String BASE_URL="menu/";
 
-    public static final String POS_ITEM_URL=BASE_URL+"pos/";
+    public static final String POS_ITEM_URL=BASE_URL+"posItem/";
 
-    public static final String MERCHANT_ITEM_URL=BASE_URL+"merchant/";
+
+    public static final String POS_TYPE_URL=BASE_URL+"posType";
+
 
 }

@@ -29,6 +29,8 @@ public class PosItem implements Serializable {
     @Column(name = "item_template_id")
     private Long itemTemplateId;
 
+    @Column(name = "item_img_url")
+    private String itemImgUrl;
     @Column(name = "create_time")
     private String createTime;
 
@@ -220,6 +222,23 @@ public class PosItem implements Serializable {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+
+    public String getItemImgUrl() {
+        return itemImgUrl;
+    }
+
+    public void setItemImgUrl(String itemImgUrl) {
+        this.itemImgUrl = itemImgUrl;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }
 

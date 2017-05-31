@@ -75,10 +75,10 @@ public class PosItemVo {
 
     /**原价**/
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long stockPrice;
+    private double stockPrice;
     /**销售价格**/
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long salesPrice;
+    private double salesPrice;
 
     public Long getId() {
         return id;
@@ -168,17 +168,7 @@ public class PosItemVo {
         this.shelfLife = shelfLife;
     }
 
-    public Long getStockPrice() {
-        return stockPrice;
-    }
 
-    public void setStockPrice(Long stockPrice) {
-        this.stockPrice = stockPrice;
-    }
-
-    public Long getSalesPrice() {
-        return salesPrice;
-    }
 
     public void setSalesPrice(Long salesPrice) {
         this.salesPrice = salesPrice;
@@ -238,5 +228,22 @@ public class PosItemVo {
 
     public void setPassportId(Long passportId) {
         this.passportId = passportId;
+    }
+
+
+    public double getStockPrice() {
+        return stockPrice;
+    }
+
+    public void setStockPrice(double stockPrice) {
+        this.stockPrice = stockPrice;
+    }
+
+    public double getSalesPrice() {
+        return salesPrice;
+    }
+
+    public void setSalesPrice(double salesPrice) {
+        this.salesPrice = salesPrice;
     }
 }

@@ -10,4 +10,15 @@ import java.util.List;
 public interface PosTypeManager {
 
     List<PosType> getAllByPassportId(Long passportId);
+    /**
+     * 查询商家是否添加过此分类名称类
+     * @param passportId
+     * @param title
+     * @return
+     */
+    PosType getPosTypeByPassportIdAndItemTypeTitle(Long passportId,String title);
+
+
+
+    PosType getPosTypeById(Long id);
 }

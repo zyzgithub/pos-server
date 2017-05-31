@@ -174,8 +174,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 itemTemplate.setImageUrl(posItemVo.getItem_img());
             }
             itemTemplate.setBarcode(posItemVo.getBarcode());
-            itemTemplate.setCostPrice(posItemVo.getStockPrice());
-            itemTemplate.setDefaultPrice(posItemVo.getSalesPrice());
+            itemTemplate.setCostPrice((long)posItemVo.getStockPrice()*100);
+            itemTemplate.setDefaultPrice((long)posItemVo.getSalesPrice()*100);
             itemTemplate.setUnitId(posItemVo.getItemUnitId());
             itemTemplate.setName(posItemVo.getItemName());
             //添加模板信息
@@ -185,18 +185,24 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
 
 
-            posItem.setStockPrice(posItemVo.getStockPrice()*100);
-            posItem.setSalesPrice(posItemVo.getSalesPrice()*100);
+            posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
+            posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
             posItem.setRepertory(posItemVo.getRepertory());
             //预警库存默认20
             posItem.setWarningRepertory(20);
             posItem.setItemName(posItemVo.getItemName());
             posItem.setItemTemplateId(itemTemplate.getId());
+            if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+            }else {
+                posItem.setItemImgUrl(posItemVo.getItem_img());
+            }
             posItem.setItemTypeId(posItemVo.getPosTypeId());
             //保质期天
             posItem.setShelfLife(posItemVo.getShelfLife());
             //商家id，以后收银员账号查询关联商家
             posItem.setPassportId(posItemVo.getPassportId());
+            posItem.setIsShelve(posItemVo.getIsShelve());
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
             map.put("result","true");
@@ -210,13 +216,18 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem=new PosItem();
                 posItem.setBuyCount(0);
                 posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice(posItemVo.getStockPrice()*100);
-                posItem.setSalesPrice(posItemVo.getSalesPrice()*100);
+                posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
+                posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
                 posItem.setRepertory(posItemVo.getRepertory());
                 //预警库存默认20
                 posItem.setWarningRepertory(20);
                 posItem.setItemName(posItemVo.getItemName());
                 posItem.setItemTemplateId(itemTemplate.getId());
+                if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                    posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                }else {
+                    posItem.setItemImgUrl(posItemVo.getItem_img());
+                }
                 posItem.setItemTypeId(posItemVo.getPosTypeId());
                 //保质期天
                 posItem.setShelfLife(posItemVo.getShelfLife());
@@ -230,8 +241,8 @@ public class DefaultPosItemManager implements PosItemManager {
             }else {
                 posItem.setBuyCount(0);
                 posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice(posItemVo.getStockPrice()*100);
-                posItem.setSalesPrice(posItemVo.getSalesPrice()*100);
+                posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
+                posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
                 //库存为添加
                 Integer rep=posItem.getRepertory()+posItemVo.getRepertory();
                 posItem.setRepertory(rep);
@@ -239,6 +250,11 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setWarningRepertory(20);
                 posItem.setItemName(posItemVo.getItemName());
                 posItem.setItemTemplateId(itemTemplate.getId());
+                if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                    posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                }else {
+                    posItem.setItemImgUrl(posItemVo.getItem_img());
+                }
                 posItem.setItemTypeId(posItemVo.getPosTypeId());
                 //保质期天
                 posItem.setShelfLife(posItemVo.getShelfLife());
@@ -284,13 +300,33 @@ public class DefaultPosItemManager implements PosItemManager {
             map.put("result","false");
             map.put("msg","查询信息为空!");
         }else {
-            posItem.setRepertory(posItemVo.getRepertory());
+            posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
+            posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+            //库存为添加
+            Integer rep=posItemVo.getRepertory();
+            posItem.setRepertory(rep);
+            //预警库存默认20
+            posItem.setWarningRepertory(20);
+            posItem.setItemName(posItemVo.getItemName());
+            if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+            }else {
+                posItem.setItemImgUrl(posItemVo.getItem_img());
+            }
+            //保质期天
+            posItem.setShelfLife(posItemVo.getShelfLife());
+            //编辑上下架信息
+            posItem.setIsShelve(posItemVo.getIsShelve());
+            //添加商家商品信息
+            posItemJpaRepository.save(posItem);
+            map.put("result","true");
+            map.put("msg","商品编辑成功!!");
 
 
 
 
         }
-        return null;
+        return map;
     }
 
 

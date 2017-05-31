@@ -20,4 +20,14 @@ public class DefaultPosTypeManager implements PosTypeManager {
     public List<PosType> getAllByPassportId(Long passportId) {
         return posTypeJpaRepository.getAllByPassportId(passportId);
     }
+
+    @Override
+    public PosType getPosTypeByPassportIdAndItemTypeTitle(Long passportId, String title) {
+        return posTypeJpaRepository.getPosTypeByPassportIdAndItemTypeTitle(passportId, title);
+    }
+
+    @Override
+    public PosType getPosTypeById(Long id) {
+        return posTypeJpaRepository.getPosTypeById(id);
+    }
 }
