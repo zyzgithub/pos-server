@@ -33,4 +33,14 @@ public interface ItemTemplateJpaRepository extends JpaRepository<ItemTemplate,In
     @Query("SELECT itemp FROM ItemTemplate itemp where itemp.barcode=:barcode and "
             +"itemp.ascriptionType=1")
     ItemTemplate getItemTemplateByBarcode(@Param("barcode") String barcode);
+
+    /***
+     * 判断模板名字是否重复
+     * @param
+     * @return
+     */
+    @Query("select itemp from ItemTemplate  itemp where itemp.name=:name and itemp.ascriptionType=1")
+    ItemTemplate getItemTemplateByName(@Param("name") String name);
+
+    ItemTemplate getItemTemplateById(Long id);
 }

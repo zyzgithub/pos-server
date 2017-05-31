@@ -23,4 +23,13 @@ public interface ItemTemplateManager {
      * @return
      */
     ItemTemplate getItemTemplateByBarcode(String barcode);
+
+    ItemTemplate getItemTemplateById(Long id);
+
+    /***
+     * 判断模板名字是否重复
+     * @param
+     * @return
+     */
+    ItemTemplate getItemTemplateByName(String name);
 }

@@ -1,7 +1,7 @@
 package com.dianba.pos.passport.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dianba.pos.common.util.AjaxJson;
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.passport.config.PassportProperties;
 import com.dianba.pos.passport.config.PassportURLConstant;
@@ -27,21 +27,20 @@ public class PassportController {
 
     @RequestMapping("loginPassport")
     @ResponseBody
-    public AjaxJson loginPassport(PassportVo passportVo) {
-
-
-        AjaxJson ajaxJson = new AjaxJson();
+    public BasicResult loginPassport(PassportVo passportVo) {
 
         JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
+        logger.info(passportProperties.getLogin());
+        JSONObject response = jsonObject.getJSONObject("response");
+        String msg = jsonObject.getString("msg");
         logger.info("pos 端登录：" + jsonObject.toJSONString());
         if (jsonObject.getIntValue("code") != 0) {
-            ajaxJson.setStateCode(AjaxJson.STATE_CODE_FAIL);
-            ajaxJson.setSuccess(false);
+            return  BasicResult.createFailResult(msg);
+        }else {
+
+            return  BasicResult.createSuccessResult(msg,response);
         }
-        String res = jsonObject.get("response").toString();
-        String msg = jsonObject.getString("msg");
-        ajaxJson.setMsg(msg);
-        ajaxJson.setObj(res);
-        return ajaxJson;
+
+
     }
 }

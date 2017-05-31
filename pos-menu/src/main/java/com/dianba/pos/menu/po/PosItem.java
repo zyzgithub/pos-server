@@ -66,6 +66,8 @@ public class PosItem implements Serializable {
     @Column(name = "sales_price")
     private Long salesPrice;
 
+    @Column(name = "barcode")
+    private String barcode;
     @Column(name = "code_id")
     private Integer codeId;
 

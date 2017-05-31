@@ -25,4 +25,14 @@ public class DefaultItemTemplateManager implements ItemTemplateManager {
     public ItemTemplate getItemTemplateByBarcode(String barcode) {
         return itemTemplateJpaRepository.getItemTemplateByBarcode(barcode);
     }
+
+    @Override
+    public ItemTemplate getItemTemplateById(Long id) {
+        return itemTemplateJpaRepository.getItemTemplateById(id);
+    }
+
+    @Override
+    public ItemTemplate getItemTemplateByName(String name) {
+        return itemTemplateJpaRepository.getItemTemplateByName(name);
+    }
 }
