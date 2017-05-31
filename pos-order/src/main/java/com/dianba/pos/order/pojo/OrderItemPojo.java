@@ -3,7 +3,7 @@ package com.dianba.pos.order.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class OrderItemPojo implements Serializable{
+public class OrderItemPojo implements Serializable {
 
     //商品ID
     private long itemId;

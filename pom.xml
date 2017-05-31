@@ -14,7 +14,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <repository.url>http://192.168.1.202:8081</repository.url>
+        <repository.url>http://apptest.0085.com:8082</repository.url>
     </properties>
 
     <modules>
