@@ -9,7 +9,7 @@ public class PosTypeVo {
 
     private String title;
 
-    private Integer type_count;
+    private Integer typeCount;
 
 
     public Long getId() {
@@ -28,11 +28,11 @@ public class PosTypeVo {
         this.title = title;
     }
 
-    public Integer getType_count() {
-        return type_count;
+    public Integer getTypeCount() {
+        return typeCount;
     }
 
-    public void setType_count(Integer type_count) {
-        this.type_count = type_count;
+    public void setTypeCount(Integer typeCount) {
+        this.typeCount = typeCount;
     }
 }

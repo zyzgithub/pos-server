@@ -39,8 +39,10 @@ public class PosItemVo {
     //商品商家id
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long passportId;
-    /**商品图片**/
-    private String item_img;
+    /**
+     * 商品图片
+     **/
+    private String itemImg;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String createDate;
 
@@ -48,7 +50,9 @@ public class PosItemVo {
     /**商品销售量**/
     private Integer buyCount;
 
-    /**商品说明**/
+    /**
+     * 商品说明
+     **/
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
 
@@ -69,14 +73,20 @@ public class PosItemVo {
 
     private Integer warningRepertory;
 
-    /**商品保质期（天）**/
+    /**
+     * 商品保质期（天）
+     **/
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer shelfLife;
 
-    /**原价**/
+    /**
+     * 原价
+     **/
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private double stockPrice;
-    /**销售价格**/
+    /**
+     * 销售价格
+     **/
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private double salesPrice;
 
@@ -169,7 +179,6 @@ public class PosItemVo {
     }
 
 
-
     public void setSalesPrice(Long salesPrice) {
         this.salesPrice = salesPrice;
     }
@@ -190,12 +199,12 @@ public class PosItemVo {
         this.barcode = barcode;
     }
 
-    public String getItem_img() {
-        return item_img;
+    public String getItemImg() {
+        return itemImg;
     }
 
-    public void setItem_img(String item_img) {
-        this.item_img = item_img;
+    public void setItemImg(String itemImg) {
+        this.itemImg = itemImg;
     }
 
     public String getPosTypeName() {

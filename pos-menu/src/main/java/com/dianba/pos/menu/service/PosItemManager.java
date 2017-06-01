@@ -17,42 +17,49 @@ public interface PosItemManager {
 
     List<PosItem> getAllByPosTypeId(@Param("posTypeId") Long posTypeId);
 
-    List<PosItem> getAllByPassportIdAndItemTypeId(@Param("passportId") Long passportId,@Param("itemTypeId") Long itemTypeId);
+    List<PosItem> getAllByPassportIdAndItemTypeId(@Param("passportId") Long passportId
+            , @Param("itemTypeId") Long itemTypeId);
+
     List<PosItem> getAllByPassportId(@Param("passportId") Long passportId);
+
     /***
      * 查询此商家是否有此模板商品
      * @param passportId
      * @param itemId
      * @return
      */
-    PosItem getPosItemByPassportIdAndItemTemplateId(Long passportId,Long itemId);
+    PosItem getPosItemByPassportIdAndItemTemplateId(Long passportId, Long itemId);
 
 
-    PosItemVo getItemByBarcode(String barcode,String passportId);
+    PosItemVo getItemByBarcode(String barcode, String passportId);
 
 
     /**
      * 商品入库
+     *
      * @param posItemVo
      * @return
      */
     @Transactional
-    Map<String,Object> itemStorage(PosItemVo posItemVo);
+    Map<String, Object> itemStorage(PosItemVo posItemVo);
 
     PosItem getPosItemById(Long id);
 
-    /**根据商品条形码或者名称搜索商品信息**/
+    /**
+     * 根据商品条形码或者名称搜索商品信息
+     **/
 
-    List<PosItem> findAllBySearchTextPassportId(String searchText,Long passportId);
+    List<PosItem> findAllBySearchTextPassportId(String searchText, Long passportId);
 
 
     /**
      * 商品编辑
+     *
      * @param posItemVo
      * @return
      */
     @Transactional
-    Map<String,Object> editPosItem(PosItemVo posItemVo);
+    Map<String, Object> editPosItem(PosItemVo posItemVo);
 
 
 }

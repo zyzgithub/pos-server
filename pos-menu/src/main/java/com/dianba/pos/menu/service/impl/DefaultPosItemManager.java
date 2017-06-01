@@ -1,11 +1,9 @@
 package com.dianba.pos.menu.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.po.ItemTemplate;
-import com.dianba.pos.item.po.ItemType;
 import com.dianba.pos.item.po.ItemUnit;
 import com.dianba.pos.item.repository.ItemTemplateJpaRepository;
 import com.dianba.pos.item.service.ItemTemplateManager;
@@ -46,6 +44,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Autowired
     private ItemTemplateJpaRepository itemTemplateJpaRepository;
+
     @Override
     public List<PosItem> getAllByPosTypeId(Long posTypeId) {
         return posItemJpaRepository.getAllByPosTypeId(posTypeId);
@@ -79,9 +78,9 @@ public class DefaultPosItemManager implements PosItemManager {
 
             PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(userId, itemTemplate.getId());
             if (posItem == null) {
-               // posItemVo.setId(posItem.getId());
-            //    posItemVo.setPosTypeId(posItem.getItemTypeId());
-               // ItemType itemType=itemTypeManager.getItemTypeById(posItem.getItemTypeId());
+                // posItemVo.setId(posItem.getId());
+                //    posItemVo.setPosTypeId(posItem.getItemTypeId());
+                // ItemType itemType=itemTypeManager.getItemTypeById(posItem.getItemTypeId());
                 //posItemVo.setPosTypeName(itemType.getTitle());
                 posItemVo.setItemTemplateId(itemTemplate.getId());
                 posItemVo.setItemName(itemTemplate.getName());
@@ -90,12 +89,12 @@ public class DefaultPosItemManager implements PosItemManager {
                 //posItemVo.setBuyCount(posItem.getBuyCount());
                 //posItemVo.setCreateDate(posItem.getCreateTime());
                 posItemVo.setBarcode(itemTemplate.getBarcode());
-               // posItemVo.setIsDelete(posItem.getIsDelete());
-               // posItemVo.setIsShelve(posItem.getIsShelve());
-                posItemVo.setItem_img(itemTemplate.getImageUrl());
-               // posItemVo.setRepertory(posItem.getRepertory());
+                // posItemVo.setIsDelete(posItem.getIsDelete());
+                // posItemVo.setIsShelve(posItem.getIsShelve());
+                posItemVo.setItemImg(itemTemplate.getImageUrl());
+                // posItemVo.setRepertory(posItem.getRepertory());
 //                posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-               // posItemVo.setShelfLife(posItem.getShelfLife());
+                // posItemVo.setShelfLife(posItem.getShelfLife());
                 ItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
                 posItemVo.setItemUnitId(itemUnit.getId());
                 posItemVo.setItemUnitName(itemUnit.getTitle());
@@ -112,7 +111,7 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItemVo.setBarcode(itemTemplate.getBarcode());
                 posItemVo.setIsDelete(posItem.getIsDelete());
                 posItemVo.setIsShelve(posItem.getIsShelve());
-                posItemVo.setItem_img(itemTemplate.getImageUrl());
+                posItemVo.setItemImg(itemTemplate.getImageUrl());
                 posItemVo.setRepertory(posItem.getRepertory());
                 posItemVo.setWarningRepertory(posItem.getWarningRepertory());
                 posItemVo.setShelfLife(posItem.getShelfLife());
@@ -128,54 +127,54 @@ public class DefaultPosItemManager implements PosItemManager {
     @Override
     public Map<String, Object> itemStorage(PosItemVo posItemVo) {
 
-        Map<String,Object> map=new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //查询barcode是否有此模板，没有就新增，有就关联
-        ItemTemplate itemTemplate=itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
+        ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
 
-        if(itemTemplate==null){ //新增模板信息
+        if (itemTemplate == null) { //新增模板信息
             //判断商品模板名字是否重复
-            PosItem posItem=new PosItem();
-            itemTemplate=itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
-            if(itemTemplate!=null){
-                map.put("result","false");
-                map.put("msg","商品名字重复了~😬~");
-            }else if(posItemVo.getStockPrice()==0L){
-                map.put("result","false");
-                map.put("msg","商品进货价不能为空~😬~");
+            PosItem posItem = new PosItem();
+            itemTemplate = itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
+            if (itemTemplate != null) {
+                map.put("result", "false");
+                map.put("msg", "商品名字重复了~😬~");
+            } else if (posItemVo.getStockPrice() == 0L) {
+                map.put("result", "false");
+                map.put("msg", "商品进货价不能为空~😬~");
 
-            }else if(posItemVo.getSalesPrice()==0L){
-                map.put("result","false");
-                map.put("msg","商品零售价不能为空~😬~");
-            }else if(posItemVo.getRepertory().equals(0)){
-                map.put("result","false");
-                map.put("msg","商品库存不能为空~😬~");
+            } else if (posItemVo.getSalesPrice() == 0L) {
+                map.put("result", "false");
+                map.put("msg", "商品零售价不能为空~😬~");
+            } else if (posItemVo.getRepertory().equals(0)) {
+                map.put("result", "false");
+                map.put("msg", "商品库存不能为空~😬~");
             } else if (posItemVo.getSalesPrice() < posItemVo.getStockPrice()) {
-                map.put("result","false");
-                map.put("msg","零售价格小于进货价哦~😬~");
+                map.put("result", "false");
+                map.put("msg", "零售价格小于进货价哦~😬~");
             }
             if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
                 posItem.setIsDelete("N");
-            }else {
+            } else {
                 posItem.setIsShelve(posItemVo.getIsShelve());
             }
-            if(StringUtil.isEmpty(posItemVo.getIsShelve())){
+            if (StringUtil.isEmpty(posItemVo.getIsShelve())) {
                 posItem.setIsShelve("Y");
-            }else {
+            } else {
                 posItem.setIsShelve(posItemVo.getIsShelve());
             }
 
 
             //pos商品模板
-            itemTemplate=new ItemTemplate();
+            itemTemplate = new ItemTemplate();
             itemTemplate.setAscriptionType(1);
-            if(StringUtil.isEmpty(posItemVo.getItem_img())){
+            if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                 itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-            }else {
-                itemTemplate.setImageUrl(posItemVo.getItem_img());
+            } else {
+                itemTemplate.setImageUrl(posItemVo.getItemImg());
             }
             itemTemplate.setBarcode(posItemVo.getBarcode());
-            itemTemplate.setCostPrice((long)posItemVo.getStockPrice()*100);
-            itemTemplate.setDefaultPrice((long)posItemVo.getSalesPrice()*100);
+            itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
+            itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
             itemTemplate.setUnitId(posItemVo.getItemUnitId());
             itemTemplate.setName(posItemVo.getItemName());
             //添加模板信息
@@ -185,17 +184,17 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
 
 
-            posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
-            posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+            posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
+            posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
             posItem.setRepertory(posItemVo.getRepertory());
             //预警库存默认20
             posItem.setWarningRepertory(20);
             posItem.setItemName(posItemVo.getItemName());
             posItem.setItemTemplateId(itemTemplate.getId());
-            if(StringUtil.isEmpty(posItemVo.getItem_img())){
+            if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-            }else {
-                posItem.setItemImgUrl(posItemVo.getItem_img());
+            } else {
+                posItem.setItemImgUrl(posItemVo.getItemImg());
             }
             posItem.setItemTypeId(posItemVo.getPosTypeId());
             //保质期天
@@ -205,28 +204,29 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setIsShelve(posItemVo.getIsShelve());
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
-            map.put("result","true");
-            map.put("msg","商品入库成功!");
+            map.put("result", "true");
+            map.put("msg", "商品入库成功!");
 
-        }else { //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
+        } else { //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
 
             //查询商家是否有入库此模板信息
-            PosItem posItem=posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId(),itemTemplate.getId());
-            if(posItem==null){ //商家没有关系此模板信息
-                posItem=new PosItem();
+            PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId()
+                    , itemTemplate.getId());
+            if (posItem == null) { //商家没有关系此模板信息
+                posItem = new PosItem();
                 posItem.setBuyCount(0);
                 posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
-                posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+                posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
+                posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
                 posItem.setRepertory(posItemVo.getRepertory());
                 //预警库存默认20
                 posItem.setWarningRepertory(20);
                 posItem.setItemName(posItemVo.getItemName());
                 posItem.setItemTemplateId(itemTemplate.getId());
-                if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                     posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-                }else {
-                    posItem.setItemImgUrl(posItemVo.getItem_img());
+                } else {
+                    posItem.setItemImgUrl(posItemVo.getItemImg());
                 }
                 posItem.setItemTypeId(posItemVo.getPosTypeId());
                 //保质期天
@@ -236,24 +236,24 @@ public class DefaultPosItemManager implements PosItemManager {
                 //添加商家商品信息
                 posItemJpaRepository.save(posItem);
 
-                map.put("result","true");
-                map.put("msg","商品入库成功!");
-            }else {
+                map.put("result", "true");
+                map.put("msg", "商品入库成功!");
+            } else {
                 posItem.setBuyCount(0);
                 posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
-                posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+                posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
+                posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
                 //库存为添加
-                Integer rep=posItem.getRepertory()+posItemVo.getRepertory();
+                Integer rep = posItem.getRepertory() + posItemVo.getRepertory();
                 posItem.setRepertory(rep);
                 //预警库存默认20
                 posItem.setWarningRepertory(20);
                 posItem.setItemName(posItemVo.getItemName());
                 posItem.setItemTemplateId(itemTemplate.getId());
-                if(StringUtil.isEmpty(posItemVo.getItem_img())){
+                if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                     posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-                }else {
-                    posItem.setItemImgUrl(posItemVo.getItem_img());
+                } else {
+                    posItem.setItemImgUrl(posItemVo.getItemImg());
                 }
                 posItem.setItemTypeId(posItemVo.getPosTypeId());
                 //保质期天
@@ -262,8 +262,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setPassportId(posItemVo.getPassportId());
                 //添加商家商品信息
                 posItemJpaRepository.save(posItem);
-                map.put("result","true");
-                map.put("msg","商品入库成功!");
+                map.put("result", "true");
+                map.put("msg", "商品入库成功!");
 
             }
 
@@ -279,12 +279,13 @@ public class DefaultPosItemManager implements PosItemManager {
     @Override
     public List<PosItem> findAllBySearchTextPassportId(String searchText, Long passportId) {
         Pattern pattern = Pattern.compile("[0-9]*");
-        List<PosItem> posItems=null;
-        if(pattern.matcher(searchText).matches()==true){
-            posItems=posItemJpaRepository.findAllByBarcodeLikeAndPassportId("%"+searchText+"%", passportId);
-
-        }else {
-            posItems=posItemJpaRepository.findAllByItemNameLikeAndPassportId("%"+searchText+"%", passportId);
+        List<PosItem> posItems = null;
+        if (pattern.matcher(searchText).matches() == true) {
+            posItems = posItemJpaRepository
+                    .findAllByBarcodeLikeAndPassportId("%" + searchText + "%", passportId);
+        } else {
+            posItems = posItemJpaRepository
+                    .findAllByItemNameLikeAndPassportId("%" + searchText + "%", passportId);
         }
         return posItems;
     }
@@ -292,26 +293,26 @@ public class DefaultPosItemManager implements PosItemManager {
     @Override
     public Map<String, Object> editPosItem(PosItemVo posItemVo) {
 
-        Map<String,Object> map=new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //查询商家是否有此商品信息
 
-        PosItem posItem=posItemManager.getPosItemById(posItemVo.getId());
-        if(posItem==null){
-            map.put("result","false");
-            map.put("msg","查询信息为空!");
-        }else {
-            posItem.setStockPrice((long)posItemVo.getStockPrice()*100);
-            posItem.setSalesPrice((long)posItemVo.getSalesPrice()*100);
+        PosItem posItem = posItemManager.getPosItemById(posItemVo.getId());
+        if (posItem == null) {
+            map.put("result", "false");
+            map.put("msg", "查询信息为空!");
+        } else {
+            posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
+            posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
             //库存为添加
-            Integer rep=posItemVo.getRepertory();
+            Integer rep = posItemVo.getRepertory();
             posItem.setRepertory(rep);
             //预警库存默认20
             posItem.setWarningRepertory(20);
             posItem.setItemName(posItemVo.getItemName());
-            if(StringUtil.isEmpty(posItemVo.getItem_img())){
+            if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-            }else {
-                posItem.setItemImgUrl(posItemVo.getItem_img());
+            } else {
+                posItem.setItemImgUrl(posItemVo.getItemImg());
             }
             //保质期天
             posItem.setShelfLife(posItemVo.getShelfLife());
@@ -319,10 +320,8 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setIsShelve(posItemVo.getIsShelve());
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
-            map.put("result","true");
-            map.put("msg","商品编辑成功!!");
-
-
+            map.put("result", "true");
+            map.put("msg", "商品编辑成功!!");
 
 
         }

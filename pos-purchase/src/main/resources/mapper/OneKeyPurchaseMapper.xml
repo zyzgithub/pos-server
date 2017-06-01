@@ -9,21 +9,20 @@
     </resultMap>
 
     <select id="queryWarnInvenstory" resultMap="OneKeyPurchaseMap">
-        select t.*,ifnull(a.total_sale,0) total_sale,ifnull(a.day_sale,0) day_sale
-        from menu t
-        LEFT JOIN (
-        select c.menu_id,c.total_sale,ceil(c.total_sale/7) day_sale from (
-        select om.menu_id,sum(om.quantity) total_sale
-        from `order` o
-        INNER JOIN order_menu om on om.order_id=o.id
-        WHERE o.merchant_id=#{merchant_id} and o.pay_state = 'pay' and o.rstate = 'normal'
-        AND o.order_type != 'scan_order' AND o.create_time > UNIX_TIMESTAMP(DATE_SUB(now(),INTERVAL 7 DAY ))
-        GROUP BY om.menu_id) c
-        ) a on a.menu_id=t.id
-        WHERE t.merchant_id = #{merchant_id} and barcode is not NULL and is_delete = 'N'
-        and (a.day_sale >= t.today_repertory or t.today_repertory &lt;= t.warn_inventory)
-        <!--<if test="exclude_barcode != null">-->
-        <!--and barcode not in ($exclude_barcode$)-->
-        <!--</if>-->
+        select * from (
+            select pi.*,t.normal_quantity total_sale,t.normal_quantity/7 day_sale
+            from (
+                select b.item_template_id,sum(b.normal_quantity) normal_quantity
+                from life_pos.pos_item a
+                inner join life_order.order_item_snapshot b on b.item_template_id=a.item_template_id
+                inner join life_order.order_entry c on c.id=b.order_id
+                where c.type in(6,7,8) and b.item_template_id!=0 -- and c.payment_type=1
+                and c.create_time > DATE_SUB(now(),INTERVAL 7 DAY)
+                and a.passport_id=100005
+                group by b.item_template_id
+            ) t
+            inner join life_pos.pos_item pi on pi.item_template_id=t.item_template_id
+              and pi.passport_id=100005
+        ) q where q.repertory &lt; q.day_sale
     </select>
 </mapper>

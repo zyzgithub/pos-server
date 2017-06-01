@@ -3,8 +3,13 @@ package com.dianba.pos.menu.controller;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.po.ItemType;
+import com.dianba.pos.item.repository.ItemTypeJpaRepository;
+import com.dianba.pos.item.service.ItemTypeManager;
 import com.dianba.pos.menu.config.MenuUrlConstant;
 import com.dianba.pos.menu.po.PosType;
+import com.dianba.pos.menu.repository.PosTypeJpaRepository;
+import com.dianba.pos.menu.service.PosTypeManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,8 +19,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(MenuUrlConstant.POS_TYPE_URL)
-public class PosTypeController extends BaseController{
+public class PosTypeController {
 
+    @Autowired
+    private ItemTypeManager itemTypeManager;
+    @Autowired
+    private ItemTypeJpaRepository itemTypeJpaRepository;
+    @Autowired
+    private PosTypeJpaRepository posTypeJpaRepository;
+    @Autowired
+    private PosTypeManager posTypeManager;
 
     /**
      * 新增商家商品分类
@@ -28,17 +41,17 @@ public class PosTypeController extends BaseController{
     @RequestMapping(value = "addPosType")
     public BasicResult addPosType(String passportId, String title) {
 
-        if(StringUtil.isEmpty(passportId)||StringUtil.isEmpty(title)){
+        if (StringUtil.isEmpty(passportId) || StringUtil.isEmpty(title)) {
 
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
-        }else {
+        } else {
 
-            PosType posType=posTypeManager.getPosTypeByPassportIdAndItemTypeTitle(Long.parseLong(passportId),title);
-            if(posType!=null){
+            PosType posType = posTypeManager.getPosTypeByPassportIdAndItemTypeTitle(Long.parseLong(passportId), title);
+            if (posType != null) {
 
                 return BasicResult.createFailResult("商家分类名称重复了。");
 
-            }else {
+            } else {
                 ItemType itemType = new ItemType();
                 itemType.setTitle(title);
                 itemType.setAscriptionType(1);
@@ -60,20 +73,21 @@ public class PosTypeController extends BaseController{
 
     /**
      * 删除商家分类
+     *
      * @param passportId
      * @param posTypeId
      * @return
      */
     @ResponseBody
     @RequestMapping("deletePosType")
-    public BasicResult deletePosType(Long passportId,Long posTypeId){
+    public BasicResult deletePosType(Long passportId, Long posTypeId) {
 
-        PosType posType=posTypeManager.getPosTypeById(posTypeId);
-        if(posType!=null&&posType.getPassportId()==passportId){
+        PosType posType = posTypeManager.getPosTypeById(posTypeId);
+        if (posType != null && posType.getPassportId() == passportId) {
 
             posTypeJpaRepository.delete(posType);
             return BasicResult.createSuccessResult("删除商家分类成功!");
-        }else {
+        } else {
 
             return BasicResult.createFailResult("删除商家分类异常!");
         }
@@ -81,6 +95,7 @@ public class PosTypeController extends BaseController{
 
     /**
      * 编辑商家分类
+     *
      * @param passportId
      * @param posTypeId
      * @param title
@@ -88,17 +103,17 @@ public class PosTypeController extends BaseController{
      */
     @ResponseBody
     @RequestMapping("editPosType")
-    public BasicResult editPosType(Long passportId,Long posTypeId, String title){
+    public BasicResult editPosType(Long passportId, Long posTypeId, String title) {
 
-        PosType posType=posTypeManager.getPosTypeById(posTypeId);
-        if(posType!=null&&posType.getPassportId()==passportId){
-            ItemType itemType=itemTypeManager.getItemTypeById(posType.getItemTypeId());
+        PosType posType = posTypeManager.getPosTypeById(posTypeId);
+        if (posType != null && posType.getPassportId() == passportId) {
+            ItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
             itemType.setTitle(title);
             itemTypeJpaRepository.save(itemType);
             posType.setItemTypeTitle(title);
             posTypeJpaRepository.save(posType);
             return BasicResult.createSuccessResult("编辑商家分类成功!");
-        }else {
+        } else {
 
             return BasicResult.createFailResult("删除商家分类异常!");
         }

@@ -1,10 +1,17 @@
 package com.dianba.supplychain.service.impl;
 
+import com.dianba.pos.menu.po.LifeBarcodeRelationship;
+import com.dianba.pos.menu.repository.LifeBarcodeRelationshipJpaRepository;
+import com.dianba.pos.menu.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.merchant.po.Merchant;
 import com.dianba.pos.merchant.repository.MerchantJpaRepository;
 import com.dianba.supplychain.mapper.WarehouseGoodsMapper;
-import com.dianba.supplychain.po.*;
-import com.dianba.supplychain.repository.*;
+import com.dianba.supplychain.po.Goods;
+import com.dianba.supplychain.po.Warehouse;
+import com.dianba.supplychain.po.WarehouseGoods;
+import com.dianba.supplychain.repository.SupplyChainGoodsJpaRepository;
+import com.dianba.supplychain.repository.WarehouseGoodsJpaRepository;
+import com.dianba.supplychain.repository.WarehouseJpaRepository;
 import com.dianba.supplychain.service.GoodsManager;
 import com.dianba.supplychain.service.WarehouseOrgManager;
 import com.dianba.supplychain.vo.Items;
@@ -20,7 +27,7 @@ import java.util.Map.Entry;
 public class DefaultGoodsManager implements GoodsManager {
 
     @Autowired
-    private BarcodeRelationshipJpaRepository barcodeRelationshipJpaRepository;
+    private LifeBarcodeRelationshipJpaRepository barcodeRelationshipJpaRepository;
     @Autowired
     private SupplyChainGoodsJpaRepository supplyChainGoodsJpaRepository;
     @Autowired
@@ -30,7 +37,7 @@ public class DefaultGoodsManager implements GoodsManager {
     @Autowired
     private WarehouseJpaRepository warehouseJpaRepository;
     @Autowired
-    private GoodsUnitJpaRepository goodsUnitJpaRepository;
+    private LifeItemUnitJpaRepository goodsUnitJpaRepository;
     @Autowired
     private MerchantJpaRepository merchantJpaRepository;
     @Autowired
@@ -51,26 +58,26 @@ public class DefaultGoodsManager implements GoodsManager {
         }
 
         // 获取本次目标的内容对应于供应链端中存在的记录
-        List<BarcodeRelationship> batchBarcodeRelationships
+        List<LifeBarcodeRelationship> batchLifeBarcodeRelationships
                 = barcodeRelationshipJpaRepository.findByTargetBarcodeIn(Arrays.asList(barcodes.split(",")));
-        if (batchBarcodeRelationships == null || batchBarcodeRelationships.isEmpty()) {
+        if (batchLifeBarcodeRelationships == null || batchLifeBarcodeRelationships.isEmpty()) {
             // 供应链没有对应的商品可以出售
             return matchItemsList;
         }
-        Map<String, List<BarcodeRelationship>> matchSourceBarcodes = new HashMap<String, List<BarcodeRelationship>>();
+        Map<String, List<LifeBarcodeRelationship>> matchSourceBarcodes = new HashMap<>();
         // 组合 用于获取商品模版数据
         StringBuilder sourceBarcodes = new StringBuilder();
         // 按目标进行分组
-        for (BarcodeRelationship barcodeRelationship : batchBarcodeRelationships) {
-            List<BarcodeRelationship> barcodeRelationships
-                    = matchSourceBarcodes.get(barcodeRelationship.getTargetBarcode());
-            if (barcodeRelationships == null) {
-                barcodeRelationships = new ArrayList<BarcodeRelationship>();
-                matchSourceBarcodes.put(barcodeRelationship.getTargetBarcode(), barcodeRelationships);
+        for (LifeBarcodeRelationship lifeBarcodeRelationship : batchLifeBarcodeRelationships) {
+            List<LifeBarcodeRelationship> lifeBarcodeRelationships
+                    = matchSourceBarcodes.get(lifeBarcodeRelationship.getTargetBarcode());
+            if (lifeBarcodeRelationships == null) {
+                lifeBarcodeRelationships = new ArrayList<LifeBarcodeRelationship>();
+                matchSourceBarcodes.put(lifeBarcodeRelationship.getTargetBarcode(), lifeBarcodeRelationships);
             }
-            barcodeRelationships.add(barcodeRelationship);
+            lifeBarcodeRelationships.add(lifeBarcodeRelationship);
 
-            sourceBarcodes.append(barcodeRelationship.getSourceBarcode()).append(",");
+            sourceBarcodes.append(lifeBarcodeRelationship.getSourceBarcode()).append(",");
         }
         sourceBarcodes = sourceBarcodes.delete(sourceBarcodes.length() - 1, sourceBarcodes.length());
         // 获取供应链中所有出售中的商品模版
@@ -93,13 +100,13 @@ public class DefaultGoodsManager implements GoodsManager {
         }
 
         Warehouse warehouse = warehouseJpaRepository.findOne(nearbyWarehouseId);
-        Iterator<Entry<String, List<BarcodeRelationship>>> entrys = matchSourceBarcodes.entrySet().iterator();
+        Iterator<Entry<String, List<LifeBarcodeRelationship>>> entrys = matchSourceBarcodes.entrySet().iterator();
         while (entrys.hasNext()) {
             MatchItems matchItems = new MatchItems();
-            Entry<String, List<BarcodeRelationship>> entry = entrys.next();
-            List<BarcodeRelationship> barcodeRelationships = entry.getValue();
-            for (BarcodeRelationship barcodeRelationship : barcodeRelationships) {
-                Goods goods = itemTemplateMap.get(barcodeRelationship.getSourceBarcode());
+            Entry<String, List<LifeBarcodeRelationship>> entry = entrys.next();
+            List<LifeBarcodeRelationship> lifeBarcodeRelationships = entry.getValue();
+            for (LifeBarcodeRelationship lifeBarcodeRelationship : lifeBarcodeRelationships) {
+                Goods goods = itemTemplateMap.get(lifeBarcodeRelationship.getSourceBarcode());
                 if (goods == null) {
                     continue;
                 }
@@ -128,7 +135,7 @@ public class DefaultGoodsManager implements GoodsManager {
                         .setScale(2, BigDecimal.ROUND_HALF_UP));
 //                GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());
 //                items.setUnit(itemUnit == null ? "箱" : itemUnit.getName());
-                items.setStandard(barcodeRelationship.getRelationCoefficient());
+                items.setStandard(lifeBarcodeRelationship.getRelationCoefficient());
                 matchItems.getItems().add(items);
                 matchItems.setBarcode(entry.getKey());
                 matchItemsList.add(matchItems);

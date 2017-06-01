@@ -1,11 +1,11 @@
-package com.dianba.supplychain.po;
+package com.dianba.pos.menu.po;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "life_item.item_unit")
-public class GoodsUnit implements Serializable {
+@Table(name = "item_unit", schema = "life_item")
+public class LifeItemUnit implements Serializable {
 
     @Id
     @Column(name = "id")
