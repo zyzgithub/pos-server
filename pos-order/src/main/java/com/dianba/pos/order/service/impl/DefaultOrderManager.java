@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.vo.OrderVo;
@@ -32,6 +34,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
 
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private LifeOrderJpaRepository orderJpaRepository;
 
     public OrderEntry getOrder(long orderId) {
         Map<String, String> params = new HashMap<>();
@@ -45,6 +49,10 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return null;
     }
 
+    public LifeOrder getLifeOrder(long orderId) {
+        return orderJpaRepository.findOne(orderId);
+    }
+
 
     public BasicResult prepareCreateOrder(long passportId, OrderTypeEnum orderType) {
         Map<String, String> params = new HashMap<>();
@@ -56,7 +64,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     public BasicResult generateOrder(long passportId, String sequenceNumber
             , String phoneNumber
             , OrderTypeEnum orderType, long actualPrice, long totalPrice
-            , List<Map<String, Object>> orderItems) {
+            , List<Map<String, Object>> orderItems) throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("sequenceNumber", sequenceNumber);
         params.put("partnerUserId", passportId + "");
@@ -89,8 +97,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
             orderItemSnapshot.setItemName(item.get("itemName").toString());
             orderItemSnapshot.setItemTypeId(Long.parseLong(item.get("itemTypeId").toString()));
             orderItemSnapshot.setItemTypeName(item.get("itemTypeName").toString());
-            orderItemSnapshot.setItemUnitId(Long.parseLong(item.get("itemTypeUnitId").toString()));
-            orderItemSnapshot.setItemUnitName(item.get("itemTypeUnitName").toString());
+//            orderItemSnapshot.setItemUnitId(Long.parseLong(item.get("itemTypeUnitId").toString()));
+//            orderItemSnapshot.setItemUnitName(item.get("itemTypeUnitName").toString());
             orderItemSnapshot.setItemBarcode(item.get("itemBarcode").toString());
             orderItemSnapshot.setCostPrice((long) (itemCostPrice * 100));
             orderItemSnapshot.setNormalPrice((long) (itemSalePrice * 100));

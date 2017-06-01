@@ -3,7 +3,7 @@ package com.dianba.pos.purchase.controller;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.purchase.config.PurchaseURLConstant;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
-import com.dianba.supplychain.vo.MatchItems;
+import com.dianba.pos.supplychain.vo.MatchItems;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

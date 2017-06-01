@@ -1,6 +1,7 @@
 package com.dianba.pos.order.service;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.order.po.LifeOrder;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 
@@ -26,6 +27,11 @@ public interface OrderManager {
      */
     OrderEntry getOrder(long orderId);
 
+    /**
+     * 获取订单详情
+     */
+    LifeOrder getLifeOrder(long orderId);
+
     /*
      * 预创建订单
      */
@@ -36,7 +42,7 @@ public interface OrderManager {
      */
     BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
             , OrderTypeEnum orderType, long actualPrice, long totalPrice
-            , List<Map<String, Object>> orderItems);
+            , List<Map<String, Object>> orderItems)throws Exception;
 
     /**
      * 确认支付订单

@@ -14,8 +14,8 @@ public interface PaymentManager {
     /**
      * 订单支付
      */
-    BasicResult payOrder(long passportId, long orderId
-            , String paymentType, TransTypeEnum transType, long transTotalAmount);
+    BasicResult payOrder(long passportId, long orderId, String paymentTypeKey, String authCode)
+            throws Exception;
 
     /**
      * 订单余额变更

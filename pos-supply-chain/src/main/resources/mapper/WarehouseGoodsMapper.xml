@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dianba.pos.supplychain.mapper.WarehouseGoodsMapper">
+
+    <resultMap id="BaseResultMap" type="com.dianba.pos.supplychain.po.WarehouseGoods">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId"/>
+        <result column="warehouse_id" jdbcType="INTEGER" property="warehouseId"/>
+        <result column="inventory" jdbcType="INTEGER" property="inventory"/>
+        <result column="inventory_alarm" jdbcType="INTEGER" property="inventoryAlarm"/>
+        <result column="safety_threshold" jdbcType="INTEGER" property="safetyThreshold"/>
+        <result column="oversold_number" jdbcType="INTEGER" property="oversoldNumber"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="market_price" jdbcType="DOUBLE" property="marketPrice"/>
+        <result column="cost_price" jdbcType="DOUBLE" property="costPrice"/>
+        <result column="retail_price" jdbcType="DOUBLE" property="retailPrice"/>
+        <result column="discount_price" jdbcType="DOUBLE" property="discountPrice"/>
+        <result column="discount_limit" jdbcType="INTEGER" property="discountLimit"/>
+        <result column="normal_limit" jdbcType="INTEGER" property="normalLimit"/>
+        <result column="delivery_delay" jdbcType="TINYINT" property="deliveryDelay"/>
+        <result column="sales" jdbcType="INTEGER" property="sales"/>
+        <result column="wait_for_delivery" jdbcType="INTEGER" property="waitForDelivery"/>
+        <result column="min_sales" jdbcType="INTEGER" property="minSales"/>
+    </resultMap>
+
+    <select id="getItemsByTemplate" resultMap="BaseResultMap">
+        select * from supply_chain_warehouse_goods
+        where warehouse_id = #{warehouseId} and goods_id in (${itemTemplates}) and is_delete = 0 and status = 1
+    </select>
+</mapper>

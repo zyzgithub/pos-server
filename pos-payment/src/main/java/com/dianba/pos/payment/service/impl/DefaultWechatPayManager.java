@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,7 +74,9 @@ public class DefaultWechatPayManager implements WechatPayManager {
         params.put("out_trade_no", order.getSequenceNumber());
         params.put("body", "1号生活715超市--" + title);
 //        otherParams.put("total_fee", String.valueOf(order.getTotalPrice() / 100));
-        params.put("total_fee", "1");
+        BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice())
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+        params.put("total_fee", totalAmount + "");
         try {
             Map<String, String> result = WxBarcodePayApi.payOrder(params);
             if (result == null) {
@@ -85,33 +88,6 @@ public class DefaultWechatPayManager implements WechatPayManager {
             result.put("out_trade_no", order.getSequenceNumber());
             //对付款结果进行处理
             response = WxBarcodePayReturnHandler.handle(result);
-            //付款成功
-            if (response.getCode() == BarcodePayResponse.SUCCESS_CODE) {
-
-//                String outTraceId = result.get("transaction_id");
-//                order.setOutTraceId(outTraceId);
-//                //更新订单对应的用户及订单的付款类型
-//                if (userId.intValue() != 0) {
-//                    WUserEntity user = this.get(WUserEntity.class, userId);
-//                    if (user != null) {
-//                        order.setWuser(user);
-//                    }
-//                }
-//                if ("merchantQcCode".equals(order.getFromType())) {//商家扫用户条形码付款
-//                    order.setPayType(OrderEntity.PayType.WEIXINPAY);
-//                } else {
-//                    order.setPayType(PayEnum.supermarkt_wxbarcode.getEn());
-//                }
-//                order.setOnlineMoney(order.getOrigin());
-//                order.setPayState("pay");
-//                order.setPayTime(DateUtils.getSeconds());
-//                orderService.updateEntitie(order);
-
-                // TODO 支付宝付款成功，调用2.0支付记录保存方法
-//                //更新订单的状态，及其他业务处理
-//                OrderHandler orderPayBackHandler = orderHandleService.getHandler(order.getOrderType());
-//                orderPayBackHandler.handle(order);
-            }
         } catch (Exception e) {
             response = BarcodePayResponse.FAILURE;
             e.printStackTrace();

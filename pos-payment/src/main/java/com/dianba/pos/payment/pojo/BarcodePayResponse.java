@@ -37,7 +37,7 @@ public class BarcodePayResponse implements Serializable {
     }
 
     public boolean isSuccess() {
-        if (code != 0) {
+        if (code == 0) {
             return true;
         }
         return false;
