@@ -6,6 +6,7 @@ import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
+import com.dianba.pos.order.vo.OrderVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
@@ -117,13 +118,13 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     }
 
     public BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize) {
-        Page<Map<String, Object>> mapPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+        Page<List<OrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
         BasicResult basicResult = BasicResult.createSuccessResult();
-        basicResult.setResponseDatas(mapPage);
-        basicResult.getResponse().put("pageNum",pageNum);
-        basicResult.getResponse().put("pageSize",pageSize);
-        basicResult.getResponse().put("total",mapPage.getTotal());
+        basicResult.setResponseDatas(orderPage);
+        basicResult.getResponse().put("pageNum", pageNum);
+        basicResult.getResponse().put("pageSize", pageSize);
+        basicResult.getResponse().put("total", orderPage.getTotal());
         return basicResult;
     }
 }

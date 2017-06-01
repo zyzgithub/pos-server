@@ -1,13 +1,13 @@
 package com.dianba.pos.passport.vo;
 
-import com.xlibao.common.constant.passport.ClientTypeEnum;
-
 /**
  * Created by zhangyong on 2017/5/28.
  */
 public class RegisterVo {
 
-    /**登录用户名**/
+    /**
+     * 登录用户名
+     **/
     private String name;
 
     /****登录密码**/
@@ -16,8 +16,10 @@ public class RegisterVo {
     /***展示名字，默认name**/
     private String showName;
 
-    /**身份证名字**/
-    private String  realName;
+    /**
+     * 身份证名字
+     **/
+    private String realName;
 
     /***身份证号码**/
     private String idNumber;
@@ -29,28 +31,32 @@ public class RegisterVo {
     private Integer sex;
 
 
-    /**注册类型 COURIER(1, "courier", "快递员", true),
-     POS(2, "pos", "POS", true),
-     CONSUMER(3, "consumer", "消费者", false),
-     MERCHANT(4, "merchant", "商家", true),
-     WAREHOUSE(5, "warehouse", "仓管", true),
-     PURCHASE(6, "purchase", "采购", true),
-     SUPPLIER(7, "supplier", "供应商", true),
-     BACKSTAGE(8, "backstage", "后台", true);**/
-    private int type= 8;
+    /**
+     * 注册类型 COURIER(1, "courier", "快递员", true),
+     * POS(2, "pos", "POS", true),
+     * CONSUMER(3, "consumer", "消费者", false),
+     * MERCHANT(4, "merchant", "商家", true),
+     * WAREHOUSE(5, "warehouse", "仓管", true),
+     * PURCHASE(6, "purchase", "采购", true),
+     * SUPPLIER(7, "supplier", "供应商", true),
+     * BACKSTAGE(8, "backstage", "后台", true);
+     **/
+    private int type = 8;
 
 
-    /**默认1**/
-    private Long fromChannel=1L;
+    /**
+     * 默认1
+     **/
+    private Long fromChannel = 1L;
 
     /***
      *
      * DeviceTypeEnum
      * DEVICE_TYPE_UNKNOW(-1, "未知设备"),
-       DEVICE_TYPE_ANDROID(1, "Android"),
-       DEVICE_TYPE_IOS(2, "IOS"),
-       DEVICE_TYPE_H5(3, "H5"),
-       DEVICE_TYPE_HTML(4, "HTML");
+     DEVICE_TYPE_ANDROID(1, "Android"),
+     DEVICE_TYPE_IOS(2, "IOS"),
+     DEVICE_TYPE_H5(3, "H5"),
+     DEVICE_TYPE_HTML(4, "HTML");
      */
     private Integer deviceType;
 
@@ -62,8 +68,7 @@ public class RegisterVo {
     private String deviceName;
 
     /**
-     *  int 当前使用的版本号，必填参数；注意：版本号区分两种情况，1、用于展示的版本号 2、内部使用的版本号；本处指内部使用的版本号
-
+     * int 当前使用的版本号，必填参数；注意：版本号区分两种情况，1、用于展示的版本号 2、内部使用的版本号；本处指内部使用的版本号
      */
     private Integer versionIndex;
 

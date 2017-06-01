@@ -1,6 +1,7 @@
 package com.dianba.pos.order.mapper;
 
 import com.dianba.pos.order.vo.Order19EDto;
+import com.dianba.pos.order.vo.OrderVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -34,7 +35,7 @@ public interface OrderMapper {
      * 获取未充值订单
      */
     List<Order19EDto> getOrderListBy19EMenu(@Param("merchantId") Integer merchantId
-            , @Param("payState") String payState ,@Param("type") Integer type);
+            , @Param("payState") String payState, @Param("type") Integer type);
 
     /**
      * 更新增值服务订单信息为成功状态
@@ -46,8 +47,9 @@ public interface OrderMapper {
 
     /**
      * 根据商家ID获取订单
+     *
      * @param merchantPassportId 商家ID
      * @return
      */
-    List<Map<String,Object>> findOrderForMerchant(long merchantPassportId);
+    List<OrderVo> findOrderForMerchant(long merchantPassportId);
 }

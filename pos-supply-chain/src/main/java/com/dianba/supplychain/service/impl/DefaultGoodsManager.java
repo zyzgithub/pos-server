@@ -126,9 +126,9 @@ public class DefaultGoodsManager implements GoodsManager {
                 items.setRetailPrice(BigDecimal.valueOf(warehouseGood.getRetailPrice()));
                 items.setPrice(new BigDecimal(warehouseGood.getMarketPrice())
                         .setScale(2, BigDecimal.ROUND_HALF_UP));
-                GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());
-                items.setUnit(itemUnit == null ? "箱" : itemUnit.getName());
-                items.setStandard(barcodeRelationship.getTargetConversionCount());
+//                GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());
+//                items.setUnit(itemUnit == null ? "箱" : itemUnit.getName());
+                items.setStandard(barcodeRelationship.getRelationCoefficient());
                 matchItems.getItems().add(items);
                 matchItems.setBarcode(entry.getKey());
                 matchItemsList.add(matchItems);

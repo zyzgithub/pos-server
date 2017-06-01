@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "supply_chain_goods_unit")
+@Table(name = "life_item.item_unit")
 public class GoodsUnit implements Serializable {
 
     @Id
@@ -12,11 +12,8 @@ public class GoodsUnit implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "sort")
-    private Byte sort;
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "status")
     private Byte status;
@@ -29,20 +26,12 @@ public class GoodsUnit implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
-    public Byte getSort() {
-        return sort;
-    }
-
-    public void setSort(Byte sort) {
-        this.sort = sort;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Byte getStatus() {

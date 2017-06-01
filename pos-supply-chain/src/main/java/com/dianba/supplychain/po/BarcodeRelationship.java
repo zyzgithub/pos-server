@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "supply_chain_barcode_relationship")
+@Table(name = "life_item.item_relationship")
 public class BarcodeRelationship implements Serializable {
 
     @Id
@@ -15,20 +15,8 @@ public class BarcodeRelationship implements Serializable {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "source_id")
-    private Integer sourceId;
-
     @Column(name = "source_barcode")
     private String sourceBarcode;
-
-    @Column(name = "source_unit_id")
-    private Integer sourceUnitId;
-
-    @Column(name = "source_conversion_count")
-    private Integer sourceConversionCount;
-
-    @Column(name = "target_id")
-    private String targetId;
 
     @Column(name = "target_barcode")
     private String targetBarcode;
@@ -36,8 +24,8 @@ public class BarcodeRelationship implements Serializable {
     @Column(name = "target_unit_id")
     private Integer targetUnitId;
 
-    @Column(name = "target_conversion_count")
-    private Integer targetConversionCount;
+    @Column(name = "relation_coefficient")
+    private Integer relationCoefficient;
 
     public Integer getId() {
         return id;
@@ -53,22 +41,6 @@ public class BarcodeRelationship implements Serializable {
 
     public void setSourceBarcode(String sourceBarcode) {
         this.sourceBarcode = sourceBarcode == null ? null : sourceBarcode.trim();
-    }
-
-    public Integer getSourceUnitId() {
-        return sourceUnitId;
-    }
-
-    public void setSourceUnitId(Integer sourceUnitId) {
-        this.sourceUnitId = sourceUnitId;
-    }
-
-    public Integer getSourceConversionCount() {
-        return sourceConversionCount;
-    }
-
-    public void setSourceConversionCount(Integer sourceConversionCount) {
-        this.sourceConversionCount = sourceConversionCount;
     }
 
     public String getTargetBarcode() {
@@ -87,22 +59,6 @@ public class BarcodeRelationship implements Serializable {
         this.targetUnitId = targetUnitId;
     }
 
-    public Integer getTargetConversionCount() {
-        return targetConversionCount;
-    }
-
-    public void setTargetConversionCount(Integer targetConversionCount) {
-        this.targetConversionCount = targetConversionCount;
-    }
-
-    public Integer getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(Integer sourceId) {
-        this.sourceId = sourceId;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -111,11 +67,11 @@ public class BarcodeRelationship implements Serializable {
         this.title = title;
     }
 
-    public String getTargetId() {
-        return targetId;
+    public Integer getRelationCoefficient() {
+        return relationCoefficient;
     }
 
-    public void setTargetId(String targetId) {
-        this.targetId = targetId;
+    public void setRelationCoefficient(Integer relationCoefficient) {
+        this.relationCoefficient = relationCoefficient;
     }
 }
