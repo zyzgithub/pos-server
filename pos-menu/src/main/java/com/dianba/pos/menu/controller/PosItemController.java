@@ -1,5 +1,6 @@
 package com.dianba.pos.menu.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
@@ -78,37 +79,46 @@ public class PosItemController {
             }
 
             List<PosItemVo> posItemVos = new ArrayList<>();
-            for (PosItem posItem : posItems) {
+            if(posItems.size()==0){
 
-                ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
-                PosItemVo posItemVo = new PosItemVo();
-                posItemVo.setId(posItem.getId());
-                posItemVo.setPosTypeId(posItem.getItemTypeId());
-                ItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-                posItemVo.setPosTypeName(itemType.getTitle());
-                posItemVo.setItemTemplateId(itemTemplate.getId());
-                posItemVo.setItemName(itemTemplate.getName());
-                BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-                BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-                BigDecimal a = new BigDecimal(100);
-                Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                posItemVo.setStockPrice(sPrice);
-                posItemVo.setSalesPrice(saPrice);
-                posItemVo.setBuyCount(posItem.getBuyCount());
-                posItemVo.setCreateDate(posItem.getCreateTime());
-                posItemVo.setBarcode(itemTemplate.getBarcode());
-                posItemVo.setIsDelete(posItem.getIsDelete());
-                posItemVo.setIsShelve(posItem.getIsShelve());
-                posItemVo.setItemImg(itemTemplate.getImageUrl());
-                posItemVo.setRepertory(posItem.getRepertory());
-                posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-                posItemVo.setShelfLife(posItem.getShelfLife());
-                ItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
-                posItemVo.setItemUnitId(itemUnit.getId());
-                posItemVo.setItemUnitName(itemUnit.getTitle());
-                posItemVos.add(posItemVo);
+                return BasicResult.createFailResult("没有商品信息!");
+
+            }else {
+
+                for (PosItem posItem : posItems) {
+
+                    ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
+                    PosItemVo posItemVo = new PosItemVo();
+                    posItemVo.setId(posItem.getId());
+                    posItemVo.setPosTypeId(posItem.getItemTypeId());
+                    ItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
+                    posItemVo.setPosTypeName(itemType.getTitle());
+                    posItemVo.setItemTemplateId(itemTemplate.getId());
+                    posItemVo.setItemName(itemTemplate.getName());
+                    BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
+                    BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
+                    BigDecimal a = new BigDecimal(100);
+                    Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                    Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                    posItemVo.setStockPrice(sPrice);
+                    posItemVo.setSalesPrice(saPrice);
+                    posItemVo.setBuyCount(posItem.getBuyCount());
+                    posItemVo.setCreateDate(posItem.getCreateTime());
+                    posItemVo.setBarcode(itemTemplate.getBarcode());
+                    posItemVo.setIsDelete(posItem.getIsDelete());
+                    posItemVo.setIsShelve(posItem.getIsShelve());
+                    posItemVo.setItemImg(itemTemplate.getImageUrl());
+                    posItemVo.setRepertory(posItem.getRepertory());
+                    posItemVo.setWarningRepertory(posItem.getWarningRepertory());
+                    posItemVo.setShelfLife(posItem.getShelfLife());
+                    ItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
+                    posItemVo.setItemUnitId(itemUnit.getId());
+                    posItemVo.setItemUnitName(itemUnit.getTitle());
+                    posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+                    posItemVos.add(posItemVo);
+                }
             }
+
             return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
         }
 
@@ -138,6 +148,7 @@ public class PosItemController {
                 ItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
                 PosTypeVo posTypeVo = new PosTypeVo();
                 posTypeVo.setId(posType.getId());
+                posTypeVo.setItemTypeId(posType.getItemTypeId());
                 posTypeVo.setTitle(itemType.getTitle());
                 List<PosItem> posItems = posItemManager.getAllByPosTypeId(posType.getId());
                 posTypeVo.setTypeCount(posItems.size());
@@ -174,7 +185,38 @@ public class PosItemController {
 
             return BasicResult.createFailResult(msg);
         } else {
-            return BasicResult.createSuccessResult(msg);
+            PosItem posItem=(PosItem) map.get("info");
+            ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
+            posItemVo = new PosItemVo();
+            posItemVo.setId(posItem.getId());
+            posItemVo.setPosTypeId(posItem.getItemTypeId());
+            ItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
+            posItemVo.setPosTypeName(itemType.getTitle());
+            posItemVo.setItemTemplateId(itemTemplate.getId());
+            posItemVo.setItemName(itemTemplate.getName());
+            BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
+            BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
+            BigDecimal a = new BigDecimal(100);
+            Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+            Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+            posItemVo.setStockPrice(sPrice);
+            posItemVo.setSalesPrice(saPrice);
+            posItemVo.setBuyCount(posItem.getBuyCount());
+            posItemVo.setCreateDate(posItem.getCreateTime());
+            posItemVo.setBarcode(itemTemplate.getBarcode());
+            posItemVo.setIsDelete(posItem.getIsDelete());
+            posItemVo.setIsShelve(posItem.getIsShelve());
+            posItemVo.setItemImg(itemTemplate.getImageUrl());
+            posItemVo.setRepertory(posItem.getRepertory());
+            posItemVo.setWarningRepertory(posItem.getWarningRepertory());
+            posItemVo.setShelfLife(posItem.getShelfLife());
+            posItemVo.setPassportId(posItem.getPassportId());
+            ItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
+            posItemVo.setItemUnitId(itemUnit.getId());
+            posItemVo.setItemUnitName(itemUnit.getTitle());
+            posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+            JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posItemVo);
+            return BasicResult.createSuccessResult(msg,jsonObject);
         }
 
     }
@@ -192,12 +234,14 @@ public class PosItemController {
         if (StringUtil.isEmpty(barcode) || StringUtil.isEmpty(passportId)) {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
-            JSONObject jsonObject = new JSONObject();
+            JSONObject jsonObject = null;
             PosItemVo posItemVo = posItemManager.getItemByBarcode(barcode, passportId);
             if (posItemVo != null) {
-                jsonObject.put("itemInfo", posItemVo);
+                jsonObject=  (JSONObject)JSONObject.toJSON(posItemVo);
             }
-            return BasicResult.createSuccessResult("获取信息成功!", jsonObject);
+            JSONArray jsonArray=new JSONArray();
+            jsonArray.add(jsonObject);
+            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonArray);
         }
 
     }
@@ -215,7 +259,7 @@ public class PosItemController {
     public BasicResult deletePosItem(Long posItemId, Long passportId) {
 
         PosItem posItem = posItemManager.getPosItemById(posItemId);
-        if (posItem != null && posItem.getPassportId() == passportId) {
+        if (posItem != null && posItem.getPassportId().equals(passportId)) {
             //删除商品
             posItemJpaRepository.delete(posItem);
 

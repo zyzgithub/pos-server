@@ -27,6 +27,8 @@ public class PosItemVo {
     private String posTypeName;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long itemTypeId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     //商品单位id
     private Long itemUnitId;
 
@@ -46,6 +48,8 @@ public class PosItemVo {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String createDate;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long generatedDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     /**商品销售量**/
     private Integer buyCount;
@@ -254,5 +258,21 @@ public class PosItemVo {
 
     public void setSalesPrice(double salesPrice) {
         this.salesPrice = salesPrice;
+    }
+
+    public Long getItemTypeId() {
+        return itemTypeId;
+    }
+
+    public void setItemTypeId(Long itemTypeId) {
+        this.itemTypeId = itemTypeId;
+    }
+
+    public Long getGeneratedDate() {
+        return generatedDate;
+    }
+
+    public void setGeneratedDate(Long generatedDate) {
+        this.generatedDate = generatedDate;
     }
 }

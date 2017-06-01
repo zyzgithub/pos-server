@@ -11,6 +11,7 @@ public class PosTypeVo {
 
     private Integer typeCount;
 
+    private Long itemTypeId;
 
     public Long getId() {
         return id;
@@ -34,5 +35,13 @@ public class PosTypeVo {
 
     public void setTypeCount(Integer typeCount) {
         this.typeCount = typeCount;
+    }
+
+    public Long getItemTypeId() {
+        return itemTypeId;
+    }
+
+    public void setItemTypeId(Long itemTypeId) {
+        this.itemTypeId = itemTypeId;
     }
 }

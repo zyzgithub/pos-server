@@ -13,6 +13,8 @@ import com.dianba.pos.menu.po.PosItem;
 import com.dianba.pos.menu.repository.PosItemJpaRepository;
 import com.dianba.pos.menu.service.PosItemManager;
 import com.dianba.pos.menu.vo.PosItemVo;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import java.util.regex.Pattern;
 @Service
 public class DefaultPosItemManager implements PosItemManager {
 
+    private Logger logger= LogManager.getLogger(DefaultPosItemManager.class);
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
 
@@ -69,13 +72,15 @@ public class DefaultPosItemManager implements PosItemManager {
     @Override
     public PosItemVo getItemByBarcode(String barcode, String passportId) {
 
+        logger.info("==================根据barcod查询是否有商品模板信息=========================");
         JSONObject jsonObject = new JSONObject();
         ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(barcode);
-        PosItemVo posItemVo = new PosItemVo();
+        PosItemVo posItemVo = null;
 
         if (itemTemplate != null) { //商品模板有此商品信息
             Long userId = Long.parseLong(passportId);
 
+            posItemVo=new PosItemVo();
             PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(userId, itemTemplate.getId());
             if (posItem == null) {
                 // posItemVo.setId(posItem.getId());
@@ -128,146 +133,188 @@ public class DefaultPosItemManager implements PosItemManager {
     public Map<String, Object> itemStorage(PosItemVo posItemVo) {
 
         Map<String, Object> map = new HashMap<>();
-        //查询barcode是否有此模板，没有就新增，有就关联
-        ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
+        if(StringUtil.isEmpty(posItemVo.getBarcode())){
 
-        if (itemTemplate == null) { //新增模板信息
-            //判断商品模板名字是否重复
-            PosItem posItem = new PosItem();
-            itemTemplate = itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
-            if (itemTemplate != null) {
-                map.put("result", "false");
-                map.put("msg", "商品名字重复了~😬~");
-            } else if (posItemVo.getStockPrice() == 0L) {
-                map.put("result", "false");
-                map.put("msg", "商品进货价不能为空~😬~");
+            map.put("result", "false");
+            map.put("msg", "商品入库码不能为空!");
+        }else {
 
-            } else if (posItemVo.getSalesPrice() == 0L) {
-                map.put("result", "false");
-                map.put("msg", "商品零售价不能为空~😬~");
-            } else if (posItemVo.getRepertory().equals(0)) {
-                map.put("result", "false");
-                map.put("msg", "商品库存不能为空~😬~");
-            } else if (posItemVo.getSalesPrice() < posItemVo.getStockPrice()) {
-                map.put("result", "false");
-                map.put("msg", "零售价格小于进货价哦~😬~");
-            }
-            if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
-                posItem.setIsDelete("N");
-            } else {
-                posItem.setIsShelve(posItemVo.getIsShelve());
-            }
-            if (StringUtil.isEmpty(posItemVo.getIsShelve())) {
-                posItem.setIsShelve("Y");
-            } else {
-                posItem.setIsShelve(posItemVo.getIsShelve());
-            }
+            //查询barcode是否有此模板，没有就新增，有就关联
+            ItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
 
+            if (itemTemplate == null) { //新增模板信息
+                //判断商品模板名字是否重复
+                PosItem posItem = new PosItem();
+                itemTemplate = itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
+                if (itemTemplate != null) {
+                    map.put("result", "false");
+                    map.put("msg", "商品名字重复了~😬~");
+                } else if (posItemVo.getStockPrice() == 0L) {
+                    map.put("result", "false");
+                    map.put("msg", "商品进货价不能为空~😬~");
 
-            //pos商品模板
-            itemTemplate = new ItemTemplate();
-            itemTemplate.setAscriptionType(1);
-            if (StringUtil.isEmpty(posItemVo.getItemImg())) {
-                itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-            } else {
-                itemTemplate.setImageUrl(posItemVo.getItemImg());
-            }
-            itemTemplate.setBarcode(posItemVo.getBarcode());
-            itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
-            itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
-            itemTemplate.setUnitId(posItemVo.getItemUnitId());
-            itemTemplate.setName(posItemVo.getItemName());
-            //添加模板信息
-            itemTemplateJpaRepository.save(itemTemplate);
-
-            posItem.setBuyCount(0);
-            posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+                } else if (posItemVo.getSalesPrice() == 0L) {
+                    map.put("result", "false");
+                    map.put("msg", "商品零售价不能为空~😬~");
+                } else if (posItemVo.getRepertory().equals(0)) {
+                    map.put("result", "false");
+                    map.put("msg", "商品库存不能为空~😬~");
+                } else if (posItemVo.getSalesPrice() < posItemVo.getStockPrice()) {
+                    map.put("result", "false");
+                    map.put("msg", "零售价格小于进货价哦~😬~");
+                }
+                if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
+                    posItem.setIsDelete("N");
+                } else {
+                    posItem.setIsDelete(posItemVo.getIsDelete());
+                }
+                if (StringUtil.isEmpty(posItemVo.getIsShelve())) {
+                    posItem.setIsShelve("Y");
+                } else {
+                    posItem.setIsShelve(posItemVo.getIsShelve());
+                }
 
 
-            posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
-            posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
-            posItem.setRepertory(posItemVo.getRepertory());
-            //预警库存默认20
-            posItem.setWarningRepertory(20);
-            posItem.setItemName(posItemVo.getItemName());
-            posItem.setItemTemplateId(itemTemplate.getId());
-            if (StringUtil.isEmpty(posItemVo.getItemImg())) {
-                posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-            } else {
-                posItem.setItemImgUrl(posItemVo.getItemImg());
-            }
-            posItem.setItemTypeId(posItemVo.getPosTypeId());
-            //保质期天
-            posItem.setShelfLife(posItemVo.getShelfLife());
-            //商家id，以后收银员账号查询关联商家
-            posItem.setPassportId(posItemVo.getPassportId());
-            posItem.setIsShelve(posItemVo.getIsShelve());
-            //添加商家商品信息
-            posItemJpaRepository.save(posItem);
-            map.put("result", "true");
-            map.put("msg", "商品入库成功!");
+                //pos商品模板
+                itemTemplate = new ItemTemplate();
+                itemTemplate.setAscriptionType(1);
+                if (StringUtil.isEmpty(posItemVo.getItemImg())) {
+                    itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                } else {
+                    itemTemplate.setImageUrl(posItemVo.getItemImg());
+                }
+                itemTemplate.setBarcode(posItemVo.getBarcode());
+                itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
+                itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
+                itemTemplate.setUnitId(posItemVo.getItemUnitId());
+                itemTemplate.setName(posItemVo.getItemName());
+                //添加模板信息
+                itemTemplateJpaRepository.save(itemTemplate);
 
-        } else { //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
-
-            //查询商家是否有入库此模板信息
-            PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId()
-                    , itemTemplate.getId());
-            if (posItem == null) { //商家没有关系此模板信息
-                posItem = new PosItem();
                 posItem.setBuyCount(0);
                 posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
-                posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
+
+
+                posItem.setStockPrice((long) (posItemVo.getStockPrice() * 100));
+                posItem.setSalesPrice((long) (posItemVo.getSalesPrice() * 100));
                 posItem.setRepertory(posItemVo.getRepertory());
                 //预警库存默认20
                 posItem.setWarningRepertory(20);
                 posItem.setItemName(posItemVo.getItemName());
+                posItem.setGeneratedDate(posItemVo.getGeneratedDate());
                 posItem.setItemTemplateId(itemTemplate.getId());
                 if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                     posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
                 } else {
                     posItem.setItemImgUrl(posItemVo.getItemImg());
                 }
-                posItem.setItemTypeId(posItemVo.getPosTypeId());
-                //保质期天
-                posItem.setShelfLife(posItemVo.getShelfLife());
-                //商家id，以后收银员账号查询关联商家
-                posItem.setPassportId(posItemVo.getPassportId());
-                //添加商家商品信息
-                posItemJpaRepository.save(posItem);
 
-                map.put("result", "true");
-                map.put("msg", "商品入库成功!");
-            } else {
-                posItem.setBuyCount(0);
-                posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
-                posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
-                //库存为添加
-                Integer rep = posItem.getRepertory() + posItemVo.getRepertory();
-                posItem.setRepertory(rep);
-                //预警库存默认20
-                posItem.setWarningRepertory(20);
-                posItem.setItemName(posItemVo.getItemName());
-                posItem.setItemTemplateId(itemTemplate.getId());
-                if (StringUtil.isEmpty(posItemVo.getItemImg())) {
-                    posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-                } else {
-                    posItem.setItemImgUrl(posItemVo.getItemImg());
-                }
-                posItem.setItemTypeId(posItemVo.getPosTypeId());
                 //保质期天
-                posItem.setShelfLife(posItemVo.getShelfLife());
+                if(posItemVo.getShelfLife()!=null) {
+                    posItem.setShelfLife(posItemVo.getShelfLife());
+                }
                 //商家id，以后收银员账号查询关联商家
                 posItem.setPassportId(posItemVo.getPassportId());
+                posItem.setPosTypeId(posItemVo.getPosTypeId());
+                posItem.setItemTypeId(posItemVo.getItemTypeId());
+                posItem.setBarcode(posItemVo.getBarcode());
                 //添加商家商品信息
                 posItemJpaRepository.save(posItem);
                 map.put("result", "true");
                 map.put("msg", "商品入库成功!");
+                map.put("info",posItem);
+
+            } else { //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
+
+                //查询商家是否有入库此模板信息
+                PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId()
+                        , itemTemplate.getId());
+                if (posItem == null) { //商家没有关系此模板信息
+                    posItem = new PosItem();
+                    if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
+                        posItem.setIsDelete("N");
+                    } else {
+                        posItem.setIsDelete(posItemVo.getIsDelete());
+                    }
+                    if (StringUtil.isEmpty(posItemVo.getIsShelve())) {
+                        posItem.setIsShelve("Y");
+                    } else {
+                        posItem.setIsShelve(posItemVo.getIsShelve());
+                    }
+                    posItem.setBuyCount(0);
+                    posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+                    posItem.setStockPrice((long) (posItemVo.getStockPrice() * 100));
+                    posItem.setSalesPrice((long) (posItemVo.getSalesPrice() * 100));
+                    posItem.setRepertory(posItemVo.getRepertory());
+                    //预警库存默认20
+                    posItem.setWarningRepertory(20);
+                    posItem.setItemName(posItemVo.getItemName());
+                    posItem.setItemTemplateId(itemTemplate.getId());
+                    if (StringUtil.isEmpty(posItemVo.getItemImg())) {
+                        posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                    } else {
+                        posItem.setItemImgUrl(posItemVo.getItemImg());
+                    }
+                    //保质期天
+                    posItem.setShelfLife(posItemVo.getShelfLife());
+                    //商家id，以后收银员账号查询关联商家
+                    posItem.setPassportId(posItemVo.getPassportId());
+                    posItem.setPosTypeId(posItemVo.getPosTypeId());
+                    posItem.setItemTypeId(posItemVo.getItemTypeId());
+                    posItem.setBarcode(posItemVo.getBarcode());
+                    posItem.setGeneratedDate(posItemVo.getGeneratedDate());
+                    //添加商家商品信息
+                    posItemJpaRepository.save(posItem);
+
+                    map.put("result", "true");
+                    map.put("msg", "商品入库成功!");
+                    map.put("info",posItem);
+                } else {
+                    if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
+                        posItem.setIsDelete("N");
+                    } else {
+                        posItem.setIsDelete(posItemVo.getIsDelete());
+                    }
+                    if (StringUtil.isEmpty(posItemVo.getIsShelve())) {
+                        posItem.setIsShelve("Y");
+                    } else {
+                        posItem.setIsShelve(posItemVo.getIsShelve());
+                    }
+                    posItem.setBuyCount(0);
+                    posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+                    posItem.setStockPrice((long)(posItemVo.getStockPrice() * 100));
+                    posItem.setSalesPrice((long) (posItemVo.getSalesPrice() * 100));
+                    //库存为添加
+                    Integer rep = posItem.getRepertory() + posItemVo.getRepertory();
+                    posItem.setRepertory(rep);
+                    //预警库存默认20
+                    posItem.setWarningRepertory(20);
+                    posItem.setItemName(posItemVo.getItemName());
+                    posItem.setItemTemplateId(itemTemplate.getId());
+                    if (StringUtil.isEmpty(posItemVo.getItemImg())) {
+                        posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                    } else {
+                        posItem.setItemImgUrl(posItemVo.getItemImg());
+                    }
+                    //保质期天
+                    posItem.setShelfLife(posItemVo.getShelfLife());
+                    //商家id，以后收银员账号查询关联商家
+                    posItem.setPassportId(posItemVo.getPassportId());
+                    posItem.setPosTypeId(posItemVo.getPosTypeId());
+                    posItem.setItemTypeId(posItemVo.getItemTypeId());
+                    posItem.setBarcode(posItemVo.getBarcode());
+                    posItem.setGeneratedDate(posItemVo.getGeneratedDate());
+                    //添加商家商品信息
+                    posItemJpaRepository.save(posItem);
+                    map.put("result", "true");
+                    map.put("msg", "商品入库成功!");
+                    map.put("info",posItem);
+
+                }
 
             }
-
         }
+
         return map;
     }
 
@@ -303,21 +350,30 @@ public class DefaultPosItemManager implements PosItemManager {
         } else {
             posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
             posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
-            //库存为添加
-            Integer rep = posItemVo.getRepertory();
-            posItem.setRepertory(rep);
+            if(posItemVo.getRepertory()!=null){
+                //库存为添加
+                Integer rep = posItemVo.getRepertory();
+                posItem.setRepertory(rep);
+            }
             //预警库存默认20
-            posItem.setWarningRepertory(20);
-            posItem.setItemName(posItemVo.getItemName());
+            //posItem.setWarningRepertory(20);
+            if(StringUtil.isEmpty(posItemVo.getItemName())){
+                posItem.setItemName(posItemVo.getItemName());
+            }
+
             if (StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
             } else {
                 posItem.setItemImgUrl(posItemVo.getItemImg());
             }
             //保质期天
-            posItem.setShelfLife(posItemVo.getShelfLife());
-            //编辑上下架信息
-            posItem.setIsShelve(posItemVo.getIsShelve());
+            if(posItemVo.getShelfLife()!=null){
+                posItem.setShelfLife(posItemVo.getShelfLife());
+            }
+            if(StringUtil.isEmpty(posItemVo.getIsShelve())){
+                //编辑上下架信息
+                posItem.setIsShelve(posItemVo.getIsShelve());
+            }
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
             map.put("result", "true");

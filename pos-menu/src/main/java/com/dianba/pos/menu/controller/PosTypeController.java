@@ -1,5 +1,6 @@
 package com.dianba.pos.menu.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.po.ItemType;
@@ -60,9 +61,10 @@ public class PosTypeController {
                 posType = new PosType();
                 posType.setPassportId(Long.parseLong(passportId));
                 posType.setItemTypeId(itemType.getId());
-
+                posType.setItemTypeTitle(title);
                 posTypeJpaRepository.save(posType);
-                return BasicResult.createSuccessResult("添加商家分类成功!");
+                JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posType);
+                return BasicResult.createSuccessResult("添加商家分类成功!",jsonObject);
 
             }
 
@@ -83,7 +85,7 @@ public class PosTypeController {
     public BasicResult deletePosType(Long passportId, Long posTypeId) {
 
         PosType posType = posTypeManager.getPosTypeById(posTypeId);
-        if (posType != null && posType.getPassportId() == passportId) {
+        if (posType != null && posType.getPassportId().equals(passportId)) {
 
             posTypeJpaRepository.delete(posType);
             return BasicResult.createSuccessResult("删除商家分类成功!");
@@ -106,16 +108,16 @@ public class PosTypeController {
     public BasicResult editPosType(Long passportId, Long posTypeId, String title) {
 
         PosType posType = posTypeManager.getPosTypeById(posTypeId);
-        if (posType != null && posType.getPassportId() == passportId) {
+        if (posType != null && posType.getPassportId().equals(passportId)) {
             ItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
             itemType.setTitle(title);
             itemTypeJpaRepository.save(itemType);
             posType.setItemTypeTitle(title);
             posTypeJpaRepository.save(posType);
-            return BasicResult.createSuccessResult("编辑商家分类成功!");
+            JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posType);
+            return BasicResult.createSuccessResult("编辑商家分类成功!",jsonObject);
         } else {
-
-            return BasicResult.createFailResult("删除商家分类异常!");
+            return BasicResult.createFailResult("编辑商家分类异常!");
         }
     }
 }

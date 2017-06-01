@@ -34,6 +34,8 @@ public class PosItem implements Serializable {
     @Column(name = "create_time")
     private String createTime;
 
+    @Column(name = "generated_date")
+    private Long generatedDate;
     /**商品销售量**/
     @Column(name = "buy_count")
     private Integer buyCount;
@@ -239,6 +241,14 @@ public class PosItem implements Serializable {
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
+    }
+
+    public Long getGeneratedDate() {
+        return generatedDate;
+    }
+
+    public void setGeneratedDate(Long generatedDate) {
+        this.generatedDate = generatedDate;
     }
 }
 
