@@ -1,8 +1,8 @@
 package com.dianba.pos.supplychain.service.impl;
 
-import com.dianba.pos.menu.po.LifeBarcodeRelationship;
-import com.dianba.pos.menu.repository.LifeBarcodeRelationshipJpaRepository;
-import com.dianba.pos.menu.repository.LifeItemUnitJpaRepository;
+import com.dianba.pos.item.po.LifeBarcodeRelationship;
+import com.dianba.pos.item.repository.LifeBarcodeRelationshipJpaRepository;
+import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.merchant.po.Merchant;
 import com.dianba.pos.merchant.repository.MerchantJpaRepository;
 import com.dianba.pos.supplychain.mapper.WarehouseGoodsMapper;

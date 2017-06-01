@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-menu</artifactId>
+            <artifactId>pos-item</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

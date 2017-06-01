@@ -3,7 +3,7 @@
 <mapper namespace="com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper">
 
     <resultMap id="OneKeyPurchaseMap" type="com.dianba.pos.purchase.pojo.OneKeyPurchase">
-               <!--extends="com.dianba.pos.menu.mapper.MenuMapper.BaseResultMap">-->
+               <!--extencom.dianba.pos.item.mapperpper.MenuMapper.BaseResultMap">-->
         <result column="total_sale" property="totalSale"/>
         <result column="day_sale" property="daySale"/>
     </resultMap>

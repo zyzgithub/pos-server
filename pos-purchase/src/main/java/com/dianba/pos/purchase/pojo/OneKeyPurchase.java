@@ -1,8 +1,8 @@
 package com.dianba.pos.purchase.pojo;
 
-import com.dianba.pos.menu.po.Menu;
+import com.dianba.pos.item.po.PosItem;
 
-public class OneKeyPurchase extends Menu {
+public class OneKeyPurchase extends PosItem {
 
     private boolean isCanBuy = false;
     private Integer totalSale;

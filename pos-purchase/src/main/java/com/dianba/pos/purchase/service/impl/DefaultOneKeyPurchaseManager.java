@@ -1,7 +1,7 @@
 package com.dianba.pos.purchase.service.impl;
 
-import com.dianba.pos.menu.po.MenuType;
-import com.dianba.pos.menu.service.MenuTypeManager;
+import com.dianba.pos.item.po.MenuType;
+import com.dianba.pos.item.service.MenuTypeManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
@@ -44,40 +44,40 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         }
         // 取出商品类型,条码
         StringBuilder sb = new StringBuilder();
-        List<Integer> typeIds = new ArrayList<>();
+        List<Long> typeIds = new ArrayList<>();
         Map<String, OneKeyPurchase> menuEntityMap = new HashMap<>();
         for (OneKeyPurchase purchase : menuEntities) {
             if (StringUtils.isNotBlank(purchase.getBarcode())) {
                 sb.append(purchase.getBarcode()).append(",");
                 menuEntityMap.put(purchase.getBarcode(), purchase);
             }
-            typeIds.add(purchase.getTypeId());
+            typeIds.add(purchase.getItemTypeId());
         }
         sb = sb.delete(sb.length() - 1, sb.length());
 
         // 用 barcodes 去 供应链查找可进货的商品,极其规格.
         List<MatchItems> matchItemsList = goodsManager.matchItemsByBarcode(userId, sb.toString());
-        List<MenuType> menutypeEntites = menuTypeManager.findMenuTypeByIds(typeIds);
+//        List<MenuType> menutypeEntites = menuTypeManager.findMenuTypeByIds(typeIds);
+        List<MenuType> menutypeEntites = menuTypeManager.findMenuTypeByIds(null);
         //系统内建议采购
         for (MatchItems matchItems : matchItemsList) {
             OneKeyPurchase menuEntity = menuEntityMap.get(matchItems.getBarcode());
-            int todayRepertory = menuEntity.getTodayRepertory() <= 0 ? 0 : menuEntity.getTodayRepertory();
-            String name = menuEntity.getName();
+            String name = menuEntity.getItemName();
             // 设置当前库存，标准库存，预警库存
-            matchItems.setRepertory(menuEntity.getTodayRepertory());
-            matchItems.setStandardInventory(
-                    menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
-            matchItems.setWarnInventory(menuEntity.getWarnInventory() == null ? 20 : menuEntity.getWarnInventory());
-            matchItems.setMenuTypeId(menuEntity.getTypeId());
+//            matchItems.setRepertory(menuEntity.get());
+//            matchItems.setStandardInventory(
+//                    menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
+//            matchItems.setWarnInventory(menuEntity.getWarnInventory() == null ? 20 : menuEntity.getWarnInventory());
+//            matchItems.setMenuTypeId(menuEntity.getTypeId());
             for (Items item : matchItems.getItems()) {
                 if (item.getStandard() == null) {
                     item.setStandard(12);
                 }
-                int defaultPurchase = calculationNeed(menuEntity.getDaySale()
-                        , todayRepertory, matchItems.getWarnInventory(), item.getStandard(), true);
-                if (defaultPurchase < item.getMinSales()) {
-                    defaultPurchase = item.getMinSales();
-                }
+//                int defaultPurchase = calculationNeed(menuEntity.getDaySale()
+//                        , todayRepertory, matchItems.getWarnInventory(), item.getStandard(), true);
+//                if (defaultPurchase < item.getMinSales()) {
+//                    defaultPurchase = item.getMinSales();
+//                }
                 BigDecimal buyRate = item.getRetailPrice()
                         .subtract(item.getPrice())
                         .divide(item.getRetailPrice(),4, BigDecimal.ROUND_HALF_UP)
@@ -95,24 +95,24 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 //进货价格
                 BigDecimal price=item.getPrice();
                 //进货单价
-                BigDecimal unitPrice=price.divide(standard,2, BigDecimal.ROUND_HALF_UP);
-                BigDecimal shoujiamaoli = BigDecimal.valueOf(menuEntity.getPrice())
-                        .subtract(unitPrice)
-                         .divide(BigDecimal.valueOf(menuEntity.getPrice()),4
-                        ,BigDecimal.ROUND_HALF_UP)
-                        .multiply(new BigDecimal(100))
-                        .setScale(2, BigDecimal.ROUND_HALF_UP);
-                System.out.println("商品售价："+menuEntity.getPrice()+",,进价："+item.getPrice());
-                logger.info("售价毛利率："+shoujiamaoli);
-                System.out.println("售价毛利率："+shoujiamaoli);
-                item.setSaleRate(shoujiamaoli + "%");
+//                BigDecimal unitPrice=price.divide(standard,2, BigDecimal.ROUND_HALF_UP);
+//                BigDecimal shoujiamaoli = BigDecimal.valueOf(menuEntity.getPrice())
+//                        .subtract(unitPrice)
+//                         .divide(BigDecimal.valueOf(menuEntity.getPrice()),4
+//                        ,BigDecimal.ROUND_HALF_UP)
+//                        .multiply(new BigDecimal(100))
+//                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+//                System.out.println("商品售价："+menuEntity.getPrice()+",,进价："+item.getPrice());
+//                logger.info("售价毛利率："+shoujiamaoli);
+//                System.out.println("售价毛利率："+shoujiamaoli);
+//                item.setSaleRate(shoujiamaoli + "%");
                 //限制采购数量为仓库库存数量
-                if (item.getStock() < defaultPurchase) {
-                    defaultPurchase = item.getStock();
-                }
-                //一键采购不限制仓库是否有货,无货一样可以采购
-//                item.setStock(defaultPurchase * 10000);
-                item.setDefaultPurchase(defaultPurchase);
+//                if (item.getStock() < defaultPurchase) {
+//                    defaultPurchase = item.getStock();
+//                }
+//                //一键采购不限制仓库是否有货,无货一样可以采购
+////                item.setStock(defaultPurchase * 10000);
+//                item.setDefaultPurchase(defaultPurchase);
                 item.setName(name);
             }
         }
@@ -129,33 +129,34 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         boolean isNotExists = true;
         for (OneKeyPurchase menuEntity : menuEntities) {
             if (!menuEntity.isCanBuy()) {
-                MatchItems matchItems = new MatchItems();
-                int todayRepertory = menuEntity.getTodayRepertory() == null ? 0 : menuEntity.getTodayRepertory();
-                Integer standard = menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory();
-                matchItems.setRepertory(menuEntity.getTodayRepertory());
-                matchItems.setStandardInventory(
-                        menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
-                matchItems.setWarnInventory(menuEntity.getWarnInventory() == null ? 0 : menuEntity.getWarnInventory());
-                matchItems.setBarcode(menuEntity.getBarcode());
-                matchItems.setMenuTypeId(menuEntity.getTypeId());
-                Items items = new Items();
-                items.setStandard(standard);
-                items.setImage(menuEntity.getImage());
-                items.setUnit(menuEntity.getUnit());
-                items.setDefaultPurchase(calculationNeed(menuEntity.getDaySale()
-                        , todayRepertory, matchItems.getWarnInventory(), items.getStandard(), false));
-                items.setPrice(new BigDecimal(menuEntity.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                items.setName(menuEntity.getName());
-                items.setId(menuEntity.getId());
-                items.setStock(todayRepertory);
-                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
-                        .subtract(items.getPrice())
-                        .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
-                        .multiply(new BigDecimal(100))
-                        .setScale(2, BigDecimal.ROUND_HALF_UP);
-                items.setSaleRate(saleRate + "%");
-                matchItems.getItems().add(items);
-                externalList.add(matchItems);
+//                MatchItems matchItems = new MatchItems();
+//                int todayRepertory = menuEntity.getTodayRepertory() == null ? 0 : menuEntity.getTodayRepertory();
+//                Integer standard = menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory();
+//                matchItems.setRepertory(menuEntity.getTodayRepertory());
+//                matchItems.setStandardInventory(
+//                        menuEntity.getStandardInventory() == null ? 12 : menuEntity.getStandardInventory());
+//                matchItems.setWarnInventory(menuEntity.getWarnInventory() ==
+// null ? 0 : menuEntity.getWarnInventory());
+//                matchItems.setBarcode(menuEntity.getBarcode());
+//                matchItems.setMenuTypeId(menuEntity.getTypeId());
+//                Items items = new Items();
+//                items.setStandard(standard);
+//                items.setImage(menuEntity.getImage());
+//                items.setUnit(menuEntity.getUnit());
+//                items.setDefaultPurchase(calculationNeed(menuEntity.getDaySale()
+//                        , todayRepertory, matchItems.getWarnInventory(), items.getStandard(), false));
+//                items.setPrice(new BigDecimal(menuEntity.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+//                items.setName(menuEntity.getName());
+//                items.setId(menuEntity.getId());
+//                items.setStock(todayRepertory);
+//                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getPrice())
+//                        .subtract(items.getPrice())
+//                        .divide(BigDecimal.valueOf(menuEntity.getPrice()), BigDecimal.ROUND_HALF_UP)
+//                        .multiply(new BigDecimal(100))
+//                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+//                items.setSaleRate(saleRate + "%");
+//                matchItems.getItems().add(items);
+//                externalList.add(matchItems);
             }
         }
         resultMap.put("preferentialList", matchItemsList);

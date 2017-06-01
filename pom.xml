@@ -27,7 +27,7 @@
         <module>pos-casher</module>
         <module>pos-payment</module>
         <module>pos-web</module>
-        <module>pos-menu</module>
+        <module>pos-item</module>
         <module>pos-merchant</module>
         <module>pos-order</module>
         <module>pos-scheduler</module>

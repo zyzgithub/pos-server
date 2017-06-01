@@ -25,7 +25,8 @@ public class OneKeyPurchaseController {
      **/
     @ResponseBody
     @RequestMapping("warnInventoryList")
-    public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request) throws Exception {
+    public AjaxJson warnInventoryList(Integer merchantId, Integer userId, HttpServletRequest request)
+ throws Exception {
         AjaxJson j = AjaxJson.successJson("请求成功");
         Map<String, Object> map = oneKeyPurchaseManager.warnInvenstoryList(merchantId, userId);
         List<MatchItems> preferentialList = (List<MatchItems>) map.get("preferentialList");

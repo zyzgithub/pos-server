@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.item.mapper.PromotionMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.dianba.pos.item.po.PromotionMenu">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="promotion_activity_id" jdbcType="INTEGER" property="promotionActivityId"/>
+        <result column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="promotion_quantity" jdbcType="INTEGER" property="promotionQuantity"/>
+        <result column="promotion_price" jdbcType="DECIMAL" property="promotionPrice"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="merchant_id" jdbcType="INTEGER" property="merchantId"/>
+    </resultMap>
+
+    <select id="findByMenuIdAndMerchantId" resultMap="BaseResultMap">
+        SELECT pm.id,pm.menu_id,pm.merchant_id,
+        pm.promotion_activity_id,pm.promotion_price,pm.promotion_quantity,pm.create_time
+        FROM promotion_menu pm, promotion_activity pa
+        WHERE pm.menu_id = #{menu_id} AND pa.merchant_id = #{merchant_id} AND pm.merchant_id = #{merchant_id}
+        AND ( pa.deadline_type = 1 OR (pa.deadline_type = 2
+        and pa.start_date &lt;= UNIX_TIMESTAMP(current_date()) AND pa.end_date >= UNIX_TIMESTAMP(current_date())
+        AND pa.start_hour &lt;= TIME_TO_SEC(NOW()) and pa.end_hour >= TIME_TO_SEC(NOW())) ) AND pa.state = 1
+        AND pa.range_type IN (1,2) and pm.promotion_activity_id = pa.id
+    </select>
+</mapper>
