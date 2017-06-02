@@ -66,6 +66,7 @@ public class LifeItemTemplate implements Serializable{
 
     @Column(name = "ascription_type")
     private Integer ascriptionType;
+
     public Long getId() {
         return id;
     }

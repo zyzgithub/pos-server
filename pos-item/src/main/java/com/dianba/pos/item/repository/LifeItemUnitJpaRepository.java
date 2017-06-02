@@ -12,7 +12,6 @@ import javax.transaction.Transactional;
  */
 @Transactional
 @Repository
-public interface LifeItemUnitJpaRepository extends JpaRepository<LifeItemUnit,Integer> {
+public interface LifeItemUnitJpaRepository extends JpaRepository<LifeItemUnit, Long> {
 
-    LifeItemUnit getItemUnitById(Long id);
 }

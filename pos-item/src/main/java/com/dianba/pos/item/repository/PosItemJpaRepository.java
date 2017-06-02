@@ -77,7 +77,8 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
      */
     @Query("select a from PosItem a where a.warningRepertory<a.repertory and a.passportId=:passportId "
             + " and a.itemTemplateId not in(:itemTemplateIds)")
-    List<PosItem> findWarningRepertoryItemsByExclude(Long passportId, List<Long> itemTemplateIds);
+    List<PosItem> findWarningRepertoryItemsByExclude(@Param("passportId") Long passportId
+            , @Param("itemTemplateIds") List<Long> itemTemplateIds);
 }
 
 

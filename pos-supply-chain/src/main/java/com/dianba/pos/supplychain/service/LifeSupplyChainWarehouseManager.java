@@ -1,6 +1,6 @@
 package com.dianba.pos.supplychain.service;
 
-public interface WarehouseOrgManager {
+public interface LifeSupplyChainWarehouseManager {
 
     Long getNearbyWarehouse(double latitude, double longitude);
 }

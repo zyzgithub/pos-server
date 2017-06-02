@@ -2,20 +2,25 @@ package com.dianba.pos.purchase.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.item.po.LifeItemTemplate;
 import com.dianba.pos.item.po.LifeItemType;
+import com.dianba.pos.item.po.LifeItemUnit;
 import com.dianba.pos.item.po.PosItem;
+import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.LifeItemTypeJpaRepository;
+import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
-import com.dianba.pos.supplychain.service.GoodsManager;
+import com.dianba.pos.supplychain.service.LifeSupplyChainItemsManager;
 import com.dianba.pos.supplychain.vo.Items;
 import com.dianba.pos.supplychain.vo.MatchItems;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,42 +39,48 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     @Autowired
     private OneKeyPurchaseMapper oneKeyPurchaseMapper;
     @Autowired
-    private GoodsManager goodsManager;
+    private LifeSupplyChainItemsManager goodsManager;
+    @Autowired
+    private LifeItemTemplateJpaRepository itemTemplateJpaRepository;
     @Autowired
     private LifeItemTypeJpaRepository itemTypeJpaRepository;
+    @Autowired
+    private LifeItemUnitJpaRepository itemUnitJpaRepository;
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
 
     public List<OneKeyPurchase> getWarnRepertoryItems(Long passportId) {
-        List<OneKeyPurchase> menuEntities = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
-        if (menuEntities == null) {
-            menuEntities = new ArrayList<>();
+        List<OneKeyPurchase> oneKeyPurchases = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
+        if (oneKeyPurchases == null) {
+            oneKeyPurchases = new ArrayList<>();
         }
         List<Long> itemTemplateIds = new ArrayList<>();
-        for (OneKeyPurchase oneKeyPurchase : menuEntities) {
+        for (OneKeyPurchase oneKeyPurchase : oneKeyPurchases) {
             itemTemplateIds.add(oneKeyPurchase.getItemTemplateId());
         }
         List<PosItem> items = posItemJpaRepository.findWarningRepertoryItemsByExclude(passportId
                 , itemTemplateIds);
         if (items != null) {
             for (PosItem posItem : items) {
-                menuEntities.add((OneKeyPurchase) posItem);
+                OneKeyPurchase oneKeyPurchase = new OneKeyPurchase();
+                BeanUtils.copyProperties(posItem, oneKeyPurchase);
+                oneKeyPurchases.add(oneKeyPurchase);
             }
         }
-        return menuEntities;
+        return oneKeyPurchases;
     }
 
     public BasicResult getWarnRepertoryList(Long passportId) throws Exception {
         // 查询库存小于预警库存/当前库存小于周销量的日平均值的商品,且不在进货中的商品
-        List<OneKeyPurchase> menuEntities = getWarnRepertoryItems(passportId);
-        if (CollectionUtils.isEmpty(menuEntities)) {
+        List<OneKeyPurchase> oneKeyPurchaseList = getWarnRepertoryItems(passportId);
+        if (CollectionUtils.isEmpty(oneKeyPurchaseList)) {
             return BasicResult.createSuccessResult();
         }
         // 取出商品类型,条码
         StringBuilder sb = new StringBuilder();
         List<Long> typeIds = new ArrayList<>();
         Map<String, OneKeyPurchase> menuEntityMap = new HashMap<>();
-        for (OneKeyPurchase purchase : menuEntities) {
+        for (OneKeyPurchase purchase : oneKeyPurchaseList) {
             if (StringUtils.isNotBlank(purchase.getBarcode())) {
                 sb.append(purchase.getBarcode()).append(",");
                 menuEntityMap.put(purchase.getBarcode(), purchase);
@@ -119,7 +130,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             }
         }
         //系统外建议采购
-        for (OneKeyPurchase menuEntity : menuEntities) {
+        for (OneKeyPurchase menuEntity : oneKeyPurchaseList) {
             for (MatchItems items : matchItemsList) {
                 if (menuEntity.getBarcode().equals(items.getBarcode())) {
                     menuEntity.setCanBuy(true);
@@ -127,9 +138,27 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 }
             }
         }
+        //商品模板ID
+        List<Long> itemTemplateIdList = new ArrayList<>();
+        for (OneKeyPurchase oneKeyPurchase : oneKeyPurchaseList) {
+            itemTemplateIdList.add(oneKeyPurchase.getItemTemplateId());
+        }
+        List<LifeItemTemplate> itemTemplateList = itemTemplateJpaRepository.findAll(itemTemplateIdList);
+        List<Long> itemUnitIdList = new ArrayList<>();
+        for (LifeItemTemplate itemTemplate : itemTemplateList) {
+            itemUnitIdList.add(itemTemplate.getUnitId());
+        }
+        List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll(itemUnitIdList);
+        Map<Long, LifeItemUnit> itemUnitMap = new HashMap<>();
+        for (LifeItemTemplate itemTemplate : itemTemplateList) {
+            for (LifeItemUnit itemUnit : itemUnits) {
+                if (itemTemplate.getUnitId().longValue() == itemUnit.getId()) {
+                    itemUnitMap.put(itemTemplate.getUnitId(), itemUnit);
+                }
+            }
+        }
         List<MatchItems> externalList = new ArrayList<>();
-        boolean isNotExists = true;
-        for (OneKeyPurchase menuEntity : menuEntities) {
+        for (OneKeyPurchase menuEntity : oneKeyPurchaseList) {
             if (!menuEntity.isCanBuy()) {
                 MatchItems matchItems = new MatchItems();
                 matchItems.setRepertory(menuEntity.getRepertory());
@@ -137,21 +166,29 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 matchItems.setBarcode(menuEntity.getBarcode());
                 matchItems.setMenuTypeId(menuEntity.getItemTypeId());
                 Items items = new Items();
-                //TODO 一键采购标准库存以及单位
-//                items.setStandard(standard);
-//                items.setUnit(menuEntity.getUnit());
+                items.setStandard(1);
+                LifeItemUnit itemUnit = itemUnitMap.get(menuEntity.getItemTemplateId());
+                String title = "";
+                if (itemUnit != null) {
+                    title = itemUnit.getTitle();
+                }
+                BigDecimal salesPrice = BigDecimal.valueOf(menuEntity.getSalesPrice());
+                salesPrice = salesPrice.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+
+                BigDecimal stockPrice = BigDecimal.valueOf(menuEntity.getStockPrice());
+                stockPrice = stockPrice.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+
+                items.setUnit(title);
                 items.setImage(menuEntity.getItemImgUrl());
                 items.setDefaultPurchase(calculationNeed(menuEntity.getDaySale()
                         , menuEntity.getRepertory(), matchItems.getWarnInventory()
                         , items.getStandard(), false));
-                items.setPrice(new BigDecimal(menuEntity.getSalesPrice())
-                        .setScale(2, BigDecimal.ROUND_HALF_UP));
+                items.setPrice(salesPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
                 items.setName(menuEntity.getItemName());
                 items.setId(menuEntity.getId());
                 items.setStock(menuEntity.getRepertory());
-                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getSalesPrice())
-                        .subtract(items.getPrice())
-                        .divide(BigDecimal.valueOf(menuEntity.getStockPrice()), BigDecimal.ROUND_HALF_UP)
+                BigDecimal saleRate = salesPrice.subtract(stockPrice)
+                        .divide(salesPrice, 2, BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 items.setSaleRate(saleRate + "%");

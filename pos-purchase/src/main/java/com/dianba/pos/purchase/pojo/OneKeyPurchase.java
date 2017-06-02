@@ -2,7 +2,9 @@ package com.dianba.pos.purchase.pojo;
 
 import com.dianba.pos.item.po.PosItem;
 
-public class OneKeyPurchase extends PosItem {
+import java.io.Serializable;
+
+public class OneKeyPurchase extends PosItem implements Serializable {
 
     private boolean isCanBuy = false;
     private Integer totalSale = 0;

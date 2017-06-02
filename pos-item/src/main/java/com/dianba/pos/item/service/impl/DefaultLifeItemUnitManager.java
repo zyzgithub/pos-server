@@ -17,6 +17,6 @@ public class DefaultLifeItemUnitManager implements LifeItemUnitManager {
 
     @Override
     public LifeItemUnit getItemUnitById(Long id) {
-        return itemUnitJpaRepository.getItemUnitById(id);
+        return itemUnitJpaRepository.findOne(id);
     }
 }

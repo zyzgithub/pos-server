@@ -2,7 +2,7 @@ package com.dianba.pos.supplychain.service.impl;
 
 import com.dianba.pos.supplychain.po.LifeSupplyChainWarehouse;
 import com.dianba.pos.supplychain.repository.LifeSupplyChainWarehouseJpaRepository;
-import com.dianba.pos.supplychain.service.WarehouseOrgManager;
+import com.dianba.pos.supplychain.service.LifeSupplyChainWarehouseManager;
 import com.dianba.pos.supplychain.util.LocationUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class DefaultWarehouseOrgManager implements WarehouseOrgManager {
+public class DefaultLifeSupplyChainWarehouseManager implements LifeSupplyChainWarehouseManager {
 
-    private Logger logger = LogManager.getLogger(DefaultWarehouseOrgManager.class);
+    private Logger logger = LogManager.getLogger(DefaultLifeSupplyChainWarehouseManager.class);
 
     @Autowired
     private LifeSupplyChainWarehouseJpaRepository warehouseJpaRepository;

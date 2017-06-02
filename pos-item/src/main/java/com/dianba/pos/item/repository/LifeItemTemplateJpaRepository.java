@@ -14,11 +14,12 @@ import java.util.List;
  */
 @Transactional
 @Repository
-public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTemplate,Integer> {
+public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTemplate, Long> {
 
 
     /**
      * 获取分类商品列表
+     *
      * @param id
      * @return
      */
@@ -27,11 +28,12 @@ public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTem
 
     /**
      * 根据code码搜索商品信息
+     *
      * @param barcode
      * @return
      */
     @Query("SELECT itemp FROM LifeItemTemplate itemp where itemp.barcode=:barcode and "
-            +"itemp.ascriptionType=1")
+            + "itemp.ascriptionType=1")
     LifeItemTemplate getItemTemplateByBarcode(@Param("barcode") String barcode);
 
     /***
@@ -43,4 +45,6 @@ public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTem
     LifeItemTemplate getItemTemplateByName(@Param("name") String name);
 
     LifeItemTemplate getItemTemplateById(Long id);
+
+    List<LifeItemTemplate> findByBarcodeIn(List<String> barcodes);
 }

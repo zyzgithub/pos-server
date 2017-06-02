@@ -4,7 +4,7 @@ import com.dianba.pos.supplychain.vo.MatchItems;
 
 import java.util.List;
 
-public interface GoodsManager {
+public interface LifeSupplyChainItemsManager {
 
     List<MatchItems> matchItemsByBarcode(Long passportId, String barcodes);
 }

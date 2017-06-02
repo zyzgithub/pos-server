@@ -36,37 +36,55 @@ public class PosItem implements Serializable {
 
     @Column(name = "generated_date")
     private Long generatedDate;
-    /**商品销售量**/
+    /**
+     * 商品销售量
+     **/
     @Column(name = "buy_count")
     private Integer buyCount;
 
-    /**商品说明**/
+    /**
+     * 商品说明
+     **/
     @Column(name = "description")
     private String description;
 
-    /**商品上下架**/
+    /**
+     * 商品上下架
+     **/
     @Column(name = "is_shelve")
     private String isShelve;
 
-    /**商品是否删除**/
+    /**
+     * 商品是否删除
+     **/
     @Column(name = "is_delete")
     private String isDelete;
 
-    /**库存**/
+    /**
+     * 库存
+     **/
     @Column(name = "repertory")
     private Integer repertory;
 
-    /**预警库存**/
+    /**
+     * 预警库存
+     **/
     @Column(name = "warning_repertory")
     private Integer warningRepertory;
 
-    /**商品保质期（天）**/
+    /**
+     * 商品保质期（天）
+     **/
     @Column(name = "shelf_life")
     private Integer shelfLife;
-    /**原价**/
+    /**
+     * 原价
+     **/
     @Column(name = "stock_price")
     private Long stockPrice;
-    /**销售价格**/
+    /**
+     * 销售价格
+     **/
     @Column(name = "sales_price")
     private Long salesPrice;
 
@@ -161,7 +179,7 @@ public class PosItem implements Serializable {
         this.menuKey = menuKey;
     }
 
-       public Long getItemTypeId() {
+    public Long getItemTypeId() {
         return itemTypeId;
     }
 
@@ -202,6 +220,9 @@ public class PosItem implements Serializable {
     }
 
     public Long getStockPrice() {
+        if (stockPrice <= 0) {
+            stockPrice = getSalesPrice();
+        }
         return stockPrice;
     }
 
@@ -210,6 +231,9 @@ public class PosItem implements Serializable {
     }
 
     public Long getSalesPrice() {
+        if (salesPrice <= 0) {
+            salesPrice = 1L;
+        }
         return salesPrice;
     }
 
