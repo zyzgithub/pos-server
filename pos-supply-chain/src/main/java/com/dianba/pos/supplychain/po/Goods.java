@@ -1,130 +1,235 @@
 package com.dianba.pos.supplychain.po;
 
 
+import com.xlibao.common.GlobalAppointmentOptEnum;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 @Entity
-@Table(name = "supply_chain_goods")
+@Table(name = "life_saas_supplychain.supplychain_item")
 public class Goods implements Serializable {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "product_id")
-    private String productId;
-
-    @Column(name = "barcode")
-    private String barcode;
-
-    @Column(name = "type_id")
-    private Integer typeId;
-
-    @Column(name = "type_name")
-    private String typeName;
-
-    @Column(name = "unit_id")
-    private Integer unitId;
-
-    @Column(name = "market_price")
-    private Double marketPrice;
-
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "item_template_id")
+    private Long itemTemplateId;
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+    private Integer productBatches = 0;
+    private String batchesCode = "";
+    private Integer stock = 0;
+    private Integer pendingQuantity = 0;
+    private Integer warningQuantity = 0;
+    private Integer keepQuantity = 0;
+    private Integer oversoldQuantity = 0;
+    @Column(name = "minimum_sell_count")
+    private Integer minimumSellCount = 1;
+    private Integer allocationQuantity = 0;
+    private Integer purchaseQuantity = 0;
+    private Byte status = GlobalAppointmentOptEnum.LOGIC_FALSE.getKey();
     @Column(name = "cost_price")
-    private Double costPrice;
-
-    @Column(name = "img")
-    private String img;
-
-    @Column(name = "description")
+    private Long costPrice = 0L;
+    @Column(name = "sell_price")
+    private Long sellPrice = 0L;
+    @Column(name = "market_price")
+    private Long marketPrice = 0L;
+    @Column(name = "discount_price")
+    private Long discountPrice = 0L;
+    @Column(name = "discount_type")
+    private Byte deliveryDelay = (byte) 0;
+    private Integer initialSales = 0;
+    private Integer actualSales = 0;
+    private Long totalStorage = 0L;
+    private Long totalOutStorage = 0L;
     private String description;
 
-    @Column(name = "goods_banner")
-    private String goodsBanner;
+    private long relationItemId;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getItemTemplateId() {
+        return itemTemplateId;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setItemTemplateId(Long itemTemplateId) {
+        this.itemTemplateId = itemTemplateId;
     }
 
-    public String getProductId() {
-        return productId;
+    public Long getWarehouseId() {
+        return warehouseId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId == null ? null : productId.trim();
+    public void setWarehouseId(Long warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
-    public String getBarcode() {
-        return barcode;
+    public Integer getProductBatches() {
+        return productBatches;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode == null ? null : barcode.trim();
+    public void setProductBatches(Integer productBatches) {
+        this.productBatches = productBatches;
     }
 
-    public Integer getTypeId() {
-        return typeId;
+    public String getBatchesCode() {
+        return batchesCode;
     }
 
-    public void setTypeId(Integer typeId) {
-        this.typeId = typeId;
+    public void setBatchesCode(String batchesCode) {
+        this.batchesCode = batchesCode;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName == null ? null : typeName.trim();
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
-    public Integer getUnitId() {
-        return unitId;
+    public Integer getPendingQuantity() {
+        return pendingQuantity;
     }
 
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+    public void setPendingQuantity(Integer pendingQuantity) {
+        this.pendingQuantity = pendingQuantity;
     }
 
-    public Double getMarketPrice() {
-        return marketPrice;
+    public Integer getWarningQuantity() {
+        return warningQuantity;
     }
 
-    public void setMarketPrice(Double marketPrice) {
-        this.marketPrice = marketPrice;
+    public void setWarningQuantity(Integer warningQuantity) {
+        this.warningQuantity = warningQuantity;
     }
 
-    public Double getCostPrice() {
+    public Integer getKeepQuantity() {
+        return keepQuantity;
+    }
+
+    public void setKeepQuantity(Integer keepQuantity) {
+        this.keepQuantity = keepQuantity;
+    }
+
+    public Integer getOversoldQuantity() {
+        return oversoldQuantity;
+    }
+
+    public void setOversoldQuantity(Integer oversoldQuantity) {
+        this.oversoldQuantity = oversoldQuantity;
+    }
+
+    public Integer getMinimumSellCount() {
+        return minimumSellCount;
+    }
+
+    public void setMinimumSellCount(Integer minimumSellCount) {
+        this.minimumSellCount = minimumSellCount;
+    }
+
+    public Integer getAllocationQuantity() {
+        return allocationQuantity;
+    }
+
+    public void setAllocationQuantity(Integer allocationQuantity) {
+        this.allocationQuantity = allocationQuantity;
+    }
+
+    public Integer getPurchaseQuantity() {
+        return purchaseQuantity;
+    }
+
+    public void setPurchaseQuantity(Integer purchaseQuantity) {
+        this.purchaseQuantity = purchaseQuantity;
+    }
+
+    public Byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(Byte status) {
+        this.status = status;
+    }
+
+    public Long getCostPrice() {
         return costPrice;
     }
 
-    public void setCostPrice(Double costPrice) {
+    public void setCostPrice(Long costPrice) {
         this.costPrice = costPrice;
     }
 
-    public String getImg() {
-        return img;
+    public Long getSellPrice() {
+        return sellPrice;
     }
 
-    public void setImg(String img) {
-        this.img = img == null ? null : img.trim();
+    public void setSellPrice(Long sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
+    public Long getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(Long marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public Long getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscountPrice(Long discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public Byte getDeliveryDelay() {
+        return deliveryDelay;
+    }
+
+    public void setDeliveryDelay(Byte deliveryDelay) {
+        this.deliveryDelay = deliveryDelay;
+    }
+
+    public Integer getInitialSales() {
+        return initialSales;
+    }
+
+    public void setInitialSales(Integer initialSales) {
+        this.initialSales = initialSales;
+    }
+
+    public Integer getActualSales() {
+        return actualSales;
+    }
+
+    public void setActualSales(Integer actualSales) {
+        this.actualSales = actualSales;
+    }
+
+    public Long getTotalStorage() {
+        return totalStorage;
+    }
+
+    public void setTotalStorage(Long totalStorage) {
+        this.totalStorage = totalStorage;
+    }
+
+    public Long getTotalOutStorage() {
+        return totalOutStorage;
+    }
+
+    public void setTotalOutStorage(Long totalOutStorage) {
+        this.totalOutStorage = totalOutStorage;
     }
 
     public String getDescription() {
@@ -132,40 +237,14 @@ public class Goods implements Serializable {
     }
 
     public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+        this.description = description;
     }
 
-    public String getGoodsBanner() {
-        return goodsBanner;
+    public long getRelationItemId() {
+        return relationItemId;
     }
 
-    public void setGoodsBanner(String goodsBanner) {
-        this.goodsBanner = goodsBanner;
-    }
-
-    public String getFormatName(WarehouseGoods item) {
-        String formatName = name;
-        if (item.getDeliveryDelay() == 1 && !name.contains("次日达")) {
-            formatName = "(次日达)" + formatName;
-        } else if (item.getDeliveryDelay() > 1 && !name.contains("日达")) {
-            formatName = "(" + item.getDeliveryDelay() + "日达)" + formatName;
-        }
-        if (item.getDiscountLimit() == -2) {
-            formatName = "(特价)" + formatName;
-        }
-        if (item.getDiscountLimit() != 0 && item.getDiscountLimit() != -2) {
-            formatName = "(促销)" + formatName;
-        }
-        if ((item.getCreateTime().getTime() + TimeUnit.DAYS.toMillis(7)) > System.currentTimeMillis()) {
-            formatName = "【新】" + formatName;
-        }
-        return formatName;
-    }
-
-    @Override
-    public String toString() {
-        return "SupplyChainGoods [id=" + id + ", name=" + name + ", productId=" + productId + ", barcode=" + barcode
-                + ", typeId=" + typeId + ", typeName=" + typeName + ", unitId=" + unitId + ", marketPrice="
-                + marketPrice + ", costPrice=" + costPrice + ", img=" + img + ", description=" + description + "]";
+    public void setRelationItemId(long relationItemId) {
+        this.relationItemId = relationItemId;
     }
 }

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  */
 public class Items {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String image;
     private Integer stock;
@@ -31,11 +31,11 @@ public class Items {
     @JsonIgnore
     private Integer minSales;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface GoodsManager {
 
-    List<MatchItems> matchItemsByBarcode(int userId, String barcodes);
+    List<MatchItems> matchItemsByBarcode(Long passportId, String barcodes);
 }

@@ -59,8 +59,7 @@ public class DefaultAliPayManager implements AliPayManager {
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
         BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice());
-        totalAmount = totalAmount.divide(BigDecimal.valueOf(100), BigDecimal.ROUND_HALF_UP)
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+        totalAmount = totalAmount.divide(BigDecimal.valueOf(100),2,BigDecimal.ROUND_HALF_UP);
         String undiscountableAmount = "0.0";
         // 卖家支付宝账号ID，用于支持一个签约账号下支持打款到不同的收款账号，(打款到sellerId对应的支付宝账号)
         // 如果该字段为空，则默认为与支付宝签约的商户的PID，也就是appid对应的PID

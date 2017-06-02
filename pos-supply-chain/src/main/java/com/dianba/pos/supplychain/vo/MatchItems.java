@@ -9,9 +9,9 @@ public class MatchItems {
     private List<Items> items;
 
     private Integer repertory;
-    private Integer menuTypeId;
-    private Integer standardInventory;
-    private Integer warnInventory;
+    private Long menuTypeId;
+    private Integer standardInventory = 12;
+    private Integer warnInventory = 20;
 
     public String getBarcode() {
         return barcode;
@@ -40,11 +40,11 @@ public class MatchItems {
         this.repertory = repertory;
     }
 
-    public Integer getMenuTypeId() {
+    public Long getMenuTypeId() {
         return menuTypeId;
     }
 
-    public void setMenuTypeId(Integer menuTypeId) {
+    public void setMenuTypeId(Long menuTypeId) {
         this.menuTypeId = menuTypeId;
     }
 

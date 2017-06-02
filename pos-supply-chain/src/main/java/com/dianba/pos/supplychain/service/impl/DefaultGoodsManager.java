@@ -3,23 +3,22 @@ package com.dianba.pos.supplychain.service.impl;
 import com.dianba.pos.item.po.LifeBarcodeRelationship;
 import com.dianba.pos.item.repository.LifeBarcodeRelationshipJpaRepository;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
-import com.dianba.pos.merchant.po.Merchant;
 import com.dianba.pos.merchant.repository.MerchantJpaRepository;
+import com.dianba.pos.passport.po.LifePassportAddress;
+import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
 import com.dianba.pos.supplychain.mapper.WarehouseGoodsMapper;
 import com.dianba.pos.supplychain.po.Goods;
-import com.dianba.pos.supplychain.po.Warehouse;
+import com.dianba.pos.supplychain.po.LifeSupplyChainWarehouse;
 import com.dianba.pos.supplychain.po.WarehouseGoods;
+import com.dianba.pos.supplychain.repository.LifeSupplyChainWarehouseJpaRepository;
 import com.dianba.pos.supplychain.repository.SupplyChainGoodsJpaRepository;
 import com.dianba.pos.supplychain.repository.WarehouseGoodsJpaRepository;
-import com.dianba.pos.supplychain.repository.WarehouseJpaRepository;
 import com.dianba.pos.supplychain.service.GoodsManager;
 import com.dianba.pos.supplychain.service.WarehouseOrgManager;
-import com.dianba.pos.supplychain.vo.Items;
 import com.dianba.pos.supplychain.vo.MatchItems;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -35,7 +34,7 @@ public class DefaultGoodsManager implements GoodsManager {
     @Autowired
     private WarehouseGoodsJpaRepository warehouseGoodsJpaRepository;
     @Autowired
-    private WarehouseJpaRepository warehouseJpaRepository;
+    private LifeSupplyChainWarehouseJpaRepository warehouseJpaRepository;
     @Autowired
     private LifeItemUnitJpaRepository goodsUnitJpaRepository;
     @Autowired
@@ -43,20 +42,20 @@ public class DefaultGoodsManager implements GoodsManager {
     @Autowired
     private WarehouseOrgManager warehouseOrgManager;
 
+    @Autowired
+    private LifePassportAddressJpaRepository passportAddressJpaRepository;
+
     @Override
-    public List<MatchItems> matchItemsByBarcode(int userId, String barcodes) {
+    public List<MatchItems> matchItemsByBarcode(Long passportId, String barcodes) {
         List<MatchItems> matchItemsList = new ArrayList<>();
-        Merchant merchant = merchantJpaRepository.findByUserId((long) userId);
-        if (merchant == null) {
-            return matchItemsList;
-        }
-        int nearbyWarehouseId = warehouseOrgManager.getNearbyWarehouse(
-                merchant.getLatitude().doubleValue(), merchant.getLongitude().doubleValue()); // 183; //
+        //获取商家地址
+        LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
+        Long nearbyWarehouseId = warehouseOrgManager.getNearbyWarehouse(
+                passportAddress.getLatitude(), passportAddress.getLongitude());
         if (nearbyWarehouseId <= 0) {
             // 附近没有子仓
             return matchItemsList;
         }
-
         // 获取本次目标的内容对应于供应链端中存在的记录
         List<LifeBarcodeRelationship> batchLifeBarcodeRelationships
                 = barcodeRelationshipJpaRepository.findByTargetBarcodeIn(Arrays.asList(barcodes.split(",")));
@@ -87,7 +86,7 @@ public class DefaultGoodsManager implements GoodsManager {
         StringBuilder builder = new StringBuilder();
         // 重组为映射表关系
         for (Goods itemTemplate : itemTemplates) {
-            itemTemplateMap.put(itemTemplate.getBarcode(), itemTemplate);
+//            itemTemplateMap.put(itemTemplate.getBarcode(), itemTemplate);
             builder.append(itemTemplate.getId()).append(",");
         }
         builder = builder.delete(builder.length() - 1, builder.length());
@@ -99,7 +98,7 @@ public class DefaultGoodsManager implements GoodsManager {
             warehouseGoodsMap.put(item.getGoodsId(), item);
         }
 
-        Warehouse warehouse = warehouseJpaRepository.findOne(nearbyWarehouseId);
+        LifeSupplyChainWarehouse warehouse = warehouseJpaRepository.findOne(nearbyWarehouseId);
         Iterator<Entry<String, List<LifeBarcodeRelationship>>> entrys = matchSourceBarcodes.entrySet().iterator();
         while (entrys.hasNext()) {
             MatchItems matchItems = new MatchItems();
@@ -115,28 +114,28 @@ public class DefaultGoodsManager implements GoodsManager {
                     continue;
                 }
                 int parentStock = 0;
-                if (warehouse.getPid() > 0) {
-                    List<WarehouseGoods> parentItems = warehouseGoodsJpaRepository
-                            .findByWarehouseIdAndGoodsId(warehouse.getPid(), goods.getId());
-                    if (parentItems != null && !parentItems.isEmpty()) {
-                        WarehouseGoods parentItem = parentItems.get(0);
-                        parentStock = parentItem.getInventory();
-                    }
-                }
-                int stock = warehouseGood.getInventory() + (parentStock < 0 ? 0 : parentStock);
-                Items items = new Items();
-                items.setMinSales(warehouseGood.getMinSales());
-                items.setId(warehouseGood.getId());
-                items.setName(goods.getName());
-                items.setImage(goods.getImg());
-                items.setStock(stock < 0 ? 0 : stock);
-                items.setRetailPrice(BigDecimal.valueOf(warehouseGood.getRetailPrice()));
-                items.setPrice(new BigDecimal(warehouseGood.getMarketPrice())
-                        .setScale(2, BigDecimal.ROUND_HALF_UP));
-//                GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());
-//                items.setUnit(itemUnit == null ? "箱" : itemUnit.getName());
-                items.setStandard(lifeBarcodeRelationship.getRelationCoefficient());
-                matchItems.getItems().add(items);
+//                if (warehouse.getPid() > 0) {
+//                    List<WarehouseGoods> parentItems = warehouseGoodsJpaRepository
+//                            .findByWarehouseIdAndGoodsId(warehouse.getPid(), goods.getId());
+//                    if (parentItems != null && !parentItems.isEmpty()) {
+//                        WarehouseGoods parentItem = parentItems.get(0);
+//                        parentStock = parentItem.getInventory();
+//                    }
+//                }
+//                int stock = warehouseGood.getInventory() + (parentStock < 0 ? 0 : parentStock);
+//                Items items = new Items();
+//                items.setMinSales(warehouseGood.getMinSales());
+////                items.setId(warehouseGood.getId());
+//                items.setName(goods.getName());
+//                items.setImage(goods.getImg());
+//                items.setStock(stock < 0 ? 0 : stock);
+//                items.setRetailPrice(BigDecimal.valueOf(warehouseGood.getRetailPrice()));
+//                items.setPrice(new BigDecimal(warehouseGood.getMarketPrice())
+//                        .setScale(2, BigDecimal.ROUND_HALF_UP));
+////                GoodsUnit itemUnit = goodsUnitJpaRepository.findOne(barcodeRelationship.getSourceUnitId());
+////                items.setUnit(itemUnit == null ? "箱" : itemUnit.getName());
+//                items.setStandard(lifeBarcodeRelationship.getRelationCoefficient());
+//                matchItems.getItems().add(items);
                 matchItems.setBarcode(entry.getKey());
                 matchItemsList.add(matchItems);
             }

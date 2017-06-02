@@ -1,6 +1,5 @@
 package com.dianba.pos.item.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
@@ -78,6 +77,7 @@ public class PosItemController {
             } else {
 
                 for (PosItem posItem : posItems) {
+
                     LifeItemTemplate itemTemplate = itemTemplateManager
                             .getItemTemplateById(posItem.getItemTemplateId());
                     PosItemVo posItemVo = new PosItemVo();
@@ -231,9 +231,7 @@ public class PosItemController {
             if (posItemVo != null) {
                 jsonObject = (JSONObject) JSONObject.toJSON(posItemVo);
             }
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.add(jsonObject);
-            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonArray);
+            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonObject);
         }
 
     }

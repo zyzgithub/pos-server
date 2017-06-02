@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,9 +73,7 @@ public class DefaultWechatPayManager implements WechatPayManager {
         params.put("out_trade_no", order.getSequenceNumber());
         params.put("body", "1号生活715超市--" + title);
 //        otherParams.put("total_fee", String.valueOf(order.getTotalPrice() / 100));
-        BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice())
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
-        params.put("total_fee", totalAmount + "");
+        params.put("total_fee", order.getTotalPrice() + "");
         try {
             Map<String, String> result = WxBarcodePayApi.payOrder(params);
             if (result == null) {

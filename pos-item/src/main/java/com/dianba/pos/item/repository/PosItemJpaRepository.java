@@ -68,7 +68,16 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
     List<PosItem> findAllByItemNameLikeAndPassportId(@Param("itemName") String itemName
             , @Param("passportId") Long passportId);
 
-
+    /**
+     * 获取预警库存商品
+     *
+     * @param passportId
+     * @param itemTemplateIds
+     * @return
+     */
+    @Query("select a from PosItem a where a.warningRepertory<a.repertory and a.passportId=:passportId "
+            + " and a.itemTemplateId not in(:itemTemplateIds)")
+    List<PosItem> findWarningRepertoryItemsByExclude(Long passportId, List<Long> itemTemplateIds);
 }
 
 

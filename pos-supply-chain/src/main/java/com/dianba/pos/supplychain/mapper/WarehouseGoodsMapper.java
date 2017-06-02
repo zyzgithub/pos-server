@@ -9,6 +9,6 @@ import java.util.List;
 @Mapper
 public interface WarehouseGoodsMapper {
 
-    List<WarehouseGoods> getItemsByTemplate(@Param("warehouseId") Integer warehouseId
+    List<WarehouseGoods> getItemsByTemplate(@Param("warehouseId") Long warehouseId
             , @Param("itemTemplates") String itemTemplates);
 }

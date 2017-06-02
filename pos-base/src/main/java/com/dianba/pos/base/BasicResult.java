@@ -1,5 +1,6 @@
 package com.dianba.pos.base;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
@@ -48,7 +49,12 @@ public class BasicResult {
         if (response == null) {
             response = new JSONObject();
         }
-        response.put("datas", datas);
+        JSONArray jsonArray = (JSONArray) datas;
+        if (jsonArray == null || jsonArray.size() == 0) {
+            jsonArray = new JSONArray();
+            response.put("datas", jsonArray);
+        }
+        response.put("datas", jsonArray);
     }
 
     public static BasicResult createSuccessResult(String msg, JSONObject response) {

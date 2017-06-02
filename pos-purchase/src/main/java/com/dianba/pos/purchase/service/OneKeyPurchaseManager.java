@@ -1,8 +1,13 @@
 package com.dianba.pos.purchase.service;
 
-import java.util.Map;
+import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.purchase.pojo.OneKeyPurchase;
+
+import java.util.List;
 
 public interface OneKeyPurchaseManager {
 
-    Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId) throws Exception;
+    List<OneKeyPurchase> getWarnRepertoryItems(Long passportId);
+
+    BasicResult getWarnRepertoryList(Long passportId) throws Exception;
 }

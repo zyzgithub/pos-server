@@ -41,16 +41,16 @@
             <artifactId>pos-report-form</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-purchase</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-supply-chain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianba</groupId>-->
+            <!--<artifactId>pos-purchase</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.dianba</groupId>-->
+            <!--<artifactId>pos-supply-chain</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>pos-passport</artifactId>

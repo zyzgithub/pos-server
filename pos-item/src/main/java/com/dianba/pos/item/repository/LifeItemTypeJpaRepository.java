@@ -12,10 +12,9 @@ import java.util.List;
  */
 @Transactional
 @Repository
-public interface LifeItemTypeJpaRepository extends JpaRepository<LifeItemType, Integer> {
+public interface LifeItemTypeJpaRepository extends JpaRepository<LifeItemType, Long> {
 
     List<LifeItemType> getAllByParentId(Long id);
-
 
     LifeItemType getItemTypeById(Long id);
 

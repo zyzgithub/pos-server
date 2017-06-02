@@ -5,8 +5,8 @@ import com.dianba.pos.item.po.PosItem;
 public class OneKeyPurchase extends PosItem {
 
     private boolean isCanBuy = false;
-    private Integer totalSale;
-    private Integer daySale;
+    private Integer totalSale = 0;
+    private Integer daySale = 0;
 
     public boolean isCanBuy() {
         return isCanBuy;

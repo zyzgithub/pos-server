@@ -8,7 +8,7 @@
         <result column="day_sale" property="daySale"/>
     </resultMap>
 
-    <select id="queryWarnInvenstory" resultMap="OneKeyPurchaseMap">
+    <select id="findWarnSaleItems" resultMap="OneKeyPurchaseMap">
         select * from (
             select pi.*,t.normal_quantity total_sale,t.normal_quantity/7 day_sale
             from (
