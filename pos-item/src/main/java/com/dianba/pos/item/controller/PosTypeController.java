@@ -10,6 +10,7 @@ import com.dianba.pos.item.service.LifeItemTypeManager;
 import com.dianba.pos.item.config.MenuUrlConstant;
 import com.dianba.pos.item.po.PosType;
 import com.dianba.pos.item.service.PosTypeManager;
+import com.dianba.pos.item.vo.PosTypeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +64,12 @@ public class PosTypeController {
                 posType.setItemTypeId(itemType.getId());
                 posType.setItemTypeTitle(title);
                 posTypeJpaRepository.save(posType);
-                JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posType);
+                PosTypeVo posTypeVo=new PosTypeVo();
+                posTypeVo.setId(posType.getId());
+                posTypeVo.setItemTypeId(posType.getItemTypeId());
+                posTypeVo.setTitle(posType.getItemTypeTitle());
+                posTypeVo.setTypeCount(0);
+                JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posTypeVo);
                 return BasicResult.createSuccessResult("添加商家分类成功!",jsonObject);
 
             }
