@@ -150,10 +150,10 @@ public class PosItemController {
             JSONObject jo = new JSONObject();
             jo.put("itemUnitList", itemUnits);
             jo.put("itemTypes", posTypeVos);
-            return BasicResult.createSuccessResultWithDatas("请求成功!", jo);
-
+            BasicResult basicResult=BasicResult.createSuccessResult();
+            basicResult.setResponse(jo);
+            return basicResult;
         }
-
     }
 
 
