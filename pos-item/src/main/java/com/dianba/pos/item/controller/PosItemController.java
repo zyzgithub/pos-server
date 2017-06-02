@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,49 +68,16 @@ public class PosItemController {
 
             }
 
-            List<PosItemVo> posItemVos = new ArrayList<>();
             if (posItems.size() == 0) {
 
                 return BasicResult.createFailResult("没有商品信息!");
 
             } else {
-
-                for (PosItem posItem : posItems) {
-
-                    LifeItemTemplate itemTemplate = itemTemplateManager
-                            .getItemTemplateById(posItem.getItemTemplateId());
-                    PosItemVo posItemVo = new PosItemVo();
-                    posItemVo.setId(posItem.getId());
-                    posItemVo.setPosTypeId(posItem.getItemTypeId());
-                    LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-                    posItemVo.setPosTypeName(itemType.getTitle());
-                    posItemVo.setItemTemplateId(itemTemplate.getId());
-                    posItemVo.setItemName(itemTemplate.getName());
-                    BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-                    BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-                    BigDecimal a = new BigDecimal(100);
-                    Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                    Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                    posItemVo.setStockPrice(sPrice);
-                    posItemVo.setSalesPrice(saPrice);
-                    posItemVo.setBuyCount(posItem.getBuyCount());
-                    posItemVo.setCreateDate(posItem.getCreateTime());
-                    posItemVo.setBarcode(itemTemplate.getBarcode());
-                    posItemVo.setIsDelete(posItem.getIsDelete());
-                    posItemVo.setIsShelve(posItem.getIsShelve());
-                    posItemVo.setItemImg(itemTemplate.getImageUrl());
-                    posItemVo.setRepertory(posItem.getRepertory());
-                    posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-                    posItemVo.setShelfLife(posItem.getShelfLife());
-                    LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
-                    posItemVo.setItemUnitId(itemUnit.getId());
-                    posItemVo.setItemUnitName(itemUnit.getTitle());
-                    posItemVo.setGeneratedDate(posItem.getGeneratedDate());
-                    posItemVos.add(posItemVo);
-                }
+                List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
+                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
             }
 
-            return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
+
         }
 
     }
@@ -134,7 +100,6 @@ public class PosItemController {
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
             //商品分类
             List<PosType> posTypes = posTypeManager.getAllByPassportId(Long.parseLong(passportId));
-
             List<PosTypeVo> posTypeVos = new ArrayList<>();
             for (PosType posType : posTypes) {
                 LifeItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
@@ -150,7 +115,7 @@ public class PosItemController {
             JSONObject jo = new JSONObject();
             jo.put("itemUnitList", itemUnits);
             jo.put("itemTypes", posTypeVos);
-            BasicResult basicResult=BasicResult.createSuccessResult();
+            BasicResult basicResult = BasicResult.createSuccessResult();
             basicResult.setResponse(jo);
             return basicResult;
         }
@@ -176,36 +141,8 @@ public class PosItemController {
             return BasicResult.createFailResult(msg);
         } else {
             PosItem posItem = (PosItem) map.get("info");
-            LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
-            posItemVo = new PosItemVo();
-            posItemVo.setId(posItem.getId());
-            posItemVo.setPosTypeId(posItem.getItemTypeId());
-            LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-            posItemVo.setPosTypeName(itemType.getTitle());
-            posItemVo.setItemTemplateId(itemTemplate.getId());
-            posItemVo.setItemName(itemTemplate.getName());
-            BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-            BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-            BigDecimal a = new BigDecimal(100);
-            Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            posItemVo.setStockPrice(sPrice);
-            posItemVo.setSalesPrice(saPrice);
-            posItemVo.setBuyCount(posItem.getBuyCount());
-            posItemVo.setCreateDate(posItem.getCreateTime());
-            posItemVo.setBarcode(itemTemplate.getBarcode());
-            posItemVo.setIsDelete(posItem.getIsDelete());
-            posItemVo.setIsShelve(posItem.getIsShelve());
-            posItemVo.setItemImg(itemTemplate.getImageUrl());
-            posItemVo.setRepertory(posItem.getRepertory());
-            posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-            posItemVo.setShelfLife(posItem.getShelfLife());
-            posItemVo.setPassportId(posItem.getPassportId());
-            LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
-            posItemVo.setItemUnitId(itemUnit.getId());
-            posItemVo.setItemUnitName(itemUnit.getTitle());
-            posItemVo.setGeneratedDate(posItem.getGeneratedDate());
-            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(posItemVo);
+            PosItemVo posItemVo1 = posItemManager.convertToVo(posItem);
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(posItemVo1);
             return BasicResult.createSuccessResult(msg, jsonObject);
         }
 
@@ -299,7 +236,7 @@ public class PosItemController {
 
             logger.info("=======================没有此商品信息=================================");
             return BasicResult.createFailResult("数据出现异常,请联系管理员!");
-        } else if (posItem.getPassportId() == posItemVo.getPassportId()) {
+        } else if (posItem.getPassportId() .equals(posItemVo.getPassportId())) {
             logger.info("商品isShelve:" + posItemVo.getIsShelve());
             posItem.setIsShelve(posItemVo.getIsShelve());
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {
@@ -331,8 +268,8 @@ public class PosItemController {
     public BasicResult getListBySearchText(String searchText, Long passportId) {
 
         List<PosItem> posItems = posItemManager.findAllBySearchTextPassportId(searchText, passportId);
-
-        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItems);
+        List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
+        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos);
 
     }
 

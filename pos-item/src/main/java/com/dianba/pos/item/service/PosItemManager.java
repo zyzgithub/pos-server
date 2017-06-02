@@ -61,5 +61,7 @@ public interface PosItemManager {
     @Transactional
     Map<String, Object> editPosItem(PosItemVo posItemVo);
 
+     List<PosItemVo> convertToVos(List<PosItem> posItems);
 
+    PosItemVo convertToVo(PosItem posItem);
 }

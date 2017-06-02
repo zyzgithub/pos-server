@@ -1,56 +1,54 @@
 package com.dianba.pos.item.vo;
-
-
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 
 /**
  * Created by zhangyong on 2017/5/26.
  */
+
 public class PosItemVo {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private Long id;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     //商品名字
+
     private String itemName;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     //商品入库码
+
     private String barcode;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     //商品类型id
     private Long posTypeId;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private String posTypeName;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long itemTypeId;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     //商品单位id
     private Long itemUnitId;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String itemUnitName;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     //商品对应模板id
     private Long itemTemplateId;
     //商品商家id
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private Long passportId;
     /**
      * 商品图片
      **/
     private String itemImg;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private String createDate;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private Long generatedDate;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     /**商品销售量**/
     private Integer buyCount;
 
@@ -60,39 +58,37 @@ public class PosItemVo {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     /**商品上下架**/
     private String isShelve;
 
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     /**商品是否删除**/
     private String isDelete;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     /**库存**/
     private Integer repertory;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     /**预警库存**/
-
     private Integer warningRepertory;
 
     /**
      * 商品保质期（天）
      **/
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private Integer shelfLife;
 
     /**
      * 原价
      **/
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private double stockPrice;
     /**
      * 销售价格
      **/
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+
     private double salesPrice;
+
 
     public Long getId() {
         return id;
@@ -102,6 +98,7 @@ public class PosItemVo {
         this.id = id;
     }
 
+
     public Long getPosTypeId() {
         return posTypeId;
     }
@@ -109,6 +106,7 @@ public class PosItemVo {
     public void setPosTypeId(Long posTypeId) {
         this.posTypeId = posTypeId;
     }
+
 
     public Long getItemTemplateId() {
         return itemTemplateId;
@@ -118,6 +116,7 @@ public class PosItemVo {
         this.itemTemplateId = itemTemplateId;
     }
 
+
     public String getCreateDate() {
         return createDate;
     }
@@ -125,6 +124,7 @@ public class PosItemVo {
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
+
 
     public Integer getBuyCount() {
         return buyCount;
@@ -134,13 +134,15 @@ public class PosItemVo {
         this.buyCount = buyCount;
     }
 
+
     public String getDescription() {
-        return description;
+        return description==null?"":description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     public String getIsShelve() {
         return isShelve;
@@ -150,6 +152,7 @@ public class PosItemVo {
         this.isShelve = isShelve;
     }
 
+
     public String getIsDelete() {
         return isDelete;
     }
@@ -157,6 +160,7 @@ public class PosItemVo {
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
     }
+
 
     public Integer getRepertory() {
         return repertory;
@@ -166,6 +170,7 @@ public class PosItemVo {
         this.repertory = repertory;
     }
 
+
     public Integer getWarningRepertory() {
         return warningRepertory;
     }
@@ -174,8 +179,9 @@ public class PosItemVo {
         this.warningRepertory = warningRepertory;
     }
 
+
     public Integer getShelfLife() {
-        return shelfLife;
+        return shelfLife==null?0:shelfLife;
     }
 
     public void setShelfLife(Integer shelfLife) {
@@ -187,6 +193,7 @@ public class PosItemVo {
         this.salesPrice = salesPrice;
     }
 
+
     public String getItemName() {
         return itemName;
     }
@@ -194,6 +201,7 @@ public class PosItemVo {
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
+
 
     public String getBarcode() {
         return barcode;
@@ -203,6 +211,7 @@ public class PosItemVo {
         this.barcode = barcode;
     }
 
+
     public String getItemImg() {
         return itemImg;
     }
@@ -211,6 +220,7 @@ public class PosItemVo {
         this.itemImg = itemImg;
     }
 
+
     public String getPosTypeName() {
         return posTypeName;
     }
@@ -218,6 +228,7 @@ public class PosItemVo {
     public void setPosTypeName(String posTypeName) {
         this.posTypeName = posTypeName;
     }
+
 
     public Long getItemUnitId() {
         return itemUnitId;
@@ -238,6 +249,7 @@ public class PosItemVo {
     public Long getPassportId() {
         return passportId;
     }
+
 
     public void setPassportId(Long passportId) {
         this.passportId = passportId;
@@ -269,7 +281,7 @@ public class PosItemVo {
     }
 
     public Long getGeneratedDate() {
-        return generatedDate;
+        return generatedDate==null?0:generatedDate;
     }
 
     public void setGeneratedDate(Long generatedDate) {
