@@ -49,12 +49,12 @@ public class BasicResult {
         if (response == null) {
             response = new JSONObject();
         }
-        JSONArray jsonArray = (JSONArray) datas;
-        if (jsonArray == null || jsonArray.size() == 0) {
-            jsonArray = new JSONArray();
+        if (datas == null) {
+            JSONArray jsonArray = new JSONArray();
             response.put("datas", jsonArray);
+        } else {
+            response.put("datas", datas);
         }
-        response.put("datas", jsonArray);
     }
 
     public static BasicResult createSuccessResult(String msg, JSONObject response) {
