@@ -8,6 +8,8 @@ public class OrderPojo implements Serializable{
     private Long passportId;
     private Double actualPrice;
     private Double totalPrice;
+    private String createTime;
+    private String completeTime;
     private List<OrderItemPojo> items;
 
     public Long getPassportId() {
@@ -32,6 +34,22 @@ public class OrderPojo implements Serializable{
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCompleteTime() {
+        return completeTime;
+    }
+
+    public void setCompleteTime(String completeTime) {
+        this.completeTime = completeTime;
     }
 
     public List<OrderItemPojo> getItems() {

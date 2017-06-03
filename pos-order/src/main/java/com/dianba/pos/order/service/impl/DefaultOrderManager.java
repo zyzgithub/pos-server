@@ -2,9 +2,11 @@ package com.dianba.pos.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +60,10 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return orderJpaRepository.findOne(orderId);
     }
 
+    @Override
+    public LifeOrder getLifeOrder(String sequenceNumber) {
+        return orderJpaRepository.findBySequenceNumber(sequenceNumber);
+    }
 
     public BasicResult prepareCreateOrder(long passportId, OrderTypeEnum orderType) {
         Map<String, String> params = new HashMap<>();
@@ -67,7 +74,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
 
     public BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
             , long actualPrice, long totalPrice
-            , List<Map<String, Object>> orderItems) throws Exception {
+            , List<OrderItemPojo> orderItems) throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("sequenceNumber", sequenceNumber);
         params.put("partnerUserId", passportId + "");
@@ -102,6 +109,9 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("partnerUserId", passportId + "");
         params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
         LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
+        if (passportAddress == null) {
+            throw new PosNullPointerException("商家地址信息不存在！" + passportId);
+        }
         //商家ID
         params.put("receiptProvince", passportAddress.getProvince());
         params.put("receiptCity", passportAddress.getCity());
@@ -120,44 +130,26 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return postPurchaseOrder(GENERATE_ORDER, params);
     }
 
-    private List<OrderItemSnapshot> createOrderItemSnapshots(List<Map<String, Object>> orderItems) {
+    private List<OrderItemSnapshot> createOrderItemSnapshots(List<OrderItemPojo> orderItems) {
         List<OrderItemSnapshot> orderItemSnapshots = new ArrayList<>();
-        if (orderItems.size() == 0) {
-            OrderItemSnapshot itemSnapshot = new OrderItemSnapshot();
-            itemSnapshot.setItemId(100000L);
-            itemSnapshot.setOrderId(100000L);
-            itemSnapshot.setItemName("农夫山泉4L*6");
-            itemSnapshot.setItemTypeId(90018L);
-            itemSnapshot.setItemTypeName("瓶装水");
-            itemSnapshot.setItemUnitId(100004L);
-            itemSnapshot.setItemUnitName("件");
-            itemSnapshot.setItemBarcode("6921168559173");
-            itemSnapshot.setNormalPrice(3700L);
-            itemSnapshot.setDiscountPrice(3700L);
-            itemSnapshot.setCostPrice(3700L);
-            itemSnapshot.setMarketPrice(3700L);
-            itemSnapshot.setTotalPrice(3700L);
-            itemSnapshot.setNormalQuantity(1);
-            orderItemSnapshots.add(itemSnapshot);
-            return orderItemSnapshots;
-        }
-        for (Map<String, Object> item : orderItems) {
-            double itemCostPrice = Double.parseDouble(item.get("costPrice").toString());
-            double itemSalePrice = Double.parseDouble(item.get("totalPrice").toString());
+        for (OrderItemPojo item : orderItems) {
+            long itemCostPrice = item.getCostPrice().multiply(BigDecimal.valueOf(100))
+                    .longValue();
+            long itemSalePrice = item.getTotalPrice().multiply(BigDecimal.valueOf(100))
+                    .longValue();
             OrderItemSnapshot orderItemSnapshot = new OrderItemSnapshot();
-            orderItemSnapshot.setItemId(Long.parseLong(item.get("itemId").toString()));
-            orderItemSnapshot.setItemTemplateId(Long.parseLong(item.get("itemTemplateId").toString()));
-            orderItemSnapshot.setItemName(item.get("itemName").toString());
-            orderItemSnapshot.setItemTypeId(Long.parseLong(item.get("itemTypeId").toString()));
-            orderItemSnapshot.setItemTypeName(item.get("itemTypeName").toString());
-            orderItemSnapshot.setItemUnitId(Long.parseLong(item.get("itemTypeUnitId").toString()));
-            orderItemSnapshot.setItemUnitName(item.get("itemTypeUnitName").toString());
-            orderItemSnapshot.setItemBarcode(item.get("itemBarcode").toString());
-            orderItemSnapshot.setCostPrice((long) (itemCostPrice * 100));
-            orderItemSnapshot.setNormalPrice((long) (itemSalePrice * 100));
-            int normalQuantity = Integer.parseInt(item.get("normalQuantity").toString());
-            orderItemSnapshot.setTotalPrice((long) (itemSalePrice * 100) * normalQuantity);
-            orderItemSnapshot.setNormalQuantity(normalQuantity);
+            orderItemSnapshot.setItemId(item.getItemId());
+            orderItemSnapshot.setItemTemplateId(item.getItemTemplateId());
+            orderItemSnapshot.setItemName(item.getItemName());
+            orderItemSnapshot.setItemTypeId(item.getItemTypeId());
+            orderItemSnapshot.setItemTypeName(item.getItemTypeName());
+            orderItemSnapshot.setItemUnitId(item.getItemTypeUnitId());
+            orderItemSnapshot.setItemUnitName(item.getItemTypeUnitName());
+            orderItemSnapshot.setItemBarcode(item.getItemBarcode());
+            orderItemSnapshot.setCostPrice(itemCostPrice);
+            orderItemSnapshot.setNormalPrice(itemSalePrice);
+            orderItemSnapshot.setTotalPrice(itemSalePrice * item.getNormalQuantity());
+            orderItemSnapshot.setNormalQuantity(item.getNormalQuantity());
             orderItemSnapshots.add(orderItemSnapshot);
         }
         return orderItemSnapshots;

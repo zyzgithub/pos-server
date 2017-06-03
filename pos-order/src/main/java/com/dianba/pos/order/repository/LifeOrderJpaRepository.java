@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional(readOnly = true)
 public interface LifeOrderJpaRepository extends JpaRepository<LifeOrder, Long> {
+
+    LifeOrder findBySequenceNumber(String sequenceNumber);
 }

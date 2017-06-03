@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.config.OrderURLConstant;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
+import com.dianba.pos.order.pojo.WarehouseItemPojo;
 import com.dianba.pos.order.service.OrderManager;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.constant.order.OrderTypeEnum;
@@ -48,7 +51,7 @@ public class OrderController extends BasicWebService {
     public BasicResult createOrder(HttpServletRequest request
             , long passportId, int orderType, double actualPrice, double totalPrice, String items
             , @RequestParam(required = false) String phoneNumber) throws Exception {
-        List<Map<String, Object>> orderItems = JsonHelper.toList(items);
+        List<OrderItemPojo> orderItems = JsonHelper.toList(items, OrderItemPojo.class);
         if (orderItems.size() < 0) {
             return BasicResult.createFailResult("订单商品为空！" + items);
         }
@@ -70,7 +73,7 @@ public class OrderController extends BasicWebService {
     }
 
     /**
-     * 一键采购
+     * 一键采购下单
      *
      * @param passportId  通行证ID
      * @param warehouseId 仓库id
@@ -80,13 +83,20 @@ public class OrderController extends BasicWebService {
     @RequestMapping("create_purchase_order")
     public BasicResult createOrder(HttpServletRequest request
             , Long passportId, Long warehouseId, String itemSets) throws Exception {
-//        warehouseId = 100001L;
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.PURCHASE_ORDER_TYPE;
         BasicResult basicResult = orderManager.prepareCreateOrder(passportId, orderTypeEnum);
         if (basicResult.isSuccess()) {
+            List<WarehouseItemPojo> warehouseItemPojos = JsonHelper.toList(itemSets, WarehouseItemPojo.class);
             String sequenceNumber = basicResult.getResponse().getString("sequenceNumber");
-            JSONObject jsonObject = JSONObject.parseObject(itemSets);
-            return orderManager.generatePurchaseOrder(passportId, sequenceNumber, warehouseId, jsonObject);
+            JSONObject jsonObject = new JSONObject();
+            for (WarehouseItemPojo itemPojo : warehouseItemPojos) {
+                jsonObject.put(itemPojo.getId() + "", itemPojo.getCount());
+            }
+            basicResult = orderManager.generatePurchaseOrder(passportId, sequenceNumber, warehouseId, jsonObject);
+            if (basicResult.isSuccess()) {
+                LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
+                basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrder).toString()));
+            }
         }
         return basicResult;
     }
@@ -122,7 +132,8 @@ public class OrderController extends BasicWebService {
      */
     @ResponseBody
     @RequestMapping("sync_offline_order")
-    public BasicResult syncOffLineOrder(List<OrderPojo> orders) {
+    public BasicResult syncOffLineOrder(String orders) {
+        List<OrderPojo> orderPojos = JsonHelper.toList(orders, OrderPojo.class);
         //TODO 同步离线订单
         return BasicResult.createSuccessResult();
     }

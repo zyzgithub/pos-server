@@ -140,13 +140,11 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     //对商家余额进行偏移计算
                     OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
                     long offsetAmount = 0;
-                    if (orderTypeEnum.getKey() == OrderTypeEnum.POS_PURCHASE_ORDER_TYPE.getKey()) {
-                        offsetAmount = -Math.abs(orderEntry.getTotalPrice());
-                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey()) {
+                    if (orderTypeEnum.getKey() == OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey()) {
                         if (orderEntry.getTotalPrice() > orderEntry.getActualPrice()) {
                             offsetAmount = orderEntry.getTotalPrice() - orderEntry.getActualPrice();
                         }
-                    } else {
+                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey()) {
                         //进行扣点计算
                         PosMerchantRate posMerchantRate = posMerchantRateJpaRepository.findOne(merchantPassportId);
                         Double commissionRate = PosMerchantRate.COMMISSION_RATE;
@@ -158,11 +156,13 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         ).setScale(0, BigDecimal.ROUND_HALF_UP);
                         offsetAmount = amount.longValue();
                     }
-                    //对商家余额进行余额偏移
-                    basicResult = offsetBalance(passportId, orderEntry.getSequenceNumber()
-                            , offsetAmount, transTypeEnum);
-                    if (!basicResult.isSuccess()) {
-                        logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
+                    if (offsetAmount != 0) {
+                        //对商家余额进行余额偏移
+                        basicResult = offsetBalance(passportId, orderEntry.getSequenceNumber()
+                                , offsetAmount, transTypeEnum);
+                        if (!basicResult.isSuccess()) {
+                            logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
+                        }
                     }
                 } else if (!basicResult.isSuccess()) {
                     logger.info("订单确认支付失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
