@@ -1,26 +1,21 @@
-package com.dianba.pos.account.po;
+package com.dianba.pos.passport.po;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
- * Created by zhangyong on 2017/5/28.
- * 收银员账号表
+ * Created by zhangyong on 2017/5/31.
  */
 @Entity
-@Table(name = "cashier_account")
-public class PosCashierAccount implements Serializable{
+@Table(name = "life_pos.pos_cashier_account")
+public class PosCashierAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    /**passport表里面的商家id**/
     @Column(name = "merchant_id")
     private Long merchantId;
 
-    /**passport表里面端收银员id**/
     @Column(name = "cashier_id")
     private Long cashierId;
 
@@ -47,6 +42,4 @@ public class PosCashierAccount implements Serializable{
     public void setCashierId(Long cashierId) {
         this.cashierId = cashierId;
     }
-
-
 }

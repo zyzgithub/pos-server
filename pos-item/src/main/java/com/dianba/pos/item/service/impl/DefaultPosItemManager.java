@@ -148,10 +148,10 @@ public class DefaultPosItemManager implements PosItemManager {
         }else if(StringUtil.isEmpty(posItemVo.getItemName())){
             map.put("result", "false");
             map.put("msg", "itemName 参数不能为空!");
-        }
-        else {
+        } else {
             map.put("result", "true");
         }
+
 
         return map;
     }
@@ -325,7 +325,8 @@ public class DefaultPosItemManager implements PosItemManager {
         Map<String, Object> map = new HashMap<>();
         //查询商家是否有此商品信息
 
-        PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(posItemVo.getPassportId(),posItemVo.getBarcode());
+        PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(posItemVo.getPassportId()
+                ,posItemVo.getBarcode());
         if (posItem == null) {
             map.put("result", "false");
             map.put("msg", "查询商家商品为空!");
