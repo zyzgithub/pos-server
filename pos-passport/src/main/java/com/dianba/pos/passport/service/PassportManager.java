@@ -1,7 +1,7 @@
 package com.dianba.pos.passport.service;
 
 import com.dianba.pos.passport.po.Passport;
-import org.apache.ibatis.annotations.Param;
+
 
 
 /**

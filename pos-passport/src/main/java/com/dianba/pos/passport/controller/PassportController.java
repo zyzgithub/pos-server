@@ -135,7 +135,7 @@ public class PassportController {
 
 }
     @ResponseBody
-    @RequestMapping("getCashierByIdTest")
+    @RequestMapping("getCashierById")
     public BasicResult getCashierById(Long cashierId){
 
         Passport passport=passportJpaRepository.findOne(cashierId);
