@@ -79,6 +79,8 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
             + " and a.itemTemplateId not in(:itemTemplateIds)")
     List<PosItem> findWarningRepertoryItemsByExclude(@Param("passportId") Long passportId
             , @Param("itemTemplateIds") List<Long> itemTemplateIds);
+
+    PosItem getPosItemByPassportIdAndBarcode(Long passportId,String barcode);
 }
 
 

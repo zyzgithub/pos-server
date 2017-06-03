@@ -1,5 +1,6 @@
 package com.dianba.pos.item.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
@@ -162,11 +163,13 @@ public class PosItemController {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
             JSONObject jsonObject = null;
+            List<PosItemVo> posItemVos=new ArrayList<>();
             PosItemVo posItemVo = posItemManager.getItemByBarcode(barcode, passportId);
             if (posItemVo != null) {
-                jsonObject = (JSONObject) JSONObject.toJSON(posItemVo);
+                posItemVos.add(posItemVo);
             }
-            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonObject);
+            JSONArray jsonArray=(JSONArray) JSONArray.toJSON(posItemVos);
+            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonArray);
         }
 
     }
@@ -210,10 +213,12 @@ public class PosItemController {
         String msg = map.get("msg").toString();
 
         if (result.equals("false")) {
-
             return BasicResult.createFailResult(msg);
         } else {
-            return BasicResult.createSuccessResult(msg);
+            PosItem posItem = (PosItem) map.get("info");
+            PosItemVo posItemVo1 = posItemManager.convertToVo(posItem);
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(posItemVo1);
+            return BasicResult.createSuccessResult(msg, jsonObject);
         }
 
 
