@@ -5,10 +5,11 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.OrderManager;
-import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.po.LifePaymentTransactionLogger;
+import com.dianba.pos.payment.po.PosMerchantRate;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.repository.LifePaymentTransLoggerJpaRepository;
+import com.dianba.pos.payment.repository.PosMerchantRateJpaRepository;
 import com.dianba.pos.payment.service.AliPayManager;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WechatPayManager;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,38 +43,58 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private WechatPayManager wechatPayManager;
     @Autowired
     private LifePaymentTransLoggerJpaRepository transLoggerJpaRepository;
+    @Autowired
+    private PosMerchantRateJpaRepository posMerchantRateJpaRepository;
 
     @Autowired
     private AppConfig appConfig;
 
-
-    public BasicResult payOrder(long passportId, long orderId
-            , String paymentType, TransTypeEnum transType, long transTotalAmount) {
+    public BasicResult balancePayment(long passportId, long orderId, String paymentPassword) {
+        OrderEntry orderEntry = orderManager.getOrder(orderId);
         Map<String, String> params = new HashMap<>();
         params.put("passportId", String.valueOf(passportId));
         //支付类型
-        params.put("paymentType", paymentType);
+        params.put("paymentType", PaymentTypeEnum.VIP_BALANCE.getKey());
         //交易类型
-        params.put("transType", transType.getKey() + "");
+        params.put("transType", TransTypeEnum.SUPPLYCHAIN_INCOME.getKey() + "");
         //合作商户ID
         params.put("partnerUserId", passportId + "");
         //订单ID/订单批次编号
-        params.put("partnerTradeNumber", orderId + "");
+        params.put("partnerTradeNumber", orderEntry.getSequenceNumber());
         //交易单位金额
-        params.put("transUnitAmount", String.valueOf(transTotalAmount));
+        params.put("transUnitAmount", String.valueOf(orderEntry.getTotalPrice()));
         //交易单位数量
         params.put("transNumber", "1");
         //交易总金额
-        params.put("transTotalAmount", String.valueOf(transTotalAmount));
+        params.put("transTotalAmount", String.valueOf(orderEntry.getTotalPrice()));
         //交易标题
-        params.put("transTitle", transType.getValue());
+        params.put("transTitle", TransTypeEnum.SUPPLYCHAIN_INCOME.getValue());
         //交易备注
-        params.put("remark", "POS-" + transType.getValue());
+        params.put("remark", "POS-余额支付");
         //是否使用优惠券
         params.put("useConpon", "0");
         //优惠额度
         params.put("discountAmount", "0");
-        return postPayWithCallBack(UNIFIED_ORDER, PaymentURLConstant.PAYMENT_ORDER + "notify", params);
+        //取出预支付ID
+        BasicResult basicResult = postPay(UNIFIED_ORDER, params);
+        if (basicResult.isSuccess()) {
+            String prePaymentId = basicResult.getResponse().get("prePaymentId").toString();
+            params = new HashMap<>();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("prePaymentId", prePaymentId);
+            jsonObject.put("timeStamp", System.currentTimeMillis());
+            params.put("paymentParameter", jsonObject.toJSONString());
+            params.put("passportId", passportId + "");
+            params.put("paymentPassword", paymentPassword);
+            basicResult = postPay(BALANCE_PAYMENT, params);
+        }
+        return basicResult;
+    }
+
+    public BasicResult passportCurrency(long passportId) throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("passportId", passportId + "");
+        return postPay(PASSPORT_CURRENCY, params);
     }
 
     @Transactional
@@ -101,10 +123,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         } else if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.CASH.getKey())) {
             //现金支付，直接返回成功，不校验
             barcodePayResponse = BarcodePayResponse.createSuccessResult();
-        } else if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.BALANCE.getKey())) {
-            //TODO 余额支付,需要判断余额是否充足
-//            barcodePayResponse = BarcodePayResponse.createSuccessResult();
-            throw new Exception("暂不支持余额支付！");
         } else {
             throw new Exception("不支持的支付类型！" + paymentTypeEnum.getKey());
         }
@@ -128,6 +146,17 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         if (orderEntry.getTotalPrice() > orderEntry.getActualPrice()) {
                             offsetAmount = orderEntry.getTotalPrice() - orderEntry.getActualPrice();
                         }
+                    } else {
+                        //进行扣点计算
+                        PosMerchantRate posMerchantRate = posMerchantRateJpaRepository.findOne(merchantPassportId);
+                        Double commissionRate = PosMerchantRate.COMMISSION_RATE;
+                        if (posMerchantRate != null) {
+                            commissionRate = posMerchantRate.getCommissionRate();
+                        }
+                        BigDecimal amount = BigDecimal.valueOf(offsetAmount).subtract(
+                                BigDecimal.valueOf(offsetAmount).multiply(BigDecimal.valueOf(commissionRate))
+                        ).setScale(0, BigDecimal.ROUND_HALF_UP);
+                        offsetAmount = amount.longValue();
                     }
                     //对商家余额进行余额偏移
                     basicResult = offsetBalance(passportId, orderEntry.getSequenceNumber()

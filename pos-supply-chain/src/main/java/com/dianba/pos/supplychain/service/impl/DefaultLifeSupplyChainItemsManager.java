@@ -12,8 +12,9 @@ import com.dianba.pos.supplychain.po.LifeSupplyChainItems;
 import com.dianba.pos.supplychain.repository.LifeSupplyChainItemsJpaRepository;
 import com.dianba.pos.supplychain.service.LifeSupplyChainItemsManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainWarehouseManager;
-import com.dianba.pos.supplychain.vo.Items;
-import com.dianba.pos.supplychain.vo.MatchItems;
+import com.dianba.pos.supplychain.vo.ItemsVo;
+import com.dianba.pos.supplychain.vo.MatchItemsVo;
+import com.dianba.pos.supplychain.vo.WarehouseItemsVo;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,22 +39,25 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
     private LifeItemUnitJpaRepository itemUnitJpaRepository;
 
     @Override
-    public List<MatchItems> matchItemsByBarcode(Long passportId, String barcodes) {
-        List<MatchItems> matchItemsList = new ArrayList<>();
+    public WarehouseItemsVo matchItemsByBarcode(Long passportId, String barcodes) {
+        WarehouseItemsVo warehouseItemsVo = new WarehouseItemsVo();
+        List<MatchItemsVo> matchItemsList = new ArrayList<>();
         //获取商家地址
         LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
         Long nearbyWarehouseId = warehouseOrgManager.getNearbyWarehouse(
                 passportAddress.getLatitude(), passportAddress.getLongitude());
+        //TODO REMOVE THIS
+        nearbyWarehouseId = 100001L;
         if (nearbyWarehouseId <= 0) {
             // 附近没有子仓
-            return matchItemsList;
+            return warehouseItemsVo;
         }
         // 获取本次目标的内容对应于供应链端中存在的记录
         List<LifeBarcodeRelationship> batchLifeBarcodeRelationships
                 = barcodeRelationshipJpaRepository.findByTargetBarcodeIn(Arrays.asList(barcodes.split(",")));
         if (batchLifeBarcodeRelationships == null || batchLifeBarcodeRelationships.isEmpty()) {
             // 供应链没有对应的商品可以出售
-            return matchItemsList;
+            return warehouseItemsVo;
         }
         Map<String, LifeBarcodeRelationship> matchSourceBarcodes = new HashMap<>();
         // 组合 用于获取商品模版数据
@@ -72,15 +76,15 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
         //供应链商品
         List<LifeSupplyChainItems> supplyChainItemsList = supplyChainItemsJpaRepository
                 .findByWarehouseIdAndItemTemplateIdInAndStatusAndRestrictionQuantity(nearbyWarehouseId
-                        , itemTemplateIds, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), 1);
+                        , itemTemplateIds, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), -1);
 
         for (LifeSupplyChainItems lifeSupplyChainItems : supplyChainItemsList) {
             for (LifeItemTemplate lifeItemTemplate : lifeItemTemplates) {
                 if (lifeSupplyChainItems.getItemTemplateId().longValue() == lifeItemTemplate.getId().longValue()) {
                     LifeBarcodeRelationship barcodeRelationship
                             = matchSourceBarcodes.get(lifeItemTemplate.getBarcode());
-                    MatchItems matchItems = new MatchItems();
-                    Items items = new Items();
+                    MatchItemsVo matchItems = new MatchItemsVo();
+                    ItemsVo items = new ItemsVo();
                     items.setMinSales(lifeSupplyChainItems.getMinimumSellCount());
                     items.setId(lifeSupplyChainItems.getId());
                     items.setName(lifeItemTemplate.getName());
@@ -98,7 +102,9 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
                 }
             }
         }
-        return matchItemsList;
+        warehouseItemsVo.setWarehouseId(nearbyWarehouseId);
+        warehouseItemsVo.setMatchItems(matchItemsList);
+        return warehouseItemsVo;
     }
 
 }

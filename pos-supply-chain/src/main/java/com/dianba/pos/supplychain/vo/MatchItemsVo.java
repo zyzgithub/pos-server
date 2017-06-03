@@ -1,12 +1,15 @@
 package com.dianba.pos.supplychain.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchItems {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class MatchItemsVo {
 
     private String barcode;
-    private List<Items> items;
+    private List<ItemsVo> items;
 
     private Integer repertory;
     private Long menuTypeId;
@@ -21,14 +24,14 @@ public class MatchItems {
         this.barcode = barcode;
     }
 
-    public List<Items> getItems() {
+    public List<ItemsVo> getItems() {
         if (items == null) {
             items = new ArrayList<>();
         }
         return items;
     }
 
-    public void setItems(List<Items> items) {
+    public void setItems(List<ItemsVo> items) {
         this.items = items;
     }
 

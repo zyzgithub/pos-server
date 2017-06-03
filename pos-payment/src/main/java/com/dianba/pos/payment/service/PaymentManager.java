@@ -11,8 +11,22 @@ public interface PaymentManager {
 
     String OFFSET_BALANCE = BASE_URL + "offsetBalance";
 
+    String BALANCE_PAYMENT = BASE_URL + "balancePayment";
+
+    String PASSPORT_CURRENCY = BASE_URL + "passportCurrency";
+
     /**
-     * 订单支付
+     * 余额支付
+     */
+    BasicResult balancePayment(long passportId, long orderId, String paymentPassword);
+
+    /**
+     * 获取商家余额
+     */
+    BasicResult passportCurrency(long passportId) throws Exception;
+
+    /**
+     * 订单支付(支付宝，微信)
      */
     BasicResult payOrder(long passportId, long orderId, String paymentTypeKey, String authCode)
             throws Exception;

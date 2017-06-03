@@ -22,4 +22,13 @@ public class OrderRemoteService {
         JSONObject response = JSONObject.parseObject(data);
         return response.toJavaObject(BasicResult.class);
     }
+
+    protected BasicResult postPurchaseOrder(String url, Map<String, String> parameters) {
+        parameters.put("partnerId", appConfig.getPosPartnerId());
+        parameters.put("appId", appConfig.getPosAppId());
+        CommonUtils.fillSignature(parameters, appConfig.getPosAppKey());
+        String data = HttpRequest.post(appConfig.getPosSupplyChainUrl() + url, parameters);
+        JSONObject response = JSONObject.parseObject(data);
+        return response.toJavaObject(BasicResult.class);
+    }
 }

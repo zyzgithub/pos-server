@@ -21,9 +21,6 @@ public class LifeBarcodeRelationship implements Serializable {
     @Column(name = "target_barcode")
     private String targetBarcode;
 
-    @Column(name = "target_unit_id")
-    private Integer targetUnitId;
-
     @Column(name = "relation_coefficient")
     private Integer relationCoefficient;
 
@@ -49,14 +46,6 @@ public class LifeBarcodeRelationship implements Serializable {
 
     public void setTargetBarcode(String targetBarcode) {
         this.targetBarcode = targetBarcode == null ? null : targetBarcode.trim();
-    }
-
-    public Integer getTargetUnitId() {
-        return targetUnitId;
-    }
-
-    public void setTargetUnitId(Integer targetUnitId) {
-        this.targetUnitId = targetUnitId;
     }
 
     public String getTitle() {

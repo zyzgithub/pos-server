@@ -1,5 +1,7 @@
 package com.dianba.pos.item.po;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -9,6 +11,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "life_item.item_type")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class LifeItemType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

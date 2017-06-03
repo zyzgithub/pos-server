@@ -10,7 +10,7 @@ public class BasicResult {
 
     private String code;
     private String msg;
-    private JSONObject response;
+    private JSONObject response = new JSONObject();
 
     @JsonIgnore
     public boolean isSuccess() {

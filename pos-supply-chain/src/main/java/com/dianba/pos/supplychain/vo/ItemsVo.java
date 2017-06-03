@@ -1,13 +1,15 @@
 package com.dianba.pos.supplychain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
 
 /**
  * 勿改属性，json转发
  */
-public class Items {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class ItemsVo {
 
     private Long id;
     private String name;

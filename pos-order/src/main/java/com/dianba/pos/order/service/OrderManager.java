@@ -41,8 +41,14 @@ public interface OrderManager {
      * 生成一个订单
      */
     BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
-            , OrderTypeEnum orderType, long actualPrice, long totalPrice
-            , List<Map<String, Object>> orderItems)throws Exception;
+            , long actualPrice, long totalPrice
+            , List<Map<String, Object>> orderItems) throws Exception;
+
+    /**
+     * 生成一键采购订单
+     */
+    BasicResult generatePurchaseOrder(long passportId, String sequenceNumber, Long warehouseId
+            , Map<String, Object> itemSet) throws Exception;
 
     /**
      * 确认支付订单

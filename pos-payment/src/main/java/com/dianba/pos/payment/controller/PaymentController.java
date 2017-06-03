@@ -4,6 +4,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.xlibao.common.BasicWebService;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,21 @@ public class PaymentController extends BasicWebService {
     @ResponseBody
     @RequestMapping("pay_order")
     public BasicResult payOrder(long passportId, long orderId, String paymentTypeKey
-            , @RequestParam(required = false) String authCode) throws Exception {
-        return paymentManager.payOrder(passportId, orderId, paymentTypeKey, authCode);
+            , @RequestParam(required = false) String authCode
+            , @RequestParam(required = false) String paymentPassword) throws Exception {
+        if (PaymentTypeEnum.BALANCE.getKey().equals(paymentTypeKey)) {
+            return paymentManager.balancePayment(passportId, orderId, paymentPassword);
+        } else {
+            return paymentManager.payOrder(passportId, orderId, paymentTypeKey, authCode);
+        }
+    }
+
+    /**
+     * 获取用户余额
+     */
+    @ResponseBody
+    @RequestMapping("passport_currency")
+    public BasicResult passportCurrency(long passportId) throws Exception {
+        return paymentManager.passportCurrency(passportId);
     }
 }

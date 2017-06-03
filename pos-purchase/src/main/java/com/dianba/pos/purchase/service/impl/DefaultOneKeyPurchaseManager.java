@@ -14,8 +14,9 @@ import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainItemsManager;
-import com.dianba.pos.supplychain.vo.Items;
-import com.dianba.pos.supplychain.vo.MatchItems;
+import com.dianba.pos.supplychain.vo.ItemsVo;
+import com.dianba.pos.supplychain.vo.MatchItemsVo;
+import com.dianba.pos.supplychain.vo.WarehouseItemsVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +40,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     @Autowired
     private OneKeyPurchaseMapper oneKeyPurchaseMapper;
     @Autowired
-    private LifeSupplyChainItemsManager goodsManager;
+    private LifeSupplyChainItemsManager lifeSupplyChainItemsManager;
     @Autowired
     private LifeItemTemplateJpaRepository itemTemplateJpaRepository;
     @Autowired
@@ -89,15 +90,16 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         }
         sb = sb.delete(sb.length() - 1, sb.length());
         // 用 barcodes 去 供应链查找可进货的商品,极其规格.
-        List<MatchItems> matchItemsList = goodsManager.matchItemsByBarcode(passportId, sb.toString());
+        WarehouseItemsVo warehouseItemsVo = lifeSupplyChainItemsManager.matchItemsByBarcode(passportId, sb.toString());
+        List<MatchItemsVo> matchItemsList = warehouseItemsVo.getMatchItems();
         List<LifeItemType> menutypeEntites = itemTypeJpaRepository.findAll(typeIds);
         //系统内建议采购
-        for (MatchItems matchItems : matchItemsList) {
+        for (MatchItemsVo matchItems : matchItemsList) {
             OneKeyPurchase menuEntity = menuEntityMap.get(matchItems.getBarcode());
             String name = menuEntity.getItemName();
             // 设置当前库存，标准库存，预警库存
             matchItems.setMenuTypeId(menuEntity.getItemTypeId());
-            for (Items item : matchItems.getItems()) {
+            for (ItemsVo item : matchItems.getItems()) {
                 if (item.getStandard() == null) {
                     item.setStandard(12);
                 }
@@ -131,7 +133,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         }
         //系统外建议采购
         for (OneKeyPurchase menuEntity : oneKeyPurchaseList) {
-            for (MatchItems items : matchItemsList) {
+            for (MatchItemsVo items : matchItemsList) {
                 if (menuEntity.getBarcode().equals(items.getBarcode())) {
                     menuEntity.setCanBuy(true);
                     break;
@@ -157,15 +159,15 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 }
             }
         }
-        List<MatchItems> externalList = new ArrayList<>();
+        List<MatchItemsVo> externalList = new ArrayList<>();
         for (OneKeyPurchase menuEntity : oneKeyPurchaseList) {
             if (!menuEntity.isCanBuy()) {
-                MatchItems matchItems = new MatchItems();
+                MatchItemsVo matchItems = new MatchItemsVo();
                 matchItems.setRepertory(menuEntity.getRepertory());
                 matchItems.setWarnInventory(menuEntity.getWarningRepertory());
                 matchItems.setBarcode(menuEntity.getBarcode());
                 matchItems.setMenuTypeId(menuEntity.getItemTypeId());
-                Items items = new Items();
+                ItemsVo items = new ItemsVo();
                 items.setStandard(1);
                 LifeItemUnit itemUnit = itemUnitMap.get(menuEntity.getItemTemplateId());
                 String title = "";
@@ -200,6 +202,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         jsonObject.put("preferentialList", matchItemsList);
         jsonObject.put("externalList", externalList);
         jsonObject.put("menutypeList", menutypeEntites);
+        jsonObject.put("warehouseId", warehouseItemsVo.getWarehouseId());
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponse(jsonObject);
         return basicResult;
