@@ -116,7 +116,7 @@ public class OrderController extends BasicWebService {
     }
 
     /**
-     * 根据商家ID获取订单列表
+     * 商家端根据商家ID获取订单列表
      *
      * @param merchantPassportId 商家ID
      * @return
@@ -125,6 +125,16 @@ public class OrderController extends BasicWebService {
     @RequestMapping("get_order")
     public BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize) {
         return orderManager.getOrderForMerchant(merchantPassportId, pageNum, pageSize);
+    }
+
+    /**
+     * pos端根据商家ID获取订单列表
+     */
+    @ResponseBody
+    @RequestMapping("get_pos_order")
+    public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
+            , Integer pageNum, Integer pageSize) {
+        return orderManager.getOrderForPos(passportId, orderType, orderStatus, pageNum, pageSize);
     }
 
     /**

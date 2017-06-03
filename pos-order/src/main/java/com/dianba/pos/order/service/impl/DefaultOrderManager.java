@@ -13,6 +13,7 @@ import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.vo.OrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
+import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
@@ -43,6 +44,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     private LifeOrderJpaRepository orderJpaRepository;
     @Autowired
     private LifePassportAddressJpaRepository passportAddressJpaRepository;
+    @Autowired
+    private LifeSupplyChainPrinterManager supplyChainPrinterManager;
 
     public OrderEntry getOrder(long orderId) {
         Map<String, String> params = new HashMap<>();
@@ -60,7 +63,6 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return orderJpaRepository.findOne(orderId);
     }
 
-    @Override
     public LifeOrder getLifeOrder(String sequenceNumber) {
         return orderJpaRepository.findBySequenceNumber(sequenceNumber);
     }
@@ -159,7 +161,19 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         Map<String, String> params = new HashMap<>();
         params.put("orderId", orderId + "");
         params.put("transType", transType + "");
-        return postOrder(PAYMENT_ORDER, params);
+        BasicResult basicResult = postOrder(PAYMENT_ORDER, params);
+        if (basicResult.isSuccess()) {
+            OrderEntry orderEntry = getOrder(orderId);
+            if (OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey() == orderEntry.getType()) {
+                //打印采购单
+                BasicResult result
+                        = supplyChainPrinterManager.printerPurchaseOrder(orderEntry.getShippingPassportId(), orderId);
+                if (!result.isSuccess()) {
+                    logger.error("采购订单打印失败！" + basicResult.getMsg() + "，订单ID:" + orderId);
+                }
+            }
+        }
+        return basicResult;
     }
 
     public BasicResult confirmOrder(long passportId, long orderId) {
@@ -169,9 +183,21 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return postOrder(CONFIRM_ORDER, params);
     }
 
-    public BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize) {
+    public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<OrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        basicResult.setResponseDatas(orderPage);
+        basicResult.getResponse().put("pageNum", pageNum);
+        basicResult.getResponse().put("pageSize", pageSize);
+        basicResult.getResponse().put("total", orderPage.getTotal());
+        return basicResult;
+    }
+
+    public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
+            , Integer pageNum, Integer pageSize) {
+        Page<List<OrderEntry>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+                -> orderMapper.findOrderForPos(passportId, orderType, orderStatus));
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);
         basicResult.getResponse().put("pageNum", pageNum);

@@ -103,6 +103,86 @@
     <!--2.0分界线-->
     <!--2.0分界线-->
     <!--2.0分界线-->
+    <resultMap id="BaseResultMap" type="com.xlibao.metadata.order.OrderEntry">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sequence_number" jdbcType="VARCHAR" property="sequenceNumber"/>
+        <result column="order_sequence_number" jdbcType="VARCHAR" property="orderSequenceNumber"/>
+        <result column="partner_id" jdbcType="VARCHAR" property="partnerId"/>
+        <result column="partner_user_id" jdbcType="VARCHAR" property="partnerUserId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="deliver_status" jdbcType="INTEGER" property="deliverStatus"/>
+        <result column="refund_status" jdbcType="INTEGER" property="refundStatus"/>
+        <result column="payment_type" jdbcType="TINYINT" property="paymentType"/>
+        <result column="trans_type" jdbcType="VARCHAR" property="transType"/>
+        <result column="user_source" jdbcType="INTEGER" property="userSource"/>
+        <result column="day_sort_number" jdbcType="INTEGER" property="daySortNumber"/>
+        <result column="push_type" jdbcType="INTEGER" property="pushType"/>
+        <result column="shipping_passport_id" jdbcType="BIGINT" property="shippingPassportId"/>
+        <result column="shipping_nick_name" jdbcType="VARCHAR" property="shippingNickName"/>
+        <result column="shipping_province" jdbcType="VARCHAR" property="shippingProvince"/>
+        <result column="shipping_city" jdbcType="VARCHAR" property="shippingCity"/>
+        <result column="shipping_district" jdbcType="VARCHAR" property="shippingDistrict"/>
+        <result column="shipping_address" jdbcType="VARCHAR" property="shippingAddress"/>
+        <result column="shipping_location" jdbcType="VARCHAR" property="shippingLocation"/>
+        <result column="shipping_phone" jdbcType="VARCHAR" property="shippingPhone"/>
+        <result column="receipt_user_id" jdbcType="VARCHAR" property="receiptUserId"/>
+        <result column="receipt_nick_name" jdbcType="VARCHAR" property="receiptNickName"/>
+        <result column="receipt_province" jdbcType="VARCHAR" property="receiptProvince"/>
+        <result column="receipt_city" jdbcType="VARCHAR" property="receiptCity"/>
+        <result column="receipt_district" jdbcType="VARCHAR" property="receiptDistrict"/>
+        <result column="receipt_address" jdbcType="VARCHAR" property="receiptAddress"/>
+        <result column="receipt_phone" jdbcType="VARCHAR" property="receiptPhone"/>
+        <result column="receipt_location" jdbcType="VARCHAR" property="receiptLocation"/>
+        <result column="courier_passport_id" jdbcType="BIGINT" property="courierPassportId"/>
+        <result column="courier_nick_name" jdbcType="VARCHAR" property="courierNickName"/>
+        <result column="courier_phone" jdbcType="VARCHAR" property="courierPhone"/>
+        <result column="total_distance" jdbcType="BIGINT" property="totalDistance"/>
+        <result column="current_location" jdbcType="VARCHAR" property="currentLocation"/>
+        <result column="collecting_fees" jdbcType="TINYINT" property="collectingFees"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="actual_price" jdbcType="BIGINT" property="actualPrice"/>
+        <result column="total_price" jdbcType="BIGINT" property="totalPrice"/>
+        <result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>
+        <result column="distribution_fee" jdbcType="BIGINT" property="distributionFee"/>
+        <result column="price_logger" jdbcType="VARCHAR" property="priceLogger"/>
+        <result column="cancel_logger" jdbcType="VARCHAR" property="cancelLogger"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+        <result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime"/>
+        <result column="body" jdbcType="VARCHAR" property="body"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <collection property="itemSnapshots" ofType="com.xlibao.metadata.order.OrderItemSnapshot">
+            <id column="id" jdbcType="BIGINT" property="id"/>
+            <result column="order_id" jdbcType="BIGINT" property="orderId"/>
+            <result column="user_mark" jdbcType="VARCHAR" property="userMark"/>
+            <result column="item_id" jdbcType="BIGINT" property="itemId"/>
+            <result column="item_template_id" jdbcType="BIGINT" property="itemTemplateId"/>
+            <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
+            <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId"/>
+            <result column="item_type_name" jdbcType="VARCHAR" property="itemTypeName"/>
+            <result column="item_unit_id" jdbcType="BIGINT" property="itemUnitId"/>
+            <result column="item_unit_name" jdbcType="VARCHAR" property="itemUnitName"/>
+            <result column="item_barcode" jdbcType="VARCHAR" property="itemBarcode"/>
+            <result column="item_code" jdbcType="VARCHAR" property="itemCode"/>
+            <result column="item_batches" jdbcType="INTEGER" property="itemBatches"/>
+            <result column="introduction_page" jdbcType="VARCHAR" property="introductionPage"/>
+            <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+            <result column="normal_quantity" jdbcType="INTEGER" property="normalQuantity"/>
+            <result column="discount_quantity" jdbcType="INTEGER" property="discountQuantity"/>
+            <result column="shipment_quantity" jdbcType="INTEGER" property="shipmentQuantity"/>
+            <result column="distribution_quantity" jdbcType="INTEGER" property="distributionQuantity"/>
+            <result column="receipt_quantity" jdbcType="INTEGER" property="receiptQuantity"/>
+            <result column="return_quantity" jdbcType="INTEGER" property="returnQuantity"/>
+            <result column="normal_price" jdbcType="BIGINT" property="normalPrice"/>
+            <result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>
+            <result column="cost_price" jdbcType="BIGINT" property="costPrice"/>
+            <result column="market_price" jdbcType="BIGINT" property="marketPrice"/>
+            <result column="total_price" jdbcType="BIGINT" property="totalPrice"/>
+            <result column="return_price" jdbcType="BIGINT" property="returnPrice"/>
+        </collection>
+    </resultMap>
+
     <resultMap id="merchantOrderResultMap" type="com.dianba.pos.order.vo.OrderVo">
         <result column="show_name" property="showName"/>
         <result column="sequence_number" property="sequenceNumber"/>
@@ -115,7 +195,7 @@
             <result column="normal_price" property="normalPrice"/>
         </collection>
     </resultMap>
-    
+
     <select id="findOrderForMerchant" resultMap="merchantOrderResultMap">
         select p.show_name,o.sequence_number,concat(o.create_time,'') create_time
           ,item_snapshot.item_name,item_snapshot.normal_quantity,item_snapshot.normal_price
@@ -127,4 +207,11 @@
         order by o.create_time desc
     </select>
 
+
+    <select id="findOrderForPos" resultMap="BaseResultMap">
+        select * from life_order.order_entry o
+        inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
+        where o.shipping_passport_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
+          and o.status in(1,8)
+    </select>
 </mapper>

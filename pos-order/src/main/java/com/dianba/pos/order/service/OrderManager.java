@@ -72,5 +72,11 @@ public interface OrderManager {
      * @param merchantPassportId 商家ID
      * @return
      */
-    BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize);
+    BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取订单详情，使用商家ID
+     */
+    BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
+            , Integer pageNum, Integer pageSize);
 }

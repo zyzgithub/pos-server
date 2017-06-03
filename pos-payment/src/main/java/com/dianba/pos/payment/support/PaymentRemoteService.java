@@ -17,17 +17,21 @@ public class PaymentRemoteService {
     private AppConfig appConfig;
 
     protected BasicResult postPayWithCallBack(String requestUrl, String callBackUrl, Map<String, String> params) {
+        if (!StringUtils.isEmpty(callBackUrl)) {
+            params.put("notifyUrl", appConfig.getPosCallBackHost() + callBackUrl);
+        }
+        signatureParams(params);
+        String data = HttpRequest.post(appConfig.getPosPaymentUrl() + requestUrl, params);
+        JSONObject response = JSONObject.parseObject(data);
+        return response.toJavaObject(BasicResult.class);
+    }
+
+    protected void signatureParams(Map<String, String> params) {
         String randomParameter = DefineRandom.randomString(32);
         params.put("partnerId", appConfig.getPosPartnerId());
         params.put("appId", appConfig.getPosAppId());
         params.put("randomParameter", randomParameter);
-        if (!StringUtils.isEmpty(callBackUrl)) {
-            params.put("notifyUrl", appConfig.getPosCallBackHost() + callBackUrl);
-        }
         CommonUtils.fillSignature(params, appConfig.getPosAppKey());
-        String data = HttpRequest.post(appConfig.getPosPaymentUrl() + requestUrl, params);
-        JSONObject response = JSONObject.parseObject(data);
-        return response.toJavaObject(BasicResult.class);
     }
 
     protected BasicResult postPay(String url, Map<String, String> params) {

@@ -90,9 +90,12 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
                     items.setName(lifeItemTemplate.getName());
                     items.setImage(lifeItemTemplate.getImageUrl());
                     items.setStock(lifeSupplyChainItems.getStock());
-                    items.setRetailPrice(BigDecimal.valueOf(lifeSupplyChainItems.getMarketPrice()));
-                    items.setPrice(new BigDecimal(lifeSupplyChainItems.getSellPrice())
-                            .setScale(2, BigDecimal.ROUND_HALF_UP));
+                    BigDecimal retailPrice = BigDecimal.valueOf(lifeSupplyChainItems.getMarketPrice())
+                            .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+                    items.setRetailPrice(retailPrice);
+                    BigDecimal price = BigDecimal.valueOf(lifeSupplyChainItems.getSellPrice())
+                            .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+                    items.setPrice(price);
                     LifeItemUnit itemUnit = itemUnitJpaRepository.findOne(lifeItemTemplate.getUnitId());
                     items.setUnit(itemUnit.getTitle());
                     items.setStandard(barcodeRelationship.getRelationCoefficient());

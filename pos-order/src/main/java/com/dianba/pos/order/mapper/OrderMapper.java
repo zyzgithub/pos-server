@@ -2,6 +2,7 @@ package com.dianba.pos.order.mapper;
 
 import com.dianba.pos.order.vo.Order19EDto;
 import com.dianba.pos.order.vo.OrderVo;
+import com.xlibao.metadata.order.OrderEntry;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -51,5 +52,16 @@ public interface OrderMapper {
      * @param merchantPassportId 商家ID
      * @return
      */
-    List<OrderVo> findOrderForMerchant(long merchantPassportId);
+    List<OrderVo> findOrderForMerchant(@Param("merchantPassportId") Long merchantPassportId);
+
+    /**
+     * 根据商家ID，类型状态获取订单
+     *
+     * @param passportId
+     * @param orderType
+     * @param orderStatus
+     * @return
+     */
+    List<OrderEntry> findOrderForPos(@Param("passportId") Long passportId
+            , @Param("orderType") Integer orderType, @Param("orderStatus") Integer orderStatus);
 }

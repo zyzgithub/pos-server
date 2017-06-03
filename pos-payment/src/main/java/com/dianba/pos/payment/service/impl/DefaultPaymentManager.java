@@ -76,15 +76,20 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         //优惠额度
         params.put("discountAmount", "0");
         //取出预支付ID
-        BasicResult basicResult = postPay(UNIFIED_ORDER, params);
+        BasicResult basicResult = postPayWithCallBack(UNIFIED_ORDER, UNIFIED_ORDER, params);
         if (basicResult.isSuccess()) {
             String prePaymentId = basicResult.getResponse().get("prePaymentId").toString();
             params = new HashMap<>();
+            Map<String, String> paymentParams = new HashMap<>();
+            paymentParams.put("prePaymentId", prePaymentId);
+            paymentParams.put("timeStamp", System.currentTimeMillis() + "");
+            signatureParams(paymentParams);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("prePaymentId", prePaymentId);
-            jsonObject.put("timeStamp", System.currentTimeMillis());
-            params.put("paymentParameter", jsonObject.toJSONString());
+            for (String key : paymentParams.keySet()) {
+                jsonObject.put(key, paymentParams.get(key));
+            }
             params.put("passportId", passportId + "");
+            params.put("paymentParameter", jsonObject.toJSONString());
             params.put("paymentPassword", paymentPassword);
             basicResult = postPay(BALANCE_PAYMENT, params);
         }
@@ -101,8 +106,10 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     public BasicResult payOrder(long passportId, long orderId, String paymentTypeKey
             , String authCode) throws Exception {
         OrderEntry orderEntry = orderManager.getOrder(orderId);
-        TransTypeEnum transTypeEnum = TransTypeEnum
-                .getTransTypeEnum(Integer.parseInt(orderEntry.getTransType()));
+        TransTypeEnum transTypeEnum = TransTypeEnum.PAYMENT;
+        if (OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey() == orderEntry.getType()) {
+            transTypeEnum = TransTypeEnum.SUPPLYCHAIN_INCOME;
+        }
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(paymentTypeKey);
         long totalPrice = orderEntry.getTotalPrice() < orderEntry.getActualPrice()
                 ? orderEntry.getActualPrice() : orderEntry.getTotalPrice();

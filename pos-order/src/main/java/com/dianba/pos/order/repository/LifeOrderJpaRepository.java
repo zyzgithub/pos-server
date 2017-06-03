@@ -11,4 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LifeOrderJpaRepository extends JpaRepository<LifeOrder, Long> {
 
     LifeOrder findBySequenceNumber(String sequenceNumber);
+
 }
