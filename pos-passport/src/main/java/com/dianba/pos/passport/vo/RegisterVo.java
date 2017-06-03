@@ -5,6 +5,8 @@ package com.dianba.pos.passport.vo;
  */
 public class RegisterVo {
 
+    private  Long accountId;
+
     /**
      * 登录用户名
      **/
@@ -175,5 +177,17 @@ public class RegisterVo {
 
     public void setSmsCode(String smsCode) {
         this.smsCode = smsCode;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

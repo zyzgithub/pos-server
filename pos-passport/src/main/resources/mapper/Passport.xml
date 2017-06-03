@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.passport.mapper.PassportMapper">
+    <select id="getPassportInfoByCashierId" resultType="com.dianba.pos.passport.po.Passport">
+        SELECT pt.id,pt.access_token accessToken,
+               pt.default_name defaultName,
+               pt.device_name deviceName,
+               pt.device_type deviceType,
+               pt.create_time createTime,
+               pt.from_channel fromChannel,
+               pt.id_number idNumber,
+               pt.phone_number phoneNumber,
+               pt.id id,
+               pt.real_name realName,
+               pt.show_name showName,
+               pt.status status,pt.type type,pt.sex sex,pt.password password
+         FROM life_passport.passport pt WHERE id =(
+           SELECT pca.merchant_id  from life_pos.pos_cashier_account pca WHERE pca.cashier_id=#{cashierId} limit 1
+        )
+    </select>
+</mapper>
