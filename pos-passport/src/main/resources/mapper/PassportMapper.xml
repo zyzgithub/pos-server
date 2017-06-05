@@ -15,9 +15,13 @@
                pt.show_name showName,
                pt.status status,pt.type type,pt.sex sex,pt.password password
          FROM life_passport.passport pt WHERE id in(
-           SELECT pca.merchant_id  from life_pos.pos_cashier_account pca WHERE pca.cashier_id=#{cashierId}
-           UNION
-           select #{cashierId}
+            select * from (
+                select * from (
+                   SELECT pca.merchant_id  from life_pos.pos_cashier_account pca WHERE pca.cashier_id=#{cashierId}
+                   UNION
+                   select #{cashierId}
+                ) a limit 1
+            ) f
         )
     </select>
 </mapper>

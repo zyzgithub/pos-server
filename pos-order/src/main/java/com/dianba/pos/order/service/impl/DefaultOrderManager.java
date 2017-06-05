@@ -12,7 +12,9 @@ import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.vo.OrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
+import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -46,6 +48,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     private LifePassportAddressJpaRepository passportAddressJpaRepository;
     @Autowired
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
+    @Autowired
+    private PassportManager passportManager;
 
     public OrderEntry getOrder(long orderId) {
         Map<String, String> params = new HashMap<>();
@@ -77,6 +81,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     public BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
             , long actualPrice, long totalPrice
             , List<OrderItemPojo> orderItems) throws Exception {
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         Map<String, String> params = new HashMap<>();
         params.put("sequenceNumber", sequenceNumber);
         params.put("partnerUserId", passportId + "");
@@ -84,11 +89,11 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
         params.put("transType", TransTypeEnum.PAYMENT.getKey() + "");
         //商家ID
-        params.put("shippingPassportId", passportId + "");
+        params.put("shippingPassportId", merchantPassport.getId() + "");
         //商家名称
-        params.put("shippingNickName", passportId + "");
-        //收货人ID
-        params.put("receiptUserId", passportId + "");
+        params.put("shippingNickName", merchantPassport.getShowName() + "");
+//        //收货人ID
+//        params.put("receiptUserId", "");
         //收货人手机号码
         if (!StringUtils.isEmpty(phoneNumber)) {
             params.put("receipt_phone", phoneNumber);

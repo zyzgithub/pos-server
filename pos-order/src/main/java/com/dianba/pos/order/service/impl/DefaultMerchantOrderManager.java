@@ -2,7 +2,6 @@ package com.dianba.pos.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.base.exception.PosRuntimeException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
@@ -30,13 +29,14 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Override
     public BasicResult findTodayAndMonthIncomeAmount(Long passportId) {
         Map<String, Object> merchantIncomeMap = merchantOrderMapper.findTodayAndMonthIncomeAmount(passportId);
-        if (merchantIncomeMap == null) {
-            throw new PosRuntimeException("该商家还未曾有过收入！");
+        BigDecimal todayTotalAmount = BigDecimal.ZERO;
+        BigDecimal monthTotalAmount = BigDecimal.ZERO;
+        if (merchantIncomeMap != null) {
+            todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
+            monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
+            todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         }
-        BigDecimal todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
-        BigDecimal monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
-        todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-        monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("todayTotalAmount", todayTotalAmount);
