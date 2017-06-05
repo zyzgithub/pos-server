@@ -15,6 +15,23 @@ public class MerchantOrderController {
     @Autowired
     private MerchantOrderManager merchantOrderManager;
 
+    /**
+     * 商家端根据商家ID获取订单列表
+     *
+     * @param merchantPassportId 商家ID
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("get_order")
+    public BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize) {
+        return merchantOrderManager.getOrderForMerchant(merchantPassportId, pageNum, pageSize);
+    }
+
+    /**
+     * 商家端根据商家ID获取收入金额（本日，本月）
+     * @param passportId
+     * @return
+     */
     @ResponseBody
     @RequestMapping("get_merchant_income")
     public BasicResult getMerchantIncome(Long passportId) {

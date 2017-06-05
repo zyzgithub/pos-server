@@ -66,13 +66,6 @@ public interface OrderManager {
      */
     BasicResult confirmOrder(long passportId, long orderId);
 
-    /**
-     * 根据商家ID获取订单
-     *
-     * @param merchantPassportId 商家ID
-     * @return
-     */
-    BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize);
 
     /**
      * 获取订单详情，使用商家ID

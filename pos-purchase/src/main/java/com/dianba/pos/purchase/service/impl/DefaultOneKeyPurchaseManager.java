@@ -57,8 +57,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
 
     public List<OneKeyPurchase> getWarnRepertoryItems(Long passportId) {
         List<OneKeyPurchase> oneKeyPurchases = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
-        if (oneKeyPurchases == null) {
-            oneKeyPurchases = new ArrayList<>();
+        if (oneKeyPurchases == null || oneKeyPurchases.size() == 0) {
+            return new ArrayList<>();
         }
         List<Long> itemTemplateIds = new ArrayList<>();
         for (OneKeyPurchase oneKeyPurchase : oneKeyPurchases) {

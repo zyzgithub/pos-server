@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
+import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
 import com.dianba.pos.order.vo.OrderDayIncomeVo;
 import com.dianba.pos.order.vo.OrderIncomeVo;
+import com.dianba.pos.order.vo.OrderVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
@@ -24,7 +26,20 @@ import java.util.Map;
 public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
     private MerchantOrderMapper merchantOrderMapper;
+
+    public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
+        Page<List<OrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+                -> orderMapper.findOrderForMerchant(merchantPassportId));
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        basicResult.setResponseDatas(orderPage);
+        basicResult.getResponse().put("pageNum", pageNum);
+        basicResult.getResponse().put("pageSize", pageSize);
+        basicResult.getResponse().put("total", orderPage.getTotal());
+        return basicResult;
+    }
 
     @Override
     public BasicResult findTodayAndMonthIncomeAmount(Long passportId) {
@@ -52,7 +67,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
             date = DateUtil.getNowTime("yyyy-MM-dd");
         } else {
             if (date.length() == 7) {
-                date = DateUtil.getNowTime("yyyy-MM-dd");
+                date = date + "-01";
                 enterType = 2;
             } else {
                 enterType = 1;

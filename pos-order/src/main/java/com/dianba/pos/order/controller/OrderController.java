@@ -3,6 +3,7 @@ package com.dianba.pos.order.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.po.LifeOrder;
@@ -58,6 +59,10 @@ public class OrderController extends BasicWebService {
         Map<Integer, OrderTypeEnum> orderTypeEnumMap = new HashMap<>();
         orderTypeEnumMap.put(OrderTypeEnum.SCAN_ORDER_TYPE.getKey(), OrderTypeEnum.SCAN_ORDER_TYPE);
         orderTypeEnumMap.put(OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey(), OrderTypeEnum.POS_EXTENDED_ORDER_TYPE);
+        //TODO REMOVE THIS
+        if (OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey() == orderType) {
+            orderType = OrderTypeEnum.SCAN_ORDER_TYPE.getKey();
+        }
         if (orderTypeEnumMap.get(orderType) != null) {
             OrderTypeEnum orderTypeEnum = orderTypeEnumMap.get(orderType);
             BasicResult basicResult = orderManager.prepareCreateOrder(passportId, orderTypeEnum);
@@ -68,7 +73,7 @@ public class OrderController extends BasicWebService {
             }
             return basicResult;
         } else {
-            return BasicResult.createFailResult("订单类型非法！请使用" + orderTypeEnumMap.toString());
+            throw new PosIllegalArgumentException("订单类型非法！" + orderType);
         }
     }
 
@@ -116,22 +121,10 @@ public class OrderController extends BasicWebService {
     }
 
     /**
-     * 商家端根据商家ID获取订单列表
-     *
-     * @param merchantPassportId 商家ID
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("get_order")
-    public BasicResult getOrderForMerchant(long merchantPassportId, int pageNum, int pageSize) {
-        return orderManager.getOrderForMerchant(merchantPassportId, pageNum, pageSize);
-    }
-
-    /**
      * pos端根据商家ID获取订单列表
      */
     @ResponseBody
-    @RequestMapping("get_pos_order")
+    @RequestMapping("get_order")
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize) {
         return orderManager.getOrderForPos(passportId, orderType, orderStatus, pageNum, pageSize);

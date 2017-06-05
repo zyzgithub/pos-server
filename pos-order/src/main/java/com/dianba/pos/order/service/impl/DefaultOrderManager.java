@@ -186,17 +186,6 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return postOrder(CONFIRM_ORDER, params);
     }
 
-    public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
-        Page<List<OrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
-                -> orderMapper.findOrderForMerchant(merchantPassportId));
-        BasicResult basicResult = BasicResult.createSuccessResult();
-        basicResult.setResponseDatas(orderPage);
-        basicResult.getResponse().put("pageNum", pageNum);
-        basicResult.getResponse().put("pageSize", pageSize);
-        basicResult.getResponse().put("total", orderPage.getTotal());
-        return basicResult;
-    }
-
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize) {
         Page<List<OrderEntry>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
