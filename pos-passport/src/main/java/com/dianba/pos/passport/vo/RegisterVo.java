@@ -33,6 +33,7 @@ public class RegisterVo {
     private Integer sex;
 
 
+    private Integer clientType;
     /**
      * 注册类型 COURIER(1, "courier", "快递员", true),
      * POS(2, "pos", "POS", true),
@@ -74,6 +75,45 @@ public class RegisterVo {
      */
     private Integer versionIndex;
 
+
+    private Integer accountType;
+
+    private String  accountTypeName;
+
+
+    private String cashierPhoto;
+
+    public Integer getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(Integer clientType) {
+        this.clientType = clientType;
+    }
+
+    public String getCashierPhoto() {
+        return cashierPhoto;
+    }
+
+    public void setCashierPhoto(String cashierPhoto) {
+        this.cashierPhoto = cashierPhoto;
+    }
+
+    public Integer getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(Integer accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getAccountTypeName() {
+        return accountTypeName;
+    }
+
+    public void setAccountTypeName(String accountTypeName) {
+        this.accountTypeName = accountTypeName;
+    }
 
     public String getName() {
         return name;

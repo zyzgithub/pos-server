@@ -2,16 +2,24 @@ package com.dianba.pos.passport.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.passport.config.PassportProperties;
 import com.dianba.pos.passport.config.PassportURLConstant;
+import com.dianba.pos.passport.po.LifePassportAlias;
+import com.dianba.pos.passport.po.LifePassportProperties;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosCashierAccount;
+import com.dianba.pos.passport.repository.LifePassportAliasJpaRepository;
+import com.dianba.pos.passport.repository.LifePassportPropertiesJpaRepository;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
 import com.dianba.pos.passport.repository.PosCashierAccountJpaRepository;
 import com.dianba.pos.passport.service.PassportManager;
+import com.dianba.pos.passport.vo.LoginVo;
 import com.dianba.pos.passport.vo.PassportVo;
 import com.dianba.pos.passport.vo.RegisterVo;
+import com.xlibao.common.constant.passport.ClientTypeEnum;
+import com.xlibao.common.constant.passport.PassportRoleTypeEnum;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,21 +51,77 @@ public class PassportController {
     @Autowired
     private PassportManager passportManager;
 
+    @Autowired
+    private LifePassportAliasJpaRepository lifePassportAliasJpaRepository;
+
+    @Autowired
+    private LifePassportPropertiesJpaRepository lifePassportPropertiesJpaRepository;
+
     @RequestMapping("loginPassport")
     @ResponseBody
     public BasicResult loginPassport(PassportVo passportVo) {
 
         logger.info("登录用户名：" + passportVo.getUsername());
-        JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
-        logger.info(passportProperties.getLogin());
-        JSONObject response = jsonObject.getJSONObject("response");
-        String msg = jsonObject.getString("msg");
-        logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
-        if (jsonObject.getIntValue("code") != 0) {
-            return BasicResult.createFailResult(msg);
+
+        //查询当前登录账号权限
+        LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                passportVo.getUsername());
+        if (lifePassportAlias == null) {
+            return BasicResult.createFailResult("无此账号信息");
         } else {
-            return BasicResult.createSuccessResult(msg, response);
+            //普通商家权限
+            LifePassportProperties a = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
+                    Long.parseLong(lifePassportAlias.getPassportId()), "consumer"
+                    , "11");
+            //签约商家权限
+            LifePassportProperties b = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
+                    Long.parseLong(lifePassportAlias.getPassportId()), "consumer", "14");
+
+            //pos商家权限
+            LifePassportProperties c = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
+                    Long.parseLong(lifePassportAlias.getPassportId()), "pos", "41");
+
+            if (a != null) {
+
+                return BasicResult.createFailResult("您还没有签约，请联系本公司。");
+            } else if (b != null) {
+                passportVo.setClientType(4);
+                JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
+                logger.info(passportProperties.getLogin());
+                JSONObject response = jsonObject.getJSONObject("response");
+                LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
+                loginVo.setAccountType(0);
+                loginVo.setAccountTypeName("店长");
+                String msg = jsonObject.getString("msg");
+                logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
+                if (jsonObject.getIntValue("code") != 0) {
+                    return BasicResult.createFailResult(msg);
+                } else {
+                    JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
+                    return BasicResult.createSuccessResult(msg, jsonObject1);
+                }
+            } else if (c != null) {
+                passportVo.setClientType(2);
+                JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
+                logger.info(passportProperties.getLogin());
+                JSONObject response = jsonObject.getJSONObject("response");
+                LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
+                loginVo.setAccountType(1);
+                loginVo.setAccountTypeName("店员");
+                String msg = jsonObject.getString("msg");
+                logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
+                if (jsonObject.getIntValue("code") != 0) {
+                    return BasicResult.createFailResult(msg);
+                } else {
+                    return BasicResult.createSuccessResult(msg, response);
+                }
+            }else {
+                return BasicResult.createFailResult("登录出现异常");
+            }
+
         }
+
+
 
 
     }
@@ -77,6 +141,7 @@ public class PassportController {
 
         logger.info("====================收银员账号注册==================");
 
+        registerVo.setClientType(2);
         logger.info("注册账号：" + registerVo.getName());
         JSONObject jsonObject = HttpUtil.post(passportProperties.getRegister(), registerVo);
 
@@ -88,18 +153,28 @@ public class PassportController {
             logger.info("accouontId:" + registerVo.getAccountId().toString());
             PosCashierAccount posCashierAccount = new PosCashierAccount();
             posCashierAccount.setMerchantId(registerVo.getAccountId());
+            posCashierAccount.setAccountType(1);
             logger.info("passportId:" + passportId);
             posCashierAccount.setCashierId(passportId);
+            posCashierAccount.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
             posCashierAccountJpaRepository.save(posCashierAccount);
+
+            PosCashierAccount posCashierAccount1=posCashierAccountJpaRepository
+                    .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(),0);
+            if(posCashierAccount1==null){
+                posCashierAccount1=new PosCashierAccount();
+                posCashierAccount1.setAccountType(0);
+                posCashierAccount1.setCashierPhoto(registerVo.getCashierPhoto());
+                posCashierAccount1.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+                posCashierAccount1.setCashierId(passportId);
+                posCashierAccount1.setMerchantId(registerVo.getAccountId());
+            }
             return BasicResult.createSuccessResult("注册成功", response);
         } else {
 
             return BasicResult.createFailResult(msg);
         }
-
-
     }
-
     /**
      * 编辑商家营业员信息
      *
@@ -109,11 +184,16 @@ public class PassportController {
     @ResponseBody
     @RequestMapping("editPosAccount")
     public BasicResult editPosAccount(Passport passport) {
-
         passportJpaRepository.save(passport);
+        PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                passport.getId());
+        posCashierAccount.setCashierPhoto(passport.getCashierPhoto());
+        posCashierAccount.setAccountType(passport.getAccountType());
+        posCashierAccountJpaRepository.save(posCashierAccount);
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
         return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
     }
+
 
     /**
      * 删除营业员信息
@@ -150,6 +230,7 @@ public class PassportController {
         for (PosCashierAccount posCashierAccount : posCashierAccountList) {
 
             Passport passport = passportJpaRepository.findOne(posCashierAccount.getCashierId());
+            passport.setAccountType(posCashierAccount.getAccountType());
             passports.add(passport);
         }
         return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", passports);
@@ -157,13 +238,15 @@ public class PassportController {
 
     }
 
+
     @ResponseBody
     @RequestMapping("getCashierById")
     public BasicResult getCashierById(Long cashierId) {
-
+        PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(cashierId);
         Passport passport = passportJpaRepository.findOne(cashierId);
+        passport.setAccountType(posCashierAccount.getAccountType());
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
-        return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
+        return BasicResult.createSuccessResult("获取pos营业员信息成功!", jsonObject);
 
     }
 

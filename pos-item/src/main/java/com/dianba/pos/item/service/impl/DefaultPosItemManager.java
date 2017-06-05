@@ -240,11 +240,7 @@ public class DefaultPosItemManager implements PosItemManager {
                        //新增模板信息
                        //判断商品模板名字是否重复
                        PosItem posItem = new PosItem();
-                       itemTemplate = itemTemplateManager.getItemTemplateByName(posItemVo.getItemName());
-                       if (itemTemplate != null) {
-                           map.put("result", "false");
-                           map.put("msg", "商品名字重复了~😬~");
-                       } else { //新增模板并关联
+                       //新增模板并关联
                            //pos商品模板
                            itemTemplate = new LifeItemTemplate();
                            itemTemplate.setAscriptionType(1);
@@ -267,9 +263,6 @@ public class DefaultPosItemManager implements PosItemManager {
                            map.put("result", "true");
                            map.put("msg", "商品入库成功!");
                            map.put("info", posItem);
-
-
-                       }
 
                    }
 

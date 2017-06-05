@@ -72,6 +72,11 @@ public class Passport implements Serializable{
     @Column(name = "access_token")
     private String accessToken;
 
+    private String cashierPhoto;
+
+    private String accountTypeName;
+
+    private Integer accountType;
     public Long getId() {
         return id;
     }
@@ -190,5 +195,29 @@ public class Passport implements Serializable{
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getCashierPhoto() {
+        return cashierPhoto;
+    }
+
+    public void setCashierPhoto(String cashierPhoto) {
+        this.cashierPhoto = cashierPhoto;
+    }
+
+    public String getAccountTypeName() {
+        return accountTypeName;
+    }
+
+    public void setAccountTypeName(String accountTypeName) {
+        this.accountTypeName = accountTypeName;
+    }
+
+    public Integer getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(Integer accountType) {
+        this.accountType = accountType;
     }
 }

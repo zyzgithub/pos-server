@@ -16,4 +16,8 @@ public interface PosCashierAccountJpaRepository extends JpaRepository<PosCashier
 
     List<PosCashierAccount> findAllByMerchantId(Long merchantId);
 
+    PosCashierAccount findPosCashierAccountByCashierId(Long cashierId);
+
+
+    PosCashierAccount findPosCashierAccountByMerchantIdAndAccountType(Long merchantId,Integer accountType);
 }

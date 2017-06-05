@@ -26,6 +26,9 @@ public class PassportVo {
     private Integer versionIndex;
 
 
+    private Integer accountType;
+
+    private String accountTypeName;
     public String getUsername() {
         return username;
     }
@@ -65,4 +68,6 @@ public class PassportVo {
     public void setVersionIndex(Integer versionIndex) {
         this.versionIndex = versionIndex;
     }
+
+
 }

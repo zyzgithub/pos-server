@@ -19,6 +19,14 @@ public class PosCashierAccount {
     @Column(name = "cashier_id")
     private Long cashierId;
 
+    @Column(name = "account_type")
+    private Integer accountType;
+
+    @Column(name = "create_time")
+    private String createTime;
+
+    @Column(name = "cashier_photo")
+    private String cashierPhoto;
     public Long getId() {
         return id;
     }
@@ -41,5 +49,29 @@ public class PosCashierAccount {
 
     public void setCashierId(Long cashierId) {
         this.cashierId = cashierId;
+    }
+
+    public Integer getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(Integer accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCashierPhoto() {
+        return cashierPhoto;
+    }
+
+    public void setCashierPhoto(String cashierPhoto) {
+        this.cashierPhoto = cashierPhoto;
     }
 }
