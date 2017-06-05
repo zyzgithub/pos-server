@@ -90,14 +90,17 @@ public class PassportController {
                 JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
                 logger.info(passportProperties.getLogin());
                 JSONObject response = jsonObject.getJSONObject("response");
-                LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
-                loginVo.setAccountType(0);
-                loginVo.setAccountTypeName("店长");
                 String msg = jsonObject.getString("msg");
                 logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
                 if (jsonObject.getIntValue("code") != 0) {
                     return BasicResult.createFailResult(msg);
                 } else {
+                    LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
+                    loginVo.setAccountType(0);
+                    loginVo.setAccountTypeName("店长");
+                    PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                            loginVo.getPassportId());
+                    loginVo.setPassportId(posCashierAccount.getMerchantId());
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
                     return BasicResult.createSuccessResult(msg, jsonObject1);
                 }
@@ -106,14 +109,16 @@ public class PassportController {
                 JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
                 logger.info(passportProperties.getLogin());
                 JSONObject response = jsonObject.getJSONObject("response");
-                LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
-                loginVo.setAccountType(1);
-                loginVo.setAccountTypeName("店员");
+
                 String msg = jsonObject.getString("msg");
                 logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
                 if (jsonObject.getIntValue("code") != 0) {
                     return BasicResult.createFailResult(msg);
                 } else {
+                    LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
+                    loginVo.setAccountType(1);
+                    loginVo.setAccountTypeName("店员");
+                    JSONObject jsonObject1=(JSONObject)JSONObject.toJSON(loginVo);
                     return BasicResult.createSuccessResult(msg, response);
                 }
             } else {
