@@ -34,8 +34,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         if (merchantIncomeMap != null) {
             todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
             monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
-            todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-            monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            //前端自己转换金额，返回分为单位
+//            todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+//            monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
@@ -78,8 +79,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                     endDate = orderIncome.getTime();
                 }
             }
-            orderIncome.setAmount(orderIncome.getAmount()
-                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            //前端自己转换金额，返回分为单位
+//            orderIncome.setAmount(orderIncome.getAmount()
+//                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
             try {
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderIncome.getTransType());
                 orderIncome.setTransType(paymentTypeEnum.getKey());
@@ -102,8 +104,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                         + CommonUtils.dayOfWeekForTime(CommonUtils.dateFormatToLong(
                         dayIncome.getTime() + " 00:00:00")));
             }
-            dayIncome.setTotalAmount(dayIncome.getTotalAmount()
-                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            //前端自己转换金额，返回分为单位
+//            dayIncome.setTotalAmount(dayIncome.getTotalAmount()
+//                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
         }
 
         BasicResult basicResult = BasicResult.createSuccessResult();

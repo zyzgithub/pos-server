@@ -9,13 +9,13 @@
             (select sum(t.total_price) todayTotalAmount
             from life_order.order_entry t
             where t.shipping_passport_id=#{passportId}
-            and t.type in(7,9) and t.status =8
+            and t.type in(4,9) and t.status =8
             and t.payment_time >=curdate()) a
         inner join
             (select sum(t.total_price) monthTotalAmount
             from life_order.order_entry t
             where t.shipping_passport_id=#{passportId}
-            and t.type in(7,9) and t.status =8
+            and t.type in(4,9) and t.status =8
             and date_format(t.payment_time,'%Y-%m')=date_format(now(),'%Y-%m')) b on 1=1
     </select>
 
@@ -25,7 +25,7 @@
             select date_format(t.payment_time,'%Y-%m-%d') time ,t.total_price amount
             from life_order.order_entry t
             where t.shipping_passport_id=#{passportId}
-              and t.type in(7,9) and t.status = 8
+              and t.type in(4,9) and t.status = 8
               and date_format(t.payment_time,'%Y-%m-%d')
                 between date_format(#{beginDate},'%Y-%m-%d') and date_format(#{endDate},'%Y-%m-%d')
         ) a group by a.time
@@ -37,7 +37,7 @@
             ,t.`total_price` amount,t.`trans_type` transType
         from life_order.order_entry t
         where t.shipping_passport_id=#{passportId}
-            and t.type in(7,9) and t.status =8
+            and t.type in(4,9) and t.status =8
         <if test="enterType==1">
             and date_format(t.payment_time,'%Y-%m-%d')=date_format(#{date},'%Y-%m-%d')
         </if>

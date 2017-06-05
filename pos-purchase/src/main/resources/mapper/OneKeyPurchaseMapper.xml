@@ -36,13 +36,13 @@
                 from life_pos.pos_item a
                 inner join life_order.order_item_snapshot b on b.item_template_id=a.item_template_id
                 inner join life_order.order_entry c on c.id=b.order_id
-                where c.type in(6,7,8) and b.item_template_id!=0 -- and c.payment_type=1
+                where c.type =4 and b.item_template_id!=0 and c.payment_type=1
                 and c.create_time > DATE_SUB(now(),INTERVAL 7 DAY)
-                and a.passport_id=100005
+                and a.passport_id=#{passportId}
                 group by b.item_template_id
             ) t
             inner join life_pos.pos_item pi on pi.item_template_id=t.item_template_id
-              and pi.passport_id=100005
+              and pi.passport_id=#{passportId}
         ) q where q.repertory &lt; q.day_sale
     </select>
 </mapper>

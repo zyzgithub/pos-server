@@ -7,6 +7,8 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.service.AliPayManager;
 import com.xlibao.metadata.order.OrderEntry;
@@ -25,6 +27,8 @@ public class DefaultAliPayManager implements AliPayManager {
 
     @Autowired
     private OrderManager orderManager;
+    @Autowired
+    private PassportManager passportManager;
 
     private static final String ALIPAY_PROPERTIES = "properties" + File.separator + "alipay.properties";
 
@@ -34,11 +38,6 @@ public class DefaultAliPayManager implements AliPayManager {
 
     @Override
     public BarcodePayResponse barcodePayment(Long passportId, Long orderId, String authCode) {
-        //TODO 根据收银员ID获取商家信息（ID，NAME)
-        Long merchantPassportId = passportId;
-        //TODO 商家名字
-        String title = "";
-
         BarcodePayResponse response = null;
         OrderEntry order = orderManager.getOrder(orderId);
         if (order == null) {
@@ -54,23 +53,24 @@ public class DefaultAliPayManager implements AliPayManager {
             logger.info("订单id:{}已付款,不需重复付款", orderId);
             return response;
         }
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         AlipayTradeService tradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
         String outTradeNo = order.getSequenceNumber();
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
         BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice());
-        totalAmount = totalAmount.divide(BigDecimal.valueOf(100),2,BigDecimal.ROUND_HALF_UP);
+        totalAmount = totalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         String undiscountableAmount = "0.0";
         // 卖家支付宝账号ID，用于支持一个签约账号下支持打款到不同的收款账号，(打款到sellerId对应的支付宝账号)
         // 如果该字段为空，则默认为与支付宝签约的商户的PID，也就是appid对应的PID
         String sellerId = "";
         // 订单描述，可以对交易或商品进行一个详细地描述，比如填写"购买商品2件共15.00元"
-        String subject = "1号生活--" + title;
+        String subject = "1号生活--" + merchantPassport.getShowName();
         String body = "本次消费共" + totalAmount + "元";
         // 商户操作员编号，添加此参数可以为商户操作员做销售统计
-        String operatorId = String.valueOf(merchantPassportId);
+        String operatorId = String.valueOf(merchantPassport.getId());
         // (必填) 商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
-        String storeId = String.valueOf(merchantPassportId);
+        String storeId = String.valueOf(merchantPassport.getId());
         String timeExpress = "5m";
         // 创建请求builder，设置请求参数
         AlipayTradePayContentBuilder builder = new AlipayTradePayContentBuilder()

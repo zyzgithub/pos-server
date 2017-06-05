@@ -56,7 +56,7 @@ public class OrderController extends BasicWebService {
             return BasicResult.createFailResult("订单商品为空！" + items);
         }
         Map<Integer, OrderTypeEnum> orderTypeEnumMap = new HashMap<>();
-        orderTypeEnumMap.put(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey(), OrderTypeEnum.POS_SCAN_ORDER_TYPE);
+        orderTypeEnumMap.put(OrderTypeEnum.SCAN_ORDER_TYPE.getKey(), OrderTypeEnum.SCAN_ORDER_TYPE);
         orderTypeEnumMap.put(OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey(), OrderTypeEnum.POS_EXTENDED_ORDER_TYPE);
         if (orderTypeEnumMap.get(orderType) != null) {
             OrderTypeEnum orderTypeEnum = orderTypeEnumMap.get(orderType);
