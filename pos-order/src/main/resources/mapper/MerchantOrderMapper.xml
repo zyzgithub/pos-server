@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.order.mapper.MerchantOrderMapper">
+
+
+    <!--商家今日本月总收入-->
+    <select id="findTodayAndMonthIncomeAmount" resultType="java.util.Map">
+        select * from
+            (select sum(t.total_price) todayTotalAmount
+            from life_order.order_entry t
+            where t.shipping_passport_id=#{passportId}
+            and t.type in(7,9) and t.status =8
+            and t.payment_time >=curdate()) a
+        inner join
+            (select sum(t.total_price) monthTotalAmount
+            from life_order.order_entry t
+            where t.shipping_passport_id=#{passportId}
+            and t.type in(7,9) and t.status =8
+            and date_format(t.payment_time,'%Y-%m')=date_format(now(),'%Y-%m')) b on 1=1
+    </select>
+
+    <!--商家按日分组收入合计-->
+    <select id="findMerchantDayIncomeOrder" resultType="com.dianba.pos.order.vo.OrderDayIncomeVo">
+        select a.time,count(a.time) count,sum(a.amount) totalAmount from (
+            select date_format(t.payment_time,'%Y-%m-%d') time ,t.total_price amount
+            from life_order.order_entry t
+            where t.shipping_passport_id=#{passportId}
+              and t.type in(7,9) and t.status = 8
+              and date_format(t.payment_time,'%Y-%m-%d')
+                between date_format(#{beginDate},'%Y-%m-%d') and date_format(#{endDate},'%Y-%m-%d')
+        ) a group by a.time
+    </select>
+
+    <!--查询商家收入订单列表-->
+    <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.OrderIncomeVo">
+        select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,`sequence_number` transSequence
+            ,t.`total_price` amount,t.`trans_type` transType
+        from life_order.order_entry t
+        where t.shipping_passport_id=#{passportId}
+            and t.type in(7,9) and t.status =8
+        <if test="enterType==1">
+            and date_format(t.payment_time,'%Y-%m-%d')=date_format(#{date},'%Y-%m-%d')
+        </if>
+        <if test="enterType==2">
+            and date_format(t.payment_time,'%Y-%m')=date_format(#{date},'%Y-%m')
+        </if>
+    </select>
+</mapper>
