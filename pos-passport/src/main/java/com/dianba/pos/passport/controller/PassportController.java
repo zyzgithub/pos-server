@@ -116,6 +116,25 @@ public class PassportController {
     }
 
     /**
+     * 删除营业员信息
+     * @param passport
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("deletePosAccount")
+    public BasicResult deletePosAccount(Passport passport){
+
+        if(passport.getId()==null){
+
+            return BasicResult.createFailResult("请输入要删除的主键id");
+        }else {
+            passportJpaRepository.delete(passport);
+            return  BasicResult.createSuccessResult("删除pos营业员信息成功!");
+
+        }
+
+    }
+    /**
      * 获取商家营业员信息成功。
      *
      * @param passportId
