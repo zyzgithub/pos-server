@@ -18,8 +18,6 @@ import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.vo.LoginVo;
 import com.dianba.pos.passport.vo.PassportVo;
 import com.dianba.pos.passport.vo.RegisterVo;
-import com.xlibao.common.constant.passport.ClientTypeEnum;
-import com.xlibao.common.constant.passport.PassportRoleTypeEnum;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,16 +68,19 @@ public class PassportController {
             return BasicResult.createFailResult("无此账号信息");
         } else {
             //普通商家权限
-            LifePassportProperties a = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
-                    Long.parseLong(lifePassportAlias.getPassportId()), "consumer"
-                    , "11");
+            LifePassportProperties a = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            Long.parseLong(lifePassportAlias.getPassportId()), "consumer"
+                            , "11");
             //签约商家权限
-            LifePassportProperties b = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
-                    Long.parseLong(lifePassportAlias.getPassportId()), "consumer", "14");
+            LifePassportProperties b = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            Long.parseLong(lifePassportAlias.getPassportId()), "consumer", "14");
 
             //pos商家权限
-            LifePassportProperties c = lifePassportPropertiesJpaRepository.findLifePassportPropertiesByPassportIdAndKAndV(
-                    Long.parseLong(lifePassportAlias.getPassportId()), "pos", "41");
+            LifePassportProperties c = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            Long.parseLong(lifePassportAlias.getPassportId()), "pos", "41");
 
             if (a != null) {
 
@@ -115,13 +116,11 @@ public class PassportController {
                 } else {
                     return BasicResult.createSuccessResult(msg, response);
                 }
-            }else {
+            } else {
                 return BasicResult.createFailResult("登录出现异常");
             }
 
         }
-
-
 
 
     }
@@ -159,10 +158,10 @@ public class PassportController {
             posCashierAccount.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
             posCashierAccountJpaRepository.save(posCashierAccount);
 
-            PosCashierAccount posCashierAccount1=posCashierAccountJpaRepository
-                    .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(),0);
-            if(posCashierAccount1==null){
-                posCashierAccount1=new PosCashierAccount();
+            PosCashierAccount posCashierAccount1 = posCashierAccountJpaRepository
+                    .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 0);
+            if (posCashierAccount1 == null) {
+                posCashierAccount1 = new PosCashierAccount();
                 posCashierAccount1.setAccountType(0);
                 posCashierAccount1.setCashierPhoto(registerVo.getCashierPhoto());
                 posCashierAccount1.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
@@ -175,6 +174,7 @@ public class PassportController {
             return BasicResult.createFailResult(msg);
         }
     }
+
     /**
      * 编辑商家营业员信息
      *
@@ -185,7 +185,7 @@ public class PassportController {
     @RequestMapping("editPosAccount")
     public BasicResult editPosAccount(Passport passport) {
         passportJpaRepository.save(passport);
-        PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+        PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
                 passport.getId());
         posCashierAccount.setCashierPhoto(passport.getCashierPhoto());
         posCashierAccount.setAccountType(passport.getAccountType());
@@ -197,23 +197,25 @@ public class PassportController {
 
     /**
      * 删除营业员信息
+     *
      * @param passport
      * @return
      */
     @ResponseBody
     @RequestMapping("deletePosAccount")
-    public BasicResult deletePosAccount(Passport passport){
+    public BasicResult deletePosAccount(Passport passport) {
 
-        if(passport.getId()==null){
+        if (passport.getId() == null) {
 
             return BasicResult.createFailResult("请输入要删除的主键id");
-        }else {
+        } else {
             passportJpaRepository.delete(passport);
-            return  BasicResult.createSuccessResult("删除pos营业员信息成功!");
+            return BasicResult.createSuccessResult("删除pos营业员信息成功!");
 
         }
 
     }
+
     /**
      * 获取商家营业员信息成功。
      *
@@ -242,7 +244,8 @@ public class PassportController {
     @ResponseBody
     @RequestMapping("getCashierById")
     public BasicResult getCashierById(Long cashierId) {
-        PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(cashierId);
+        PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
+                .findPosCashierAccountByCashierId(cashierId);
         Passport passport = passportJpaRepository.findOne(cashierId);
         passport.setAccountType(posCashierAccount.getAccountType());
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);

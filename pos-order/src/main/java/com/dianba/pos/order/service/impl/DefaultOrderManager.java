@@ -10,7 +10,6 @@ import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
-import com.dianba.pos.order.vo.OrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
