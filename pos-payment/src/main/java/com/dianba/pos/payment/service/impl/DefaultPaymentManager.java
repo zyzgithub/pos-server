@@ -5,6 +5,8 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.po.LifePaymentTransactionLogger;
 import com.dianba.pos.payment.po.PosMerchantRate;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
@@ -45,6 +47,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private LifePaymentTransLoggerJpaRepository transLoggerJpaRepository;
     @Autowired
     private PosMerchantRateJpaRepository posMerchantRateJpaRepository;
+    @Autowired
+    private PassportManager passportManager;
 
     @Autowired
     private AppConfig appConfig;
@@ -142,8 +146,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 //通知订单系统，订单已经支付
                 basicResult = orderManager.paymentOrder(orderId, transTypeEnum.getKey());
                 if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
-                    //TODO 获取商家ID
-                    long merchantPassportId = passportId;
+                    Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                     //对商家余额进行偏移计算
                     OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
                     long offsetAmount = 0;
@@ -151,9 +154,10 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         if (orderEntry.getTotalPrice() > orderEntry.getActualPrice()) {
                             offsetAmount = orderEntry.getTotalPrice() - orderEntry.getActualPrice();
                         }
-                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey()) {
+                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.SCAN_ORDER_TYPE.getKey()) {
                         //进行扣点计算
-                        PosMerchantRate posMerchantRate = posMerchantRateJpaRepository.findOne(merchantPassportId);
+                        PosMerchantRate posMerchantRate = posMerchantRateJpaRepository
+                                .findOne(merchantPassport.getId());
                         Double commissionRate = PosMerchantRate.COMMISSION_RATE;
                         if (posMerchantRate != null) {
                             commissionRate = posMerchantRate.getCommissionRate();
@@ -165,7 +169,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     }
                     if (offsetAmount != 0) {
                         //对商家余额进行余额偏移
-                        basicResult = offsetBalance(passportId, orderEntry.getSequenceNumber()
+                        basicResult = offsetBalance(merchantPassport.getId(), orderEntry.getSequenceNumber()
                                 , offsetAmount, transTypeEnum);
                         if (!basicResult.isSuccess()) {
                             logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());

@@ -2,6 +2,8 @@ package com.dianba.pos.payment.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.service.WechatPayManager;
 import com.dianba.pos.payment.util.WxBarcodePayApi;
@@ -23,6 +25,8 @@ public class DefaultWechatPayManager implements WechatPayManager {
 
     @Autowired
     private OrderManager orderManager;
+    @Autowired
+    private PassportManager passportManager;
 
     @Override
     public String getOpenId(String authCode) {
@@ -57,11 +61,7 @@ public class DefaultWechatPayManager implements WechatPayManager {
             logger.info("订单id:{}已付款,不需重复付款", orderId);
             return response;
         }
-        //TODO 根据收银员ID获取商家信息（ID，NAME)
-        Long merchantPassportId = passportId;
-        //TODO 商家名字
-        String title = "";
-
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         Map<String, String> params = new HashMap<>();
         params.put("auth_code", authCode);
         if (StringUtils.isNotBlank(deviceInfo)) {
@@ -71,7 +71,7 @@ public class DefaultWechatPayManager implements WechatPayManager {
             params.put("spbill_create_ip", spBillCreateIP);
         }
         params.put("out_trade_no", order.getSequenceNumber());
-        params.put("body", "1号生活715超市--" + title);
+        params.put("body", "1号生活715超市--" + merchantPassport.getShowName());
 //        otherParams.put("total_fee", String.valueOf(order.getTotalPrice() / 100));
         params.put("total_fee", order.getTotalPrice() + "");
         try {

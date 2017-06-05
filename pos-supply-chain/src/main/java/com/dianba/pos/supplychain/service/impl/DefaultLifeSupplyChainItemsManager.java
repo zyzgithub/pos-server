@@ -46,8 +46,6 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
         LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
         Long nearbyWarehouseId = warehouseOrgManager.getNearbyWarehouse(
                 passportAddress.getLatitude(), passportAddress.getLongitude());
-        //TODO REMOVE THIS
-        nearbyWarehouseId = 100001L;
         if (nearbyWarehouseId <= 0) {
             // 附近没有子仓
             return warehouseItemsVo;

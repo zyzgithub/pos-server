@@ -2,6 +2,7 @@ package com.dianba.pos.purchase.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.item.po.LifeItemTemplate;
 import com.dianba.pos.item.po.LifeItemType;
 import com.dianba.pos.item.po.LifeItemUnit;
@@ -10,6 +11,8 @@ import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.LifeItemTypeJpaRepository;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
 import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
@@ -49,6 +52,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     private LifeItemUnitJpaRepository itemUnitJpaRepository;
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
+    @Autowired
+    private PassportManager passportManager;
 
     public List<OneKeyPurchase> getWarnRepertoryItems(Long passportId) {
         List<OneKeyPurchase> oneKeyPurchases = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
@@ -72,8 +77,13 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     }
 
     public BasicResult getWarnRepertoryList(Long passportId) throws Exception {
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+        if (merchantPassport == null) {
+            throw new PosNullPointerException("商家信息不存在！" + passportId);
+        }
         // 查询库存小于预警库存/当前库存小于周销量的日平均值的商品,且不在进货中的商品
-        List<OneKeyPurchase> oneKeyPurchaseList = getWarnRepertoryItems(passportId);
+        List<OneKeyPurchase> oneKeyPurchaseList = getWarnRepertoryItems(merchantPassport.getId());
+        logger.info("商家一键采购：" + merchantPassport.getId() + "，匹配量：" + oneKeyPurchaseList.size());
         if (CollectionUtils.isEmpty(oneKeyPurchaseList)) {
             return BasicResult.createSuccessResult();
         }
@@ -90,7 +100,9 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         }
         sb = sb.delete(sb.length() - 1, sb.length());
         // 用 barcodes 去 供应链查找可进货的商品,极其规格.
-        WarehouseItemsVo warehouseItemsVo = lifeSupplyChainItemsManager.matchItemsByBarcode(passportId, sb.toString());
+        WarehouseItemsVo warehouseItemsVo = lifeSupplyChainItemsManager.matchItemsByBarcode(merchantPassport.getId()
+                , sb.toString());
+        logger.info("商家一键采购：" + merchantPassport.getId() + "，对应仓库：" + warehouseItemsVo.getWarehouseId());
         List<MatchItemsVo> matchItemsList = warehouseItemsVo.getMatchItems();
         List<LifeItemType> menutypeEntites = itemTypeJpaRepository.findAll(typeIds);
         //系统内建议采购

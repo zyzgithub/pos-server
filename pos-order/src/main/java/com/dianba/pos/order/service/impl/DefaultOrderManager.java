@@ -92,8 +92,6 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("shippingPassportId", merchantPassport.getId() + "");
         //商家名称
         params.put("shippingNickName", merchantPassport.getShowName() + "");
-//        //收货人ID
-//        params.put("receiptUserId", "");
         //收货人手机号码
         if (!StringUtils.isEmpty(phoneNumber)) {
             params.put("receipt_phone", phoneNumber);
