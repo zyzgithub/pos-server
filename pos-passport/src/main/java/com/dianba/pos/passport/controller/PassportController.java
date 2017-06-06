@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.HttpUtil;
+import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.passport.config.PassportProperties;
 import com.dianba.pos.passport.config.PassportURLConstant;
 import com.dianba.pos.passport.po.LifePassportAlias;
@@ -86,7 +87,7 @@ public class PassportController {
 
                 return BasicResult.createFailResult("您还没有签约，请联系本公司。");
             } else if (b != null) {
-                passportVo.setClientType(4);
+                passportVo.setClientType(3);
                 JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
                 logger.info(passportProperties.getLogin());
                 JSONObject response = jsonObject.getJSONObject("response");
@@ -98,9 +99,7 @@ public class PassportController {
                     LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
                     loginVo.setAccountType(0);
                     loginVo.setAccountTypeName("店长");
-                    PosCashierAccount posCashierAccount=posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
-                            loginVo.getPassportId());
-                    loginVo.setPassportId(posCashierAccount.getMerchantId());
+                    loginVo.setPassportId(loginVo.getPassportId());
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
                     return BasicResult.createSuccessResult(msg, jsonObject1);
                 }
@@ -109,7 +108,6 @@ public class PassportController {
                 JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
                 logger.info(passportProperties.getLogin());
                 JSONObject response = jsonObject.getJSONObject("response");
-
                 String msg = jsonObject.getString("msg");
                 logger.info("pos 端登录返回结果：" + jsonObject.toJSONString());
                 if (jsonObject.getIntValue("code") != 0) {
@@ -118,8 +116,11 @@ public class PassportController {
                     LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
                     loginVo.setAccountType(1);
                     loginVo.setAccountTypeName("店员");
-                    JSONObject jsonObject1=(JSONObject)JSONObject.toJSON(loginVo);
-                    return BasicResult.createSuccessResult(msg, response);
+                    PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                            loginVo.getPassportId());
+                    loginVo.setPassportId(posCashierAccount.getMerchantId());
+                    JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
+                    return BasicResult.createSuccessResult(msg, jsonObject1);
                 }
             } else {
                 return BasicResult.createFailResult("登录出现异常");
@@ -183,18 +184,36 @@ public class PassportController {
     /**
      * 编辑商家营业员信息
      *
-     * @param passport
+     * @param
      * @return
      */
     @ResponseBody
     @RequestMapping("editPosAccount")
-    public BasicResult editPosAccount(Passport passport) {
+    public BasicResult editPosAccount(RegisterVo registerVo) {
+        Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
+
+        if (!StringUtil.isEmpty(registerVo.getRealName())) {
+            passport.setRealName(registerVo.getRealName());
+        }
+
+        if (!StringUtil.isEmpty(registerVo.getPhoneNumber())) {
+            passport.setPhoneNumber(registerVo.getPhoneNumber());
+        }
+
+        if (!StringUtil.isEmpty(registerVo.getIdNumber())) {
+            passport.setIdNumber(registerVo.getIdNumber());
+        }
+
+        if (!StringUtil.isEmpty(registerVo.getPassword())) {
+            passport.setPassword(registerVo.getPassword());
+        }
         passportJpaRepository.save(passport);
         PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
                 passport.getId());
-        posCashierAccount.setCashierPhoto(passport.getCashierPhoto());
-        posCashierAccount.setAccountType(passport.getAccountType());
-        posCashierAccountJpaRepository.save(posCashierAccount);
+        if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
+            posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
+            posCashierAccountJpaRepository.save(posCashierAccount);
+        }
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
         return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
     }
@@ -203,20 +222,49 @@ public class PassportController {
     /**
      * 删除营业员信息
      *
-     * @param passport
+     * @param
      * @return
      */
     @ResponseBody
     @RequestMapping("deletePosAccount")
-    public BasicResult deletePosAccount(Passport passport) {
+    public BasicResult deletePosAccount(RegisterVo registerVo) {
 
-        if (passport.getId() == null) {
-
+        if (registerVo.getAccountId() == null) {
             return BasicResult.createFailResult("请输入要删除的主键id");
         } else {
-            passportJpaRepository.delete(passport);
-            return BasicResult.createSuccessResult("删除pos营业员信息成功!");
+            Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
+            if (passport != null) {
+                passportJpaRepository.delete(passport);
+            }
+            LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                    passport.getDefaultName());
+            if (lifePassportAlias != null) {
+                lifePassportAliasJpaRepository.delete(lifePassportAlias);
+            }
+            LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                    passport.getPhoneNumber());
+            if (lifePassportAlias1 != null) {
+                lifePassportAliasJpaRepository.delete(lifePassportAlias1);
+            }
+            LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
+            if (lifePassportProperties != null) {
+                lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
+            }
 
+
+            if (registerVo.getAccountType().equals(1)) {//店员
+                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                        registerVo.getAccountId());
+                posCashierAccountJpaRepository.delete(posCashierAccount);
+            }
+            if (registerVo.getAccountType().equals(0)) { //店长
+                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
+                        .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 0);
+                posCashierAccountJpaRepository.delete(posCashierAccount);
+            }
+
+            return BasicResult.createSuccessResult("删除成功");
         }
 
     }
@@ -233,14 +281,43 @@ public class PassportController {
 
         List<PosCashierAccount> posCashierAccountList = posCashierAccountJpaRepository.findAllByMerchantId(passportId);
 
-        List<Passport> passports = new ArrayList<>();
+        List<RegisterVo> registerVos = new ArrayList<>();
         for (PosCashierAccount posCashierAccount : posCashierAccountList) {
 
-            Passport passport = passportJpaRepository.findOne(posCashierAccount.getCashierId());
-            passport.setAccountType(posCashierAccount.getAccountType());
-            passports.add(passport);
+            Passport passport = passportJpaRepository.getPassportById(posCashierAccount.getCashierId());
+            RegisterVo registerVo = new RegisterVo();
+
+            registerVo.setAccountType(posCashierAccount.getAccountType());
+            if (posCashierAccount.getAccountType().equals(0)) {
+                registerVo.setAccountTypeName("店长");
+                registerVo.setAccountId(posCashierAccount.getMerchantId());
+                registerVo.setClientType(3);
+            } else if (posCashierAccount.getAccountType().equals(1)) {
+                registerVo.setAccountTypeName("店员");
+                registerVo.setAccountId(posCashierAccount.getCashierId());
+                registerVo.setClientType(2);
+            }
+            if (StringUtil.isEmpty(posCashierAccount.getCashierPhoto())) {
+                registerVo.setCashierPhoto("");
+            } else {
+                registerVo.setCashierPhoto(posCashierAccount.getCashierPhoto());
+            }
+            registerVo.setVersionIndex(1);
+            registerVo.setDeviceName(passport.getDeviceName());
+            registerVo.setDeviceType(passport.getDeviceType());
+            registerVo.setFromChannel(passport.getFromChannel());
+            registerVo.setIdNumber(passport.getIdNumber());
+            registerVo.setName(passport.getDefaultName());
+            registerVo.setShowName(passport.getShowName());
+            registerVo.setRealName(passport.getRealName());
+            registerVo.setPassword(passport.getPassword());
+            registerVo.setPhoneNumber(passport.getPhoneNumber());
+            registerVo.setSex(passport.getSex());
+            registerVo.setSmsCode("");
+
+            registerVos.add(registerVo);
         }
-        return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", passports);
+        return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", registerVos);
 
 
     }
@@ -252,8 +329,37 @@ public class PassportController {
         PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
                 .findPosCashierAccountByCashierId(cashierId);
         Passport passport = passportJpaRepository.findOne(cashierId);
-        passport.setAccountType(posCashierAccount.getAccountType());
-        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
+        RegisterVo registerVo = new RegisterVo();
+
+        if (posCashierAccount.getAccountType().equals(0)) {
+            registerVo.setAccountTypeName("店长");
+            registerVo.setAccountId(posCashierAccount.getMerchantId());
+            registerVo.setClientType(3);
+        } else if (posCashierAccount.getAccountType().equals(1)) {
+            registerVo.setAccountTypeName("店员");
+            registerVo.setAccountId(posCashierAccount.getCashierId());
+            registerVo.setClientType(2);
+        }
+
+        registerVo.setAccountType(posCashierAccount.getAccountType());
+        if (StringUtil.isEmpty(posCashierAccount.getCashierPhoto())) {
+            registerVo.setCashierPhoto("");
+        } else {
+            registerVo.setCashierPhoto(posCashierAccount.getCashierPhoto());
+        }
+        registerVo.setVersionIndex(1);
+        registerVo.setDeviceName(passport.getDeviceName());
+        registerVo.setDeviceType(passport.getDeviceType());
+        registerVo.setFromChannel(passport.getFromChannel());
+        registerVo.setIdNumber(passport.getIdNumber());
+        registerVo.setName(passport.getDefaultName());
+        registerVo.setShowName(passport.getShowName());
+        registerVo.setRealName(passport.getRealName());
+        registerVo.setPassword(passport.getPassword());
+        registerVo.setPhoneNumber(passport.getPhoneNumber());
+        registerVo.setSex(passport.getSex());
+        registerVo.setSmsCode("");
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(registerVo);
         return BasicResult.createSuccessResult("获取pos营业员信息成功!", jsonObject);
 
     }

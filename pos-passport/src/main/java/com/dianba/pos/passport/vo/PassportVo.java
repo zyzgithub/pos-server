@@ -25,10 +25,36 @@ public class PassportVo {
     /**int 当前的版本标志，必填参数；(内部版本号，一般递增，初始为1，此部分的信息主要由前端决定)**/
     private Integer versionIndex;
 
+    private Integer fromChannel;
 
     private Integer accountType;
 
     private String accountTypeName;
+
+    public Integer getFromChannel() {
+        return fromChannel;
+    }
+
+    public void setFromChannel(Integer fromChannel) {
+        this.fromChannel = fromChannel;
+    }
+
+    public Integer getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(Integer accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getAccountTypeName() {
+        return accountTypeName;
+    }
+
+    public void setAccountTypeName(String accountTypeName) {
+        this.accountTypeName = accountTypeName;
+    }
+
     public String getUsername() {
         return username;
     }

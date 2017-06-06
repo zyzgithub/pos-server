@@ -9,74 +9,99 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "life_passport.passport")
-public class Passport implements Serializable{
+public class Passport implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    /**登录默认账号**/
+    /**
+     * 登录默认账号
+     **/
     @Column(name = "default_name")
     private String defaultName;
 
-    /**登录默认密码**/
+    /**
+     * 登录默认密码
+     **/
     @Column(name = "password")
     private String password;
 
-    /**登录展示名字**/
+    /**
+     * 登录展示名字
+     **/
     @Column(name = "show_name")
     private String showName;
 
-    /**用户真实姓名**/
+    /**
+     * 用户真实姓名
+     **/
     @Column(name = "real_name")
     private String realName;
 
-    /**用户身份证号码**/
+    /**
+     * 用户身份证号码
+     **/
     @Column(name = "id_number")
     private String idNumber;
 
-    /**用户手机号码**/
+    /**
+     * 用户手机号码
+     **/
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    /**用户性别(0:女性 1:男性；默认值:0)**/
+    /**
+     * 用户性别(0:女性 1:男性；默认值:0)
+     **/
     @Column(name = "sex")
     private Integer sex;
 
-    /**用户类型(普通用户，VIP用户等，由逻辑设定**/
+    /**
+     * 用户类型(普通用户，VIP用户等，由逻辑设定
+     **/
     @Column(name = "type")
     private Integer type;
 
-    /**当前的状态(如：正常、禁言、禁登、黑名单等)**/
+    /**
+     * 当前的状态(如：正常、禁言、禁登、黑名单等)
+     **/
     @Column(name = "status")
     private Integer status;
 
-    /**注册时间**/
+    /**
+     * 注册时间
+     **/
     @Column(name = "create_time")
     private Date createTime;
 
-    /**册的渠道(如：官网、第三方渠道等；用于分析推广方式)**/
-    @Column(name="from_channel")
+    /**
+     * 册的渠道(如：官网、第三方渠道等；用于分析推广方式)
+     **/
+    @Column(name = "from_channel")
     private Long fromChannel;
 
-    /**设备类型(分析用户群，可针对不同用户开展不同的活动)**/
+    /**
+     * 设备类型(分析用户群，可针对不同用户开展不同的活动)
+     **/
     @Column(name = "device_type")
     private Integer deviceType;
 
-    /**设备名称**/
+    /**
+     * 设备名称
+     **/
     @Column(name = "device_name")
     private String deviceName;
 
-    /**最后的访问令牌(每次登录进行重置)**/
+    /**
+     * 最后的访问令牌(每次登录进行重置)
+     **/
     @Column(name = "access_token")
     private String accessToken;
 
-    private String cashierPhoto;
 
-    private String accountTypeName;
 
-    private Integer accountType;
     public Long getId() {
         return id;
     }
@@ -197,27 +222,6 @@ public class Passport implements Serializable{
         this.accessToken = accessToken;
     }
 
-    public String getCashierPhoto() {
-        return cashierPhoto;
-    }
 
-    public void setCashierPhoto(String cashierPhoto) {
-        this.cashierPhoto = cashierPhoto;
-    }
 
-    public String getAccountTypeName() {
-        return accountTypeName;
-    }
-
-    public void setAccountTypeName(String accountTypeName) {
-        this.accountTypeName = accountTypeName;
-    }
-
-    public Integer getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(Integer accountType) {
-        this.accountType = accountType;
-    }
 }

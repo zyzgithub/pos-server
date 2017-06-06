@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LifePassportAliasJpaRepository extends JpaRepository<LifePassportAlias,Integer> {
 
     LifePassportAlias findLifePassportAliasByAliasName(String userName);
+    LifePassportAlias findLifePassportAliasByPassportId(Long passportId);
 }
