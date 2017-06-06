@@ -116,8 +116,9 @@ public class PassportController {
                     LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
                     loginVo.setAccountType(1);
                     loginVo.setAccountTypeName("店员");
-                    PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
-                            loginVo.getPassportId());
+                    PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
+                            .findPosCashierAccountByCashierId(
+                                    loginVo.getPassportId());
                     loginVo.setPassportId(posCashierAccount.getMerchantId());
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
                     return BasicResult.createSuccessResult(msg, jsonObject1);

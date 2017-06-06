@@ -3,7 +3,9 @@ package com.dianba.pos.order.service;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
+import com.dianba.pos.order.pojo.OrderPojo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 
 import java.util.List;
@@ -59,12 +61,19 @@ public interface OrderManager {
     /**
      * 确认支付订单
      */
-    BasicResult paymentOrder(long orderId, int transType);
+    BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum);
 
     /**
      * 确认完成订单
      */
     BasicResult confirmOrder(long passportId, long orderId);
+
+    /**
+     * 批量保存离线订单
+     * @param orders
+     * @return
+     */
+    BasicResult syncOfflineOrders(List<OrderPojo> orders);
 
 
     /**

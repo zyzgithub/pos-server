@@ -144,7 +144,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 saveTransLog(orderEntry.getSequenceNumber(), passportId, authCode, paymentTypeEnum, transTypeEnum
                         , totalPrice);
                 //通知订单系统，订单已经支付
-                basicResult = orderManager.paymentOrder(orderId, transTypeEnum.getKey());
+                basicResult = orderManager.paymentOrder(orderId, paymentTypeEnum);
                 if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
                     Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                     //对商家余额进行偏移计算

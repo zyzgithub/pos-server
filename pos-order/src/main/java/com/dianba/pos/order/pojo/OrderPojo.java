@@ -10,8 +10,8 @@ public class OrderPojo implements Serializable{
     private Double actualPrice;
     private Double totalPrice;
     private String createTime;
-    private String completeTime;
-    private List<OrderItemPojo> items;
+    private String paymenTime;
+    private List<OrderItemPojo> itemSnapshots;
 
     public String getId() {
         return id;
@@ -53,19 +53,19 @@ public class OrderPojo implements Serializable{
         this.createTime = createTime;
     }
 
-    public String getCompleteTime() {
-        return completeTime;
+    public String getPaymenTime() {
+        return paymenTime;
     }
 
-    public void setCompleteTime(String completeTime) {
-        this.completeTime = completeTime;
+    public void setPaymenTime(String paymenTime) {
+        this.paymenTime = paymenTime;
     }
 
-    public List<OrderItemPojo> getItems() {
-        return items;
+    public List<OrderItemPojo> getItemSnapshots() {
+        return itemSnapshots;
     }
 
-    public void setItems(List<OrderItemPojo> items) {
-        this.items = items;
+    public void setItemSnapshots(List<OrderItemPojo> itemSnapshots) {
+        this.itemSnapshots = itemSnapshots;
     }
 }

@@ -7,6 +7,7 @@ import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
+import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
@@ -19,7 +20,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
-import com.xlibao.common.constant.payment.TransTypeEnum;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import org.apache.logging.log4j.LogManager;
@@ -86,7 +87,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("partnerUserId", passportId + "");
 
         params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
-        params.put("transType", TransTypeEnum.PAYMENT.getKey() + "");
+        params.put("transType", PaymentTypeEnum.UNKNOWN.getKey());
         //商家ID
         params.put("shippingPassportId", merchantPassport.getId() + "");
         //商家名称
@@ -112,18 +113,19 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("sequenceNumber", sequenceNumber);
         params.put("partnerUserId", passportId + "");
         params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
-        LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
-        if (passportAddress == null) {
+        LifePassportAddress merchantPassportAdress = passportAddressJpaRepository
+                .findByPassportId(passportId);
+        if (merchantPassportAdress == null) {
             throw new PosNullPointerException("商家地址信息不存在！" + passportId);
         }
         //商家ID
-        params.put("receiptProvince", passportAddress.getProvince());
-        params.put("receiptCity", passportAddress.getCity());
-        params.put("receiptDistrict", passportAddress.getDistrict());
-        params.put("receiptAddress", passportAddress.getStreet());
-        params.put("receiptNickName", passportAddress.getName());
-        params.put("receiptPhone", passportAddress.getPhoneNumber());
-        params.put("receiptLocation", passportAddress.getLatitude() + "," + passportAddress.getLongitude());
+        params.put("receiptProvince", merchantPassportAdress.getProvince());
+        params.put("receiptCity", merchantPassportAdress.getCity());
+        params.put("receiptDistrict", merchantPassportAdress.getDistrict());
+        params.put("receiptAddress", merchantPassportAdress.getStreet());
+        params.put("receiptNickName", merchantPassportAdress.getName());
+        params.put("receiptPhone", merchantPassportAdress.getPhoneNumber());
+        params.put("receiptLocation", merchantPassportAdress.getLatitude() + "," + merchantPassportAdress.getLongitude());
         JSONObject jsonObject = new JSONObject();
         for (String key : itemSet.keySet()) {
             jsonObject.put(key, warehouseId);
@@ -159,10 +161,10 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return orderItemSnapshots;
     }
 
-    public BasicResult paymentOrder(long orderId, int transType) {
+    public BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum) {
         Map<String, String> params = new HashMap<>();
         params.put("orderId", orderId + "");
-        params.put("transType", transType + "");
+        params.put("transType", paymentTypeEnum.getKey());
         BasicResult basicResult = postOrder(PAYMENT_ORDER, params);
         if (basicResult.isSuccess()) {
             OrderEntry orderEntry = getOrder(orderId);
@@ -183,6 +185,19 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("orderId", orderId + "");
         params.put("partnerUserId", passportId + "");
         return postOrder(CONFIRM_ORDER, params);
+    }
+
+    public BasicResult syncOfflineOrders(List<OrderPojo> orders) {
+        List<LifeOrder> lifeOrders = new ArrayList<>();
+        List<Map<String, String>> faileOrderIds = new ArrayList<>();
+        for (OrderPojo orderPojo : orders) {
+            Map<String,String> map=new HashMap<>();
+            map.put("id",orderPojo.getId());
+            faileOrderIds.add(map);
+        }
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        basicResult.setResponseDatas(faileOrderIds);
+        return basicResult;
     }
 
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus

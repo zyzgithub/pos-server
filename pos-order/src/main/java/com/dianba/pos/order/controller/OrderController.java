@@ -12,6 +12,8 @@ import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.pojo.WarehouseItemPojo;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
@@ -36,6 +38,8 @@ public class OrderController extends BasicWebService {
 
     @Autowired
     private OrderManager orderManager;
+    @Autowired
+    private PassportManager passportManager;
 
     /**
      * POS下单
@@ -90,7 +94,11 @@ public class OrderController extends BasicWebService {
     public BasicResult createOrder(HttpServletRequest request
             , Long passportId, Long warehouseId, String itemSets) throws Exception {
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.PURCHASE_ORDER_TYPE;
-        BasicResult basicResult = orderManager.prepareCreateOrder(passportId, orderTypeEnum);
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+        if (merchantPassport == null) {
+            throw new PosNullPointerException("商家不存在！");
+        }
+        BasicResult basicResult = orderManager.prepareCreateOrder(merchantPassport.getId(), orderTypeEnum);
         if (basicResult.isSuccess()) {
             List<WarehouseItemPojo> warehouseItemPojos = JsonHelper.toList(itemSets, WarehouseItemPojo.class);
             String sequenceNumber = basicResult.getResponse().getString("sequenceNumber");
@@ -98,7 +106,7 @@ public class OrderController extends BasicWebService {
             for (WarehouseItemPojo itemPojo : warehouseItemPojos) {
                 jsonObject.put(itemPojo.getId() + "", itemPojo.getCount());
             }
-            basicResult = orderManager.generatePurchaseOrder(passportId, sequenceNumber, warehouseId, jsonObject);
+            basicResult = orderManager.generatePurchaseOrder(merchantPassport.getId(), sequenceNumber, warehouseId, jsonObject);
             if (basicResult.isSuccess()) {
                 LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
                 basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrder).toString()));
@@ -139,9 +147,20 @@ public class OrderController extends BasicWebService {
      */
     @ResponseBody
     @RequestMapping("sync_offline_order")
-    public BasicResult syncOffLineOrder(String orders) {
-        List<OrderPojo> orderPojos = JsonHelper.toList(orders, OrderPojo.class);
-        //TODO 同步离线订单
-        return BasicResult.createSuccessResult();
+    public BasicResult syncOffLineOrder(HttpServletRequest request, String orders) {
+        List<OrderPojo> orderPojos;
+        try {
+            orderPojos = JsonHelper.toList(orders, OrderPojo.class);
+            if (orders == null || orderPojos.isEmpty()) {
+                throw new PosIllegalArgumentException("订单为空！");
+            }
+        } catch (Exception e) {
+            if (e instanceof PosIllegalArgumentException) {
+                throw e;
+            } else {
+                throw new PosIllegalArgumentException("订单参数非法！");
+            }
+        }
+        return orderManager.syncOfflineOrders(orderPojos);
     }
 }
