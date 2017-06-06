@@ -1,23 +1,25 @@
 package com.dianba.pos.item.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.po.LifeItemTemplate;
 import com.dianba.pos.item.po.LifeItemType;
 import com.dianba.pos.item.po.LifeItemUnit;
+import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.service.LifeItemTemplateManager;
 import com.dianba.pos.item.service.LifeItemTypeManager;
 import com.dianba.pos.item.service.LifeItemUnitManager;
-import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.item.vo.PosItemVo;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -145,7 +147,7 @@ public class DefaultPosItemManager implements PosItemManager {
         } else if (posItemVo.getItemUnitId() == null) {
             map.put("result", "false");
             map.put("msg", "itemUnitId 参数不能为空!");
-        }else if(StringUtil.isEmpty(posItemVo.getItemName())){
+        } else if (StringUtil.isEmpty(posItemVo.getItemName())) {
             map.put("result", "false");
             map.put("msg", "itemName 参数不能为空!");
         } else {
@@ -221,73 +223,71 @@ public class DefaultPosItemManager implements PosItemManager {
     public Map<String, Object> itemStorage(PosItemVo posItemVo) {
         Map<String, Object> map = new HashMap<>();
 
-           if(StringUtil.isEmpty(posItemVo.getBarcode())){
-               map.put("result", "false");
-               map.put("msg", "barcode 参数不能为空!");
-           }else if(posItemVo.getPassportId()==null){
-               map.put("result", "false");
-               map.put("msg", "passportId 参数不能为空!");
-           }else {
+        if (StringUtil.isEmpty(posItemVo.getBarcode())) {
+            map.put("result", "false");
+            map.put("msg", "barcode 参数不能为空!");
+        } else if (posItemVo.getPassportId() == null) {
+            map.put("result", "false");
+            map.put("msg", "passportId 参数不能为空!");
+        } else {
 
-               //查询barcode是否有此模板，没有就新增，有就关联
-               LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
-               if (itemTemplate == null) {
+            //查询barcode是否有此模板，没有就新增，有就关联
+            LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
+            if (itemTemplate == null) {
 
-                   //-------------模板为空，参数必须要效验。。---------------------
-                   map = itemStorageVerification(posItemVo);
-                   String result = map.get("result").toString();
-                   if (result.equals("true")) {
-                       //新增模板信息
-                       //判断商品模板名字是否重复
-                       PosItem posItem = new PosItem();
-                       //新增模板并关联
-                           //pos商品模板
-                           itemTemplate = new LifeItemTemplate();
-                           itemTemplate.setAscriptionType(1);
-                           if (StringUtil.isEmpty(posItemVo.getItemImg())) {
-                               itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-                           } else {
-                               itemTemplate.setImageUrl(posItemVo.getItemImg());
-                           }
-                           itemTemplate.setBarcode(posItemVo.getBarcode());
-                           itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
-                           itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
-                           itemTemplate.setUnitId(posItemVo.getItemUnitId());
-                           itemTemplate.setName(posItemVo.getItemName());
-                           //添加模板信息
-                           itemTemplateJpaRepository.save(itemTemplate);
-                           //set 实体类
-                           posItem = convertToClass(posItemVo, itemTemplate);
-                           //添加商家商品信息
-                           posItemJpaRepository.save(posItem);
-                           map.put("result", "true");
-                           map.put("msg", "商品入库成功!");
-                           map.put("info", posItem);
+                //-------------模板为空，参数必须要效验。。---------------------
+                map = itemStorageVerification(posItemVo);
+                String result = map.get("result").toString();
+                if (result.equals("true")) {
+                    //新增模板信息
+                    //判断商品模板名字是否重复
+                    PosItem posItem = new PosItem();
+                    //新增模板并关联
+                    //pos商品模板
+                    itemTemplate = new LifeItemTemplate();
+                    itemTemplate.setAscriptionType(1);
+                    if (StringUtil.isEmpty(posItemVo.getItemImg())) {
+                        itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                    } else {
+                        itemTemplate.setImageUrl(posItemVo.getItemImg());
+                    }
+                    itemTemplate.setBarcode(posItemVo.getBarcode());
+                    itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
+                    itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
+                    itemTemplate.setUnitId(posItemVo.getItemUnitId());
+                    itemTemplate.setName(posItemVo.getItemName());
+                    //添加模板信息
+                    itemTemplateJpaRepository.save(itemTemplate);
+                    //set 实体类
+                    posItem = convertToClass(posItemVo, itemTemplate);
+                    //添加商家商品信息
+                    posItemJpaRepository.save(posItem);
+                    map.put("result", "true");
+                    map.put("msg", "商品入库成功!");
+                    map.put("info", posItem);
 
-                   }
+                }
 
-               } else {
-                   //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
-                   //查询商家是否有入库此模板信息
-                   PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId()
-                           , itemTemplate.getId());
-                   if (posItem == null) { //商家没有关系此模板信息
-                       //set 实体类
-                       posItem = convertToClass(posItemVo, itemTemplate);
-                       //添加商家商品信息
-                       posItemJpaRepository.save(posItem);
+            } else {
+                //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
+                //查询商家是否有入库此模板信息
+                PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateId(posItemVo.getPassportId()
+                        , itemTemplate.getId());
+                if (posItem == null) { //商家没有关系此模板信息
+                    //set 实体类
+                    posItem = convertToClass(posItemVo, itemTemplate);
+                    //添加商家商品信息
+                    posItemJpaRepository.save(posItem);
 
-                       map.put("result", "true");
-                       map.put("msg", "商品入库成功!");
-                       map.put("info", posItem);
-                   } else {
-                       map = editPosItem(posItemVo);
-                   }
-             }
-
+                    map.put("result", "true");
+                    map.put("msg", "商品入库成功!");
+                    map.put("info", posItem);
+                } else {
+                    map = editPosItem(posItemVo);
+                }
             }
 
-
+        }
 
 
         return map;
@@ -319,7 +319,7 @@ public class DefaultPosItemManager implements PosItemManager {
         //查询商家是否有此商品信息
 
         PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(posItemVo.getPassportId()
-                ,posItemVo.getBarcode());
+                , posItemVo.getBarcode());
         if (posItem == null) {
             map.put("result", "false");
             map.put("msg", "查询商家商品为空!");
@@ -456,5 +456,18 @@ public class DefaultPosItemManager implements PosItemManager {
 
         return posItemVos;
 
+    }
+
+    @Transactional
+    public void offsetItemRepertory(Map<Long, Integer> itemIdMaps) {
+        if (itemIdMaps == null || itemIdMaps.size() == 0) {
+            throw new PosNullPointerException("所需变更的商品库存为空！");
+        }
+        List<PosItem> posItems = posItemJpaRepository.findAll(itemIdMaps.keySet());
+        for (Long key : itemIdMaps.keySet()) {
+            PosItem posItem = new PosItem();
+            posItem.setRepertory(posItem.getRepertory() - itemIdMaps.get(key));
+        }
+        posItemJpaRepository.save(posItems);
     }
 }

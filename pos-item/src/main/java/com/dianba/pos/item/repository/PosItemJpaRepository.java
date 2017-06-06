@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Transactional
 @Repository
-public interface PosItemJpaRepository extends JpaRepository<PosItem, Integer> {
+public interface PosItemJpaRepository extends JpaRepository<PosItem, Long> {
 
 
     /**

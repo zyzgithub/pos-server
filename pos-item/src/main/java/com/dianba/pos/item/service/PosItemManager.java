@@ -61,7 +61,14 @@ public interface PosItemManager {
     @Transactional
     Map<String, Object> editPosItem(PosItemVo posItemVo);
 
-     List<PosItemVo> convertToVos(List<PosItem> posItems);
+    List<PosItemVo> convertToVos(List<PosItem> posItems);
 
     PosItemVo convertToVo(PosItem posItem);
+
+    /**
+     * 更新商品库存
+     *
+     * @param itemIdMaps key:id,value:库存偏移量
+     */
+    void offsetItemRepertory(Map<Long, Integer> itemIdMaps);
 }

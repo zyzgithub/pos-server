@@ -189,6 +189,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
 
     public BasicResult syncOfflineOrders(List<OrderPojo> orders) {
         List<LifeOrder> lifeOrders = new ArrayList<>();
+        //TODO 保存离线订单
         List<Map<String, String>> faileOrderIds = new ArrayList<>();
         for (OrderPojo orderPojo : orders) {
             Map<String,String> map=new HashMap<>();

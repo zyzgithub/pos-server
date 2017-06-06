@@ -1,5 +1,7 @@
 package com.dianba.pos.item.po;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -8,6 +10,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "pos_item", schema = "life_pos")
+@DynamicUpdate
 public class PosItem implements Serializable {
 
     @Id

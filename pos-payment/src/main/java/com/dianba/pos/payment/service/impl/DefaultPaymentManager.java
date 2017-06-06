@@ -3,6 +3,7 @@ package com.dianba.pos.payment.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
+import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.passport.po.Passport;
@@ -21,6 +22,7 @@ import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
+import com.xlibao.metadata.order.OrderItemSnapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private PosMerchantRateJpaRepository posMerchantRateJpaRepository;
     @Autowired
     private PassportManager passportManager;
+    @Autowired
+    private PosItemManager posItemManager;
 
     @Autowired
     private AppConfig appConfig;
@@ -145,6 +149,14 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         , totalPrice);
                 //通知订单系统，订单已经支付
                 basicResult = orderManager.paymentOrder(orderId, paymentTypeEnum);
+                Map<Long, Integer> itemIdMaps = new HashMap<>();
+                //修改商品库存
+                if (OrderTypeEnum.SCAN_ORDER_TYPE.getKey() == orderEntry.getType()) {
+                    for (OrderItemSnapshot itemSnapshot : orderEntry.getItemSnapshots()) {
+                        itemIdMaps.put(itemSnapshot.getId(), itemSnapshot.getNormalQuantity());
+                    }
+                    posItemManager.offsetItemRepertory(itemIdMaps);
+                }
                 if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
                     Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                     //对商家余额进行偏移计算
