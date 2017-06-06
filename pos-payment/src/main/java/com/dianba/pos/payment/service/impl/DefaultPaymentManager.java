@@ -184,7 +184,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         basicResult = offsetBalance(merchantPassport.getId(), orderEntry.getSequenceNumber()
                                 , offsetAmount, transTypeEnum);
                         if (!basicResult.isSuccess()) {
-                            logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
+                            logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId()
+                                    + "，错误消息：" + basicResult.getMsg());
                         }
                     }
                 } else if (!basicResult.isSuccess()) {

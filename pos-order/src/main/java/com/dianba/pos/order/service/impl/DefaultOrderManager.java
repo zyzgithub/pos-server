@@ -125,7 +125,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         params.put("receiptAddress", merchantPassportAdress.getStreet());
         params.put("receiptNickName", merchantPassportAdress.getName());
         params.put("receiptPhone", merchantPassportAdress.getPhoneNumber());
-        params.put("receiptLocation", merchantPassportAdress.getLatitude() + "," + merchantPassportAdress.getLongitude());
+        params.put("receiptLocation", merchantPassportAdress.getLatitude()
+                + "," + merchantPassportAdress.getLongitude());
         JSONObject jsonObject = new JSONObject();
         for (String key : itemSet.keySet()) {
             jsonObject.put(key, warehouseId);
@@ -192,8 +193,8 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         //TODO 保存离线订单
         List<Map<String, String>> faileOrderIds = new ArrayList<>();
         for (OrderPojo orderPojo : orders) {
-            Map<String,String> map=new HashMap<>();
-            map.put("id",orderPojo.getId());
+            Map<String, String> map = new HashMap<>();
+            map.put("id", orderPojo.getId());
             faileOrderIds.add(map);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();

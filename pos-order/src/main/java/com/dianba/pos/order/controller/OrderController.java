@@ -106,7 +106,8 @@ public class OrderController extends BasicWebService {
             for (WarehouseItemPojo itemPojo : warehouseItemPojos) {
                 jsonObject.put(itemPojo.getId() + "", itemPojo.getCount());
             }
-            basicResult = orderManager.generatePurchaseOrder(merchantPassport.getId(), sequenceNumber, warehouseId, jsonObject);
+            basicResult = orderManager.generatePurchaseOrder(merchantPassport.getId()
+                    , sequenceNumber, warehouseId, jsonObject);
             if (basicResult.isSuccess()) {
                 LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
                 basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrder).toString()));
