@@ -5,12 +5,21 @@ import java.util.List;
 
 public class OrderPojo implements Serializable{
 
+    private String id;
     private Long passportId;
     private Double actualPrice;
     private Double totalPrice;
     private String createTime;
     private String completeTime;
     private List<OrderItemPojo> items;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Long getPassportId() {
         return passportId;

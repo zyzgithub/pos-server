@@ -2,7 +2,7 @@ package com.dianba.pos.order.vo;
 
 import java.io.Serializable;
 
-public class OrderItemSnapshotVo implements Serializable{
+public class MerchantOrderItemSnapshotVo implements Serializable{
 
     private Long normalPrice;
     private Integer normalQuantity;

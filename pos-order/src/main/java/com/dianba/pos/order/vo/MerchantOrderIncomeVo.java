@@ -3,7 +3,7 @@ package com.dianba.pos.order.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class OrderIncomeVo implements Serializable{
+public class MerchantOrderIncomeVo implements Serializable{
 
     private Integer id;
     private String time;

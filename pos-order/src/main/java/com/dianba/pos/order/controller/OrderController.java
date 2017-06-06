@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
+import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.po.LifeOrder;
@@ -116,6 +117,9 @@ public class OrderController extends BasicWebService {
     public BasicResult getOrderDetail(long orderId) {
         BasicResult basicResult = BasicResult.createSuccessResult();
         OrderEntry orderEntry = orderManager.getOrder(orderId);
+        if (orderEntry == null) {
+            throw new PosNullPointerException("订单不存在！" + orderId);
+        }
         basicResult.setResponse(JSONObject.parseObject(JSON.toJSON(orderEntry).toString()));
         return basicResult;
     }

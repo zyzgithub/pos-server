@@ -6,9 +6,9 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
-import com.dianba.pos.order.vo.OrderDayIncomeVo;
-import com.dianba.pos.order.vo.OrderIncomeVo;
-import com.dianba.pos.order.vo.OrderVo;
+import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
+import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
+import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
@@ -31,7 +31,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     private MerchantOrderMapper merchantOrderMapper;
 
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
-        Page<List<OrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+        Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);
@@ -75,11 +75,11 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         }
         String orderDate = date;
         Integer orderEnterType = enterType;
-        Page<OrderIncomeVo> orderIncomePage = PageHelper.startPage(pageIndex, pageSize)
+        Page<MerchantOrderIncomeVo> orderIncomePage = PageHelper.startPage(pageIndex, pageSize)
                 .doSelectPage(() -> merchantOrderMapper.findMerchantIncomeOrder(passportId, orderEnterType, orderDate));
         String beginDate = "";
         String endDate = "";
-        for (OrderIncomeVo orderIncome : orderIncomePage) {
+        for (MerchantOrderIncomeVo orderIncome : orderIncomePage) {
             if (beginDate.equals("") || endDate.equals("")) {
                 beginDate = orderIncome.getTime();
                 endDate = orderIncome.getTime();
@@ -106,9 +106,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                 orderIncome.setTitle(PaymentTypeEnum.UNKNOWN.getValue());
             }
         }
-        List<OrderDayIncomeVo> orderDayIncomes = merchantOrderMapper
+        List<MerchantOrderDayIncomeVo> orderDayIncomes = merchantOrderMapper
                 .findMerchantDayIncomeOrder(passportId, beginDate, endDate);
-        for (OrderDayIncomeVo dayIncome : orderDayIncomes) {
+        for (MerchantOrderDayIncomeVo dayIncome : orderDayIncomes) {
             if (CommonUtils.isToday(CommonUtils.dateFormatToLong(dayIncome.getTime() + " 00:00:00"))) {
                 dayIncome.setTitle("今日");
             } else if (CommonUtils.isSameDay(CommonUtils.dateFormatToLong(dayIncome.getTime() + " 00:00:00")

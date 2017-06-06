@@ -3,14 +3,14 @@ package com.dianba.pos.order.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class OrderVo implements Serializable{
+public class MerchantOrderVo implements Serializable{
 
     private String showName;
     private String sequenceNumber;
     private String createTime;
     private Long totalPrice;
     private String status;
-    private List<OrderItemSnapshotVo> itemSnapshots;
+    private List<MerchantOrderItemSnapshotVo> itemSnapshots;
 
     public String getShowName() {
         return showName;
@@ -52,11 +52,11 @@ public class OrderVo implements Serializable{
         this.status = status;
     }
 
-    public List<OrderItemSnapshotVo> getItemSnapshots() {
+    public List<MerchantOrderItemSnapshotVo> getItemSnapshots() {
         return itemSnapshots;
     }
 
-    public void setItemSnapshots(List<OrderItemSnapshotVo> itemSnapshots) {
+    public void setItemSnapshots(List<MerchantOrderItemSnapshotVo> itemSnapshots) {
         this.itemSnapshots = itemSnapshots;
     }
 }

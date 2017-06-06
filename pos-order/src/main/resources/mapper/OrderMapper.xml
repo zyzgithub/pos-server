@@ -183,13 +183,13 @@
         </collection>
     </resultMap>
 
-    <resultMap id="merchantOrderResultMap" type="com.dianba.pos.order.vo.OrderVo">
+    <resultMap id="merchantOrderResultMap" type="com.dianba.pos.order.vo.MerchantOrderVo">
         <result column="show_name" property="showName"/>
         <result column="sequence_number" property="sequenceNumber"/>
         <result column="create_time" property="createTime"/>
         <result column="total_price" property="totalPrice"/>
         <result column="status" property="status"/>
-        <collection property="itemSnapshots" ofType="com.dianba.pos.order.vo.OrderItemSnapshotVo">
+        <collection property="itemSnapshots" ofType="com.dianba.pos.order.vo.MerchantOrderItemSnapshotVo">
             <result column="item_name" property="itemName"/>
             <result column="normal_quantity" property="normalQuantity"/>
             <result column="normal_price" property="normalPrice"/>

@@ -33,8 +33,8 @@ public class DefaultLifeSupplyChainWarehouseManager implements LifeSupplyChainWa
                 continue;
             }
             String[] location = supplyChainWarehouse.getLocation().split(",");
-            BigDecimal warehouseLatitude = BigDecimal.valueOf(Double.parseDouble(location[0]));
-            BigDecimal warehouseLongitude = BigDecimal.valueOf(Double.parseDouble(location[1]));
+            BigDecimal warehouseLatitude = BigDecimal.valueOf(Double.parseDouble(location[1]));
+            BigDecimal warehouseLongitude = BigDecimal.valueOf(Double.parseDouble(location[0]));
             // 计算商家到仓库的距离
             double distance = LocationUtil.distanceSimplify(warehouseLatitude.doubleValue()
                     , warehouseLongitude.doubleValue(), latitude, longitude);

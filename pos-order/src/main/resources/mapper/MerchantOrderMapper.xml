@@ -20,7 +20,7 @@
     </select>
 
     <!--商家按日分组收入合计-->
-    <select id="findMerchantDayIncomeOrder" resultType="com.dianba.pos.order.vo.OrderDayIncomeVo">
+    <select id="findMerchantDayIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderDayIncomeVo">
         select a.time,count(a.time) count,sum(a.amount) totalAmount from (
             select date_format(t.payment_time,'%Y-%m-%d') time ,t.total_price amount
             from life_order.order_entry t
@@ -32,7 +32,7 @@
     </select>
 
     <!--查询商家收入订单列表-->
-    <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.OrderIncomeVo">
+    <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderIncomeVo">
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,`sequence_number` transSequence
             ,t.`total_price` amount,t.`trans_type` transType
         from life_order.order_entry t

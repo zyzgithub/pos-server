@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.item.mapper.PosItemMapper">
+    <resultMap id="BaseResultMap" type="com.dianba.pos.item.po.PosItem">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId" />
+        <result column="pos_type_id" jdbcType="INTEGER" property="posTypeId" />
+        <result column="passport_id" jdbcType="BIGINT" property="passportId" />
+        <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+        <result column="generated_date" jdbcType="BIGINT" property="generatedDate" />
+        <result column="item_template_id" jdbcType="BIGINT" property="itemTemplateId" />
+        <result column="item_img_url" jdbcType="VARCHAR" property="itemImgUrl" />
+        <result column="buy_count" jdbcType="INTEGER" property="buyCount" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="is_shelve" jdbcType="VARCHAR" property="isShelve" />
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+        <result column="stock_price" jdbcType="BIGINT" property="stockPrice" />
+        <result column="sales_price" jdbcType="BIGINT" property="salesPrice" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+        <result column="repertory" jdbcType="INTEGER" property="repertory" />
+        <result column="warning_repertory" jdbcType="INTEGER" property="warningRepertory" />
+        <result column="shelf_life" jdbcType="INTEGER" property="shelfLife" />
+        <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+        <result column="menu_key" jdbcType="VARCHAR" property="menuKey" />
+        <result column="code_id" jdbcType="INTEGER" property="codeId" />
+    </resultMap>
+
+    <select id="findWarningRepertoryItemsByExclude" resultMap="BaseResultMap">
+        select a.*
+        from life_pos.pos_item a
+        where a.warning_repertory > a.repertory
+        and a.passport_id=#{passportId}
+        <if test="itemTemplateIds!=null and itemTemplateIds.size()!=0">
+            and a.item_template_id not in
+            <foreach collection="itemTemplateIds" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+</mapper>

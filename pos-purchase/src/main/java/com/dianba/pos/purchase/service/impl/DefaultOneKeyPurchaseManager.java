@@ -3,6 +3,7 @@ package com.dianba.pos.purchase.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosNullPointerException;
+import com.dianba.pos.item.mapper.PosItemMapper;
 import com.dianba.pos.item.po.LifeItemTemplate;
 import com.dianba.pos.item.po.LifeItemType;
 import com.dianba.pos.item.po.LifeItemUnit;
@@ -10,7 +11,6 @@ import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.LifeItemTypeJpaRepository;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
-import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
@@ -51,22 +51,18 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     @Autowired
     private LifeItemUnitJpaRepository itemUnitJpaRepository;
     @Autowired
-    private PosItemJpaRepository posItemJpaRepository;
+    private PosItemMapper posItemMapper;
     @Autowired
     private PassportManager passportManager;
 
     public List<OneKeyPurchase> getWarnRepertoryItems(Long passportId) {
         List<OneKeyPurchase> oneKeyPurchases = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
-        if (oneKeyPurchases == null || oneKeyPurchases.size() == 0) {
-            return new ArrayList<>();
-        }
         List<Long> itemTemplateIds = new ArrayList<>();
         for (OneKeyPurchase oneKeyPurchase : oneKeyPurchases) {
             itemTemplateIds.add(oneKeyPurchase.getItemTemplateId());
         }
-        List<PosItem> items = posItemJpaRepository.findWarningRepertoryItemsByExclude(passportId
-                , itemTemplateIds);
-        if (items != null) {
+        List<PosItem> items = posItemMapper.findWarningRepertoryItemsByExclude(passportId, itemTemplateIds);
+        if (items != null && items.size() > 0) {
             for (PosItem posItem : items) {
                 OneKeyPurchase oneKeyPurchase = new OneKeyPurchase();
                 BeanUtils.copyProperties(posItem, oneKeyPurchase);
