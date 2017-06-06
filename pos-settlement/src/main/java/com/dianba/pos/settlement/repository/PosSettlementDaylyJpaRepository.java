@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface PosSettlementDaylyJpaRepository extends JpaRepository<PosSettlementDayly, Long> {
 
-    List<PosSettlementDayly> findByPassportId(Long passportId);
+    List<PosSettlementDayly> findByPassportIdAndIsPaid(Long passportId, Integer isPaid);
 }

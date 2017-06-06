@@ -23,9 +23,11 @@ public class PosSettlementDayly {
     @Column(name = "count")
     private Integer count;
     @Column(name = "is_paid")
-    private String isPaid = "0";
+    private Integer isPaid = 0;
     @Column(name = "create_time")
     private Date createTime = new Date();
+    @Column(name = "cash_amount")
+    private BigDecimal cashAmount;
 
     public Long getId() {
         return id;
@@ -75,11 +77,11 @@ public class PosSettlementDayly {
         this.count = count;
     }
 
-    public String getIsPaid() {
+    public Integer getIsPaid() {
         return isPaid;
     }
 
-    public void setIsPaid(String isPaid) {
+    public void setIsPaid(Integer isPaid) {
         this.isPaid = isPaid;
     }
 
@@ -89,5 +91,16 @@ public class PosSettlementDayly {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public BigDecimal getCashAmount() {
+        if (cashAmount == null) {
+            cashAmount = BigDecimal.ZERO;
+        }
+        return cashAmount;
+    }
+
+    public void setCashAmount(BigDecimal cashAmount) {
+        this.cashAmount = cashAmount;
     }
 }

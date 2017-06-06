@@ -2,9 +2,10 @@ package com.dianba.pos.settlement.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.po.PosMerchantType;
 import com.dianba.pos.passport.service.PassportManager;
+import com.dianba.pos.passport.service.PosMerchantTypeManager;
 import com.dianba.pos.settlement.mapper.SettlementMapper;
 import com.dianba.pos.settlement.po.PosSettlementDayly;
 import com.dianba.pos.settlement.repository.PosSettlementDaylyJpaRepository;
@@ -33,23 +34,26 @@ public class DefaultSettlementManager implements SettlementManager {
     private PassportManager passportManager;
     @Autowired
     private PosSettlementDaylyJpaRepository settlementDaylyJpaRepository;
+    @Autowired
+    private PosMerchantTypeManager posMerchantTypeManager;
 
     @Transactional
-    public BasicResult getSettlementOrder(Long passportId) {
-        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository.findByPassportId(passportId);
+    public BasicResult getSettlementOrder(Long passportId, BigDecimal cashAmount) {
+        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
+                .findByPassportIdAndIsPaid(passportId, 0);
+        Long merchantPassportId = 0L;
         if (posSettlementDaylies == null || posSettlementDaylies.size() == 0) {
-            Passport passport = passportManager.getPassportInfoByCashierId(passportId);
-            if (passport == null) {
-                throw new PosNullPointerException("商家信息不存在！");
-            }
+            Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+            merchantPassportId = merchantPassport.getId();
             //计算结算信息
             posSettlementDaylies = settlementMapper.statisticsOrderByDay(passportId);
             for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
                 BigDecimal amount = posSettlementDayly.getAmount()
                         .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
                 posSettlementDayly.setAmount(amount);
+                posSettlementDayly.setCashAmount(cashAmount);
                 posSettlementDayly.setPassportId(passportId);
-                posSettlementDayly.setMerchantPassportId(passport.getId());
+                posSettlementDayly.setMerchantPassportId(merchantPassport.getId());
             }
             posSettlementDaylies = settlementDaylyJpaRepository.save(posSettlementDaylies);
         }
@@ -67,11 +71,36 @@ public class DefaultSettlementManager implements SettlementManager {
             }
             settlementDaylyVos.add(settlementDaylyVo);
             totalAmount = totalAmount.add(settlementDaylyVo.getAmount());
+            if (cashAmount == null) {
+                cashAmount = settlementDaylyVo.getCashAmount();
+            }
+            if (merchantPassportId == 0L) {
+                merchantPassportId = settlementDaylyVo.getMerchantPassportId();
+            }
+        }
+        PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(merchantPassportId);
+        boolean isDirectStore = false;
+        //TODO 暂时有数据皆为直营店
+        if (posMerchantType != null) {
+            isDirectStore = true;
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(settlementDaylyVos);
         JSONObject jsonObject = basicResult.getResponse();
         jsonObject.put("totalAmount", totalAmount);
+        jsonObject.put("cashAmount", cashAmount);
+        jsonObject.put("isDirectStore", isDirectStore ? 1 : 0);
         return basicResult;
+    }
+
+    @Transactional
+    public BasicResult settlementShift(Long passportId) {
+        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
+                .findByPassportIdAndIsPaid(passportId, 0);
+        for (PosSettlementDayly settlementDayly : posSettlementDaylies) {
+            settlementDayly.setIsPaid(1);
+        }
+        settlementDaylyJpaRepository.save(posSettlementDaylies);
+        return BasicResult.createSuccessResult();
     }
 }

@@ -2,6 +2,7 @@ package com.dianba.pos.passport.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.common.util.StringUtil;
@@ -57,7 +58,11 @@ public class DefaultPassportManager implements PassportManager {
 
     @Override
     public Passport getPassportInfoByCashierId(Long cashierId) {
-        return passportMapper.getPassportInfoByCashierId(cashierId);
+        Passport passport = passportMapper.getPassportInfoByCashierId(cashierId);
+        if (passport == null) {
+            throw new PosNullPointerException("商家信息不存在！");
+        }
+        return passport;
     }
 
     @Override
