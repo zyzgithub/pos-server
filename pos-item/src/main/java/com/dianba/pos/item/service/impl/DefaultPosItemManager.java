@@ -235,36 +235,37 @@ public class DefaultPosItemManager implements PosItemManager {
             LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(posItemVo.getBarcode());
             if (itemTemplate == null) {
 
-                //-------------模板为空，参数必须要效验。。---------------------
-                map = itemStorageVerification(posItemVo);
-                String result = map.get("result").toString();
-                if (result.equals("true")) {
-                    //新增模板信息
-                    //判断商品模板名字是否重复
-                    PosItem posItem = new PosItem();
-                    //新增模板并关联
-                    //pos商品模板
-                    itemTemplate = new LifeItemTemplate();
-                    itemTemplate.setAscriptionType(1);
-                    if (StringUtil.isEmpty(posItemVo.getItemImg())) {
-                        itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
-                    } else {
-                        itemTemplate.setImageUrl(posItemVo.getItemImg());
-                    }
-                    itemTemplate.setBarcode(posItemVo.getBarcode());
-                    itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
-                    itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
-                    itemTemplate.setUnitId(posItemVo.getItemUnitId());
-                    itemTemplate.setName(posItemVo.getItemName());
-                    //添加模板信息
-                    itemTemplateJpaRepository.save(itemTemplate);
-                    //set 实体类
-                    posItem = convertToClass(posItemVo, itemTemplate);
-                    //添加商家商品信息
-                    posItemJpaRepository.save(posItem);
-                    map.put("result", "true");
-                    map.put("msg", "商品入库成功!");
-                    map.put("info", posItem);
+                   //-------------模板为空，参数必须要效验。。---------------------
+                   map = itemStorageVerification(posItemVo);
+                   String result = map.get("result").toString();
+                   if (result.equals("true")) {
+                       //新增模板信息
+                       //判断商品模板名字是否重复
+                       PosItem posItem = new PosItem();
+                       //新增模板并关联
+                           //pos商品模板
+                           itemTemplate = new LifeItemTemplate();
+                           itemTemplate.setAscriptionType(1);
+                           if (StringUtil.isEmpty(posItemVo.getItemImg())) {
+                               itemTemplate.setImageUrl("http://oss.0085.com/courier/2016/0815/1471247874374.jpg");
+                           } else {
+                               itemTemplate.setImageUrl(posItemVo.getItemImg());
+                           }
+                           itemTemplate.setBarcode(posItemVo.getBarcode());
+                           itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
+                           itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
+                           itemTemplate.setUnitId(posItemVo.getItemUnitId());
+                           itemTemplate.setTypeId(posItemVo.getItemTypeId());
+                           itemTemplate.setName(posItemVo.getItemName());
+                           //添加模板信息
+                           itemTemplateJpaRepository.save(itemTemplate);
+                           //set 实体类
+                           posItem = convertToClass(posItemVo, itemTemplate);
+                           //添加商家商品信息
+                           posItemJpaRepository.save(posItem);
+                           map.put("result", "true");
+                           map.put("msg", "商品入库成功!");
+                           map.put("info", posItem);
 
                 }
 
