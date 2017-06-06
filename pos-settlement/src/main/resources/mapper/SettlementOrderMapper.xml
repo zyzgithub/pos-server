@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.settlement.mapper.SettlementMapper">
+
+    <select id="statisticsOrderByDay" resultType="com.dianba.pos.settlement.po.PosSettlementDayly">
+        select t.trans_type paymentType,count(t.id) count,sum(t.total_price) amount
+        from life_order.order_entry t
+        where t.type=4 -- and t.payment_type=1
+        and t.trans_type in('ALIPAY','WEIXIN_NATIVE','CASH')
+        and t.payment_time >=curdate()
+        group by t.trans_type
+    </select>
+</mapper>

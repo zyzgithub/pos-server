@@ -1,8 +1,8 @@
-package com.dianba.pos.order.service;
+package com.dianba.pos.settlement.service;
 
 import com.dianba.pos.base.BasicResult;
 
-public interface SettlementOrderManager {
+public interface SettlementManager {
 
     BasicResult getSettlementOrder(Long passportId);
 }

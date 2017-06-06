@@ -110,7 +110,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         return postPay(PASSPORT_CURRENCY, params);
     }
 
-    @Transactional
     public BasicResult payOrder(long passportId, long orderId, String paymentTypeKey
             , String authCode) throws Exception {
         OrderEntry orderEntry = orderManager.getOrder(orderId);
@@ -153,7 +152,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 //修改商品库存
                 if (OrderTypeEnum.SCAN_ORDER_TYPE.getKey() == orderEntry.getType()) {
                     for (OrderItemSnapshot itemSnapshot : orderEntry.getItemSnapshots()) {
-                        itemIdMaps.put(itemSnapshot.getId(), itemSnapshot.getNormalQuantity());
+                        itemIdMaps.put(itemSnapshot.getItemId(), itemSnapshot.getNormalQuantity());
                     }
                     posItemManager.offsetItemRepertory(itemIdMaps);
                 }
