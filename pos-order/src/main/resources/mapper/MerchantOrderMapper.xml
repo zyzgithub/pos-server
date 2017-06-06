@@ -29,20 +29,23 @@
               and date_format(t.payment_time,'%Y-%m-%d')
                 between date_format(#{beginDate},'%Y-%m-%d') and date_format(#{endDate},'%Y-%m-%d')
         ) a group by a.time
+        order by a.time desc
     </select>
 
     <!--查询商家收入订单列表-->
     <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderIncomeVo">
+        select * from (
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,`sequence_number` transSequence
-            ,t.`total_price` amount,t.`trans_type` transType
+        ,t.`total_price` amount,t.`trans_type` transType
         from life_order.order_entry t
         where t.shipping_passport_id=#{passportId}
-            and t.type in(4,9) and t.status =8
+        and t.type in(4,9) and t.status =8
         <if test="enterType==1">
             and date_format(t.payment_time,'%Y-%m-%d')=date_format(#{date},'%Y-%m-%d')
         </if>
         <if test="enterType==2">
             and date_format(t.payment_time,'%Y-%m')=date_format(#{date},'%Y-%m')
         </if>
+        ) a order by a.time desc
     </select>
 </mapper>

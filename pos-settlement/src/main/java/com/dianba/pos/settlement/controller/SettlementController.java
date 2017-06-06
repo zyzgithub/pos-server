@@ -16,7 +16,7 @@ public class SettlementController {
     private SettlementManager settlementManager;
 
     @ResponseBody
-    @RequestMapping("get_settlement_order")
+    @RequestMapping("get_order")
     public BasicResult getSettlementOrder(Long passportId) {
         return settlementManager.getSettlementOrder(passportId);
     }

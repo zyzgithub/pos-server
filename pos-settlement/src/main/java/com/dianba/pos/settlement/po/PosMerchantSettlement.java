@@ -41,4 +41,5 @@ public class PosMerchantSettlement {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
 }

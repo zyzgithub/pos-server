@@ -68,7 +68,7 @@ public class DefaultSettlementManager implements SettlementManager {
             settlementDaylyVos.add(settlementDaylyVo);
             totalAmount = totalAmount.add(settlementDaylyVo.getAmount());
         }
-        BasicResult basicResult = new BasicResult();
+        BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(settlementDaylyVos);
         JSONObject jsonObject = basicResult.getResponse();
         jsonObject.put("totalAmount", totalAmount);
