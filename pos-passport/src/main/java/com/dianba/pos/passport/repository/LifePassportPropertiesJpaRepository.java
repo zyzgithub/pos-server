@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LifePassportPropertiesJpaRepository extends JpaRepository<LifePassportProperties,Integer> {
     LifePassportProperties findLifePassportPropertiesByPassportIdAndKAndV(Long passportId,String k,String v);
 
+    LifePassportProperties findLifePassportPropertiesByPassportId(Long passportId);
 }
