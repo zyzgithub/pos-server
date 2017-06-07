@@ -7,40 +7,40 @@ import java.io.Serializable;
  * Created by Administrator on 2017/5/9 0009.
  */
 @Entity
-@Table(name = "charge_19e")
-public class Charge19e implements Serializable {
+@Table(name = "life_pos.pos_charge_19e_order")
+public class PosCharge19eOrder implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chargeId")
-    private Integer chargeId;
-    @Column(name = "orderId")
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "order_id")
     private Long orderId;
-    @Column(name = "resultCode")
+    @Column(name = "result_code")
     private String resultCode;
-    @Column(name = "resultDesc")
+    @Column(name = "result_desc")
     private String resultDesc;
-    @Column(name = "eOrderId")
+    @Column(name = "eOrder_id")
     private String eOrderId;
-    @Column(name = "productName")
+    @Column(name = "product_name")
     private String productName;
-    @Column(name = "createTime")
+    @Column(name = "create_time")
     private String createTime;
-    @Column(name = "chargePhone")
+    @Column(name = "charge_phone")
     private String chargePhone;
-    @Column(name = "chargeNumber")
+    @Column(name = "charge_number")
     private String chargeNumber;
-    @Column(name = "orderStatus")
+    @Column(name = "order_status")
     private String orderStatus;
-    @Column(name = "merchantId")
+    @Column(name = "merchant_id")
     private String merchantId;
-    @Column(name = "finishTime")
+    @Column(name = "finish_time")
     private String finishTime;
-    @Column(name = "merchantOrderId")
+    @Column(name = "merchant_order_id")
     private String merchantOrderId;
-    @Column(name = "queryResultUrl")
+    @Column(name = "query_result_url")
     private String queryResultUrl;
-    @Column(name = "resultText")
+    @Column(name = "result_text")
     private String resultText;
     @Column(name = "type")
     private Integer type;
@@ -51,12 +51,17 @@ public class Charge19e implements Serializable {
         this.orderId = orderId;
     }
 
-    public Integer getChargeId() {
-        return chargeId;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setChargeId(Integer chargeId) {
-        this.chargeId = chargeId;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Long getOrderId() {
+        return orderId;
     }
 
     public String getResultCode() {

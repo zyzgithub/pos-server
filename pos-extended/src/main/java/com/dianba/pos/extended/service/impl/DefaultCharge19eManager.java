@@ -3,7 +3,7 @@ package com.dianba.pos.extended.service.impl;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
-import com.dianba.pos.extended.po.Charge19e;
+import com.dianba.pos.extended.po.PosCharge19eOrder;
 import com.dianba.pos.extended.repository.Charge19eJpaRepository;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
@@ -161,7 +161,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
     @Override
     public void saveHfChargeTable(Order19EDto or, ChargeResult cr) {
-        Charge19e ct = new Charge19e();
+        PosCharge19eOrder ct = new PosCharge19eOrder();
         ct.setChargeNumber(or.getPrice().toString());
         ct.setChargePhone(or.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));
@@ -183,7 +183,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
     @Override
     public void saveFlowChargeTable(Order19EDto order19EDto, ChargeFlowResult chargeFlowResult) {
-        Charge19e ct = new Charge19e();
+        PosCharge19eOrder ct = new PosCharge19eOrder();
         ct.setChargeNumber(order19EDto.getPrice().toString());
         ct.setChargePhone(order19EDto.getMobile());
         ct.setCreateTime(DateUtil.getCurrDate("yyyyMMddHHmmss"));

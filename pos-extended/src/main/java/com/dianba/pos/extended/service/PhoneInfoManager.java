@@ -1,8 +1,8 @@
 package com.dianba.pos.extended.service;
 
-import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.po.PosPhoneInfo;
 
 public interface PhoneInfoManager {
 
-    PhoneInfo findByMobileNumber(Long mobileNumber);
+    PosPhoneInfo findByMobileNumber(Long mobileNumber);
 }

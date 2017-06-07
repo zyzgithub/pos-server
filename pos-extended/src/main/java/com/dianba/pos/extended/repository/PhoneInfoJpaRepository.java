@@ -1,10 +1,10 @@
 package com.dianba.pos.extended.repository;
 
-import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.po.PosPhoneInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PhoneInfoJpaRepository extends JpaRepository<PhoneInfo, Long> {
+public interface PhoneInfoJpaRepository extends JpaRepository<PosPhoneInfo, Long> {
 
 }

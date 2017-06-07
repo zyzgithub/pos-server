@@ -8,10 +8,9 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
-import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.po.PosPhoneInfo;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PhoneInfoManager;
-import com.dianba.pos.extended.service.TsmCountryAreaManager;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
 import com.dianba.pos.extended.util.FlowOrderStatus;
@@ -58,8 +57,6 @@ public class Charge19EController {
     @Autowired
     private LifeOrderMapper orderMapper;
 
-    @Autowired
-    private TsmCountryAreaManager tsmCountryAreaManager;
 
     @Autowired
     private Charge19eMapper charge19eMapper;
@@ -193,7 +190,7 @@ public class Charge19EController {
             Integer isFlash = Integer.parseInt(type);
             String mobilePrefix = phone.substring(0, 7);
             Long phonel = Long.parseLong(mobilePrefix);
-            PhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phonel);
+            PosPhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phonel);
             if (phoneInfo == null) {
                 aj.setMsg("手机号码不存在!");
                 aj.setSuccess(false);

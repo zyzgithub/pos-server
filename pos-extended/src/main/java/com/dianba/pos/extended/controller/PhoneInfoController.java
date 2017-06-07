@@ -3,7 +3,7 @@ package com.dianba.pos.extended.controller;
 import com.dianba.pos.common.exception.lang.AbstractApiController;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
-import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.po.PosPhoneInfo;
 import com.dianba.pos.extended.service.PhoneInfoManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,7 +21,7 @@ public class PhoneInfoController extends AbstractApiController {
     @RequestMapping("get_phone")
     public AjaxJson getPhoneInfo(Long phoneNumber) {
         AjaxJson ajaxJson = AjaxJson.successJson("请求成功");
-        PhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phoneNumber);
+        PosPhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phoneNumber);
         ajaxJson.setObj(phoneInfo);
         return ajaxJson;
     }
