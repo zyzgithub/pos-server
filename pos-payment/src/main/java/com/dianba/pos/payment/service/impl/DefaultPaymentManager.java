@@ -155,7 +155,9 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     }
                     posItemManager.offsetItemRepertory(itemIdMaps);
                 }
-                if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
+                //TODO 10 结算订单
+                if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)
+                        && 10 != orderEntry.getType()) {
                     Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                     //对商家余额进行偏移计算
                     OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());

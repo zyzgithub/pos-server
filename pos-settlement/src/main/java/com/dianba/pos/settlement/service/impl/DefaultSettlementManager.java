@@ -2,10 +2,14 @@ package com.dianba.pos.settlement.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosAccessDeniedException;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.service.SettlementOrderManager;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantType;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosMerchantTypeManager;
+import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.settlement.mapper.SettlementMapper;
 import com.dianba.pos.settlement.po.PosSettlementDayly;
 import com.dianba.pos.settlement.repository.PosSettlementDaylyJpaRepository;
@@ -36,6 +40,10 @@ public class DefaultSettlementManager implements SettlementManager {
     private PosSettlementDaylyJpaRepository settlementDaylyJpaRepository;
     @Autowired
     private PosMerchantTypeManager posMerchantTypeManager;
+    @Autowired
+    private PaymentManager paymentManager;
+    @Autowired
+    private SettlementOrderManager settlementOrderManager;
 
     @Transactional
     public BasicResult getSettlementOrder(Long passportId, BigDecimal cashAmount) {
@@ -94,13 +102,51 @@ public class DefaultSettlementManager implements SettlementManager {
     }
 
     @Transactional
-    public BasicResult settlementShift(Long passportId) {
+    public BasicResult settlementShift(Long passportId) throws Exception {
         List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
                 .findByPassportIdAndIsPaid(passportId, 0);
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+        PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(merchantPassport.getId());
+        if (posMerchantType != null && posSettlementDaylies.size() > 0) {
+            throw new PosAccessDeniedException("直营店结算请先支付！");
+        }
         for (PosSettlementDayly settlementDayly : posSettlementDaylies) {
             settlementDayly.setIsPaid(1);
         }
-        settlementDaylyJpaRepository.save(posSettlementDaylies);
+        if (posSettlementDaylies.size() > 0) {
+            settlementDaylyJpaRepository.save(posSettlementDaylies);
+        }
         return BasicResult.createSuccessResult();
+    }
+
+    public BasicResult settlementPay(Long passportId, String paymentType, String authCode) throws Exception {
+        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
+                .findByPassportIdAndIsPaid(passportId, 0);
+        BigDecimal cashAmount = BigDecimal.ZERO;
+        for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
+            if (posSettlementDayly.getPaymentType().equals(PaymentTypeEnum.CASH.getKey())) {
+                cashAmount = posSettlementDayly.getAmount();
+                break;
+            }
+        }
+        List<String> paymentTypes = new ArrayList<>();
+        paymentTypes.add(PaymentTypeEnum.ALIPAY.getKey());
+        paymentTypes.add(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+        if (!paymentTypes.contains(paymentType)) {
+            throw new PosAccessDeniedException("请使用微信或者支付宝支付！");
+        }
+        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(paymentType);
+        LifeOrder lifeOrder = settlementOrderManager.generateSettlementOrder(passportId, paymentTypeEnum, cashAmount);
+        if (lifeOrder == null) {
+            return BasicResult.createFailResult("支付失败！订单异常！");
+        }
+        BasicResult basicResult = paymentManager.payOrder(passportId, lifeOrder.getId(), paymentType, authCode);
+        if (basicResult.isSuccess()) {
+            for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
+                posSettlementDayly.setIsPaid(1);
+            }
+        }
+        settlementDaylyJpaRepository.save(posSettlementDaylies);
+        return basicResult;
     }
 }

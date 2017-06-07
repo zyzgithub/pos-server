@@ -25,8 +25,13 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("settlement_shift")
-    public BasicResult settlementShift(Long passportId) {
+    public BasicResult settlementShift(Long passportId) throws Exception {
         return settlementManager.settlementShift(passportId);
     }
 
+    @ResponseBody
+    @RequestMapping("settlement_pay")
+    public BasicResult settlementPay(Long passportId, String paymentTypeKey, String authCode) throws Exception {
+        return settlementManager.settlementPay(passportId, paymentTypeKey, authCode);
+    }
 }

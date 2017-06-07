@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
-import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Autowired
-    private OrderMapper orderMapper;
+    private LifeOrderMapper orderMapper;
     @Autowired
     private MerchantOrderMapper merchantOrderMapper;
 

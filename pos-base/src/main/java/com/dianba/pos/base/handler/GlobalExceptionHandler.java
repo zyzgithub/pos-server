@@ -1,6 +1,8 @@
 package com.dianba.pos.base.handler;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosAccessDeniedException;
+import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.base.exception.PosRuntimeException;
 import org.apache.logging.log4j.LogManager;
@@ -18,13 +20,14 @@ public class GlobalExceptionHandler {
 
     private static Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 
-    private static final Class[] EXCEPTIONS
-            = new Class[]{PosNullPointerException.class, PosRuntimeException.class};
+    private static final Class[] EXCEPTIONS = new Class[]{PosNullPointerException.class
+            , PosRuntimeException.class
+            , PosIllegalArgumentException.class
+            , PosAccessDeniedException.class};
 
     @ResponseBody
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     public BasicResult exceptionHandler(RuntimeException e, HttpServletResponse response) {
-        logger.error(e);
         boolean isCustomException = false;
         for (Class cla : EXCEPTIONS) {
             if (e.getClass().getName().equals(cla.getName())) {
@@ -34,7 +37,9 @@ public class GlobalExceptionHandler {
         }
         if (!isCustomException) {
             e.printStackTrace();
+            return BasicResult.createFailResult("系统错误！");
         }
+        logger.error(e);
         return BasicResult.createFailResult(e.getMessage());
     }
 }

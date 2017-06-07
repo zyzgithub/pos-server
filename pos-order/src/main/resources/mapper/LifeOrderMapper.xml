@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dianba.pos.order.mapper.OrderMapper">
+<mapper namespace="com.dianba.pos.order.mapper.LifeOrderMapper">
     <!-- 查询使用商米pos每个月的盈利金额-->
     <select id="queryOrderList" resultType="java.util.HashMap">
       SELECT
@@ -235,5 +235,12 @@
         INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
         WHERE pt.id=#{id} AND oe.type=3 AND oe.status in(8,256)
         AND oe.payment_time BETWEEN #{startTime}  AND #{endTime}
+    </select>
+
+    <select id="findSettlementOrder4Today" resultMap="BaseResultMap">
+        select * from life_order.order_entry o
+        inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
+        where o.partner_user_id=#{passportId} and o.type=10 and o.status in(1,8)
+        and date_format(o.create_time,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
     </select>
 </mapper>

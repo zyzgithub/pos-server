@@ -1,7 +1,7 @@
 package com.dianba.pos.order.mapper;
 
-import com.dianba.pos.order.vo.Order19EDto;
 import com.dianba.pos.order.vo.MerchantOrderVo;
+import com.dianba.pos.order.vo.Order19EDto;
 import com.xlibao.metadata.order.OrderEntry;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface OrderMapper {
+public interface LifeOrderMapper {
 
 
 
@@ -73,4 +73,6 @@ public interface OrderMapper {
      */
     Map<String, Object> findMerchantStockMoney(@Param("id") Long id
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    OrderEntry findSettlementOrder4Today(@Param("passportId") Long passportId);
 }

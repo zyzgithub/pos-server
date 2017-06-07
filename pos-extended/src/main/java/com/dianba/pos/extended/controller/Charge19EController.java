@@ -23,7 +23,7 @@ import com.dianba.pos.item.mapper.MenuMapper;
 import com.dianba.pos.item.po.Menu;
 import com.dianba.pos.item.service.MenuManager;
 import com.dianba.pos.item.vo.MenuDto;
-import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.order.mapper.LifeOrderMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class Charge19EController {
     private MenuMapper menuMapper;
 
     @Autowired
-    private OrderMapper orderMapper;
+    private LifeOrderMapper orderMapper;
 
     @Autowired
     private TsmCountryAreaManager tsmCountryAreaManager;

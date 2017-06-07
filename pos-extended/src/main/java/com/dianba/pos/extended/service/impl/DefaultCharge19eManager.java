@@ -14,7 +14,7 @@ import com.dianba.pos.extended.vo.Charge19E;
 import com.dianba.pos.extended.vo.ChargeFlow;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.ChargeResult;
-import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.repository.OrderJpaRepository;
 import com.dianba.pos.order.vo.Order19EDto;
 import org.apache.commons.lang.RandomStringUtils;
@@ -39,7 +39,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
     @Autowired
     private OrderJpaRepository orderJpaRepository;
     @Autowired
-    private OrderMapper orderMapper;
+    private LifeOrderMapper orderMapper;
 
     @Autowired
     private Charge19eMapper charge19eMapper;

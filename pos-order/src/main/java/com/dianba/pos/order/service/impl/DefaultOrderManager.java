@@ -4,7 +4,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.JsonHelper;
-import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
@@ -39,7 +39,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     private static Logger logger = LogManager.getLogger(DefaultOrderManager.class);
 
     @Autowired
-    private OrderMapper orderMapper;
+    private LifeOrderMapper orderMapper;
     @Autowired
     private LifeOrderJpaRepository orderJpaRepository;
     @Autowired

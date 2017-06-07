@@ -1,5 +1,8 @@
 package com.dianba.pos.order.po;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -7,6 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "life_order.order_entry")
+@DynamicInsert
+@DynamicUpdate
 public class LifeOrder implements Serializable{
 
     @Id

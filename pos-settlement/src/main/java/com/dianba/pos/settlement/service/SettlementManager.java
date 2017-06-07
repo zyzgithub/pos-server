@@ -8,5 +8,7 @@ public interface SettlementManager {
 
     BasicResult getSettlementOrder(Long passportId, BigDecimal cashAmount);
 
-    BasicResult settlementShift(Long passportId);
+    BasicResult settlementShift(Long passportId) throws Exception;
+
+    BasicResult settlementPay(Long passportId, String paymentType, String authCode) throws Exception;
 }
