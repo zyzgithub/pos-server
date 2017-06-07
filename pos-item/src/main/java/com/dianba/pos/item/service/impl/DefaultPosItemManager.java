@@ -284,6 +284,11 @@ public class DefaultPosItemManager implements PosItemManager {
                     map.put("msg", "商品入库成功!");
                     map.put("info", posItem);
                 } else {
+                    //商品入库为新增数量。
+                    if(posItemVo.getRepertory()!=null){
+                        int count=posItem.getRepertory()+posItemVo.getRepertory();
+                        posItemVo.setRepertory(count);
+                    }
                     map = editPosItem(posItemVo);
                 }
             }
@@ -332,8 +337,7 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setIsShelve(posItemVo.getIsShelve());
             }
             if (posItemVo.getRepertory() != null) {
-                int count=posItem.getRepertory()+posItemVo.getRepertory();
-                posItem.setRepertory(count);
+                posItem.setRepertory(posItemVo.getRepertory());
             }
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {
                 posItem.setItemName(posItemVo.getItemName());
