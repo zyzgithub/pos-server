@@ -103,7 +103,8 @@ public class PosSettlementDayly {
     public void setCashAmount(BigDecimal cashAmount) {
         if (cashAmount == null) {
             this.cashAmount = BigDecimal.ZERO;
+        } else {
+            this.cashAmount = cashAmount;
         }
-        this.cashAmount = cashAmount;
     }
 }

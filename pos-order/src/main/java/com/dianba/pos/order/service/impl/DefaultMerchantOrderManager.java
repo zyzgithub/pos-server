@@ -49,6 +49,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         if (merchantIncomeMap != null) {
             todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
             monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
+            //TODO 扣点计算
             //前端自己转换金额，返回分为单位
 //            todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 //            monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
@@ -63,6 +64,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     public BasicResult getMerchantIncomeDetail(Long passportId, Integer enterType
             , Integer pageIndex, Integer pageSize, String date) {
+
         if (StringUtils.isEmpty(date)) {
             date = DateUtil.getNowTime("yyyy-MM-dd");
         } else {
@@ -94,6 +96,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                     endDate = orderIncome.getTime();
                 }
             }
+            //TODO 扣点计算
             //前端自己转换金额，返回分为单位
 //            orderIncome.setAmount(orderIncome.getAmount()
 //                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
@@ -119,6 +122,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                         + CommonUtils.dayOfWeekForTime(CommonUtils.dateFormatToLong(
                         dayIncome.getTime() + " 00:00:00")));
             }
+            //TODO 扣点计算
             //前端自己转换金额，返回分为单位
 //            dayIncome.setTotalAmount(dayIncome.getTotalAmount()
 //                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));

@@ -5,6 +5,8 @@ import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.SettlementOrderManager;
 import com.dianba.pos.order.util.OrderSequenceUtil;
+import com.xlibao.common.constant.order.OrderStatusEnum;
+import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,8 @@ public class DefaultSettlementOrderManager implements SettlementOrderManager {
         lifeOrder.setPartnerUserId(passportId + "");
         lifeOrder.setCreateTime(new Date());
         //10 POS结算订单
-        lifeOrder.setType(10);
+        lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
+        lifeOrder.setType(OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey());
         lifeOrder.setPaymentType("-1");
         lifeOrder.setTransType(paymentType.getKey());
         long price = amount.multiply(BigDecimal.valueOf(100)).longValue();
