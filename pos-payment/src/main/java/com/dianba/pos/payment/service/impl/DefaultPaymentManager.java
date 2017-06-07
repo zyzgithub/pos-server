@@ -7,12 +7,12 @@ import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.po.PosMerchantRate;
 import com.dianba.pos.passport.service.PassportManager;
+import com.dianba.pos.passport.service.PosMerchantRateManager;
 import com.dianba.pos.payment.po.LifePaymentTransactionLogger;
-import com.dianba.pos.payment.po.PosMerchantRate;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.repository.LifePaymentTransLoggerJpaRepository;
-import com.dianba.pos.payment.repository.PosMerchantRateJpaRepository;
 import com.dianba.pos.payment.service.AliPayManager;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WechatPayManager;
@@ -47,7 +47,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     @Autowired
     private LifePaymentTransLoggerJpaRepository transLoggerJpaRepository;
     @Autowired
-    private PosMerchantRateJpaRepository posMerchantRateJpaRepository;
+    private PosMerchantRateManager posMerchantRateManager;
     @Autowired
     private PassportManager passportManager;
     @Autowired
@@ -167,14 +167,14 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                         }
                     } else if (orderTypeEnum.getKey() == OrderTypeEnum.SCAN_ORDER_TYPE.getKey()) {
                         //进行扣点计算
-                        PosMerchantRate posMerchantRate = posMerchantRateJpaRepository
-                                .findOne(merchantPassport.getId());
-                        Double commissionRate = PosMerchantRate.COMMISSION_RATE;
+                        PosMerchantRate posMerchantRate = posMerchantRateManager
+                                .findByMerchantPassportId(merchantPassport.getId());
+                        BigDecimal commissionRate = PosMerchantRate.COMMISSION_RATE;
                         if (posMerchantRate != null) {
                             commissionRate = posMerchantRate.getCommissionRate();
                         }
                         BigDecimal amount = BigDecimal.valueOf(offsetAmount).subtract(
-                                BigDecimal.valueOf(offsetAmount).multiply(BigDecimal.valueOf(commissionRate))
+                                BigDecimal.valueOf(offsetAmount).multiply(commissionRate)
                         ).setScale(0, BigDecimal.ROUND_HALF_UP);
                         offsetAmount = amount.longValue();
                     }

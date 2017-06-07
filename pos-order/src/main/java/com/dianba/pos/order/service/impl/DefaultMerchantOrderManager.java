@@ -3,12 +3,14 @@ package com.dianba.pos.order.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
+import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
+import com.dianba.pos.passport.po.PosMerchantRate;
+import com.dianba.pos.passport.service.PosMerchantRateManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
@@ -29,6 +31,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     private LifeOrderMapper orderMapper;
     @Autowired
     private MerchantOrderMapper merchantOrderMapper;
+    @Autowired
+    private PosMerchantRateManager posMerchantRateManager;
 
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
@@ -44,15 +48,20 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Override
     public BasicResult findTodayAndMonthIncomeAmount(Long passportId) {
         Map<String, Object> merchantIncomeMap = merchantOrderMapper.findTodayAndMonthIncomeAmount(passportId);
+        PosMerchantRate posMerchantRate = posMerchantRateManager.findByMerchantPassportId(passportId);
+        BigDecimal rate = PosMerchantRate.COMMISSION_RATE;
+        if (posMerchantRate != null) {
+            rate = posMerchantRate.getCommissionRate();
+        }
         BigDecimal todayTotalAmount = BigDecimal.ZERO;
         BigDecimal monthTotalAmount = BigDecimal.ZERO;
         if (merchantIncomeMap != null) {
             todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
             monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
-            //TODO 扣点计算
-            //前端自己转换金额，返回分为单位
-//            todayTotalAmount = todayTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-//            monthTotalAmount = monthTotalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            todayTotalAmount = todayTotalAmount.subtract(todayTotalAmount.multiply(rate))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP);
+            monthTotalAmount = monthTotalAmount.subtract(monthTotalAmount.multiply(rate))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
@@ -79,6 +88,11 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         Integer orderEnterType = enterType;
         Page<MerchantOrderIncomeVo> orderIncomePage = PageHelper.startPage(pageIndex, pageSize)
                 .doSelectPage(() -> merchantOrderMapper.findMerchantIncomeOrder(passportId, orderEnterType, orderDate));
+        PosMerchantRate posMerchantRate = posMerchantRateManager.findByMerchantPassportId(passportId);
+        BigDecimal rate = PosMerchantRate.COMMISSION_RATE;
+        if (posMerchantRate != null) {
+            rate = posMerchantRate.getCommissionRate();
+        }
         String beginDate = "";
         String endDate = "";
         for (MerchantOrderIncomeVo orderIncome : orderIncomePage) {
@@ -96,10 +110,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                     endDate = orderIncome.getTime();
                 }
             }
-            //TODO 扣点计算
-            //前端自己转换金额，返回分为单位
-//            orderIncome.setAmount(orderIncome.getAmount()
-//                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            orderIncome.setAmount(orderIncome.getAmount().subtract(orderIncome.getAmount().multiply(rate))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
             try {
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderIncome.getTransType());
                 orderIncome.setTransType(paymentTypeEnum.getKey());
@@ -122,10 +134,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                         + CommonUtils.dayOfWeekForTime(CommonUtils.dateFormatToLong(
                         dayIncome.getTime() + " 00:00:00")));
             }
-            //TODO 扣点计算
-            //前端自己转换金额，返回分为单位
-//            dayIncome.setTotalAmount(dayIncome.getTotalAmount()
-//                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            dayIncome.setTotalAmount(dayIncome.getTotalAmount().subtract(dayIncome.getTotalAmount().multiply(rate))
+                    .setScale(0, BigDecimal.ROUND_HALF_UP));
         }
 
         BasicResult basicResult = BasicResult.createSuccessResult();

@@ -36,7 +36,7 @@
                 from life_pos.pos_item a
                 inner join life_order.order_item_snapshot b on b.item_template_id=a.item_template_id
                 inner join life_order.order_entry c on c.id=b.order_id
-                where c.type =4 and b.item_template_id!=0 and c.payment_type=1
+                where c.type =4 and b.item_template_id!=0 and c.status=8
                 and c.create_time > DATE_SUB(now(),INTERVAL 7 DAY)
                 and a.passport_id=#{passportId}
                 group by b.item_template_id
