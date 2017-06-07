@@ -10,11 +10,12 @@ import com.dianba.pos.passport.po.PosMerchantType;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosMerchantTypeManager;
 import com.dianba.pos.payment.service.PaymentManager;
-import com.dianba.pos.settlement.mapper.SettlementMapper;
+import com.dianba.pos.settlement.mapper.PosSettlementDaylyMapper;
 import com.dianba.pos.settlement.po.PosSettlementDayly;
 import com.dianba.pos.settlement.repository.PosSettlementDaylyJpaRepository;
 import com.dianba.pos.settlement.service.SettlementManager;
 import com.dianba.pos.settlement.vo.PosSettlementDaylyVo;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +34,7 @@ public class DefaultSettlementManager implements SettlementManager {
     private static Logger logger = LogManager.getLogger(DefaultSettlementManager.class);
 
     @Autowired
-    private SettlementMapper settlementMapper;
+    private PosSettlementDaylyMapper posSettlementDaylyMapper;
     @Autowired
     private PassportManager passportManager;
     @Autowired
@@ -50,20 +51,31 @@ public class DefaultSettlementManager implements SettlementManager {
         List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
                 .findByPassportIdAndIsPaid(passportId, 0);
         Long merchantPassportId = 0L;
+        if (cashAmount == null) {
+            cashAmount = BigDecimal.ZERO;
+        }
         if (posSettlementDaylies == null || posSettlementDaylies.size() == 0) {
             Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
             merchantPassportId = merchantPassport.getId();
-            //计算结算信息
-            posSettlementDaylies = settlementMapper.statisticsOrderByDay(passportId);
-            for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
-                BigDecimal amount = posSettlementDayly.getAmount()
-                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-                posSettlementDayly.setAmount(amount);
-                posSettlementDayly.setCashAmount(cashAmount);
-                posSettlementDayly.setPassportId(passportId);
-                posSettlementDayly.setMerchantPassportId(merchantPassport.getId());
+            String dateTime = posSettlementDaylyMapper.findLastSettlementTime(passportId);
+            boolean isSettlement = false;
+            if (dateTime != null && CommonUtils.isToday(CommonUtils.dateFormatToLong(dateTime))) {
+                isSettlement = true;
             }
-            posSettlementDaylies = settlementDaylyJpaRepository.save(posSettlementDaylies);
+            //是否已经做了今日结算
+            if (!isSettlement) {
+                //计算结算信息
+                posSettlementDaylies = posSettlementDaylyMapper.statisticsOrderByDay(passportId, dateTime);
+                for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
+                    BigDecimal amount = posSettlementDayly.getAmount()
+                            .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+                    posSettlementDayly.setAmount(amount);
+                    posSettlementDayly.setCashAmount(cashAmount);
+                    posSettlementDayly.setPassportId(passportId);
+                    posSettlementDayly.setMerchantPassportId(merchantPassport.getId());
+                }
+                posSettlementDaylies = settlementDaylyJpaRepository.save(posSettlementDaylies);
+            }
         }
         List<PosSettlementDaylyVo> settlementDaylyVos = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;

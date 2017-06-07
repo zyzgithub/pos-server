@@ -240,7 +240,7 @@
     <select id="findSettlementOrder4Today" resultMap="BaseResultMap">
         select * from life_order.order_entry o
         inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
-        where o.partner_user_id=#{passportId} and o.type=10 and o.status in(1,8)
+        where o.partner_user_id=#{passportId} and o.type=8 and o.status in(1,8)
         and date_format(o.create_time,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
     </select>
 </mapper>
