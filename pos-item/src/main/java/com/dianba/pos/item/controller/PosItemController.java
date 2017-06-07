@@ -108,7 +108,8 @@ public class PosItemController {
                 posTypeVo.setId(posType.getId());
                 posTypeVo.setItemTypeId(posType.getItemTypeId());
                 posTypeVo.setTitle(itemType.getTitle());
-                List<PosItem> posItems = posItemManager.getAllByPosTypeId(posType.getId());
+                List<PosItem> posItems = posItemManager.getAllByPassportIdAndItemTypeId(posType.getPassportId()
+                        ,posType.getItemTypeId());
                 posTypeVo.setTypeCount(posItems.size());
                 posTypeVos.add(posTypeVo);
             }
