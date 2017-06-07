@@ -6,6 +6,7 @@ import com.xlibao.metadata.order.OrderEntry;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +14,7 @@ import java.util.Map;
 public interface OrderMapper {
 
 
-    /**
-     * 查询商家使用商米pos每个月的盈利信息
-     */
-    Map<String, Object> queryOrderList(@Param("id") Long id
-            , @Param("create_time") Long startTime, @Param("nowTime") Long nowTime);
+
 
     /**
      * 获取商家使用pos机的时间
@@ -64,4 +61,16 @@ public interface OrderMapper {
      */
     List<OrderEntry> findOrderForPos(@Param("passportId") Long passportId
             , @Param("orderType") Integer orderType, @Param("orderStatus") Integer orderStatus);
+
+    /**
+     * 查询商家使用pos盈利信息
+     */
+    Map<String, Object> findPosProfitMoney(@Param("id") Long id
+            , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    /**
+     * 查询商家进货信息
+     */
+    Map<String, Object> findMerchantStockMoney(@Param("id") Long id
+            , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

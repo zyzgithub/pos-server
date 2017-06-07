@@ -81,4 +81,6 @@ public interface OrderManager {
      */
     BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize);
+
+    BasicResult getMerchantProfitInfo(Long merchantId,String phone);
 }

@@ -214,4 +214,26 @@
         where o.shipping_passport_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
           and o.status in(1,8)
     </select>
+
+
+    <!--商家pos 机每月营业额o e.type 3-采购 7-pos营业订单 -->
+    <select id="findPosProfitMoney" resultType="java.util.HashMap">
+        SELECT sum(ois.total_price-ois.cost_price) sumMoney
+           FROM life_order.order_entry oe
+           inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
+           INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
+           WHERE pt.id=#{id} AND oe.type=7 AND oe.status in(8,256)
+           AND oe.payment_time BETWEEN #{startTime}  AND #{endTime}
+    </select>
+
+    <!--商家pos 机每月营业额o e.type 3-采购 7-pos营业订单 -->
+    <select id="findMerchantStockMoney" resultType="java.util.HashMap">
+        SELECT sum(ois.total_price-ois.cost_price) sumMoney
+        ,count(1) count
+        FROM life_order.order_entry oe
+        inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
+        INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
+        WHERE pt.id=#{id} AND oe.type=3 AND oe.status in(8,256)
+        AND oe.payment_time BETWEEN #{startTime}  AND #{endTime}
+    </select>
 </mapper>

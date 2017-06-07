@@ -1,8 +1,8 @@
 package com.dianba.pos.order.service.impl;
-
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosNullPointerException;
+import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.OrderMapper;
 import com.dianba.pos.order.po.LifeOrder;
@@ -14,6 +14,7 @@ import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
+import com.dianba.pos.passport.repository.PassportJpaRepository;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
@@ -30,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DefaultOrderManager extends OrderRemoteService implements OrderManager {
@@ -50,6 +48,9 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
     @Autowired
     private PassportManager passportManager;
+
+    @Autowired
+    private PassportJpaRepository passportJpaRepository;
 
     public OrderEntry getOrder(long orderId) {
         Map<String, String> params = new HashMap<>();
@@ -213,4 +214,95 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         basicResult.getResponse().put("total", orderPage.getTotal());
         return basicResult;
     }
+
+    public JSONObject getJSONObject(Map<String, Object> posProfitMoney, Map<String, Object> merchantStockMoney
+            , int chu) {
+        JSONObject jsonObject = new JSONObject();
+        //月转换
+        BigDecimal m = new BigDecimal(chu);
+        BigDecimal dv = new BigDecimal(100);
+        if (posProfitMoney == null) {
+            jsonObject.put("posProfitMoney", "");
+        } else {
+            //商家总盈利金额
+            Long posSumMoney = Long.parseLong(posProfitMoney.get("sumMoney").toString());
+            BigDecimal posSumMoneyBd = new BigDecimal(posSumMoney);
+
+            Double money = posSumMoneyBd.divide(dv, 2, BigDecimal.ROUND_UP)
+                    .divide(m, 2, BigDecimal.ROUND_UP)
+                    .doubleValue();
+            jsonObject.put("posProfitMoney", money + "");
+
+        }
+        if (merchantStockMoney.get("count").toString().equals("0")) {
+            jsonObject.put("mStockMoney", "");
+            jsonObject.put("mStockCount", "");
+        } else {
+            //商家总进货金额
+            Long merchantSumMoney = Long.parseLong(merchantStockMoney.get("sumMoney").toString());
+            BigDecimal merchantSumMoneyBd = new BigDecimal(merchantSumMoney);
+            Double money = merchantSumMoneyBd.divide(dv, 2, BigDecimal.ROUND_UP)
+                    .divide(m, 2, BigDecimal.ROUND_UP)
+                    .doubleValue();
+            //商家总进货次数
+            int count = Integer.parseInt(merchantStockMoney.get("count").toString());
+            BigDecimal countBd = new BigDecimal(count);
+            int c = countBd.divide(m, 0).intValue();
+
+            jsonObject.put("mStockMoney", money + "");
+            jsonObject.put("mStockCount", c + "");
+        }
+        return jsonObject;
+    }
+
+
+    @Override
+    public BasicResult getMerchantProfitInfo(Long merchantId, String phone) {
+
+        JSONObject jsonObject = new JSONObject();
+        Passport passport = passportJpaRepository.getPassportById(merchantId);
+        if (passport == null) {
+            return BasicResult.createFailResult("获取失败,没有此商家账号");
+        } else {
+
+            //查询6个月内
+            int month = 6;
+            //商家创建时间
+            Date createTime = passport.getCreateTime();
+            //当前时间
+            Date nowTime = DateUtil.getCurrentDate("yyyy-MM-dd HH:mm:ss");
+            int yueCha = DateUtil.yueDiff(createTime, nowTime);
+
+            if (yueCha == 0 || yueCha == 1) { //一个月不用算平均数
+                Map<String, Object> posProfitMoney = orderMapper.findPosProfitMoney(merchantId, createTime, nowTime);
+
+                Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
+                        merchantId, createTime, nowTime);
+
+                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,1);
+
+            } else if (yueCha > month) { //商家使用超过6个月算最近6个月值
+                //获取最近前6个月的时间
+                Date beforeDate = DateUtil.getDateByMonth(-6);
+                Map<String, Object> posProfitMoney = orderMapper.findPosProfitMoney(merchantId, beforeDate, nowTime);
+                Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
+                        merchantId, beforeDate, nowTime);
+                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,6);
+
+            } else { //计算商家当前使用月值
+
+                Map<String, Object> posProfitMoney = orderMapper.findPosProfitMoney(merchantId, createTime, nowTime);
+                Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
+                        merchantId, createTime, nowTime);
+                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,yueCha);
+            }
+            jsonObject.put("userName", passport.getRealName());
+            jsonObject.put("userPhone", passport.getPhoneNumber());
+            jsonObject.put("merchantId", passport.getId());
+            return BasicResult.createSuccessResult("获取成功", jsonObject);
+        }
+
+    }
+
+
 }
