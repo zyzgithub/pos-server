@@ -179,46 +179,64 @@ public class DefaultPassportManager implements PassportManager {
     @Override
     public BasicResult editPosAccount(RegisterVo registerVo) {
         Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
+        if(passport!=null){
 
-        //真实姓名
-        if (!StringUtil.isEmpty(registerVo.getRealName())) {
-            passport.setRealName(registerVo.getRealName());
-        }
-        //身份证号码
-        if (!StringUtil.isEmpty(registerVo.getIdNumber())) {
-            passport.setIdNumber(registerVo.getIdNumber());
+            LifePassportAlias passportAlias=lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                    passport.getPhoneNumber());
+            LifePassportAlias passportAlias1=lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                    passport.getDefaultName());
+            //真实姓名
+            if (!StringUtil.isEmpty(registerVo.getRealName())) {
+                passport.setRealName(registerVo.getRealName());
+            }
+            //身份证号码
+            if (!StringUtil.isEmpty(registerVo.getIdNumber())) {
+                passport.setIdNumber(registerVo.getIdNumber());
+            }
+
+            //手机号码
+            if (!StringUtil.isEmpty(registerVo.getPhoneNumber())) {
+                passport.setPhoneNumber(registerVo.getPhoneNumber());
+                passportAlias.setAliasName(registerVo.getPhoneNumber());
+            }
+
+            //账号
+            if (!StringUtil.isEmpty(registerVo.getName())) {
+                passport.setDefaultName(registerVo.getName());
+                passportAlias1.setAliasName(registerVo.getName());
+            }
+            //密码
+            if (!StringUtil.isEmpty(registerVo.getPassword())) {
+                passport.setPassword(registerVo.getPassword());
+            }
+
+            passportJpaRepository.save(passport);
+
+            lifePassportAliasJpaRepository.save(passportAlias);
+            lifePassportAliasJpaRepository.save(passportAlias1);
+            PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                    passport.getId());
+            if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
+                posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
+                posCashierAccountJpaRepository.save(posCashierAccount);
+            }
+            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
+            return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
+        }else {
+            return BasicResult.createFailResult("没有此营业员信息");
+
         }
 
-        //手机号码
-        if (!StringUtil.isEmpty(registerVo.getPhoneNumber())) {
-            passport.setPhoneNumber(registerVo.getPhoneNumber());
-        }
 
-        //账号
-        if (!StringUtil.isEmpty(registerVo.getName())) {
-            passport.setDefaultName(registerVo.getName());
-        }
-        //密码
-        if (!StringUtil.isEmpty(registerVo.getPassword())) {
-            passport.setPassword(registerVo.getPassword());
-        }
-
-        passportJpaRepository.save(passport);
-        PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
-                passport.getId());
-        if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
-            posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
-            posCashierAccountJpaRepository.save(posCashierAccount);
-        }
-        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
-        return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
     }
 
     @Override
     public BasicResult deletePosAccount(RegisterVo registerVo) {
         if (registerVo.getAccountId() == null) {
             return BasicResult.createFailResult("accountId 不能为空");
-        } else {
+        } else if(registerVo.getAccountType().equals(0)){
+            return BasicResult.createFailResult("店长账号不能删除");
+        }else{
             //删除原账号
             Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
             if (passport != null) {
@@ -241,12 +259,7 @@ public class DefaultPassportManager implements PassportManager {
             if (lifePassportProperties != null) {
                 lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
             }
-            if (registerVo.getAccountType().equals(1)) {//店员
-                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
-                        registerVo.getAccountId());
-                posCashierAccountJpaRepository.delete(posCashierAccount);
-            }
-            if (registerVo.getAccountType().equals(0)) { //店长
+            if (registerVo.getAccountType().equals(1)) { //店长
                 PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
                         .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 0);
                 posCashierAccountJpaRepository.delete(posCashierAccount);

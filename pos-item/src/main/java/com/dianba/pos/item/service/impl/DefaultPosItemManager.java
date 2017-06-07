@@ -332,7 +332,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setIsShelve(posItemVo.getIsShelve());
             }
             if (posItemVo.getRepertory() != null) {
-                posItem.setRepertory(posItemVo.getRepertory());
+                int count=posItem.getRepertory()+posItemVo.getRepertory();
+                posItem.setRepertory(count);
             }
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {
                 posItem.setItemName(posItemVo.getItemName());
@@ -425,7 +426,7 @@ public class DefaultPosItemManager implements PosItemManager {
                     .getItemTemplateById(posItem.getItemTemplateId());
             PosItemVo posItemVo = new PosItemVo();
             posItemVo.setId(posItem.getId());
-            posItemVo.setPosTypeId(posItem.getItemTypeId());
+            posItemVo.setPosTypeId(posItem.getPosTypeId());
             LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
             posItemVo.setPosTypeName(itemType.getTitle());
             posItemVo.setItemTemplateId(itemTemplate.getId());
