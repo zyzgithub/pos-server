@@ -72,14 +72,21 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
         List<LifeItemTemplate> lifeItemTemplates = itemTemplateJpaRepository
                 .findByBarcodeIn(new ArrayList<>(matchSourceBarcodes.keySet()));
         List<Long> itemTemplateIds = new ArrayList<>();
+        List<Long> unitIds = new ArrayList<>();
         for (LifeItemTemplate template : lifeItemTemplates) {
             itemTemplateIds.add(template.getId());
+            unitIds.add(template.getUnitId());
         }
         //供应链商品
         List<LifeSupplyChainItems> supplyChainItemsList = supplyChainItemsJpaRepository
                 .findByWarehouseIdAndItemTemplateIdInAndStatusAndRestrictionQuantity(nearbyWarehouseId
                         , itemTemplateIds, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), -1);
 
+        Map<Long, LifeItemUnit> lifeItemUnitMap = new HashMap<>();
+        List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll(unitIds);
+        for (LifeItemUnit itemUnit : itemUnits) {
+            lifeItemUnitMap.put(itemUnit.getId(), itemUnit);
+        }
         for (LifeSupplyChainItems lifeSupplyChainItems : supplyChainItemsList) {
             for (LifeItemTemplate lifeItemTemplate : lifeItemTemplates) {
                 if (lifeSupplyChainItems.getItemTemplateId().longValue() == lifeItemTemplate.getId().longValue()) {
@@ -98,8 +105,10 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
                     BigDecimal price = BigDecimal.valueOf(lifeSupplyChainItems.getSellPrice())
                             .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
                     items.setPrice(price);
-                    LifeItemUnit itemUnit = itemUnitJpaRepository.findOne(lifeItemTemplate.getUnitId());
-                    items.setUnit(itemUnit.getTitle());
+                    LifeItemUnit itemUnit = lifeItemUnitMap.get(lifeItemTemplate.getUnitId());
+                    if (itemUnit != null) {
+                        items.setUnit(itemUnit.getTitle());
+                    }
                     items.setStandard(barcodeRelationship.getRelationCoefficient());
                     matchItems.getItems().add(items);
                     matchItems.setBarcode(lifeItemTemplate.getBarcode());

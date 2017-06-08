@@ -192,12 +192,12 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     if (posMerchantRate != null) {
                         commissionRate = posMerchantRate.getCommissionRate();
                     }
-                    BigDecimal amount = BigDecimal.valueOf(offsetAmount).subtract(
-                            BigDecimal.valueOf(offsetAmount).multiply(commissionRate)
+                    BigDecimal amount = BigDecimal.valueOf(orderEntry.getTotalPrice()).subtract(
+                            BigDecimal.valueOf(orderEntry.getTotalPrice()).multiply(commissionRate)
                     ).setScale(0, BigDecimal.ROUND_HALF_UP);
                     offsetAmount = amount.longValue();
                 } else if (orderTypeEnum.getKey() == OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey()) {
-                    offsetAmount = orderEntry.getTotalPrice();
+                    offsetAmount = -orderEntry.getTotalPrice();
                 }
                 if (offsetAmount != 0) {
                     //对商家余额进行余额偏移

@@ -37,8 +37,10 @@ public class PaymentController extends BasicWebService {
             , @RequestParam(required = false) String authCode
             , @RequestParam(required = false) String paymentPassword) throws Exception {
         if (PaymentTypeEnum.BALANCE.getKey().equals(paymentTypeKey)) {
+            //余额
             return paymentManager.balancePayment(passportId, orderId, paymentPassword);
         } else {
+            //微信，支付宝，现金
             return paymentManager.payOrder(passportId, orderId, paymentTypeKey, authCode);
         }
     }

@@ -164,7 +164,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         for (LifeItemTemplate itemTemplate : itemTemplateList) {
             for (LifeItemUnit itemUnit : itemUnits) {
                 if (itemTemplate.getUnitId().longValue() == itemUnit.getId()) {
-                    itemUnitMap.put(itemTemplate.getUnitId(), itemUnit);
+                    itemUnitMap.put(itemTemplate.getId(), itemUnit);
                 }
             }
         }

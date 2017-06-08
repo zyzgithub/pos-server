@@ -32,7 +32,7 @@ public interface PaymentManager {
             throws Exception;
 
     /**
-     * 订单余额变更
+     * 商户余额变更
      */
     BasicResult offsetBalance(long passportId, String transSequenceNumber
             , long offsetAmount, TransTypeEnum transTypeEnum);
