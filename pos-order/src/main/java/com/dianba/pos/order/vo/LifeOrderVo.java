@@ -2,10 +2,9 @@ package com.dianba.pos.order.vo;
 
 import com.dianba.pos.order.po.LifeOrder;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 
-public class LifeOrderVo extends LifeOrder{
+public class LifeOrderVo extends LifeOrder {
 
     private BigDecimal actualPrice;
     private BigDecimal totalPrice;
