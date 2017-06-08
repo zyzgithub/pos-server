@@ -5,8 +5,8 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.item.service.PosItemManager;
-import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantRate;
 import com.dianba.pos.passport.service.PassportManager;
@@ -212,8 +212,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 logger.info("订单确认支付失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
             }
             //返回订单详情-加商品列表
-            LifeOrder lifeOrder = orderManager.getLifeOrder(orderEntry.getId());
-            basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrder).toString()));
+            LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderEntry.getId());
+            basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrderVo).toString()));
             return basicResult;
         } catch (Exception e) {
             logger.error("订单保存异常!" + e.getMessage());

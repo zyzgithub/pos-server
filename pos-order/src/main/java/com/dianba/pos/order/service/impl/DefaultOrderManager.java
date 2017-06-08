@@ -13,6 +13,7 @@ import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
+import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
@@ -28,6 +29,7 @@ import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -66,7 +68,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return null;
     }
 
-    public LifeOrder getLifeOrder(long orderId) {
+    public LifeOrderVo getLifeOrder(long orderId) {
         LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
         lifeOrder.setActualPrice(lifeOrder.getActualPrice()
                 .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
@@ -90,7 +92,16 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
                         .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
             }
         }
-        return lifeOrder;
+        LifeOrderVo lifeOrderVo = new LifeOrderVo();
+        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
+        if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
+        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
+        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+        }
+        return lifeOrderVo;
     }
 
     public LifeOrder getLifeOrder(String sequenceNumber) {

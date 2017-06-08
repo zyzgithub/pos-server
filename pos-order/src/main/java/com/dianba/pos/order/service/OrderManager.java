@@ -4,6 +4,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
+import com.dianba.pos.order.vo.LifeOrderVo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
@@ -33,7 +34,7 @@ public interface OrderManager {
     /**
      * 获取订单详情，使用orderId
      */
-    LifeOrder getLifeOrder(long orderId);
+    LifeOrderVo getLifeOrder(long orderId);
 
     /**
      * 获取订单详情，使用订单编码
