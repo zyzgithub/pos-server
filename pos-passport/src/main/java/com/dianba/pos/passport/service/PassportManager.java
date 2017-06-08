@@ -4,7 +4,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.vo.PassportVo;
 import com.dianba.pos.passport.vo.RegisterVo;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -26,6 +26,7 @@ public interface PassportManager {
      * @param registerVo
      * @return
      */
+    @Transactional
     BasicResult register(RegisterVo registerVo);
 
     /**
@@ -33,6 +34,7 @@ public interface PassportManager {
      * @param registerVo
      * @return
      */
+    @Transactional
     BasicResult editPosAccount(RegisterVo registerVo);
 
     /**
@@ -40,6 +42,7 @@ public interface PassportManager {
      * @param registerVo
      * @return
      */
+    @Transactional
     BasicResult deletePosAccount(RegisterVo registerVo);
 
     /**

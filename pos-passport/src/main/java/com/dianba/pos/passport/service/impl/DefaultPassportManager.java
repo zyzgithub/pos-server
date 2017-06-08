@@ -179,11 +179,11 @@ public class DefaultPassportManager implements PassportManager {
     @Override
     public BasicResult editPosAccount(RegisterVo registerVo) {
         Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
-        if(passport!=null){
+        if (passport != null) {
 
-            LifePassportAlias passportAlias=lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+            LifePassportAlias passportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
                     passport.getPhoneNumber());
-            LifePassportAlias passportAlias1=lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+            LifePassportAlias passportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
                     passport.getDefaultName());
             //真实姓名
             if (!StringUtil.isEmpty(registerVo.getRealName())) {
@@ -222,7 +222,7 @@ public class DefaultPassportManager implements PassportManager {
             }
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
             return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
-        }else {
+        } else {
             return BasicResult.createFailResult("没有此营业员信息");
 
         }
@@ -234,51 +234,67 @@ public class DefaultPassportManager implements PassportManager {
     public BasicResult deletePosAccount(RegisterVo registerVo) {
         if (registerVo.getAccountId() == null) {
             return BasicResult.createFailResult("accountId 不能为空");
-        } else if(registerVo.getAccountType().equals(0)){
-            return BasicResult.createFailResult("店长账号不能删除");
-        }else{
-            //删除原账号
-            Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
-            if (passport != null) {
+        } else {
+            //签约商家权限
+            LifePassportProperties b = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            registerVo.getAccountId(), "consumer", "14");
+
+            //pos商家权限
+            LifePassportProperties c = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            registerVo.getAccountId(), "pos", "41");
+
+            if (b != null) {
+                //签约商家账号不能删除
+                logger.info("此账号是签约商家账号不能删除。。" + registerVo.getAccountId());
+                return BasicResult.createFailResult("签约商家账号不能删除。");
+            } else if (c != null) {
+                //pos 用户
+                //删除原账号
+                Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
                 passportJpaRepository.delete(passport);
-            }
-            //删除2个登录账号
-            LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                    passport.getDefaultName());
-            if (lifePassportAlias != null) {
+                //删除2个登录账号
+                LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                        passport.getDefaultName());
                 lifePassportAliasJpaRepository.delete(lifePassportAlias);
-            }
-            LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                    passport.getPhoneNumber());
-            if (lifePassportAlias1 != null) {
+
+                LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                        passport.getPhoneNumber());
+
                 lifePassportAliasJpaRepository.delete(lifePassportAlias1);
-            }
-            //删除账号权限
-            LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
-                    .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
-            if (lifePassportProperties != null) {
+                //删除账号权限
+                LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
+                        .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
+
                 lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
-            }
-            if (registerVo.getAccountType().equals(1)) { //店长
+
+
                 PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
-                        .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 0);
+                        .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 1);
                 posCashierAccountJpaRepository.delete(posCashierAccount);
+
+
+                return BasicResult.createSuccessResult("删除成功");
+            } else {
+
+                logger.error("要删除的用户id为：" + registerVo.getAccountId() + "删除出现异常。");
+                return BasicResult.createSuccessResult("没有删除权限");
             }
 
-            return BasicResult.createSuccessResult("删除成功");
         }
     }
 
     @Override
     public BasicResult getMerchantPosList(RegisterVo registerVo) {
         List<PosCashierAccount> posCashierAccountList = posCashierAccountJpaRepository
-                .findAllByMerchantId(registerVo.getAccountId());
+                .findAllByMerchantIdOrderByAccountType(registerVo.getAccountId());
         Passport passport = null;
         List<RegisterVo> registerVos = new ArrayList<>();
-        if(posCashierAccountList.size()==0){
+        if (posCashierAccountList.size() == 0) {
 
             return BasicResult.createFailResult("获取商家营业员信息失败");
-        }else {
+        } else {
             for (PosCashierAccount posCashierAccount : posCashierAccountList) {
 
                 if (posCashierAccount.getAccountType() == 0) {
@@ -287,37 +303,39 @@ public class DefaultPassportManager implements PassportManager {
                     passport = passportJpaRepository.getPassportById(posCashierAccount.getCashierId());
                 }
                 registerVo = new RegisterVo();
-                registerVo.setAccountType(posCashierAccount.getAccountType());
-                registerVo.setVersionIndex(1);
-                registerVo.setDeviceName(passport.getDeviceName());
-                registerVo.setDeviceType(passport.getDeviceType());
-                registerVo.setFromChannel(passport.getFromChannel());
-                registerVo.setIdNumber(passport.getIdNumber());
-                registerVo.setName(passport.getDefaultName());
-                registerVo.setShowName(passport.getShowName());
-                registerVo.setRealName(passport.getRealName());
-                registerVo.setPassword(passport.getPassword());
-                registerVo.setPhoneNumber(passport.getPhoneNumber());
-                registerVo.setSex(passport.getSex());
-                registerVo.setSmsCode("");
-                if (posCashierAccount.getAccountType().equals(0)) {
-                    passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
-                    registerVo.setAccountTypeName("店长");
-                    registerVo.setAccountId(posCashierAccount.getMerchantId());
-                    registerVo.setClientType(3);
-                } else if (posCashierAccount.getAccountType().equals(1)) {
-                    registerVo.setAccountTypeName("店员");
-                    registerVo.setAccountId(posCashierAccount.getCashierId());
-                    registerVo.setClientType(2);
-                }
-                if (StringUtil.isEmpty(posCashierAccount.getCashierPhoto())) {
-                    registerVo.setCashierPhoto("");
-                } else {
-                    registerVo.setCashierPhoto(posCashierAccount.getCashierPhoto());
+                if (passport != null) {
+                    registerVo.setAccountType(posCashierAccount.getAccountType());
+                    registerVo.setVersionIndex(1);
+                    registerVo.setDeviceName(passport.getDeviceName());
+                    registerVo.setDeviceType(passport.getDeviceType());
+                    registerVo.setFromChannel(passport.getFromChannel());
+                    registerVo.setIdNumber(passport.getIdNumber());
+                    registerVo.setName(passport.getDefaultName());
+                    registerVo.setShowName(passport.getShowName());
+                    registerVo.setRealName(passport.getRealName());
+                    registerVo.setPassword(passport.getPassword());
+                    registerVo.setPhoneNumber(passport.getPhoneNumber());
+                    registerVo.setSex(passport.getSex());
+                    registerVo.setSmsCode("");
+                    if (posCashierAccount.getAccountType().equals(0)) {
+                        passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
+                        registerVo.setAccountTypeName("店长");
+                        registerVo.setAccountId(posCashierAccount.getMerchantId());
+                        registerVo.setClientType(3);
+                    } else if (posCashierAccount.getAccountType().equals(1)) {
+                        registerVo.setAccountTypeName("店员");
+                        registerVo.setAccountId(posCashierAccount.getCashierId());
+                        registerVo.setClientType(2);
+                    }
+                    if (StringUtil.isEmpty(posCashierAccount.getCashierPhoto())) {
+                        registerVo.setCashierPhoto("");
+                    } else {
+                        registerVo.setCashierPhoto(posCashierAccount.getCashierPhoto());
+                    }
+                    registerVos.add(registerVo);
                 }
 
 
-                registerVos.add(registerVo);
             }
             return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", registerVos);
         }
