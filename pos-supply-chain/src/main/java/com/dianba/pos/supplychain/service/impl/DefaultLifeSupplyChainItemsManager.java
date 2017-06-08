@@ -62,15 +62,15 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
             return warehouseItemsVo;
         }
         Map<String, LifeBarcodeRelationship> matchSourceBarcodes = new HashMap<>();
-        // 组合 用于获取商品模版数据
-        List<String> sourceBarcodes = new ArrayList<>();
-        // 按目标进行分组
+        Map<String, String> barcodeRelateionShip = new HashMap<>();
         for (LifeBarcodeRelationship lifeBarcodeRelationship : batchLifeBarcodeRelationships) {
-            matchSourceBarcodes.put(lifeBarcodeRelationship.getTargetBarcode(), lifeBarcodeRelationship);
-            sourceBarcodes.add(lifeBarcodeRelationship.getSourceBarcode());
+            barcodeRelateionShip.put(lifeBarcodeRelationship.getSourceBarcode()
+                    , lifeBarcodeRelationship.getTargetBarcode());
+            matchSourceBarcodes.put(lifeBarcodeRelationship.getSourceBarcode(), lifeBarcodeRelationship);
         }
         //商品模板
-        List<LifeItemTemplate> lifeItemTemplates = itemTemplateJpaRepository.findByBarcodeIn(sourceBarcodes);
+        List<LifeItemTemplate> lifeItemTemplates = itemTemplateJpaRepository
+                .findByBarcodeIn(new ArrayList<>(matchSourceBarcodes.keySet()));
         List<Long> itemTemplateIds = new ArrayList<>();
         for (LifeItemTemplate template : lifeItemTemplates) {
             itemTemplateIds.add(template.getId());
@@ -108,6 +108,7 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
             }
         }
         warehouseItemsVo.setWarehouseId(nearbyWarehouseId);
+        warehouseItemsVo.setBarcodeRelateionShip(barcodeRelateionShip);
         warehouseItemsVo.setMatchItems(matchItemsList);
         return warehouseItemsVo;
     }

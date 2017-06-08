@@ -211,8 +211,7 @@
     <select id="findOrderForPos" resultMap="BaseResultMap">
         select * from life_order.order_entry o
         inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
-        where o.shipping_passport_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
-          and o.status =8
+        where o.partner_user_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
     </select>
 
 

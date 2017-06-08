@@ -103,7 +103,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
         List<LifeItemType> menutypeEntites = itemTypeJpaRepository.findAll(typeIds);
         //系统内建议采购
         for (MatchItemsVo matchItems : matchItemsList) {
-            OneKeyPurchase menuEntity = menuEntityMap.get(matchItems.getBarcode());
+            String targetBarcode = warehouseItemsVo.getBarcodeRelateionShip().get(matchItems.getBarcode());
+            OneKeyPurchase menuEntity = menuEntityMap.get(targetBarcode);
             String name = menuEntity.getItemName();
             // 设置当前库存，标准库存，预警库存
             matchItems.setMenuTypeId(menuEntity.getItemTypeId());
