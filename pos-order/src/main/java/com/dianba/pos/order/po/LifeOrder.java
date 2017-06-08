@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Table(name = "life_order.order_entry")
 @DynamicInsert
 @DynamicUpdate
-public class LifeOrder implements Serializable{
+public class LifeOrder implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class LifeOrder implements Serializable{
     @Column(name = "status")
     private Integer status;
     @Column(name = "deliver_status")
-    private Integer deliverStatus = Integer.valueOf(0);
+    private Integer deliverStatus = 0;
     @Column(name = "refund_status")
     private Integer refundStatus;
     @Column(name = "payment_type")
@@ -51,13 +52,13 @@ public class LifeOrder implements Serializable{
     @Column(name = "remark")
     private String remark;
     @Column(name = "actual_price")
-    private Long actualPrice;
+    private BigDecimal actualPrice = BigDecimal.ZERO;
     @Column(name = "total_price")
-    private Long totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
     @Column(name = "discount_price")
-    private Long discountPrice;
+    private BigDecimal discountPrice = BigDecimal.ZERO;
     @Column(name = "distribution_fee")
-    private Long distributionFee;
+    private BigDecimal distributionFee = BigDecimal.ZERO;
     @Column(name = "price_logger")
     private String priceLogger;
     @Column(name = "cancel_logger")
@@ -207,35 +208,41 @@ public class LifeOrder implements Serializable{
         this.remark = remark;
     }
 
-    public Long getActualPrice() {
+    public BigDecimal getActualPrice() {
         return actualPrice;
     }
 
-    public void setActualPrice(Long actualPrice) {
+    public void setActualPrice(BigDecimal actualPrice) {
         this.actualPrice = actualPrice;
     }
 
-    public Long getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Long totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Long getDiscountPrice() {
+    public BigDecimal getDiscountPrice() {
+        if (discountPrice == null) {
+            discountPrice = BigDecimal.ZERO;
+        }
         return discountPrice;
     }
 
-    public void setDiscountPrice(Long discountPrice) {
+    public void setDiscountPrice(BigDecimal discountPrice) {
         this.discountPrice = discountPrice;
     }
 
-    public Long getDistributionFee() {
+    public BigDecimal getDistributionFee() {
+        if (distributionFee == null) {
+            distributionFee = BigDecimal.ZERO;
+        }
         return distributionFee;
     }
 
-    public void setDistributionFee(Long distributionFee) {
+    public void setDistributionFee(BigDecimal distributionFee) {
         this.distributionFee = distributionFee;
     }
 

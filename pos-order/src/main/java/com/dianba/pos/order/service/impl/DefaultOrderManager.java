@@ -1,4 +1,5 @@
 package com.dianba.pos.order.service.impl;
+
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosNullPointerException;
@@ -6,11 +7,13 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.po.LifeOrderItemSnapshot;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
+import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
@@ -26,6 +29,7 @@ import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -64,8 +68,40 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         return null;
     }
 
-    public LifeOrder getLifeOrder(long orderId) {
-        return orderJpaRepository.findOne(orderId);
+    public LifeOrderVo getLifeOrder(long orderId) {
+        LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
+        lifeOrder.setActualPrice(lifeOrder.getActualPrice()
+                .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+        lifeOrder.setTotalPrice(lifeOrder.getTotalPrice()
+                .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+        lifeOrder.setDiscountPrice(lifeOrder.getDiscountPrice()
+                .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+        lifeOrder.setDistributionFee(lifeOrder.getDistributionFee()
+                .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+        if (lifeOrder.getItemSnapshots() != null && lifeOrder.getItemSnapshots().size() > 0) {
+            for (LifeOrderItemSnapshot itemSnapshot : lifeOrder.getItemSnapshots()) {
+                itemSnapshot.setCostPrice(itemSnapshot.getCostPrice()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+                itemSnapshot.setMarketPrice(itemSnapshot.getMarketPrice()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+                itemSnapshot.setNormalPrice(itemSnapshot.getNormalPrice()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+                itemSnapshot.setReturnPrice(itemSnapshot.getReturnPrice()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+                itemSnapshot.setTotalPrice(itemSnapshot.getTotalPrice()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            }
+        }
+        LifeOrderVo lifeOrderVo = new LifeOrderVo();
+        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
+        if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
+        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
+        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+        }
+        return lifeOrderVo;
     }
 
     public LifeOrder getLifeOrder(String sequenceNumber) {
@@ -279,7 +315,7 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
                 Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
                         merchantId, createTime, nowTime);
 
-                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,1);
+                jsonObject = getJSONObject(posProfitMoney, merchantStockMoney, 1);
 
             } else if (yueCha > month) { //商家使用超过6个月算最近6个月值
                 //获取最近前6个月的时间
@@ -287,14 +323,14 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
                 Map<String, Object> posProfitMoney = orderMapper.findPosProfitMoney(merchantId, beforeDate, nowTime);
                 Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
                         merchantId, beforeDate, nowTime);
-                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,6);
+                jsonObject = getJSONObject(posProfitMoney, merchantStockMoney, 6);
 
             } else { //计算商家当前使用月值
 
                 Map<String, Object> posProfitMoney = orderMapper.findPosProfitMoney(merchantId, createTime, nowTime);
                 Map<String, Object> merchantStockMoney = orderMapper.findMerchantStockMoney(
                         merchantId, createTime, nowTime);
-                jsonObject=getJSONObject(posProfitMoney,merchantStockMoney,yueCha);
+                jsonObject = getJSONObject(posProfitMoney, merchantStockMoney, yueCha);
             }
             jsonObject.put("userName", passport.getRealName());
             jsonObject.put("userPhone", passport.getPhoneNumber());

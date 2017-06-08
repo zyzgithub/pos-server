@@ -37,8 +37,8 @@ public class DefaultSettlementOrderManager implements SettlementOrderManager {
         lifeOrder.setPaymentType("-1");
         lifeOrder.setTransType(paymentType.getKey());
         long price = amount.multiply(BigDecimal.valueOf(100)).longValue();
-        lifeOrder.setActualPrice(price);
-        lifeOrder.setTotalPrice(price);
+        lifeOrder.setActualPrice(BigDecimal.valueOf(price));
+        lifeOrder.setTotalPrice(BigDecimal.valueOf(price));
         lifeOrder = orderJpaRepository.save(lifeOrder);
         return lifeOrder;
     }

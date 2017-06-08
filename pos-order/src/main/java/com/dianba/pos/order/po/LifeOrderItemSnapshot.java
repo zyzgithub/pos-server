@@ -2,6 +2,7 @@ package com.dianba.pos.order.po;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -41,17 +42,17 @@ public class LifeOrderItemSnapshot implements Serializable {
     @Column(name = "create_time")
     private Date createTime;
     @Column(name = "normal_quantity")
-    private Integer normalQuantity = Integer.valueOf(0);
+    private Integer normalQuantity = 0;
     @Column(name = "normal_price")
-    private Long normalPrice = Long.valueOf(0L);
+    private BigDecimal normalPrice = BigDecimal.ZERO;
     @Column(name = "cost_price")
-    private Long costPrice = Long.valueOf(0L);
+    private BigDecimal costPrice = BigDecimal.ZERO;
     @Column(name = "market_price")
-    private Long marketPrice = Long.valueOf(0L);
+    private BigDecimal marketPrice = BigDecimal.ZERO;
     @Column(name = "total_price")
-    private Long totalPrice = Long.valueOf(0L);
+    private BigDecimal totalPrice = BigDecimal.ZERO;
     @Column(name = "return_price")
-    private Long returnPrice = Long.valueOf(0L);
+    private BigDecimal returnPrice = BigDecimal.ZERO;
 
     public Long getId() {
         return id;
@@ -181,43 +182,46 @@ public class LifeOrderItemSnapshot implements Serializable {
         this.normalQuantity = normalQuantity;
     }
 
-    public Long getNormalPrice() {
+    public BigDecimal getNormalPrice() {
         return normalPrice;
     }
 
-    public void setNormalPrice(Long normalPrice) {
+    public void setNormalPrice(BigDecimal normalPrice) {
         this.normalPrice = normalPrice;
     }
 
-    public Long getCostPrice() {
+    public BigDecimal getCostPrice() {
         return costPrice;
     }
 
-    public void setCostPrice(Long costPrice) {
+    public void setCostPrice(BigDecimal costPrice) {
         this.costPrice = costPrice;
     }
 
-    public Long getMarketPrice() {
+    public BigDecimal getMarketPrice() {
         return marketPrice;
     }
 
-    public void setMarketPrice(Long marketPrice) {
+    public void setMarketPrice(BigDecimal marketPrice) {
         this.marketPrice = marketPrice;
     }
 
-    public Long getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Long totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Long getReturnPrice() {
+    public BigDecimal getReturnPrice() {
+        if (returnPrice == null) {
+            returnPrice = BigDecimal.ZERO;
+        }
         return returnPrice;
     }
 
-    public void setReturnPrice(Long returnPrice) {
+    public void setReturnPrice(BigDecimal returnPrice) {
         this.returnPrice = returnPrice;
     }
 }
