@@ -214,12 +214,34 @@ public class DefaultPassportManager implements PassportManager {
 
             lifePassportAliasJpaRepository.save(passportAlias);
             lifePassportAliasJpaRepository.save(passportAlias1);
-            PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
-                    passport.getId());
-            if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
-                posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
-                posCashierAccountJpaRepository.save(posCashierAccount);
+
+            //签约商家权限
+            LifePassportProperties b = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            registerVo.getAccountId(), "consumer", "14");
+
+            //pos商家权限
+            LifePassportProperties c = lifePassportPropertiesJpaRepository
+                    .findLifePassportPropertiesByPassportIdAndKAndV(
+                            registerVo.getAccountId(), "pos", "41");
+
+            if(b!=null){
+                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
+                        .findPosCashierAccountByMerchantIdAndAccountType(passport.getId(),0);
+                if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
+                    posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
+                    posCashierAccountJpaRepository.save(posCashierAccount);
+                }
+            }else if(c!=null){
+                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                        passport.getId());
+
+                if (!StringUtil.isEmpty(registerVo.getCashierPhoto())) {
+                    posCashierAccount.setCashierPhoto(registerVo.getCashierPhoto());
+                    posCashierAccountJpaRepository.save(posCashierAccount);
+                }
             }
+
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(passport);
             return BasicResult.createSuccessResult("编辑pos营业员信息成功!", jsonObject);
         } else {
@@ -268,10 +290,9 @@ public class DefaultPassportManager implements PassportManager {
                         .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
 
                 lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
+                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
+                        registerVo.getAccountId());
 
-
-                PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
-                        .findPosCashierAccountByMerchantIdAndAccountType(registerVo.getAccountId(), 1);
                 posCashierAccountJpaRepository.delete(posCashierAccount);
 
 
