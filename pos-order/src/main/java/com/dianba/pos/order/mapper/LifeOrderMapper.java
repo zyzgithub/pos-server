@@ -77,5 +77,6 @@ public interface LifeOrderMapper {
 
     OrderEntry findSettlementOrder4Today(@Param("passportId") Long passportId);
 
-    List<MerchantDayReportVo> findMerchantDayReport(Long merchantId);
+    List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId,@Param("itId") Long idId
+            ,@Param("itemName") String itemName);
 }

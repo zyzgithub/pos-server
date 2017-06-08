@@ -68,6 +68,14 @@ public class MerchantDayReportVo {
     }
 
 
+    public Double getMarginMoney(){
+
+        BigDecimal sumTotalMoneyBd=new BigDecimal(sumTotalMoney);
+        BigDecimal b=new BigDecimal(sumCostMoney);
+
+        return sumTotalMoneyBd.subtract(b).divide(a,2,BigDecimal.ROUND_UP).doubleValue();
+    }
+
     public String getGrossMargin() {
         BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
         BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);

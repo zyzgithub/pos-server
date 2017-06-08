@@ -62,9 +62,9 @@ public class MerchantOrderController {
 
     @ResponseBody
     @RequestMapping("findMerchantDayReport")
-    public BasicResult findMerchantDayReport(Long merchantId){
+    public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName){
 
-       List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId);
+       List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId,itId,itemName);
 
        return BasicResult.createSuccessResultWithDatas("获取成功",merchantDayReportVos);
 
