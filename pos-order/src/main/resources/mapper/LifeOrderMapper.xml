@@ -221,7 +221,7 @@
            FROM life_order.order_entry oe
            inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
            INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
-           WHERE pt.id=#{id} AND oe.type=7 AND oe.status in(8,256)
+           WHERE pt.id=#{id} AND oe.type=4 AND oe.status > 8
            AND oe.payment_time BETWEEN #{startTime}  AND #{endTime}
     </select>
 
@@ -241,5 +241,23 @@
         inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
         where o.partner_user_id=#{passportId} and o.type=8 and o.status in(1,8)
         and date_format(o.create_time,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
+    </select>
+
+    <!--商家商品每日销售报表-->
+    <select id="findMerchantDayReport" resultType="com.dianba.pos.order.vo.MerchantDayReportVo">
+        SELECT pi.id piId
+        ,pi.item_name itemName
+        ,ois.item_template_id itemTemplateId
+        ,it.id itId,it.title itTitle
+        ,count(1) sumCount
+        ,sum(ois.cost_price) sumCostMoney
+        ,sum(ois.total_price) sumTotalMoney
+        FROM life_order.order_entry oe
+        inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
+        INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
+        INNER JOIN life_pos.pos_item pi on pi.item_template_id=ois.item_template_id
+        INNER JOIN life_item.item_type it on it.id=pi.item_type_id
+        WHERE pt.id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
+        GROUP BY ois.item_template_id ORDER BY sumCount desc;
     </select>
 </mapper>

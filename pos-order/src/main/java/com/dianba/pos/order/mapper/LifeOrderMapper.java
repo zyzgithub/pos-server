@@ -1,5 +1,6 @@
 package com.dianba.pos.order.mapper;
 
+import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.order.vo.Order19EDto;
 import com.xlibao.metadata.order.OrderEntry;
@@ -75,4 +76,6 @@ public interface LifeOrderMapper {
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     OrderEntry findSettlementOrder4Today(@Param("passportId") Long passportId);
+
+    List<MerchantDayReportVo> findMerchantDayReport(Long merchantId);
 }
