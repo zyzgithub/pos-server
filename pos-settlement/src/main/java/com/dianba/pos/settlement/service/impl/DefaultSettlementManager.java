@@ -51,10 +51,13 @@ public class DefaultSettlementManager implements SettlementManager {
         List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
                 .findByPassportIdAndIsPaid(passportId, 0);
         Long merchantPassportId = 0L;
-        if (cashAmount == null) {
-            cashAmount = BigDecimal.ZERO;
-        }
-        if (posSettlementDaylies == null || posSettlementDaylies.size() == 0) {
+        /**
+         * 1、登录后获取结算单据，有结算数据，锁定结算
+         * 2、登录后获取结算单据，未生成结算单据，不锁定结算
+         * 3、登陆后点击结算，生成结算单据，锁定结算
+         */
+        if (cashAmount != null && posSettlementDaylies.size() == 0) {
+            //点击结算，锁定结算
             Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
             merchantPassportId = merchantPassport.getId();
             String dateTime = posSettlementDaylyMapper.findLastSettlementTime(passportId);
@@ -108,7 +111,7 @@ public class DefaultSettlementManager implements SettlementManager {
         basicResult.setResponseDatas(settlementDaylyVos);
         JSONObject jsonObject = basicResult.getResponse();
         jsonObject.put("totalAmount", totalAmount);
-        jsonObject.put("cashAmount", cashAmount);
+        jsonObject.put("cashAmount", cashAmount == null ? BigDecimal.ZERO : cashAmount);
         jsonObject.put("isDirectStore", isDirectStore ? 1 : 0);
         return basicResult;
     }
