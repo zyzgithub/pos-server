@@ -280,7 +280,7 @@ public class DefaultPassportManager implements PassportManager {
 
                 //删除2个登录账号
 
-                if(passport.getPhoneNumber().toString().equals(passport.getDefaultName())){
+                if(passport.getPhoneNumber().equals(passport.getDefaultName())){
                     LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
                             .findLifePassportAliasByAliasName(passport.getDefaultName());
                     lifePassportAliasJpaRepository.delete(lifePassportAlias);

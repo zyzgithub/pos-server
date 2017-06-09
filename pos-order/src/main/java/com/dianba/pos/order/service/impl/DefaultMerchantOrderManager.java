@@ -173,7 +173,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     }
     private void sendEmail(List<MerchantDayReportVo> lineList, String email, String merchantName) {
-        List<String> title = Arrays.asList("排名", "商品名称",  "商品类型名称", "销售数量", "总销售额",  "毛利", "毛利率");
+        List<String> title = Arrays.asList("排名",  "商品名称",  "所属分类",  "实时销售数"
+                ,  "实时销售金额",  "毛利", "毛利率");
         List<List<String>> datas = new LinkedList<>();
         int i=0;
         if (CollectionUtils.isNotEmpty(lineList)) {
@@ -184,8 +185,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                 data.add(line.getItemName() + "");
                 data.add(line.getItTitle() + "");
                 data.add(line.getSumCount() + "");
-                data.add(line.getSumTotalMoney() + "");
                 data.add(line.getTotalMoney() + "");
+                data.add(line.getMarginMoney() + "");
                 data.add(line.getGrossMargin() + "");
                 datas.add(data);
             }
