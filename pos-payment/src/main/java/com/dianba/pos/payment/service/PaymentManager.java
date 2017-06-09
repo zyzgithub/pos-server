@@ -15,10 +15,21 @@ public interface PaymentManager {
 
     String PASSPORT_CURRENCY = BASE_URL + "passportCurrency";
 
+    String PAYMENT_PASSWORD_VAILD = BASE_URL + "paymentPasswordValidation";
+
     /**
      * 余额支付
      */
     BasicResult balancePayment(long passportId, long orderId, String paymentPassword);
+
+    /**
+     * 校验商家支付密码
+     *
+     * @param passportId
+     * @param paymentPassword
+     * @return
+     */
+    BasicResult checkPayPasswordKey(Long passportId, String paymentPassword);
 
     /**
      * 获取商家余额

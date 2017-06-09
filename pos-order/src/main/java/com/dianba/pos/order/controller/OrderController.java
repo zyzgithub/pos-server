@@ -126,9 +126,6 @@ public class OrderController extends BasicWebService {
     public BasicResult getOrderDetail(long orderId) {
         BasicResult basicResult = BasicResult.createSuccessResult();
         OrderEntry orderEntry = orderManager.getOrder(orderId);
-        if (orderEntry == null) {
-            throw new PosNullPointerException("订单不存在！" + orderId);
-        }
         basicResult.setResponse(JSONObject.parseObject(JSON.toJSON(orderEntry).toString()));
         return basicResult;
     }

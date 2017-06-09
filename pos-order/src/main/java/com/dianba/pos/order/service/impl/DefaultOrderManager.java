@@ -63,6 +63,9 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
         if (basicResult.isSuccess()) {
             JSONObject jsonObject = basicResult.getResponse();
             OrderEntry orderEntry = jsonObject.toJavaObject(OrderEntry.class);
+            if (orderEntry == null) {
+                throw new PosNullPointerException("订单不存在！");
+            }
             return orderEntry;
         }
         return null;

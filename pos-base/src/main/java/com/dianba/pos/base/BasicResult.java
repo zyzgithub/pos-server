@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 
 public class BasicResult {
 
@@ -44,8 +46,15 @@ public class BasicResult {
         this.response = response;
     }
 
+    @JsonIgnore
+    public JSONArray getResponseDatas() {
+        if (response == null) {
+            return new JSONArray();
+        }
+        return (JSONArray) response.get("datas");
+    }
 
-    public void setResponseDatas(Object datas) {
+    public <T> void setResponseDatas(List<T> datas) {
         if (response == null) {
             response = new JSONObject();
         }
@@ -64,7 +73,7 @@ public class BasicResult {
         return basicResult;
     }
 
-    public static BasicResult createSuccessResultWithDatas(String msg, Object datas) {
+    public static <T> BasicResult createSuccessResultWithDatas(String msg, List<T> datas) {
         BasicResult basicResult = createSuccessResult();
         basicResult.setMsg(msg);
         basicResult.setResponseDatas(datas);

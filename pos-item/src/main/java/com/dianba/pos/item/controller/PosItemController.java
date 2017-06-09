@@ -1,11 +1,13 @@
 package com.dianba.pos.item.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.config.MenuUrlConstant;
-import com.dianba.pos.item.po.*;
+import com.dianba.pos.item.po.LifeItemType;
+import com.dianba.pos.item.po.LifeItemUnit;
+import com.dianba.pos.item.po.PosItem;
+import com.dianba.pos.item.po.PosType;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.service.*;
@@ -109,7 +111,7 @@ public class PosItemController {
                 posTypeVo.setItemTypeId(posType.getItemTypeId());
                 posTypeVo.setTitle(itemType.getTitle());
                 List<PosItem> posItems = posItemManager.getAllByPassportIdAndItemTypeId(posType.getPassportId()
-                        ,posType.getItemTypeId());
+                        , posType.getItemTypeId());
                 posTypeVo.setTypeCount(posItems.size());
                 posTypeVos.add(posTypeVo);
             }
@@ -163,14 +165,12 @@ public class PosItemController {
         if (StringUtil.isEmpty(barcode) || StringUtil.isEmpty(passportId)) {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
-            JSONObject jsonObject = null;
-            List<PosItemVo> posItemVos=new ArrayList<>();
+            List<PosItemVo> posItemVos = new ArrayList<>();
             PosItemVo posItemVo = posItemManager.getItemByBarcode(barcode, passportId);
             if (posItemVo != null) {
                 posItemVos.add(posItemVo);
             }
-            JSONArray jsonArray=(JSONArray) JSONArray.toJSON(posItemVos);
-            return BasicResult.createSuccessResultWithDatas("获取信息成功!", jsonArray);
+            return BasicResult.createSuccessResultWithDatas("获取信息成功!", posItemVos);
         }
 
     }
@@ -242,7 +242,7 @@ public class PosItemController {
 
             logger.info("=======================没有此商品信息=================================");
             return BasicResult.createFailResult("数据出现异常,请联系管理员!");
-        } else if (posItem.getPassportId() .equals(posItemVo.getPassportId())) {
+        } else if (posItem.getPassportId().equals(posItemVo.getPassportId())) {
             logger.info("商品isShelve:" + posItemVo.getIsShelve());
             posItem.setIsShelve(posItemVo.getIsShelve());
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {

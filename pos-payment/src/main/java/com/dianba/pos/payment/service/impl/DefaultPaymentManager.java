@@ -1,9 +1,10 @@
 package com.dianba.pos.payment.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
-import com.dianba.pos.base.exception.PosNullPointerException;
+import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.vo.LifeOrderVo;
@@ -11,14 +12,13 @@ import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantRate;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosMerchantRateManager;
-import com.dianba.pos.payment.po.LifePaymentTransactionLogger;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
-import com.dianba.pos.payment.repository.LifePaymentTransLoggerJpaRepository;
 import com.dianba.pos.payment.service.AliPayManager;
 import com.dianba.pos.payment.service.PaymentManager;
+import com.dianba.pos.payment.service.TransLoggerManager;
 import com.dianba.pos.payment.service.WechatPayManager;
 import com.dianba.pos.payment.support.PaymentRemoteService;
-import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.dianba.pos.payment.vo.PassportCurrencyVo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -46,7 +47,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     @Autowired
     private WechatPayManager wechatPayManager;
     @Autowired
-    private LifePaymentTransLoggerJpaRepository transLoggerJpaRepository;
+    private TransLoggerManager transLoggerManager;
     @Autowired
     private PosMerchantRateManager posMerchantRateManager;
     @Autowired
@@ -59,9 +60,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
 
     public BasicResult balancePayment(long passportId, long orderId, String paymentPassword) {
         OrderEntry orderEntry = orderManager.getOrder(orderId);
-        if (orderEntry == null) {
-            throw new PosNullPointerException("订单不存在！");
-        }
         Map<String, String> params = new HashMap<>();
         params.put("passportId", String.valueOf(passportId));
         //支付类型
@@ -111,10 +109,29 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         return basicResult;
     }
 
+    public BasicResult checkPayPasswordKey(Long passportId, String paymentPassword) {
+        Map<String, String> params = new HashMap<>();
+        params.put("passportId", passportId + "");
+        params.put("paymentPassword", paymentPassword);
+        return postPay(PAYMENT_PASSWORD_VAILD, params);
+    }
+
     public BasicResult passportCurrency(long passportId) throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("passportId", passportId + "");
-        return postPay(PASSPORT_CURRENCY, params);
+        BasicResult basicResult = postPay(PASSPORT_CURRENCY, params);
+        if (basicResult.isSuccess()) {
+            JSONArray jsonArray = basicResult.getResponseDatas();
+            List<PassportCurrencyVo> passportCurrencyVos = JsonHelper.toList(jsonArray, PassportCurrencyVo.class);
+            for (PassportCurrencyVo passportCurrency : passportCurrencyVos) {
+                passportCurrency.setCurrentAmount(passportCurrency.getCurrentAmount()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+                passportCurrency.setFreezeAmount(passportCurrency.getFreezeAmount()
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+            }
+            basicResult.setResponseDatas(passportCurrencyVos);
+        }
+        return basicResult;
     }
 
     public BasicResult payOrder(long passportId, long orderId, String paymentTypeKey
@@ -150,8 +167,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         BasicResult basicResult = BasicResult.createFailResult();
         if (barcodePayResponse.isSuccess()) {
             //保存支付信息
-            saveTransLog(orderEntry.getSequenceNumber(), passportId, authCode, paymentTypeEnum, transTypeEnum
-                    , totalPrice);
+            transLoggerManager.saveTransLog(orderEntry.getSequenceNumber()
+                    , passportId, authCode, paymentTypeEnum, transTypeEnum, totalPrice);
             return completeOrder(basicResult, orderEntry, passportId, paymentTypeEnum, transTypeEnum);
         } else {
             basicResult = BasicResult.createFailResult(barcodePayResponse.getMsg());
@@ -219,28 +236,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             logger.error("订单保存异常!" + e.getMessage());
         }
         return basicResult;
-    }
-
-
-    private void saveTransLog(String transSequenceNumber, Long passportId, String authCode
-            , PaymentTypeEnum paymentType, TransTypeEnum transType, Long transAmount) {
-        LifePaymentTransactionLogger transactionLogger = new LifePaymentTransactionLogger();
-        transactionLogger.setTransSequenceNumber(transSequenceNumber);
-        transactionLogger.setPassportId(passportId);
-        transactionLogger.setPaymentType(paymentType.getKey());
-        transactionLogger.setTransType(transType.getKey());
-        transactionLogger.setPartnerId(appConfig.getPosPartnerId());
-        transactionLogger.setAppId(appConfig.getPosAppId());
-        transactionLogger.setPartnerUserId(passportId + "");
-        transactionLogger.setPartnerTradeNumber(authCode);
-        transactionLogger.setChannelId(paymentType.getChannelId());
-        transactionLogger.setTransUnitAmount(transAmount);
-        transactionLogger.setTransNumber(1);
-        transactionLogger.setTransTotalAmount(transAmount);
-        transactionLogger.setTransTitle(transType.getValue());
-        transactionLogger.setUseConpon(GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
-        transactionLogger.setDiscountAmount(0L);
-        transLoggerJpaRepository.save(transactionLogger);
     }
 
     @Override

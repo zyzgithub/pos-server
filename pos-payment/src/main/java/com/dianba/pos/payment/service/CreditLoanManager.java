@@ -15,5 +15,5 @@ public interface CreditLoanManager {
 
     CreditLoanQuotaVo getQuota(Long passportId) throws Exception;
 
-    BasicResult submitOrder(Long passportId, Long orderId) throws Exception;
+    BasicResult submitOrder(Long passportId, Long orderId, String paymentPassword) throws Exception;
 }

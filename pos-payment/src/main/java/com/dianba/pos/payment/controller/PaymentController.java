@@ -1,7 +1,9 @@
 package com.dianba.pos.payment.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.payment.config.PaymentURLConstant;
+import com.dianba.pos.payment.service.CreditLoanManager;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
@@ -21,6 +23,8 @@ public class PaymentController extends BasicWebService {
 
     @Autowired
     private PaymentManager paymentManager;
+    @Autowired
+    private CreditLoanManager creditLoanManager;
 
     /**
      * 支付订单
@@ -46,11 +50,17 @@ public class PaymentController extends BasicWebService {
     }
 
     /**
-     * 获取用户余额
+     * 获取用户余额，以及显示是否可以信用卡支付
      */
     @ResponseBody
     @RequestMapping("passport_currency")
     public BasicResult passportCurrency(long passportId) throws Exception {
-        return paymentManager.passportCurrency(passportId);
+        BasicResult basicResult = paymentManager.passportCurrency(passportId);
+        JSONObject jsonObject = basicResult.getResponse();
+        BasicResult creditResult = creditLoanManager.isHaveCreditLoanQuota(passportId);
+        if (creditResult.isSuccess()) {
+            jsonObject.putAll(creditResult.getResponse());
+        }
+        return basicResult;
     }
 }
