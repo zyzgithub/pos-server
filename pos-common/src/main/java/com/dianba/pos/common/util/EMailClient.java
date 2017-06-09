@@ -14,10 +14,10 @@ import java.util.Properties;
 @SuppressWarnings("all")
 public class EMailClient {
     //定义发件人、收件人、SMTP服务器、用户名、密码、主题、内容等
-    private String from = "pengyuanyuan@0085.com";
+    private String from = "guangdongdianba@0085.com";
     private String smtpServer = "smtp.ym.163.com";
-    private String username = "pengyuanyuan@0085.com";
-    private String password = "pyy0101";
+    private String username = "guangdongdianba@0085.com";
+    private String password = "dbkj123456";
     private boolean ifAuth; //服务器是否要身份认证
 
     private String displayName;
