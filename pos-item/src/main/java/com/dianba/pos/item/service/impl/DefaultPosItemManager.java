@@ -439,38 +439,7 @@ public class DefaultPosItemManager implements PosItemManager {
     public List<PosItemVo> convertToVos(List<PosItem> posItems) {
         List<PosItemVo> posItemVos = new ArrayList<>();
         for (PosItem posItem : posItems) {
-
-            LifeItemTemplate itemTemplate = itemTemplateManager
-                    .getItemTemplateById(posItem.getItemTemplateId());
-            PosItemVo posItemVo = new PosItemVo();
-            posItemVo.setId(posItem.getId());
-            posItemVo.setPosTypeId(posItem.getPosTypeId());
-            LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-            posItemVo.setPosTypeName(itemType.getTitle());
-            posItemVo.setItemTemplateId(itemTemplate.getId());
-            posItemVo.setItemName(posItem.getItemName());
-            BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-            BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-            BigDecimal a = new BigDecimal(100);
-            Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            posItemVo.setStockPrice(sPrice);
-            posItemVo.setSalesPrice(saPrice);
-            posItemVo.setItemTypeId(posItem.getItemTypeId());
-            posItemVo.setBuyCount(posItem.getBuyCount());
-            posItemVo.setCreateDate(posItem.getCreateTime());
-            posItemVo.setBarcode(itemTemplate.getBarcode());
-            posItemVo.setIsDelete(posItem.getIsDelete());
-            posItemVo.setIsShelve(posItem.getIsShelve());
-            posItemVo.setItemImg(posItem.getItemImgUrl());
-            posItemVo.setRepertory(posItem.getRepertory());
-            posItemVo.setPassportId(posItem.getPassportId());
-            posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-            posItemVo.setShelfLife(posItem.getShelfLife());
-            LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
-            posItemVo.setItemUnitId(itemUnit.getId());
-            posItemVo.setItemUnitName(itemUnit.getTitle());
-            posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+            PosItemVo posItemVo=convertToVo(posItem);
             posItemVos.add(posItemVo);
         }
 
