@@ -56,34 +56,27 @@ public class MerchantDayReportVo {
 
     public Double getCostMoney() {
         BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
-        BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);
-        return sumMoneyBd.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+        return sumMoneyBd.divide(a, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 
     public Double getTotalMoney() {
-        BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
         BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);
-        return sumTotalMoneyBd.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+        return sumTotalMoneyBd.divide(a, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 
     public Double getMarginMoney(){
 
-        BigDecimal sumTotalMoneyBd=new BigDecimal(sumTotalMoney);
-        BigDecimal b=new BigDecimal(sumCostMoney);
-
-        return sumTotalMoneyBd.subtract(b).divide(a,2,BigDecimal.ROUND_UP).doubleValue();
+        BigDecimal sumTotalMoneyBd=new BigDecimal(Double.toString(getCostMoney()));
+        BigDecimal b=new BigDecimal(Double.toString(getTotalMoney()));
+        return b.subtract(sumTotalMoneyBd).doubleValue();
     }
 
     public String getGrossMargin() {
-        BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
-        BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);
-        Double c = new BigDecimal(sumTotalMoney - sumCostMoney)
-                .divide(sumTotalMoneyBd, 2, BigDecimal.ROUND_UP)
-                .multiply(a)
-                .doubleValue();
-
+        BigDecimal abc = new BigDecimal(getMarginMoney());
+        BigDecimal abcd = new BigDecimal(getTotalMoney());
+        Double c = abc.multiply(a).divide(abcd, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return c+"%";
     }
 

@@ -250,7 +250,7 @@
         ,ois.item_template_id itemTemplateId
         ,it.id itId,it.title itTitle
         ,sum(ois.normal_quantity) sumCount
-        ,sum(ois.cost_price) sumCostMoney
+        ,sum(ois.cost_price*ois.normal_quantity) sumCostMoney
         ,sum(ois.total_price) sumTotalMoney
         FROM life_order.order_entry oe
         inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
