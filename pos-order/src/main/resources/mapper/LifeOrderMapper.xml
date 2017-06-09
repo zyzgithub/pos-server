@@ -103,10 +103,9 @@
     <!--2.0分界线-->
     <!--2.0分界线-->
     <!--2.0分界线-->
-    <resultMap id="BaseResultMap" type="com.xlibao.metadata.order.OrderEntry">
+    <resultMap id="BaseResultMap" type="com.dianba.pos.order.po.LifeOrder">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="sequence_number" jdbcType="VARCHAR" property="sequenceNumber"/>
-        <result column="order_sequence_number" jdbcType="VARCHAR" property="orderSequenceNumber"/>
         <result column="partner_id" jdbcType="VARCHAR" property="partnerId"/>
         <result column="partner_user_id" jdbcType="VARCHAR" property="partnerUserId"/>
         <result column="type" jdbcType="INTEGER" property="type"/>
@@ -115,9 +114,9 @@
         <result column="refund_status" jdbcType="INTEGER" property="refundStatus"/>
         <result column="payment_type" jdbcType="TINYINT" property="paymentType"/>
         <result column="trans_type" jdbcType="VARCHAR" property="transType"/>
-        <result column="user_source" jdbcType="INTEGER" property="userSource"/>
-        <result column="day_sort_number" jdbcType="INTEGER" property="daySortNumber"/>
-        <result column="push_type" jdbcType="INTEGER" property="pushType"/>
+        <!--<result column="user_source" jdbcType="INTEGER" property="userSource"/>-->
+        <!--<result column="day_sort_number" jdbcType="INTEGER" property="daySortNumber"/>-->
+        <!--<result column="push_type" jdbcType="INTEGER" property="pushType"/>-->
         <result column="shipping_passport_id" jdbcType="BIGINT" property="shippingPassportId"/>
         <result column="shipping_nick_name" jdbcType="VARCHAR" property="shippingNickName"/>
         <result column="shipping_province" jdbcType="VARCHAR" property="shippingProvince"/>
@@ -150,9 +149,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
         <result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime"/>
-        <result column="body" jdbcType="VARCHAR" property="body"/>
-        <result column="detail" jdbcType="VARCHAR" property="detail"/>
-        <collection property="itemSnapshots" ofType="com.xlibao.metadata.order.OrderItemSnapshot">
+        <collection property="itemSnapshots" ofType="com.dianba.pos.order.po.LifeOrderItemSnapshot">
             <id column="id" jdbcType="BIGINT" property="id"/>
             <result column="order_id" jdbcType="BIGINT" property="orderId"/>
             <result column="user_mark" jdbcType="VARCHAR" property="userMark"/>
@@ -169,13 +166,13 @@
             <result column="introduction_page" jdbcType="VARCHAR" property="introductionPage"/>
             <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
             <result column="normal_quantity" jdbcType="INTEGER" property="normalQuantity"/>
-            <result column="discount_quantity" jdbcType="INTEGER" property="discountQuantity"/>
-            <result column="shipment_quantity" jdbcType="INTEGER" property="shipmentQuantity"/>
-            <result column="distribution_quantity" jdbcType="INTEGER" property="distributionQuantity"/>
-            <result column="receipt_quantity" jdbcType="INTEGER" property="receiptQuantity"/>
-            <result column="return_quantity" jdbcType="INTEGER" property="returnQuantity"/>
+            <!--<result column="discount_quantity" jdbcType="INTEGER" property="discountQuantity"/>-->
+            <!--<result column="shipment_quantity" jdbcType="INTEGER" property="shipmentQuantity"/>-->
+            <!--<result column="distribution_quantity" jdbcType="INTEGER" property="distributionQuantity"/>-->
+            <!--<result column="receipt_quantity" jdbcType="INTEGER" property="receiptQuantity"/>-->
+            <!--<result column="return_quantity" jdbcType="INTEGER" property="returnQuantity"/>-->
             <result column="normal_price" jdbcType="BIGINT" property="normalPrice"/>
-            <result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>
+            <!--<result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>-->
             <result column="cost_price" jdbcType="BIGINT" property="costPrice"/>
             <result column="market_price" jdbcType="BIGINT" property="marketPrice"/>
             <result column="total_price" jdbcType="BIGINT" property="totalPrice"/>
@@ -212,6 +209,7 @@
         select * from life_order.order_entry o
         inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
         where o.partner_user_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
+        order by o.id desc
     </select>
 
 
@@ -258,8 +256,8 @@
         INNER JOIN life_pos.pos_item pi on pi.item_template_id=ois.item_template_id
         INNER JOIN life_item.item_type it on it.id=pi.item_type_id
         WHERE pt.id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
-        <if test="itId !=null"> AND it.id=#{itId}</if>
-        <if test="itemName !=null"> AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
+        <if test="itId !=null">AND it.id=#{itId}</if>
+        <if test="itemName !=null">AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
         GROUP BY ois.item_template_id ORDER BY sumCount desc;
     </select>
 </mapper>

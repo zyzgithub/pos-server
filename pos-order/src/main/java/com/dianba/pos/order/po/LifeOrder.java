@@ -37,18 +37,54 @@ public class LifeOrder implements Serializable {
     private String paymentType;
     @Column(name = "trans_type")
     private String transType;
+
     @Column(name = "shipping_passport_id")
     private Long shippingPassportId;
     @Column(name = "shipping_nick_name")
     private String shippingNickName;
+    @Column(name = "shipping_province")
+    private String shippingProvince;
+    @Column(name = "shipping_city")
+    private String shippingCity;
+    @Column(name = "shipping_district")
+    private String shippingDistrict;
+    @Column(name = "shipping_address")
+    private String shippingAddress;
+    @Column(name = "shipping_location")
+    private String shippingLocation;
     @Column(name = "shipping_phone")
     private String shippingPhone;
+
     @Column(name = "receipt_user_id")
     private String receiptUserId;
+    @Column(name = "receipt_nick_name")
+    private String receiptNickName;
+    @Column(name = "receipt_province")
+    private String receiptProvince;
+    @Column(name = "receipt_city")
+    private String receiptCity;
+    @Column(name = "receipt_district")
+    private String receiptDistrict;
+    @Column(name = "receipt_address")
+    private String receiptAddress;
     @Column(name = "receipt_phone")
     private String receiptPhone;
     @Column(name = "receipt_location")
     private String receiptLocation;
+
+    @Column(name = "courier_passport_id")
+    private Long courierPassportId = 0L;
+    @Column(name = "courier_nick_name")
+    private String courierNickName;
+    @Column(name = "courier_phone")
+    private String courierPhone;
+    @Column(name = "total_distance")
+    private Long totalDistance;
+    @Column(name = "current_location")
+    private String currentLocation;
+    @Column(name = "collecting_fees")
+    private Byte collectingFees;
+
     @Column(name = "remark")
     private String remark;
     @Column(name = "actual_price")
@@ -67,6 +103,8 @@ public class LifeOrder implements Serializable {
     private Date createTime;
     @Column(name = "payment_time")
     private Date paymentTime = new Date(0L);
+    @Column(name = "confirm_time")
+    private Date confirmTime = new Date(0L);
 
     @OneToMany
     @JoinColumn(name = "order_id")
@@ -276,6 +314,142 @@ public class LifeOrder implements Serializable {
 
     public void setPaymentTime(Date paymentTime) {
         this.paymentTime = paymentTime;
+    }
+
+    public String getShippingProvince() {
+        return shippingProvince;
+    }
+
+    public void setShippingProvince(String shippingProvince) {
+        this.shippingProvince = shippingProvince;
+    }
+
+    public String getShippingCity() {
+        return shippingCity;
+    }
+
+    public void setShippingCity(String shippingCity) {
+        this.shippingCity = shippingCity;
+    }
+
+    public String getShippingDistrict() {
+        return shippingDistrict;
+    }
+
+    public void setShippingDistrict(String shippingDistrict) {
+        this.shippingDistrict = shippingDistrict;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public String getShippingLocation() {
+        return shippingLocation;
+    }
+
+    public void setShippingLocation(String shippingLocation) {
+        this.shippingLocation = shippingLocation;
+    }
+
+    public String getReceiptNickName() {
+        return receiptNickName;
+    }
+
+    public void setReceiptNickName(String receiptNickName) {
+        this.receiptNickName = receiptNickName;
+    }
+
+    public String getReceiptProvince() {
+        return receiptProvince;
+    }
+
+    public void setReceiptProvince(String receiptProvince) {
+        this.receiptProvince = receiptProvince;
+    }
+
+    public String getReceiptCity() {
+        return receiptCity;
+    }
+
+    public void setReceiptCity(String receiptCity) {
+        this.receiptCity = receiptCity;
+    }
+
+    public String getReceiptDistrict() {
+        return receiptDistrict;
+    }
+
+    public void setReceiptDistrict(String receiptDistrict) {
+        this.receiptDistrict = receiptDistrict;
+    }
+
+    public String getReceiptAddress() {
+        return receiptAddress;
+    }
+
+    public void setReceiptAddress(String receiptAddress) {
+        this.receiptAddress = receiptAddress;
+    }
+
+    public Long getCourierPassportId() {
+        return courierPassportId;
+    }
+
+    public void setCourierPassportId(Long courierPassportId) {
+        this.courierPassportId = courierPassportId;
+    }
+
+    public String getCourierNickName() {
+        return courierNickName;
+    }
+
+    public void setCourierNickName(String courierNickName) {
+        this.courierNickName = courierNickName;
+    }
+
+    public String getCourierPhone() {
+        return courierPhone;
+    }
+
+    public void setCourierPhone(String courierPhone) {
+        this.courierPhone = courierPhone;
+    }
+
+    public Long getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Long totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(String currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public Byte getCollectingFees() {
+        return collectingFees;
+    }
+
+    public void setCollectingFees(Byte collectingFees) {
+        this.collectingFees = collectingFees;
+    }
+
+    public Date getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(Date confirmTime) {
+        this.confirmTime = confirmTime;
     }
 
     public List<LifeOrderItemSnapshot> getItemSnapshots() {

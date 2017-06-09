@@ -1,9 +1,9 @@
 package com.dianba.pos.order.mapper;
 
+import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.order.vo.Order19EDto;
-import com.xlibao.metadata.order.OrderEntry;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,8 +13,6 @@ import java.util.Map;
 
 @Mapper
 public interface LifeOrderMapper {
-
-
 
 
     /**
@@ -60,7 +58,7 @@ public interface LifeOrderMapper {
      * @param orderStatus
      * @return
      */
-    List<OrderEntry> findOrderForPos(@Param("passportId") Long passportId
+    List<LifeOrder> findOrderForPos(@Param("passportId") Long passportId
             , @Param("orderType") Integer orderType, @Param("orderStatus") Integer orderStatus);
 
     /**
@@ -75,8 +73,8 @@ public interface LifeOrderMapper {
     Map<String, Object> findMerchantStockMoney(@Param("id") Long id
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
-    OrderEntry findSettlementOrder4Today(@Param("passportId") Long passportId);
+    LifeOrder findSettlementOrder4Today(@Param("passportId") Long passportId);
 
-    List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId,@Param("itId") Long idId
-            ,@Param("itemName") String itemName);
+    List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
+            , @Param("itemName") String itemName);
 }

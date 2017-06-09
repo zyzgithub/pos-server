@@ -8,7 +8,6 @@ import com.dianba.pos.order.util.OrderSequenceUtil;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
-import com.xlibao.metadata.order.OrderEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,7 @@ public class DefaultSettlementOrderManager implements SettlementOrderManager {
         return lifeOrder;
     }
 
-    public OrderEntry findSettlementOrderByDay(Long passportId) {
+    public LifeOrder findSettlementOrderByDay(Long passportId) {
         return orderMapper.findSettlementOrder4Today(passportId);
     }
 }

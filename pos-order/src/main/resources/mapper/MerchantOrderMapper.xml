@@ -7,40 +7,94 @@
     <select id="findTodayAndMonthIncomeAmount" resultType="java.util.Map">
         select ifnull(a.todayTotalAmount,0) todayTotalAmount,ifnull(b.monthTotalAmount,0) monthTotalAmount
         from
-            (select sum(t.total_price) todayTotalAmount
-            from life_order.order_entry t
-            where t.shipping_passport_id=#{passportId}
-            and t.type in(4,9) and t.status =8
-            and t.payment_time >=curdate()) a
+            (select sum(x.total_price-x.total_price*x.rate) todayTotalAmount from (
+                select t.total_price,t.trans_type
+                    ,case t.trans_type
+                        when 'CASH' then 0
+                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
+                        else 0 end rate
+                from life_order.order_entry t
+                inner join (
+                    select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
+                    union
+                    select 1,0.0038
+                    limit 1
+                ) b on 1=1
+                where t.shipping_passport_id=#{passportId}
+                and t.type in(4,9) and t.status =8
+                and t.payment_time >=curdate()
+                ) x
+            ) a
         inner join
-            (select sum(t.total_price) monthTotalAmount
-            from life_order.order_entry t
-            where t.shipping_passport_id=#{passportId}
-            and t.type in(4,9) and t.status =8
-            and date_format(t.payment_time,'%Y-%m')=date_format(now(),'%Y-%m')) b on 1=1
+            (select sum(x.total_price-x.total_price*x.rate) monthTotalAmount from (
+                select t.total_price,t.trans_type
+                    ,case t.trans_type
+                        when 'CASH' then 0
+                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
+                        else 0 end rate
+                from life_order.order_entry t
+                inner join (
+                    select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
+                    union
+                    select 1,0.0038
+                    limit 1
+                ) b on 1=1
+                where t.shipping_passport_id=#{passportId}
+                and t.type in(4,9) and t.status =8
+                and date_format(t.payment_time,'%Y-%m')=date_format(now(),'%Y-%m')
+                ) x
+            ) b on 1=1
     </select>
 
     <!--商家按日分组收入合计-->
     <select id="findMerchantDayIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderDayIncomeVo">
-        select a.time,count(a.time) count,sum(a.amount) totalAmount from (
-            select date_format(t.payment_time,'%Y-%m-%d') time ,t.total_price amount
-            from life_order.order_entry t
-            where t.shipping_passport_id=#{passportId}
-              and t.type in(4,9) and t.status = 8
-              and date_format(t.payment_time,'%Y-%m-%d')
-                between date_format(#{beginDate},'%Y-%m-%d') and date_format(#{endDate},'%Y-%m-%d')
+        select a.time,count(a.time) count,sum(a.real_amount) totalAmount from (
+            select x.*,x.amount-x.amount*x.rate real_amount from (
+                select date_format(t.payment_time,'%Y-%m-%d') time
+                    ,b.commission_rate,t.total_price amount
+                    ,t.trans_type
+                    ,case t.trans_type
+                        when 'CASH' then 0
+                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
+                        else 0 end rate
+                from life_order.order_entry t
+                inner join (
+                    select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
+                    union
+                    select 1,0.0038
+                    limit 1
+                ) b on 1=1
+                where t.shipping_passport_id=#{passportId}
+                  and t.type in(4,9) and t.status = 8
+                  and date_format(t.payment_time,'%Y-%m-%d')
+                    between date_format(#{beginDate},'%Y-%m-%d') and date_format(#{endDate},'%Y-%m-%d')
+            ) x
         ) a group by a.time
         order by a.time desc
     </select>
 
     <!--查询商家收入订单列表-->
     <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderIncomeVo">
-        select * from (
-        select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,`sequence_number` transSequence
-        ,t.`total_price` amount,t.`trans_type` transType
-        from life_order.order_entry t
-        where t.shipping_passport_id=#{passportId}
-        and t.type in(4,9) and t.status =8
+        select a.*,a.total_price-a.total_price*a.rate amount from (
+            select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,sequence_number transSequence
+            ,t.total_price,t.trans_type transType
+            ,case t.trans_type
+            when 'CASH' then 0
+            when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+            when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
+            else 0 end rate
+            from life_order.order_entry t
+            inner join (
+                select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
+                union
+                select 1,0.0038
+                limit 1
+            ) b on 1=1
+            where t.shipping_passport_id=#{passportId}
+            and t.type in(4,9) and t.status =8
         <if test="enterType==1">
             and date_format(t.payment_time,'%Y-%m-%d')=date_format(#{date},'%Y-%m-%d')
         </if>

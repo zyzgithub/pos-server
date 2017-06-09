@@ -250,8 +250,12 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
 
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize) {
-        Page<List<OrderEntry>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+        Page<List<LifeOrder>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForPos(passportId, orderType, orderStatus));
+        for (Object object : orderPage) {
+            LifeOrder lifeOrder = (LifeOrder) object;
+            lifeOrderTransformation(lifeOrder);
+        }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);
         basicResult.getResponse().put("pageNum", pageNum);

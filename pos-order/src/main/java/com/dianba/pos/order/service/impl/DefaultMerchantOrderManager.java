@@ -14,9 +14,7 @@ import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.passport.po.Passport;
-import com.dianba.pos.passport.po.PosMerchantRate;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
-import com.dianba.pos.passport.service.PosMerchantRateManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
@@ -40,13 +38,10 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Autowired
     private MerchantOrderMapper merchantOrderMapper;
     @Autowired
-    private PosMerchantRateManager posMerchantRateManager;
-
-    @Autowired
     private LifeOrderMapper lifeOrderMapper;
-
     @Autowired
     private PassportJpaRepository passportJpaRepository;
+
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
@@ -61,20 +56,15 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Override
     public BasicResult findTodayAndMonthIncomeAmount(Long passportId) {
         Map<String, Object> merchantIncomeMap = merchantOrderMapper.findTodayAndMonthIncomeAmount(passportId);
-        PosMerchantRate posMerchantRate = posMerchantRateManager.findByMerchantPassportId(passportId);
-        BigDecimal rate = PosMerchantRate.COMMISSION_RATE;
-        if (posMerchantRate != null) {
-            rate = posMerchantRate.getCommissionRate();
-        }
         BigDecimal todayTotalAmount = BigDecimal.ZERO;
         BigDecimal monthTotalAmount = BigDecimal.ZERO;
         if (merchantIncomeMap != null) {
-            todayTotalAmount = (BigDecimal) merchantIncomeMap.get("todayTotalAmount");
-            monthTotalAmount = (BigDecimal) merchantIncomeMap.get("monthTotalAmount");
-            todayTotalAmount = todayTotalAmount.subtract(todayTotalAmount.multiply(rate))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP);
-            monthTotalAmount = monthTotalAmount.subtract(monthTotalAmount.multiply(rate))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP);
+            todayTotalAmount = BigDecimal.valueOf(
+                    Double.parseDouble(merchantIncomeMap.get("todayTotalAmount").toString()));
+            monthTotalAmount = BigDecimal.valueOf(
+                    Double.parseDouble(merchantIncomeMap.get("monthTotalAmount").toString()));
+            todayTotalAmount = todayTotalAmount.setScale(0, BigDecimal.ROUND_HALF_UP);
+            monthTotalAmount = monthTotalAmount.setScale(0, BigDecimal.ROUND_HALF_UP);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
@@ -101,11 +91,6 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         Integer orderEnterType = enterType;
         Page<MerchantOrderIncomeVo> orderIncomePage = PageHelper.startPage(pageIndex, pageSize)
                 .doSelectPage(() -> merchantOrderMapper.findMerchantIncomeOrder(passportId, orderEnterType, orderDate));
-        PosMerchantRate posMerchantRate = posMerchantRateManager.findByMerchantPassportId(passportId);
-        BigDecimal rate = PosMerchantRate.COMMISSION_RATE;
-        if (posMerchantRate != null) {
-            rate = posMerchantRate.getCommissionRate();
-        }
         String beginDate = "";
         String endDate = "";
         for (MerchantOrderIncomeVo orderIncome : orderIncomePage) {
@@ -123,8 +108,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                     endDate = orderIncome.getTime();
                 }
             }
-            orderIncome.setAmount(orderIncome.getAmount().subtract(orderIncome.getAmount().multiply(rate))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            orderIncome.setAmount(orderIncome.getAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
             try {
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderIncome.getTransType());
                 orderIncome.setTransType(paymentTypeEnum.getKey());
@@ -147,8 +131,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                         + CommonUtils.dayOfWeekForTime(CommonUtils.dateFormatToLong(
                         dayIncome.getTime() + " 00:00:00")));
             }
-            dayIncome.setTotalAmount(dayIncome.getTotalAmount().subtract(dayIncome.getTotalAmount().multiply(rate))
-                    .setScale(0, BigDecimal.ROUND_HALF_UP));
+            dayIncome.setTotalAmount(dayIncome.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
         }
 
         BasicResult basicResult = BasicResult.createSuccessResult();
@@ -166,17 +149,18 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         if (StringUtil.isEmpty(email)) {
             return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
         } else {
-            Passport passport=passportJpaRepository.getPassportById(merchantId);
-            sendEmail(merchantDayReportVos,email,"_"+passport.getShowName()+"_");
+            Passport passport = passportJpaRepository.getPassportById(merchantId);
+            sendEmail(merchantDayReportVos, email, "_" + passport.getShowName() + "_");
             return BasicResult.createSuccessResult("商家日销售报表导出成功");
         }
 
     }
+
     private void sendEmail(List<MerchantDayReportVo> lineList, String email, String merchantName) {
-        List<String> title = Arrays.asList("排名",  "商品名称",  "所属分类",  "实时销售数"
-                ,  "实时销售金额",  "毛利", "毛利率");
+        List<String> title = Arrays.asList("排名", "商品名称", "所属分类", "实时销售数"
+                , "实时销售金额", "毛利", "毛利率");
         List<List<String>> datas = new LinkedList<>();
-        int i=0;
+        int i = 0;
         if (CollectionUtils.isNotEmpty(lineList)) {
             for (MerchantDayReportVo line : lineList) {
                 i++;
@@ -203,7 +187,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         String str = sdf.format(new Date());
         str = str + merchantName;
-        EMailClient mail = new EMailClient(email, str + "POS导出商品销售报表", str + "POS导出商品销售报表", "POS导出销售报表附件已发送，请查看！");
+        EMailClient mail = new EMailClient(email, str + "POS导出商品销售报表"
+                , str + "POS导出商品销售报表", "POS导出销售报表附件已发送，请查看！");
         mail.addAttachfile("商家日销售报表_" + str + ".xls", bs);
         mail.send();
     }
