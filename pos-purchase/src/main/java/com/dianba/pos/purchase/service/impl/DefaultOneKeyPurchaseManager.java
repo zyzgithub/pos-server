@@ -107,6 +107,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             OneKeyPurchase menuEntity = menuEntityMap.get(targetBarcode);
             String name = menuEntity.getItemName();
             // 设置当前库存，标准库存，预警库存
+            matchItems.setStandardInventory(menuEntity.getTotalSale());
+            matchItems.setWarnInventory(menuEntity.getWarningRepertory());
             matchItems.setRepertory(menuEntity.getRepertory());
             matchItems.setMenuTypeId(menuEntity.getItemTypeId());
             for (ItemsVo item : matchItems.getItems()) {
