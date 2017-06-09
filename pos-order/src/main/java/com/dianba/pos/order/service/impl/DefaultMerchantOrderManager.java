@@ -5,6 +5,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.EMailClient;
 import com.dianba.pos.common.util.SimpleExcelWriter;
+import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
@@ -162,7 +163,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
         List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
                 .findMerchantDayReport(merchantId, itId, itemName);
-        if (email == null) {
+        if (StringUtil.isEmpty(email)) {
             return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
         } else {
             Passport passport=passportJpaRepository.getPassportById(merchantId);
