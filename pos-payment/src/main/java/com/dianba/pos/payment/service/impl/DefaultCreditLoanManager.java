@@ -2,6 +2,7 @@ package com.dianba.pos.payment.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosRuntimeException;
 import com.dianba.pos.order.service.OrderManager;
 import com.dianba.pos.order.vo.LifeOrderVo;
@@ -15,6 +16,7 @@ import com.dianba.pos.payment.vo.CreditLoanQuotaVo;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
+import com.xlibao.metadata.order.OrderItemSnapshot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,15 +74,29 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
         if (!basicResult.isSuccess()) {
             return basicResult;
         }
+        CreditLoanQuotaVo creditLoanQuota = getQuota(passportId);
+        if (creditLoanQuota == null) {
+            throw new PosAccessDeniedException("商家信用卡信息不存在！");
+        }
         Passport passport = passportManager.getPassportInfoByCashierId(passportId);
         OrderEntry orderEntry = orderManager.getOrder(orderId);
         Map<String, String> params = new HashMap<>();
-        params.put("order_type", "B");
+        params.put("order_type", creditLoanQuota.getBusType());
         params.put("business_ordernum", orderEntry.getSequenceNumber());
         BigDecimal totalAmount = BigDecimal.valueOf(orderEntry.getTotalPrice());
         totalAmount = totalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         params.put("amount", totalAmount + "");
         params.put("commodity_title", "1号生活715超市--" + passport.getShowName());
+        String itemDeatils = "";
+        for (OrderItemSnapshot itemSnapshot : orderEntry.getItemSnapshots()) {
+            itemDeatils = itemDeatils + itemSnapshot.getItemName() + "*" + itemSnapshot.getNormalQuantity() + "，";
+        }
+        if (itemDeatils.equals("")) {
+            itemDeatils = passport.getShowName();
+        } else {
+            itemDeatils = itemDeatils.substring(0, itemDeatils.length() - 1);
+        }
+        params.put("commodity_detail", itemDeatils);
         JSONObject result = postCreditLoan(SUBMIT_ORDER, passport.getId(), params);
         JSONObject jsonObject = result.getJSONObject("response");
         if (jsonObject == null || jsonObject.size() == 0) {

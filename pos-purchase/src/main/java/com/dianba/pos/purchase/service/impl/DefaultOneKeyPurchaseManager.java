@@ -121,15 +121,17 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 if (defaultPurchase < item.getMinSales()) {
                     defaultPurchase = item.getMinSales();
                 }
+                BigDecimal salesPrice = BigDecimal.valueOf(menuEntity.getSalesPrice());
+                salesPrice = salesPrice.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
                 BigDecimal buyRate = item.getRetailPrice()
                         .subtract(item.getPrice())
                         .divide(item.getRetailPrice(), 4, BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 item.setBuyRate(buyRate + "%");
-                BigDecimal saleRate = BigDecimal.valueOf(menuEntity.getSalesPrice())
+                BigDecimal saleRate = salesPrice
                         .subtract(item.getPrice().multiply(BigDecimal.valueOf(item.getStandard())))
-                        .divide(BigDecimal.valueOf(menuEntity.getSalesPrice()), BigDecimal.ROUND_HALF_UP)
+                        .divide(salesPrice,4, BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 item.setSaleRate(saleRate + "%");

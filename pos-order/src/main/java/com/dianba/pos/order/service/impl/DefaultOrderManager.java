@@ -73,6 +73,26 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
 
     public LifeOrderVo getLifeOrder(long orderId) {
         LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
+        lifeOrderTransformation(lifeOrder);
+        LifeOrderVo lifeOrderVo = new LifeOrderVo();
+        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
+        if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
+        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
+        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+        }
+        return lifeOrderVo;
+    }
+
+    public LifeOrder getLifeOrder(String sequenceNumber) {
+        LifeOrder lifeOrder = orderJpaRepository.findBySequenceNumber(sequenceNumber);
+        lifeOrderTransformation(lifeOrder);
+        return lifeOrder;
+    }
+
+    private void lifeOrderTransformation(LifeOrder lifeOrder) {
         lifeOrder.setActualPrice(lifeOrder.getActualPrice()
                 .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
         lifeOrder.setTotalPrice(lifeOrder.getTotalPrice()
@@ -95,20 +115,6 @@ public class DefaultOrderManager extends OrderRemoteService implements OrderMana
                         .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
             }
         }
-        LifeOrderVo lifeOrderVo = new LifeOrderVo();
-        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
-        if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
-            lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
-        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
-            lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
-        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
-            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
-        }
-        return lifeOrderVo;
-    }
-
-    public LifeOrder getLifeOrder(String sequenceNumber) {
-        return orderJpaRepository.findBySequenceNumber(sequenceNumber);
     }
 
     public BasicResult prepareCreateOrder(long passportId, OrderTypeEnum orderType) {
