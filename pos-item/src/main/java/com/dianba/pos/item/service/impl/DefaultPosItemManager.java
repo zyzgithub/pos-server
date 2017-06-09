@@ -170,8 +170,8 @@ public class DefaultPosItemManager implements PosItemManager {
         PosItem posItem = new PosItem();
         posItem.setBuyCount(0);
         //预警库存默认20
-        if(posItemVo.getRepertory()!=null){
-            posItem.setWarningRepertory(posItemVo.getRepertory());
+        if(posItemVo.getWarningRepertory()!=null){
+            posItem.setWarningRepertory(posItemVo.getWarningRepertory());
         }else {
             posItem.setWarningRepertory(20);
         }
@@ -373,7 +373,9 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl(posItemVo.getItemImg());
             }
-
+            if(posItemVo.getWarningRepertory()!=null){
+                posItem.setWarningRepertory(posItemVo.getWarningRepertory());
+            }
             //保质期天
             if (posItemVo.getShelfLife() != null) {
                 posItem.setShelfLife(posItemVo.getShelfLife());
