@@ -16,7 +16,6 @@ public interface PosItemMapper {
 
     List<PosTypeVo> getItemUnitAndType(Long passportId);
 
-
-    List<PosItemVo> getListBySearchText(String searchText, Long passportId);
+    List<PosItemVo> getListBySearchText(@Param("searchText") String searchText,@Param("passportId") Long passportId);
 
 }

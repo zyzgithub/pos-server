@@ -46,10 +46,10 @@
       WHERE pi.passport_id=#{passportId} GROUP BY pt.item_type_id ORDER BY typeCount desc
     </select>
 
-    <select id="ç" resultType="com.dianba.pos.item.vo.PosItemVo">
+    <select id="getListBySearchText" resultType="com.dianba.pos.item.vo.PosItemVo">
         SELECT pi.id id,pi.item_name itemName,pi.barcode barcode,pi.pos_type_id posTypeId,it.title posTypeName
         ,pi.item_type_id itemTypeId,iu.id itemUnitId,iu.title itemUnitName,pi.item_template_id itemTemplateId
-        ,pi.passport_id passportId,pi.item_img_url itemImg,pi.create_time createTime,pi.generated_date generatedDate
+        ,pi.passport_id passportId,pi.item_img_url itemImg,pi.create_time createDate,pi.generated_date generatedDate
         ,pi.buy_count buyCount,pi.description,pi.is_shelve isShelve,is_delete isDelete,pi.repertory
         ,pi.warning_repertory warningRepertory,pi.shelf_life shelfLife,pi.stock_price stockPrice
         ,pi.sales_price salesPrice
