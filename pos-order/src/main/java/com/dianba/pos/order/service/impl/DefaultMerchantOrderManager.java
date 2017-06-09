@@ -37,6 +37,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Autowired
     private LifeOrderMapper lifeOrderMapper;
+
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
@@ -152,11 +153,12 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Override
     public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
 
-        if(email==null){
-            List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId,itId,itemName);
+        if (email == null) {
+            List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
+                    .findMerchantDayReport(merchantId, itId, itemName);
 
-            return BasicResult.createSuccessResultWithDatas("获取成功",merchantDayReportVos);
-        }else {
+            return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
+        } else {
 
             return BasicResult.createSuccessResult("报表导出成功");
         }
