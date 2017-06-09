@@ -276,15 +276,31 @@ public class DefaultPassportManager implements PassportManager {
                 //删除原账号
                 Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
                 passportJpaRepository.delete(passport);
+
+
                 //删除2个登录账号
-                LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                        passport.getDefaultName());
-                lifePassportAliasJpaRepository.delete(lifePassportAlias);
 
-                LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                        passport.getPhoneNumber());
+                if(passport.getPhoneNumber().toString().equals(passport.getDefaultName())){
+                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                            passport.getDefaultName());
+                    lifePassportAliasJpaRepository.delete(lifePassportAlias);
+                }else {
+                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                            passport.getDefaultName());
+                    if(lifePassportAlias!=null){
+                        lifePassportAliasJpaRepository.delete(lifePassportAlias);
+                    }
 
-                lifePassportAliasJpaRepository.delete(lifePassportAlias1);
+                    LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
+                            passport.getPhoneNumber());
+                    if(lifePassportAlias1!=null){
+                        lifePassportAliasJpaRepository.delete(lifePassportAlias1);
+                    }
+
+                }
+
+
+
                 //删除账号权限
                 LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
                         .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
