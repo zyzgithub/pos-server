@@ -16,6 +16,9 @@ public class AppConfig {
     private String posPaymentUrl;
     @Value("${pos.supplychain.url}")
     private String posSupplyChainUrl;
+    @Value("${pos.finance.url}")
+    private String posFinanceUrl;
+
     @Value("${pos.app.id}")
     private String posAppId;
     @Value("${pos.app.partnerId}")
@@ -42,8 +45,8 @@ public class AppConfig {
         return posSupplyChainUrl;
     }
 
-    public void setPosSupplyChainUrl(String posSupplyChainUrl) {
-        this.posSupplyChainUrl = posSupplyChainUrl;
+    public String getPosFinanceUrl() {
+        return posFinanceUrl;
     }
 
     public String getPosAppId() {

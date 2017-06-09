@@ -80,7 +80,7 @@ public class MerchantDayReportVo {
         BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
         BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);
         Double c = new BigDecimal(sumTotalMoney - sumCostMoney)
-                .divide(sumMoneyBd, 2, BigDecimal.ROUND_UP)
+                .divide(sumTotalMoneyBd, 2, BigDecimal.ROUND_UP)
                 .multiply(a)
                 .doubleValue();
 
