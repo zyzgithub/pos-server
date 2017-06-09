@@ -6,11 +6,9 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.config.MenuUrlConstant;
 import com.dianba.pos.item.po.*;
-import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.service.*;
 import com.dianba.pos.item.vo.PosItemVo;
-import com.dianba.pos.item.vo.PosTypeVo;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,6 @@ public class PosItemController {
     @Autowired
     private LifeItemUnitManager itemUnitManager;
     @Autowired
-    private LifeItemUnitJpaRepository itemUnitJpaRepository;
-    @Autowired
     private PosItemJpaRepository posItemJpaRepository;
     @Autowired
     private LifeItemTemplateManager itemTemplateManager;
@@ -56,30 +52,7 @@ public class PosItemController {
     @RequestMapping("getItemByPassportId")
     public BasicResult getItemByPassportId(String passportId, String itemTypeId) {
 
-        if (StringUtil.isEmpty(passportId)) {
-
-            return BasicResult.createFailResult("参数输入有误，或者参数值为空");
-        } else {
-            List<PosItem> posItems = null;
-            if (StringUtil.isEmpty(itemTypeId)) {
-                posItems = posItemManager.getAllByPassportId(Long.parseLong(passportId));
-            } else {
-                posItems = posItemManager.getAllByPassportIdAndItemTypeId(Long.parseLong(passportId)
-                        , Long.parseLong(itemTypeId));
-
-            }
-
-            if (posItems.size() == 0) {
-
-                return BasicResult.createFailResult("没有商品信息!");
-
-            } else {
-                List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
-                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
-            }
-
-
-        }
+        return posItemManager.getItemByPassportId(passportId, itemTypeId);
 
     }
 
@@ -92,35 +65,7 @@ public class PosItemController {
     @RequestMapping(value = "getItemUnitAndType")
     public BasicResult getItemUnitAndType(String passportId) {
 
-        if (StringUtil.isEmpty(passportId)) {
-
-            return BasicResult.createFailResult("参数输入有误，或者参数值为空");
-        } else {
-
-            //规格
-            List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
-            //商品分类
-            List<PosType> posTypes = posTypeManager.getAllByPassportId(Long.parseLong(passportId));
-            List<PosTypeVo> posTypeVos = new ArrayList<>();
-            for (PosType posType : posTypes) {
-                LifeItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
-                PosTypeVo posTypeVo = new PosTypeVo();
-                posTypeVo.setId(posType.getId());
-                posTypeVo.setItemTypeId(posType.getItemTypeId());
-                posTypeVo.setTitle(itemType.getTitle());
-                List<PosItem> posItems = posItemManager.getAllByPassportIdAndItemTypeId(posType.getPassportId()
-                        ,posType.getItemTypeId());
-                posTypeVo.setTypeCount(posItems.size());
-                posTypeVos.add(posTypeVo);
-            }
-
-            JSONObject jo = new JSONObject();
-            jo.put("itemUnitList", itemUnits);
-            jo.put("itemTypes", posTypeVos);
-            BasicResult basicResult = BasicResult.createSuccessResult();
-            basicResult.setResponse(jo);
-            return basicResult;
-        }
+        return posItemManager.getItemUnitAndType(passportId);
     }
 
 
@@ -273,9 +218,7 @@ public class PosItemController {
     @RequestMapping("getListBySearchText")
     public BasicResult getListBySearchText(String searchText, Long passportId) {
 
-        List<PosItem> posItems = posItemManager.findAllBySearchTextPassportId(searchText, passportId);
-        List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
-        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos);
+       return posItemManager.getListBySearchText(searchText,passportId);
 
     }
 
