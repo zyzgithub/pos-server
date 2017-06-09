@@ -12,6 +12,11 @@
     <artifactId>pos-server</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <repository.url>http://apptest.0085.com:8082</repository.url>
+    </properties>
+
     <modules>
         <module>pos-base</module>
         <module>pos-common</module>
@@ -22,11 +27,13 @@
         <module>pos-casher</module>
         <module>pos-payment</module>
         <module>pos-web</module>
-        <module>pos-menu</module>
+        <module>pos-item</module>
         <module>pos-merchant</module>
         <module>pos-order</module>
         <module>pos-scheduler</module>
         <module>pos-report-form</module>
+        <module>pos-passport</module>
+        <module>pos-settlement</module>
     </modules>
 
     <dependencies>
@@ -86,22 +93,78 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <!--<repositories>-->
-    <!--<repository>-->
-    <!--<id>nexus</id>-->
-    <!--<name>nexus</name>-->
-    <!--<layout>default</layout>-->
-    <!--<url>http://0085DevServer:8082/nexus/content/groups/public/</url>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <!--</repositories>-->
+    <distributionManagement>
+        <repository>
+            <id>dianba-release</id>
+            <name>Release</name>
+            <url>${repository.url}/repository/dianba-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dianba-snapshot</id>
+            <name>Snapshot</name>
+            <url>${repository.url}/repository/dianba-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>platform-release</id>
+            <name>platform Releases Repository</name>
+            <url>${repository.url}/repository/platform-release</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>platform-snapshot</id>
+            <name>platform Snapshots Repository</name>
+            <url>${repository.url}/repository/platform-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>dianba-release</id>
+            <name>Releases Repository</name>
+            <url>${repository.url}/repository/dianba-release/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>dianba-snapshot</id>
+            <name>Snapshots Repository</name>
+            <url>${repository.url}/repository/dianba-snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

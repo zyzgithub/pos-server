@@ -28,7 +28,7 @@ public class PosStatistics {
     private BigDecimal totalTurnover;
 
     //今日营业额 TOP 10
-    private List<TopMerchant> topMerchants;
+    List<TopMerchant> topMerchants;
 
     public Integer getUsedMerchant() {
         return usedMerchant;
@@ -63,9 +63,6 @@ public class PosStatistics {
     }
 
     public BigDecimal getCashTurnover() {
-        if (cashTurnover == null) {
-            cashTurnover = BigDecimal.ZERO;
-        }
         return cashTurnover;
     }
 
@@ -74,9 +71,6 @@ public class PosStatistics {
     }
 
     public BigDecimal getAliTurnover() {
-        if (aliTurnover == null) {
-            aliTurnover = BigDecimal.ZERO;
-        }
         return aliTurnover;
     }
 
@@ -85,9 +79,6 @@ public class PosStatistics {
     }
 
     public BigDecimal getWeChatTurnover() {
-        if (weChatTurnover == null) {
-            weChatTurnover = BigDecimal.ZERO;
-        }
         return weChatTurnover;
     }
 

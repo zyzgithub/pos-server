@@ -1,12 +1,14 @@
 package com.dianba.pos.purchase.pojo;
 
-import com.dianba.pos.menu.po.Menu;
+import com.dianba.pos.item.po.PosItem;
 
-public class OneKeyPurchase extends Menu {
+import java.io.Serializable;
+
+public class OneKeyPurchase extends PosItem implements Serializable {
 
     private boolean isCanBuy = false;
-    private Integer totalSale;
-    private Integer daySale;
+    private Integer totalSale = 0;
+    private Integer daySale = 0;
 
     public boolean isCanBuy() {
         return isCanBuy;

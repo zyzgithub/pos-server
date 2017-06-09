@@ -1,6 +1,7 @@
 package com.dianba.pos.extended.util;
 
 import com.alibaba.fastjson.JSON;
+import com.dianba.pos.common.util.MapUtil;
 import com.dianba.pos.extended.vo.ChargeFlow;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.Product;
@@ -74,7 +75,7 @@ public class FlowCharge19EApi {
             mapm.put("merOrderNo", flow.getMerOrderNo());
             //mapm.put("remake",flow.getRemark());
             mapm.put("sign", md5);
-            Map<String, String> pdmapar = MapUtil.sortMapByKey(mapm);
+            Map<String, Object> pdmapar = MapUtil.sortMapByKey(mapm);
             String params = MapUtil.createLinkString(pdmapar);
             // 发送请求参数
 
@@ -126,7 +127,7 @@ public class FlowCharge19EApi {
         map.put("version", pd.getVersion());
         map.put("merchantId", pd.getMerchantId());
         map.put("mobile", pd.getMobile());
-        Map<String, String> pdmap = MapUtil.sortMapByKey(map);
+        Map<String, Object> pdmap = MapUtil.sortMapByKey(map);
         String sign = MapUtil.createLinkString(pdmap);
         String md5 = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.KEY);
         PrintWriter out = null;
@@ -161,7 +162,7 @@ public class FlowCharge19EApi {
             mappars.put("merchantId", pd.getMerchantId());
             mappars.put("mobile", pd.getMobile());
             mappars.put("sign", md5);
-            Map<String, String> mapparsSort = MapUtil.sortMapByKey(mappars);
+            Map<String, Object> mapparsSort = MapUtil.sortMapByKey(mappars);
             String params = MapUtil.createLinkString(mapparsSort);
             String urlStr = URLDecoder.decode(params, "UTF-8");
             logger.info("获取流量商品列表参数:=========="+urlStr);

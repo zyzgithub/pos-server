@@ -8,10 +8,9 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
-import com.dianba.pos.extended.po.PhoneInfo;
+import com.dianba.pos.extended.po.PosPhoneInfo;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PhoneInfoManager;
-import com.dianba.pos.extended.service.TsmCountryAreaManager;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
 import com.dianba.pos.extended.util.FlowOrderStatus;
@@ -19,11 +18,11 @@ import com.dianba.pos.extended.vo.ChargeCallBack;
 import com.dianba.pos.extended.vo.FlowChargeCallBack;
 import com.dianba.pos.extended.vo.Product;
 import com.dianba.pos.extended.vo.ProductListDto;
-import com.dianba.pos.menu.mapper.MenuMapper;
-import com.dianba.pos.menu.po.Menu;
-import com.dianba.pos.menu.service.MenuManager;
-import com.dianba.pos.menu.vo.MenuDto;
-import com.dianba.pos.order.mapper.OrderMapper;
+import com.dianba.pos.item.mapper.MenuMapper;
+import com.dianba.pos.item.po.Menu;
+import com.dianba.pos.item.service.MenuManager;
+import com.dianba.pos.item.vo.MenuDto;
+import com.dianba.pos.order.mapper.LifeOrderMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +55,8 @@ public class Charge19EController {
     private MenuMapper menuMapper;
 
     @Autowired
-    private OrderMapper orderMapper;
+    private LifeOrderMapper orderMapper;
 
-    @Autowired
-    private TsmCountryAreaManager tsmCountryAreaManager;
 
     @Autowired
     private Charge19eMapper charge19eMapper;
@@ -116,7 +113,7 @@ public class Charge19EController {
 
                 //查询此订单是否更新完毕
                 Object ob = orderMapper.getByPayId(merchantOrderId);
-                if (!ob.equals("success")) {
+                if (ob!=null&!ob.equals("success")) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     orderMapper.editOrderInfoBy19e("success", merchantOrderId, 0);
@@ -140,7 +137,7 @@ public class Charge19EController {
     public String flowChargeCallBack(FlowChargeCallBack chargeCallBack) {
         logger.info("进入流量充值回调：");
         String result = "";
-        if (!StringUtil.isEmpty(chargeCallBack.getOrderNo())) {
+        if (!StringUtil.isEmpty(chargeCallBack.getMerOrderNo())) {
             Map map = new HashMap<>();
             map.put("merOrderNo", chargeCallBack.getMerOrderNo());
             map.put("orderNo", chargeCallBack.getOrderNo());
@@ -150,10 +147,11 @@ public class Charge19EController {
             String merOrderNo = chargeCallBack.getMerOrderNo();
             //Integer times = Integer.parseInt(DateUtil.currentTimeMillis().toString());
             if (FlowOrderStatus.ChargeSuccess.getIndex().equals(chargeCallBack.getOrderStatus())) {
+                logger.info("流量充值回调返回为SUCCESS状态：==========");
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = orderMapper.getByPayId(merOrderNo);
-                if (!ob.equals("success")) {
+                if (ob!=null&!ob.equals("success")) {
                     //改变原订单状态
                     orderMapper.editOrderInfoBy19e("success", merOrderNo, 0);
                     //改变第三方订单状态
@@ -192,7 +190,7 @@ public class Charge19EController {
             Integer isFlash = Integer.parseInt(type);
             String mobilePrefix = phone.substring(0, 7);
             Long phonel = Long.parseLong(mobilePrefix);
-            PhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phonel);
+            PosPhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phonel);
             if (phoneInfo == null) {
                 aj.setMsg("手机号码不存在!");
                 aj.setSuccess(false);
@@ -203,7 +201,6 @@ public class Charge19EController {
                     List<MenuDto> menulst = menuMapper.getMenuListByPhoneAndType(-1L, phonel, isFlash);
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
-
                 } else if (type.equals("4")) {
                     Product pd = new Product();
                     pd.setMobile(phone);
@@ -212,12 +209,10 @@ public class Charge19EController {
                     JSONObject jb = JSON.parseObject(result);
                     List<MenuDto> menulst = new ArrayList<>();
                     if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
-
                         JSONArray ja = jb.getJSONArray("productList");
                         List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
                         logger.info("流量充值商品列表信息：====" + ja.toString());
                         for (ProductListDto pl : lst) {
-
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
                             logger.info("根据第三方商品id获取本地商品:====" + productId);
@@ -230,21 +225,15 @@ public class Charge19EController {
                                 menuDto.setPrice(menu.getPrice());
                                 menuDto.setStockPrice(menu.getOriginalPrice());
                                 menulst.add(menuDto);
-
                             }
                         }
                     }
                     jo.put("phoneInfo", phoneInfo);
                     jo.put("menuList", menulst);
-
                 }
-
-
             }
-
         }
         aj.setObj(jo);
-
         return aj;
     }
 }

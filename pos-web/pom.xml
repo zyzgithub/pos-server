@@ -48,7 +48,12 @@
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-supply-chain</artifactId>
+            <artifactId>pos-passport</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dianba</groupId>
+            <artifactId>pos-settlement</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -56,6 +61,20 @@
     <build>
         <finalName>pos</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <!-- 过滤后缀为pem、pfx的证书文件 -->
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>pem</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

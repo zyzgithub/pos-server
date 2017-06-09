@@ -1,5 +1,6 @@
 package com.dianba.pos.extended.util;
 
+import com.dianba.pos.common.util.MapUtil;
 import java.util.Map;
 
 /**
@@ -7,8 +8,8 @@ import java.util.Map;
  */
 public class FlowChargeSign {
 
-    public static String getSignByMap(Map<String,String> map){
-        Map<String, String> pdmap = MapUtil.sortMapByKey(map);
+    public static String getSignByMap(Map<String,Object> map){
+        Map<String, Object> pdmap = MapUtil.sortMapByKey(map);
         String sign = MapUtil.createLinkString(pdmap);
         String result = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.KEY);
         return result;

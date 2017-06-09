@@ -22,7 +22,7 @@ public class PosReportController {
         AjaxJson ajaxJson=new AjaxJson();
         ajaxJson.setSuccess(true);
         PosStatistics posStatistics=posReportManager.posStatistics();
-        ajaxJson.setObj(posStatistics);
+        ajaxJson.setResponse(posStatistics);
         return ajaxJson;
     }
 }
