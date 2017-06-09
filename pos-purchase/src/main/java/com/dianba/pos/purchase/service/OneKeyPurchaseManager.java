@@ -1,13 +1,12 @@
 package com.dianba.pos.purchase.service;
 
-import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.purchase.pojo.OneKeyPurchase;
+import com.dianba.pos.common.util.HttpProxy;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Map;
 
 public interface OneKeyPurchaseManager {
 
-    List<OneKeyPurchase> getWarnRepertoryItems(Long passportId);
-
-    BasicResult getWarnRepertoryList(Long passportId) throws Exception;
+    Map<String, Object> warnInvenstoryList(Integer merchantId, Integer userId)
+            throws HttpProxy.HttpAccessException, IOException;
 }

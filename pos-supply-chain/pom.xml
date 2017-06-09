@@ -14,12 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-passport</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-item</artifactId>
+            <artifactId>pos-menu</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

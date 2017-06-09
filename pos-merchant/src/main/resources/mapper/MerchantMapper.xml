@@ -49,7 +49,7 @@
           LEFT JOIN  merchant me
           LEFT JOIN user us
           on us.id=me.user_id
-          on pos.merchant_id=me.id WHERE me.id=#{merchantId};
+          on pos.merchant_id=me.id WHERE me.id=#{merchantId} AND me.mobile=#{phone};
     </select>
 
 </mapper>

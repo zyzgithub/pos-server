@@ -343,17 +343,7 @@ public class DateUtil {
         Date afterDay = StringtoDate(after, LONG_DATE_FORMAT);
         return getMonth(afterDay) - getMonth(beforeDay);
     }
-    /**
-     * 比较两个日期的月差
-     *
-     * @param before
-     * @param after
-     * @return
-     */
-    public static int yueDiff(Date before, Date after) {
 
-        return getMonth(after) - getMonth(before);
-    }
     /*
         * 将时间戳转换为时间
         */
@@ -564,21 +554,6 @@ public class DateUtil {
         Long a = dBefore.getTime();
         Long time = Long.parseLong(a.toString().substring(0, 10));
         return time;
-    }
-    /**
-     * 获取前几个月的时间
-     * -1 前一个月
-     */
-    public static Date getDateByMonth(Integer month) {
-
-        Date dNow = new Date();   //当前时间
-        Date dBefore = new Date();
-        Calendar calendar = Calendar.getInstance(); //得到日历
-        calendar.setTime(dNow);//把当前时间赋给日历
-        calendar.add(Calendar.MONTH, month);  //设置为前3月
-        dBefore = calendar.getTime();
-
-        return dBefore;
     }
 //    public static boolean getMillisByTwo(Long millis  ){
 //
@@ -967,7 +942,7 @@ public class DateUtil {
     }
 
     // 获取当天时间
-    public static String getNowTime(String dateformat) {
+    public String getNowTime(String dateformat) {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat(dateformat);// 可以方便地修改日期格式
         String hehe = dateFormat.format(now);

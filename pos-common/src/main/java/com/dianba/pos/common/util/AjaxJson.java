@@ -27,7 +27,6 @@ public class AjaxJson {
     private String state = "success";//sessionkey状态
     private String stateCode = "00";//状态码  00正常 01异常
 
-    private Object response=null;
     public AjaxJson(boolean success, String msg, String stateCode) {
         super();
         this.success = success;
@@ -163,15 +162,6 @@ public class AjaxJson {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-
-    public Object getResponse() {
-        return response;
-    }
-
-    public void setResponse(Object response) {
-        this.response = response;
     }
 
     public AjaxJson state(String state) {

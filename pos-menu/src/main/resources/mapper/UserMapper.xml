@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.menu.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.dianba.pos.menu.po.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="gender" jdbcType="CHAR" property="gender"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="photoUrl" jdbcType="VARCHAR" property="photourl"/>
+        <result column="money" jdbcType="DOUBLE" property="money"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="user_type" jdbcType="CHAR" property="userType"/>
+        <result column="sns" jdbcType="VARCHAR" property="sns"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="login_time" jdbcType="INTEGER" property="loginTime"/>
+        <result column="create_time" jdbcType="INTEGER" property="createTime"/>
+        <result column="pay_password" jdbcType="VARCHAR" property="payPassword"/>
+        <result column="openid" jdbcType="VARCHAR" property="openid"/>
+        <result column="unionid" jdbcType="VARCHAR" property="unionid"/>
+        <result column="unionid_remark" jdbcType="VARCHAR" property="unionidRemark"/>
+        <result column="mobile_remark" jdbcType="VARCHAR" property="mobileRemark"/>
+        <result column="openid_remark" jdbcType="VARCHAR" property="openidRemark"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="first_order_time" jdbcType="INTEGER" property="firstOrderTime"/>
+        <result column="user_state" jdbcType="TINYINT" property="userState"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="buy_count" jdbcType="INTEGER" property="buyCount"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+        <result column="mem_status" jdbcType="TINYINT" property="memStatus"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
+        <result column="aliAcNo" jdbcType="VARCHAR" property="aliacno"/>
+    </resultMap>
+
+</mapper>

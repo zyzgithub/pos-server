@@ -14,29 +14,13 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-passport</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-item</artifactId>
+            <artifactId>pos-menu</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>pos-merchant</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>pos-supply-chain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
         </dependency>
     </dependencies>
 </project>
