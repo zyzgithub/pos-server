@@ -207,7 +207,11 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                             .findByMerchantPassportId(merchantPassport.getId());
                     BigDecimal commissionRate = PosMerchantRate.COMMISSION_RATE;
                     if (posMerchantRate != null) {
-                        commissionRate = posMerchantRate.getCommissionRate();
+                        if (1 == posMerchantRate.getIsNeed()) {
+                            commissionRate = posMerchantRate.getCommissionRate();
+                        } else {
+                            commissionRate = BigDecimal.ZERO;
+                        }
                     }
                     BigDecimal amount = BigDecimal.valueOf(orderEntry.getTotalPrice()).subtract(
                             BigDecimal.valueOf(orderEntry.getTotalPrice()).multiply(commissionRate)
