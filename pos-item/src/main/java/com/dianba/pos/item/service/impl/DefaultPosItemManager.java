@@ -1,20 +1,21 @@
 package com.dianba.pos.item.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
-import com.dianba.pos.item.po.LifeItemTemplate;
-import com.dianba.pos.item.po.LifeItemType;
-import com.dianba.pos.item.po.LifeItemUnit;
-import com.dianba.pos.item.po.PosItem;
+import com.dianba.pos.item.mapper.PosItemMapper;
+import com.dianba.pos.item.po.*;
 import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
+import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.service.LifeItemTemplateManager;
 import com.dianba.pos.item.service.LifeItemTypeManager;
 import com.dianba.pos.item.service.LifeItemUnitManager;
 import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.item.vo.PosItemVo;
+import com.dianba.pos.item.vo.PosTypeVo;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,12 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Autowired
     private LifeItemTemplateJpaRepository itemTemplateJpaRepository;
+
+    @Autowired
+    private LifeItemUnitJpaRepository itemUnitJpaRepository;
+
+    @Autowired
+    private PosItemMapper posItemMapper;
 
     @Override
     public List<PosItem> getAllByPosTypeId(Long posTypeId) {
@@ -163,7 +170,12 @@ public class DefaultPosItemManager implements PosItemManager {
         PosItem posItem = new PosItem();
         posItem.setBuyCount(0);
         //预警库存默认20
-        posItem.setWarningRepertory(20);
+        if(posItemVo.getWarningRepertory()!=null){
+            posItem.setWarningRepertory(posItemVo.getWarningRepertory());
+        }else {
+            posItem.setWarningRepertory(20);
+        }
+
         posItem.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
         if (StringUtil.isEmpty(posItemVo.getIsDelete())) {
             posItem.setIsDelete("N");
@@ -285,8 +297,8 @@ public class DefaultPosItemManager implements PosItemManager {
                     map.put("info", posItem);
                 } else {
                     //商品入库为新增数量。
-                    if(posItemVo.getRepertory()!=null){
-                        int count=posItem.getRepertory()+posItemVo.getRepertory();
+                    if (posItemVo.getRepertory() != null) {
+                        int count = posItem.getRepertory() + posItemVo.getRepertory();
                         posItemVo.setRepertory(count);
                     }
                     map = editPosItem(posItemVo);
@@ -361,7 +373,9 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl(posItemVo.getItemImg());
             }
-
+            if(posItemVo.getWarningRepertory()!=null){
+                posItem.setWarningRepertory(posItemVo.getWarningRepertory());
+            }
             //保质期天
             if (posItemVo.getShelfLife() != null) {
                 posItem.setShelfLife(posItemVo.getShelfLife());
@@ -425,38 +439,7 @@ public class DefaultPosItemManager implements PosItemManager {
     public List<PosItemVo> convertToVos(List<PosItem> posItems) {
         List<PosItemVo> posItemVos = new ArrayList<>();
         for (PosItem posItem : posItems) {
-
-            LifeItemTemplate itemTemplate = itemTemplateManager
-                    .getItemTemplateById(posItem.getItemTemplateId());
-            PosItemVo posItemVo = new PosItemVo();
-            posItemVo.setId(posItem.getId());
-            posItemVo.setPosTypeId(posItem.getPosTypeId());
-            LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-            posItemVo.setPosTypeName(itemType.getTitle());
-            posItemVo.setItemTemplateId(itemTemplate.getId());
-            posItemVo.setItemName(posItem.getItemName());
-            BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-            BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-            BigDecimal a = new BigDecimal(100);
-            Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            posItemVo.setStockPrice(sPrice);
-            posItemVo.setSalesPrice(saPrice);
-            posItemVo.setItemTypeId(posItem.getItemTypeId());
-            posItemVo.setBuyCount(posItem.getBuyCount());
-            posItemVo.setCreateDate(posItem.getCreateTime());
-            posItemVo.setBarcode(itemTemplate.getBarcode());
-            posItemVo.setIsDelete(posItem.getIsDelete());
-            posItemVo.setIsShelve(posItem.getIsShelve());
-            posItemVo.setItemImg(posItem.getItemImgUrl());
-            posItemVo.setRepertory(posItem.getRepertory());
-            posItemVo.setPassportId(posItem.getPassportId());
-            posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-            posItemVo.setShelfLife(posItem.getShelfLife());
-            LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
-            posItemVo.setItemUnitId(itemUnit.getId());
-            posItemVo.setItemUnitName(itemUnit.getTitle());
-            posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+            PosItemVo posItemVo=convertToVo(posItem);
             posItemVos.add(posItemVo);
         }
 
@@ -479,5 +462,60 @@ public class DefaultPosItemManager implements PosItemManager {
             }
         }
         posItemJpaRepository.save(posItems);
+    }
+
+    @Override
+    public BasicResult getItemUnitAndType(String passportId) {
+        if (StringUtil.isEmpty(passportId)) {
+
+            return BasicResult.createFailResult("参数输入有误，或者参数值为空");
+        } else {
+
+            //规格
+            List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
+            //商品分类
+
+            List<PosTypeVo> posTypeVos = posItemMapper.getItemUnitAndType(Long.parseLong(passportId));
+            JSONObject jo = new JSONObject();
+            jo.put("itemUnitList", itemUnits);
+            jo.put("itemTypes", posTypeVos);
+            BasicResult basicResult = BasicResult.createSuccessResult();
+            basicResult.setResponse(jo);
+            return basicResult;
+        }
+    }
+
+    @Override
+    public BasicResult getItemByPassportId(String passportId, String itemTypeId) {
+        if (StringUtil.isEmpty(passportId)) {
+
+            return BasicResult.createFailResult("参数输入有误，或者参数值为空");
+        } else {
+            List<PosItem> posItems = null;
+            if (StringUtil.isEmpty(itemTypeId)) {
+                posItems = posItemManager.getAllByPassportId(Long.parseLong(passportId));
+            } else {
+                posItems = posItemManager.getAllByPassportIdAndItemTypeId(Long.parseLong(passportId)
+                        , Long.parseLong(itemTypeId));
+
+            }
+
+            if (posItems.size() == 0) {
+
+                return BasicResult.createFailResult("没有商品信息!");
+
+            } else {
+                List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
+                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
+            }
+
+
+        }
+    }
+
+    @Override
+    public BasicResult getListBySearchText(String searchText, Long passportId) {
+        List<PosItemVo> posItemVos = posItemMapper.getListBySearchText(searchText, passportId);
+        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos);
     }
 }

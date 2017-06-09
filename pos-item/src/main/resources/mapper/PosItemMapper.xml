@@ -2,27 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dianba.pos.item.mapper.PosItemMapper">
     <resultMap id="BaseResultMap" type="com.dianba.pos.item.po.PosItem">
-        <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId" />
-        <result column="pos_type_id" jdbcType="INTEGER" property="posTypeId" />
-        <result column="passport_id" jdbcType="BIGINT" property="passportId" />
-        <result column="create_time" jdbcType="VARCHAR" property="createTime" />
-        <result column="generated_date" jdbcType="BIGINT" property="generatedDate" />
-        <result column="item_template_id" jdbcType="BIGINT" property="itemTemplateId" />
-        <result column="item_img_url" jdbcType="VARCHAR" property="itemImgUrl" />
-        <result column="buy_count" jdbcType="INTEGER" property="buyCount" />
-        <result column="description" jdbcType="VARCHAR" property="description" />
-        <result column="is_shelve" jdbcType="VARCHAR" property="isShelve" />
-        <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
-        <result column="stock_price" jdbcType="BIGINT" property="stockPrice" />
-        <result column="sales_price" jdbcType="BIGINT" property="salesPrice" />
-        <result column="barcode" jdbcType="VARCHAR" property="barcode" />
-        <result column="repertory" jdbcType="INTEGER" property="repertory" />
-        <result column="warning_repertory" jdbcType="INTEGER" property="warningRepertory" />
-        <result column="shelf_life" jdbcType="INTEGER" property="shelfLife" />
-        <result column="item_name" jdbcType="VARCHAR" property="itemName" />
-        <result column="menu_key" jdbcType="VARCHAR" property="menuKey" />
-        <result column="code_id" jdbcType="INTEGER" property="codeId" />
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId"/>
+        <result column="pos_type_id" jdbcType="INTEGER" property="posTypeId"/>
+        <result column="passport_id" jdbcType="BIGINT" property="passportId"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="generated_date" jdbcType="BIGINT" property="generatedDate"/>
+        <result column="item_template_id" jdbcType="BIGINT" property="itemTemplateId"/>
+        <result column="item_img_url" jdbcType="VARCHAR" property="itemImgUrl"/>
+        <result column="buy_count" jdbcType="INTEGER" property="buyCount"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="is_shelve" jdbcType="VARCHAR" property="isShelve"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+        <result column="stock_price" jdbcType="BIGINT" property="stockPrice"/>
+        <result column="sales_price" jdbcType="BIGINT" property="salesPrice"/>
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="repertory" jdbcType="INTEGER" property="repertory"/>
+        <result column="warning_repertory" jdbcType="INTEGER" property="warningRepertory"/>
+        <result column="shelf_life" jdbcType="INTEGER" property="shelfLife"/>
+        <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
+        <result column="menu_key" jdbcType="VARCHAR" property="menuKey"/>
+        <result column="code_id" jdbcType="INTEGER" property="codeId"/>
     </resultMap>
 
     <select id="findWarningRepertoryItemsByExclude" resultMap="BaseResultMap">
@@ -36,5 +36,27 @@
                 #{id}
             </foreach>
         </if>
+    </select>
+
+    <!--获取商品规格，以及商家商品分类-->
+    <select id="getItemUnitAndType" resultType="com.dianba.pos.item.vo.PosTypeVo">
+      SELECT pt.id id,it.title title,count(1) typeCount ,it.id itemTypeId FROM life_pos.pos_type pt
+      INNER JOIN life_item.item_type it on it.id=pt.item_type_id
+      INNER JOIN life_pos.pos_item pi on pi.item_type_id=pt.item_type_id AND  pi.passport_id=pt.passport_id
+      WHERE pi.passport_id=#{passportId} GROUP BY pt.item_type_id ORDER BY typeCount desc
+    </select>
+
+    <select id="getListBySearchText" resultType="com.dianba.pos.item.vo.PosItemVo">
+        SELECT pi.id id,pi.item_name itemName,pi.barcode barcode,pi.pos_type_id posTypeId,it.title posTypeName
+        ,pi.item_type_id itemTypeId,iu.id itemUnitId,iu.title itemUnitName,pi.item_template_id itemTemplateId
+        ,pi.passport_id passportId,pi.item_img_url itemImg,pi.create_time createDate,pi.generated_date generatedDate
+        ,pi.buy_count buyCount,pi.description,pi.is_shelve isShelve,is_delete isDelete,pi.repertory
+        ,pi.warning_repertory warningRepertory,pi.shelf_life shelfLife,pi.stock_price stockPrice
+        ,pi.sales_price salesPrice
+        FROM life_pos.pos_item pi INNER JOIN life_item.item_type it on it.id=pi.item_type_id
+        INNER JOIN life_item.item_template item on item.id=pi.item_template_id
+        INNER JOIN life_item.item_unit iu on iu.id=item.unit_id
+        WHERE pi.passport_id=#{passportId} AND pi.item_name like CONCAT('%', #{searchText}, '%')
+        or pi.barcode LIKE CONCAT('%', #{searchText}, '%')
     </select>
 </mapper>

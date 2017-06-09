@@ -1,5 +1,6 @@
 package com.dianba.pos.item.service;
 
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.vo.PosItemVo;
 import org.springframework.data.repository.query.Param;
@@ -71,4 +72,27 @@ public interface PosItemManager {
      * @param itemIdMaps key:id,value:库存偏移量
      */
     void offsetItemRepertory(Map<Long, Integer> itemIdMaps);
+
+    /**
+     *  获取商品规格，以及商家商品分类
+     * @param passportId
+     * @return
+     */
+    BasicResult getItemUnitAndType(String passportId);
+
+    /**
+     * 获取商品分类以及商品信息并显示各类商品数量
+     *
+     * @param passportId
+     * @return
+     */
+    BasicResult getItemByPassportId(String passportId, String itemTypeId);
+
+    /**
+     * 搜索
+     * @param searchText
+     * @param passportId
+     * @return
+     */
+    BasicResult getListBySearchText(String searchText, Long passportId);
 }
