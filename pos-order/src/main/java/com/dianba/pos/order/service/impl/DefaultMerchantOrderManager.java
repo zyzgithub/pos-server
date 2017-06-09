@@ -3,6 +3,9 @@ package com.dianba.pos.order.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.DateUtil;
+import com.dianba.pos.common.util.EMailClient;
+import com.dianba.pos.common.util.SimpleExcelWriter;
+import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
@@ -10,20 +13,24 @@ import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
+import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantRate;
+import com.dianba.pos.passport.repository.PassportJpaRepository;
 import com.dianba.pos.passport.service.PosMerchantRateManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
+import jxl.write.WriteException;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class DefaultMerchantOrderManager implements MerchantOrderManager {
@@ -38,6 +45,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Autowired
     private LifeOrderMapper lifeOrderMapper;
 
+    @Autowired
+    private PassportJpaRepository passportJpaRepository;
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
@@ -152,17 +161,49 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Override
     public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
-
-        if (email == null) {
-            List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
-                    .findMerchantDayReport(merchantId, itId, itemName);
-
+        List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
+                .findMerchantDayReport(merchantId, itId, itemName);
+        if (StringUtil.isEmpty(email)) {
             return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
         } else {
-
-            return BasicResult.createSuccessResult("报表导出成功");
+            Passport passport=passportJpaRepository.getPassportById(merchantId);
+            sendEmail(merchantDayReportVos,email,"_"+passport.getShowName()+"_");
+            return BasicResult.createSuccessResult("商家日销售报表导出成功");
         }
 
     }
+    private void sendEmail(List<MerchantDayReportVo> lineList, String email, String merchantName) {
+        List<String> title = Arrays.asList("排名", "商品名称",  "商品类型名称", "销售数量", "总销售额",  "毛利", "毛利率");
+        List<List<String>> datas = new LinkedList<>();
+        int i=0;
+        if (CollectionUtils.isNotEmpty(lineList)) {
+            for (MerchantDayReportVo line : lineList) {
+                i++;
+                List<String> data = new LinkedList<>();
+                data.add(i + "");
+                data.add(line.getItemName() + "");
+                data.add(line.getItTitle() + "");
+                data.add(line.getSumCount() + "");
+                data.add(line.getSumTotalMoney() + "");
+                data.add(line.getTotalMoney() + "");
+                data.add(line.getGrossMargin() + "");
+                datas.add(data);
+            }
+        }
+        byte[] bs = new byte[0];
+        try {
+            bs = SimpleExcelWriter.getWorkbookBytes(title, datas);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        String str = sdf.format(new Date());
+        str = str + merchantName;
+        EMailClient mail = new EMailClient(email, str + "POS导出商品销售报表", str + "POS导出商品销售报表", "POS导出销售报表附件已发送，请查看！");
+        mail.addAttachfile("商家日销售报表_" + str + ".xls", bs);
+        mail.send();
+    }
 }

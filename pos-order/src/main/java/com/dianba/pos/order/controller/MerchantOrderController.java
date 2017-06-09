@@ -4,13 +4,11 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
-import com.dianba.pos.order.vo.MerchantDayReportVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 
 @Controller
 @RequestMapping(OrderURLConstant.MERCHANT)
@@ -70,10 +68,6 @@ public class MerchantOrderController {
     @ResponseBody
     @RequestMapping("findMerchantDayReport")
     public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email){
-
-       List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId,itId,itemName);
-
-       return BasicResult.createSuccessResultWithDatas("获取成功",merchantDayReportVos);
-
+       return merchantOrderManager.findMerchantDayReport(merchantId, itId, itemName, email);
     }
 }

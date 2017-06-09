@@ -249,7 +249,7 @@
         ,pi.item_name itemName
         ,ois.item_template_id itemTemplateId
         ,it.id itId,it.title itTitle
-        ,count(1) sumCount
+        ,sum(ois.normal_quantity) sumCount
         ,sum(ois.cost_price) sumCostMoney
         ,sum(ois.total_price) sumTotalMoney
         FROM life_order.order_entry oe
