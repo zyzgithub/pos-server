@@ -281,18 +281,18 @@ public class DefaultPassportManager implements PassportManager {
                 //删除2个登录账号
 
                 if(passport.getPhoneNumber().toString().equals(passport.getDefaultName())){
-                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                            passport.getDefaultName());
+                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
+                            .findLifePassportAliasByAliasName(passport.getDefaultName());
                     lifePassportAliasJpaRepository.delete(lifePassportAlias);
                 }else {
-                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                            passport.getDefaultName());
+                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
+                            .findLifePassportAliasByAliasName(passport.getDefaultName());
                     if(lifePassportAlias!=null){
                         lifePassportAliasJpaRepository.delete(lifePassportAlias);
                     }
 
-                    LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository.findLifePassportAliasByAliasName(
-                            passport.getPhoneNumber());
+                    LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository
+                            .findLifePassportAliasByAliasName(passport.getPhoneNumber());
                     if(lifePassportAlias1!=null){
                         lifePassportAliasJpaRepository.delete(lifePassportAlias1);
                     }
