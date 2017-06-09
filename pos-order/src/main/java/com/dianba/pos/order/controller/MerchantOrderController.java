@@ -60,9 +60,16 @@ public class MerchantOrderController {
         return merchantOrderManager.getMerchantIncomeDetail(passportId, enterType, pageIndex, pageSize, date);
     }
 
+    /**
+     * 商家日报表 以及邮箱导出
+     * @param merchantId
+     * @param itId
+     * @param itemName
+     * @return
+     */
     @ResponseBody
     @RequestMapping("findMerchantDayReport")
-    public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName){
+    public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email){
 
        List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId,itId,itemName);
 

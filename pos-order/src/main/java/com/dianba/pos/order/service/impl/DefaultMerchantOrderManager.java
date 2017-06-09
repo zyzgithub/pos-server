@@ -6,6 +6,7 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
+import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
@@ -34,6 +35,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Autowired
     private PosMerchantRateManager posMerchantRateManager;
 
+    @Autowired
+    private LifeOrderMapper lifeOrderMapper;
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForMerchant(merchantPassportId));
@@ -144,6 +147,20 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         jsonObject.put("currencyArray", orderIncomePage);
         basicResult.setResponse(jsonObject);
         return basicResult;
+    }
+
+    @Override
+    public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
+
+        if(email==null){
+            List<MerchantDayReportVo> merchantDayReportVos= lifeOrderMapper.findMerchantDayReport(merchantId,itId,itemName);
+
+            return BasicResult.createSuccessResultWithDatas("获取成功",merchantDayReportVos);
+        }else {
+
+            return BasicResult.createSuccessResult("报表导出成功");
+        }
+
     }
 
 }

@@ -260,7 +260,6 @@
         WHERE pt.id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
         <if test="itId !=null"> AND it.id=#{itId}</if>
         <if test="itemName !=null"> AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
-
         GROUP BY ois.item_template_id ORDER BY sumCount desc;
     </select>
 </mapper>
