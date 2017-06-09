@@ -5,7 +5,8 @@
 
     <!--商家今日本月总收入-->
     <select id="findTodayAndMonthIncomeAmount" resultType="java.util.Map">
-        select * from
+        select ifnull(a.todayTotalAmount,0) todayTotalAmount,ifnull(b.monthTotalAmount,0) monthTotalAmount
+        from
             (select sum(t.total_price) todayTotalAmount
             from life_order.order_entry t
             where t.shipping_passport_id=#{passportId}
