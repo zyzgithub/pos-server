@@ -63,6 +63,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Autowired
     private LifeItemTypeJpaRepository lifeItemTypeJpaRepository;
+
     @Override
     public List<PosItem> getAllByPosTypeId(Long posTypeId) {
         return posItemJpaRepository.getAllByPosTypeId(posTypeId);
@@ -173,9 +174,9 @@ public class DefaultPosItemManager implements PosItemManager {
         PosItem posItem = new PosItem();
         posItem.setBuyCount(0);
         //预警库存默认20
-        if(posItemVo.getWarningRepertory()!=null){
+        if (posItemVo.getWarningRepertory() != null) {
             posItem.setWarningRepertory(posItemVo.getWarningRepertory());
-        }else {
+        } else {
             posItem.setWarningRepertory(20);
         }
 
@@ -376,7 +377,7 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getItemImg())) {
                 posItem.setItemImgUrl(posItemVo.getItemImg());
             }
-            if(posItemVo.getWarningRepertory()!=null){
+            if (posItemVo.getWarningRepertory() != null) {
                 posItem.setWarningRepertory(posItemVo.getWarningRepertory());
             }
             //保质期天
@@ -441,7 +442,7 @@ public class DefaultPosItemManager implements PosItemManager {
     public List<PosItemVo> convertToVos(List<PosItem> posItems) {
         List<PosItemVo> posItemVos = new ArrayList<>();
         for (PosItem posItem : posItems) {
-            PosItemVo posItemVo=convertToVo(posItem);
+            PosItemVo posItemVo = convertToVo(posItem);
             posItemVos.add(posItemVo);
         }
 
@@ -478,15 +479,29 @@ public class DefaultPosItemManager implements PosItemManager {
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
             //商品分类
             logger.info("获取所有商品分类");
-            List<PosType> posTypes=posTypeJpaRepository.getAllByPassportId(Long.parseLong(passportId));
-            List<PosTypeVo> posTypeVos=new ArrayList<>();
-            if(posTypes.size()>0){
-                for(PosType posType : posTypes){
-                    PosTypeVo posTypeVo=new PosTypeVo();
+            List<PosType> posTypes = posTypeJpaRepository.getAllByPassportId(Long.parseLong(passportId));
+            List<Long> itemTypeIds = new ArrayList<>();
+            for (PosType posType : posTypes) {
+                itemTypeIds.add(posType.getItemTypeId());
+            }
+            List<Map<String, Object>> itemTypeCountMapList = posItemMapper
+                    .getCountByItemType(Long.parseLong(passportId), itemTypeIds);
+            Map<Long, Integer> itemTypeCountMap = new HashMap<>();
+            for (Map<String, Object> map : itemTypeCountMapList) {
+                itemTypeCountMap.put(Long.parseLong(map.get("item_type_id").toString())
+                        , Integer.parseInt(map.get("count").toString()));
+            }
+            List<PosTypeVo> posTypeVos = new ArrayList<>();
+            if (posTypes.size() > 0) {
+                for (PosType posType : posTypes) {
+                    PosTypeVo posTypeVo = new PosTypeVo();
                     posTypeVo.setId(posType.getId());
                     posTypeVo.setTitle(posType.getItemTypeTitle());
                     posTypeVo.setItemTypeId(posType.getItemTypeId());
-                    Integer count=posItemMapper.getCountByItemType(Long.parseLong(passportId),posType.getItemTypeId());
+                    Integer count = itemTypeCountMap.get(posType.getItemTypeId());
+                    if (count == null) {
+                        count = 0;
+                    }
                     posTypeVo.setTypeCount(count);
                     posTypeVos.add(posTypeVo);
                 }

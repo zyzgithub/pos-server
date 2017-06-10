@@ -59,7 +59,12 @@
         WHERE pi.passport_id=#{passportId} AND pi.item_name like CONCAT('%', #{searchText}, '%')
         or pi.barcode LIKE CONCAT('%', #{searchText}, '%')
     </select>
-    <select id="getCountByItemType" resultType="java.lang.Integer">
-        select count(1) from life_pos.pos_item WHERE passport_id=#{passportId} AND item_type_id=#{itemTypeId};
+    <select id="getCountByItemType" resultType="java.util.Map">
+        select item_type_id,count(1) count from life_pos.pos_item WHERE passport_id=#{passportId}
+        AND item_type_id in
+        <foreach collection="itemTypeIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        group by item_type_id
     </select>
 </mapper>

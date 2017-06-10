@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface PosItemMapper {
@@ -16,7 +17,8 @@ public interface PosItemMapper {
 
     List<PosTypeVo> getItemUnitAndType(Long passportId);
 
-    List<PosItemVo> getListBySearchText(@Param("searchText") String searchText,@Param("passportId") Long passportId);
+    List<PosItemVo> getListBySearchText(@Param("searchText") String searchText, @Param("passportId") Long passportId);
 
-    Integer getCountByItemType(@Param("passportId") Long passportId,@Param("itemTypeId") Long itemTypeId);
+    List<Map<String, Object>> getCountByItemType(@Param("passportId") Long passportId
+            , @Param("itemTypeIds") List<Long> itemTypeIds);
 }
