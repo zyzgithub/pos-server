@@ -175,7 +175,7 @@
             <!--<result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>-->
             <result column="cost_price" jdbcType="BIGINT" property="costPrice"/>
             <result column="market_price" jdbcType="BIGINT" property="marketPrice"/>
-            <result column="total_price" jdbcType="BIGINT" property="totalPrice"/>
+            <result column="item_total_price" jdbcType="BIGINT" property="totalPrice"/>
             <result column="return_price" jdbcType="BIGINT" property="returnPrice"/>
         </collection>
     </resultMap>
@@ -192,7 +192,7 @@
             <result column="normal_price" property="normalPrice"/>
         </collection>
     </resultMap>
-    
+
     <sql id="ColumnsForBaseResultMap">
         o.id,
         o.sequence_number,
@@ -267,7 +267,7 @@
         s.discount_price,
         s.cost_price,
         s.market_price,
-        s.total_price,
+        s.total_price item_total_price,
         s.return_price
     </sql>
 
@@ -289,7 +289,13 @@
         <include refid="ColumnsForBaseResultMap"/>
         FROM life_order.order_entry o
         inner join life_order.order_item_snapshot s on s.order_id=o.id
-        where o.partner_user_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
+        where o.partner_user_id=#{passportId} and o.type=#{orderType}
+        <if test="orderStatus==8">
+            and o.status>=8
+        </if>
+        <if test="orderStatus!=8">
+            and o.status=#{orderStatus}
+        </if>
         order by o.id desc
     </select>
 
