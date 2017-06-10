@@ -18,4 +18,5 @@ public interface PosItemMapper {
 
     List<PosItemVo> getListBySearchText(@Param("searchText") String searchText,@Param("passportId") Long passportId);
 
+    Integer getCountByItemType(@Param("passportId") Long passportId,@Param("itemTypeId") Long itemTypeId);
 }

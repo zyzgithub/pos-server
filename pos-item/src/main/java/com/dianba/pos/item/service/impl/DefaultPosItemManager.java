@@ -7,9 +7,7 @@ import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.mapper.PosItemMapper;
 import com.dianba.pos.item.po.*;
-import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
-import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
-import com.dianba.pos.item.repository.PosItemJpaRepository;
+import com.dianba.pos.item.repository.*;
 import com.dianba.pos.item.service.LifeItemTemplateManager;
 import com.dianba.pos.item.service.LifeItemTypeManager;
 import com.dianba.pos.item.service.LifeItemUnitManager;
@@ -60,6 +58,11 @@ public class DefaultPosItemManager implements PosItemManager {
     @Autowired
     private PosItemMapper posItemMapper;
 
+    @Autowired
+    private PosTypeJpaRepository posTypeJpaRepository;
+
+    @Autowired
+    private LifeItemTypeJpaRepository lifeItemTypeJpaRepository;
     @Override
     public List<PosItem> getAllByPosTypeId(Long posTypeId) {
         return posItemJpaRepository.getAllByPosTypeId(posTypeId);
@@ -399,7 +402,6 @@ public class DefaultPosItemManager implements PosItemManager {
         return map;
     }
 
-
     @Override
     public PosItemVo convertToVo(PosItem posItem) {
         LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
@@ -471,11 +473,24 @@ public class DefaultPosItemManager implements PosItemManager {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
 
+            logger.info("获取所有商品单位规格。。");
             //规格
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
             //商品分类
-
-            List<PosTypeVo> posTypeVos = posItemMapper.getItemUnitAndType(Long.parseLong(passportId));
+            logger.info("获取所有商品分类");
+            List<PosType> posTypes=posTypeJpaRepository.getAllByPassportId(Long.parseLong(passportId));
+            List<PosTypeVo> posTypeVos=new ArrayList<>();
+            if(posTypes.size()>0){
+                for(PosType posType : posTypes){
+                    PosTypeVo posTypeVo=new PosTypeVo();
+                    posTypeVo.setId(posType.getId());
+                    posTypeVo.setTitle(posType.getItemTypeTitle());
+                    posTypeVo.setItemTypeId(posType.getItemTypeId());
+                    Integer count=posItemMapper.getCountByItemType(Long.parseLong(passportId),posType.getItemTypeId());
+                    posTypeVo.setTypeCount(count);
+                    posTypeVos.add(posTypeVo);
+                }
+            }
             JSONObject jo = new JSONObject();
             jo.put("itemUnitList", itemUnits);
             jo.put("itemTypes", posTypeVos);
