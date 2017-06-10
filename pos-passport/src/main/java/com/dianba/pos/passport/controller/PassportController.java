@@ -2,6 +2,7 @@ package com.dianba.pos.passport.controller;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.passport.config.PassportURLConstant;
 import com.dianba.pos.passport.service.PassportManager;
+import com.dianba.pos.passport.service.PosProtocolManager;
 import com.dianba.pos.passport.vo.PassportVo;
 import com.dianba.pos.passport.vo.RegisterVo;
 import org.apache.log4j.LogManager;
@@ -22,6 +23,8 @@ public class PassportController {
     @Autowired
     private PassportManager passportManager;
 
+    @Autowired
+    private PosProtocolManager posProtocolManager;
 
     @RequestMapping("loginPassport")
     @ResponseBody
@@ -88,4 +91,17 @@ public class PassportController {
         return passportManager.getCashierById(registerVo);
     }
 
+    @ResponseBody
+    @RequestMapping("getPosProtocolAll")
+    public BasicResult getPosProtocolAll(){
+
+        return posProtocolManager.findAll();
+    }
+
+    @ResponseBody
+    @RequestMapping("getPosProtocolById")
+    public BasicResult getPosProtocolById(Long id){
+
+        return posProtocolManager.findPosProtocolById(id);
+    }
 }
