@@ -12,8 +12,4 @@ public interface SettlementOrderManager {
      */
     LifeOrder generateSettlementOrder(Long passportId, PaymentTypeEnum paymentType, BigDecimal amount);
 
-    /**
-     * 查询结算订单
-     */
-    LifeOrder findSettlementOrderByDay(Long passportId);
 }

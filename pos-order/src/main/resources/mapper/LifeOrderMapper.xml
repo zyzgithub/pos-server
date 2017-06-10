@@ -150,7 +150,7 @@
         <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
         <result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime"/>
         <collection property="itemSnapshots" ofType="com.dianba.pos.order.po.LifeOrderItemSnapshot">
-            <id column="id" jdbcType="BIGINT" property="id"/>
+            <id column="item_snapshot_id" jdbcType="BIGINT" property="id"/>
             <result column="order_id" jdbcType="BIGINT" property="orderId"/>
             <result column="user_mark" jdbcType="VARCHAR" property="userMark"/>
             <result column="item_id" jdbcType="BIGINT" property="itemId"/>
@@ -164,7 +164,7 @@
             <result column="item_code" jdbcType="VARCHAR" property="itemCode"/>
             <result column="item_batches" jdbcType="INTEGER" property="itemBatches"/>
             <result column="introduction_page" jdbcType="VARCHAR" property="introductionPage"/>
-            <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+            <result column="item_create_time" jdbcType="TIMESTAMP" property="createTime"/>
             <result column="normal_quantity" jdbcType="INTEGER" property="normalQuantity"/>
             <!--<result column="discount_quantity" jdbcType="INTEGER" property="discountQuantity"/>-->
             <!--<result column="shipment_quantity" jdbcType="INTEGER" property="shipmentQuantity"/>-->
@@ -192,6 +192,84 @@
             <result column="normal_price" property="normalPrice"/>
         </collection>
     </resultMap>
+    
+    <sql id="ColumnsForBaseResultMap">
+        o.id,
+        o.sequence_number,
+        o.order_sequence_number,
+        o.partner_id,
+        o.partner_user_id,
+        o.type,
+        o.status,
+        o.deliver_status,
+        o.refund_status,
+        o.payment_type,
+        o.trans_type,
+        o.user_source,
+        o.day_sort_number,
+        o.push_type,
+        o.shipping_passport_id,
+        o.shipping_nick_name,
+        o.shipping_province,
+        o.shipping_city,
+        o.shipping_district,
+        o.shipping_address,
+        o.shipping_location,
+        o.shipping_phone,
+        o.receipt_user_id,
+        o.receipt_nick_name,
+        o.receipt_province,
+        o.receipt_city,
+        o.receipt_district,
+        o.receipt_address,
+        o.receipt_phone,
+        o.receipt_location,
+        o.courier_passport_id,
+        o.courier_nick_name,
+        o.courier_phone,
+        o.total_distance,
+        o.current_location,
+        o.collecting_fees,
+        o.remark,
+        o.actual_price,
+        o.total_price,
+        o.discount_price,
+        o.distribution_fee,
+        o.price_logger,
+        o.cancel_logger,
+        o.create_time,
+        o.payment_time,
+        o.confirm_time,
+        o.body,
+        o.detail,
+        s.id item_snapshot_id,
+        s.order_id,
+        s.user_mark,
+        s.item_id,
+        s.item_template_id,
+        s.item_name,
+        s.item_type_id,
+        s.item_type_name,
+        s.item_unit_id,
+        s.item_unit_name,
+        s.item_barcode,
+        s.item_code,
+        s.item_batches,
+        s.introduction_page,
+        s.create_time item_create_time,
+        s.normal_quantity,
+        s.discount_quantity,
+        s.shipment_quantity,
+        s.distribution_quantity,
+        s.receipt_quantity,
+        s.return_quantity,
+        s.normal_price,
+        s.discount_price,
+        s.cost_price,
+        s.market_price,
+        s.total_price,
+        s.return_price
+    </sql>
 
     <select id="findOrderForMerchant" resultMap="merchantOrderResultMap">
         select p.show_name,o.sequence_number,concat(o.create_time,'') create_time
@@ -200,14 +278,17 @@
         from life_order.order_entry o
         inner join life_passport.passport p on p.id=o.shipping_passport_id
         inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
-        where o.shipping_passport_id=#{merchantPassportId} and o.status =8
+        where o.shipping_passport_id=#{merchantPassportId}
+          and o.type in(4,9) and o.status =8
         order by o.create_time desc
     </select>
 
 
     <select id="findOrderForPos" resultMap="BaseResultMap">
-        select * from life_order.order_entry o
-        inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
+        SELECT
+        <include refid="ColumnsForBaseResultMap"/>
+        FROM life_order.order_entry o
+        inner join life_order.order_item_snapshot s on s.order_id=o.id
         where o.partner_user_id=#{passportId} and o.type=#{orderType} and o.status=#{orderStatus}
         order by o.id desc
     </select>
@@ -232,13 +313,6 @@
         INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
         WHERE pt.id=#{id} AND oe.type=3 AND oe.status in(8,256)
         AND oe.payment_time BETWEEN #{startTime}  AND #{endTime}
-    </select>
-
-    <select id="findSettlementOrder4Today" resultMap="BaseResultMap">
-        select * from life_order.order_entry o
-        inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
-        where o.partner_user_id=#{passportId} and o.type=8 and o.status in(1,8)
-        and date_format(o.create_time,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d')
     </select>
 
     <!--商家商品每日销售报表-->

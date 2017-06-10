@@ -73,8 +73,6 @@ public interface LifeOrderMapper {
     Map<String, Object> findMerchantStockMoney(@Param("id") Long id
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
-    LifeOrder findSettlementOrder4Today(@Param("passportId") Long passportId);
-
     List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
             , @Param("itemName") String itemName);
 }

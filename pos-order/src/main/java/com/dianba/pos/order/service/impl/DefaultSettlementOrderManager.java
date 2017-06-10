@@ -42,7 +42,4 @@ public class DefaultSettlementOrderManager implements SettlementOrderManager {
         return lifeOrder;
     }
 
-    public LifeOrder findSettlementOrderByDay(Long passportId) {
-        return orderMapper.findSettlementOrder4Today(passportId);
-    }
 }
