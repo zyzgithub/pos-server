@@ -12,7 +12,7 @@ import com.xlibao.metadata.order.OrderEntry;
 import java.util.List;
 import java.util.Map;
 
-public interface OrderManager {
+public interface LifeOrderManager {
 
     String BASE_URL = "order/";
 

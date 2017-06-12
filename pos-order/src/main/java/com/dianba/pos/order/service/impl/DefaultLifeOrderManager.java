@@ -11,7 +11,7 @@ import com.dianba.pos.order.po.LifeOrderItemSnapshot;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
@@ -38,9 +38,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Service
-public class DefaultOrderManager extends OrderRemoteService implements OrderManager {
+public class DefaultLifeOrderManager extends OrderRemoteService implements LifeOrderManager {
 
-    private static Logger logger = LogManager.getLogger(DefaultOrderManager.class);
+    private static Logger logger = LogManager.getLogger(DefaultLifeOrderManager.class);
 
     @Autowired
     private LifeOrderMapper orderMapper;

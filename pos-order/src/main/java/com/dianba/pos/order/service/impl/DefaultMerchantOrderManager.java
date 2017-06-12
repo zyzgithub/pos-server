@@ -14,7 +14,9 @@ import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.po.PosMerchantType;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
+import com.dianba.pos.passport.service.PosMerchantTypeManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.CommonUtils;
@@ -41,6 +43,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     private LifeOrderMapper lifeOrderMapper;
     @Autowired
     private PassportJpaRepository passportJpaRepository;
+    @Autowired
+    private PosMerchantTypeManager posMerchantTypeManager;
 
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
@@ -109,6 +113,17 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                 }
             }
             orderIncome.setAmount(orderIncome.getAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
+            PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(passportId);
+            //不是直营店
+            if (posMerchantType == null) {
+                orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME);
+            } else {
+                if ("1".equals(orderIncome.getPaymentType())) {
+                    orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME_BALANCE);
+                } else {
+                    orderIncome.setSettlementTitle(MerchantOrderIncomeVo.NOT_SETTLEMENT);
+                }
+            }
             try {
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderIncome.getTransType());
                 orderIncome.setTransType(paymentTypeEnum.getKey());

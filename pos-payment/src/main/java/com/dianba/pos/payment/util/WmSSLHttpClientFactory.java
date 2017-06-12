@@ -5,8 +5,8 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.security.cert.CertificateException;
 
 public final class WmSSLHttpClientFactory {
 
-    private static Logger logger = LoggerFactory.getLogger(WmSSLHttpClientFactory.class);
+    private static Logger logger = LogManager.getLogger(WmSSLHttpClientFactory.class);
 
     //连接超时时间，默认10秒
     private static int socketTimeout = 10000;

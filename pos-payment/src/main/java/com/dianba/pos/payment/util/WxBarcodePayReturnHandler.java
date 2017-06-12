@@ -2,14 +2,14 @@ package com.dianba.pos.payment.util;
 
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
 public class WxBarcodePayReturnHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(WxBarcodePayReturnHandler.class);
+    private static Logger logger = LogManager.getLogger(WxBarcodePayReturnHandler.class);
 
     private static final int RETRY_TIMES = 12;
 

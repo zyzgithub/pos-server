@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosRuntimeException;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.service.PassportManager;
@@ -30,7 +30,7 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
     @Autowired
     private PassportManager passportManager;
     @Autowired
-    private OrderManager orderManager;
+    private LifeOrderManager orderManager;
     @Autowired
     private PaymentManager paymentManager;
     @Autowired

@@ -8,8 +8,8 @@ import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -21,7 +21,7 @@ import java.security.UnrecoverableKeyException;
 
 public class WmHttpsRequest {
 
-    private static Logger logger = LoggerFactory.getLogger(WmHttpsRequest.class);
+    private static Logger logger = LogManager.getLogger(WmHttpsRequest.class);
 
     public static String sendPost(String url, String postDataXML) throws IOException, KeyStoreException
             , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {

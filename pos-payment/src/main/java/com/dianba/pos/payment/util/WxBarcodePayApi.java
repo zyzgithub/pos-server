@@ -1,8 +1,8 @@
 package com.dianba.pos.payment.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class WxBarcodePayApi {
 
-    private static Logger logger = LoggerFactory.getLogger(WxBarcodePayApi.class);
+    private static Logger logger = LogManager.getLogger(WxBarcodePayApi.class);
 
     //1）被扫付款API
     public static final String WX_BARCODE_PAY_URL = "https://api.mch.weixin.qq.com/pay/micropay";

@@ -1,7 +1,7 @@
 package com.dianba.pos.payment.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
@@ -24,7 +24,7 @@ public class DefaultWechatPayManager implements WechatPayManager {
     private static Logger logger = LogManager.getLogger(DefaultWechatPayManager.class);
 
     @Autowired
-    private OrderManager orderManager;
+    private LifeOrderManager orderManager;
     @Autowired
     private PassportManager passportManager;
 

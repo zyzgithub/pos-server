@@ -1,7 +1,7 @@
 package com.dianba.pos.casher.controller;
 
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ public class MerchantController {
 
 
     @Autowired
-   private OrderManager orderManager;
+   private LifeOrderManager orderManager;
     @ResponseBody
     @RequestMapping(value = "getMerchantProfitInfo")
     public BasicResult getMerchantProfitInfo(Long merchantId,String phone) {

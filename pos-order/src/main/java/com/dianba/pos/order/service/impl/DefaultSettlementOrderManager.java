@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class DefaultSettlementOrderManager implements SettlementOrderManager {
@@ -42,4 +43,15 @@ public class DefaultSettlementOrderManager implements SettlementOrderManager {
         return lifeOrder;
     }
 
+
+    @Transactional
+    public void updateSettlementCashOrderByUserAndDate(Long passportId, String date) {
+        List<LifeOrder> lifeOrders = orderMapper.findOrderByPartnerUserAndPaymentTime(passportId, date);
+        if (lifeOrders != null && lifeOrders.size() != 0) {
+            for (LifeOrder lifeOrder : lifeOrders) {
+                lifeOrder.setPaymentType("1");
+            }
+            orderJpaRepository.save(lifeOrders);
+        }
+    }
 }

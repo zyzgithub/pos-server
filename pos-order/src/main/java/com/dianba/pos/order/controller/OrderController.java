@@ -11,7 +11,7 @@ import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.pojo.WarehouseItemPojo;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.service.PassportManager;
 import com.xlibao.common.BasicWebService;
@@ -37,7 +37,7 @@ public class OrderController extends BasicWebService {
     private static Logger logger = LogManager.getLogger(OrderController.class);
 
     @Autowired
-    private OrderManager orderManager;
+    private LifeOrderManager orderManager;
     @Autowired
     private PassportManager passportManager;
 

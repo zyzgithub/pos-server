@@ -12,4 +12,10 @@ public interface SettlementOrderManager {
      */
     LifeOrder generateSettlementOrder(Long passportId, PaymentTypeEnum paymentType, BigDecimal amount);
 
+    /**
+     * 更新收银员结算后，订单的状态(payment_type)
+     * @param passportId
+     * @param date
+     */
+    void updateSettlementCashOrderByUserAndDate(Long passportId, String date);
 }

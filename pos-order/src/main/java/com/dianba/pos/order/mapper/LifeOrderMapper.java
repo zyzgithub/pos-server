@@ -61,6 +61,9 @@ public interface LifeOrderMapper {
     List<LifeOrder> findOrderForPos(@Param("passportId") Long passportId
             , @Param("orderType") Integer orderType, @Param("orderStatus") Integer orderStatus);
 
+    List<LifeOrder> findOrderByPartnerUserAndPaymentTime(@Param("passportId") Long passportId
+            ,@Param("date") String date);
+
     /**
      * 查询商家使用pos盈利信息
      */

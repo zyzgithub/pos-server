@@ -3,6 +3,7 @@ package com.dianba.pos.settlement.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
+import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.SettlementOrderManager;
 import com.dianba.pos.passport.po.Passport;
@@ -156,12 +157,18 @@ public class DefaultSettlementManager implements SettlementManager {
             return BasicResult.createFailResult("支付失败！订单异常！");
         }
         BasicResult basicResult = paymentManager.payOrder(passportId, lifeOrder.getId(), paymentType, authCode);
+        String date = null;
         if (basicResult.isSuccess()) {
             for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
                 posSettlementDayly.setIsPaid(1);
+                if (date == null) {
+                    date = DateUtil.DateToString(posSettlementDayly.getCreateTime(), DateUtil.FORMAT_ONE);
+                }
             }
         }
         settlementDaylyJpaRepository.save(posSettlementDaylies);
+        //更新指定收银员操作的指定日期前的订单为已经结算状态
+        settlementOrderManager.updateSettlementCashOrderByUserAndDate(passportId, date);
         return basicResult;
     }
 }

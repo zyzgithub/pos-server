@@ -299,6 +299,16 @@
         order by o.id desc
     </select>
 
+    <select id="findOrderByPartnerUserAndPaymentTime" resultMap="BaseResultMap">
+        SELECT
+        <include refid="ColumnsForBaseResultMap"/>
+        FROM life_order.order_entry o
+        inner join life_order.order_item_snapshot s on s.order_id=o.id
+        where o.partner_user_id=#{passportId} and o.type=4 and o.status=8
+          and o.payment_type=-1 and o.trans_type='CASH'
+          and o.payment_time &lt; date_format(#{date},'%Y-%m-%d %H:%i:%s')
+        order by o.id desc
+    </select>
 
     <!--商家pos 机每月营业额o e.type 3-采购 7-pos营业订单 -->
     <select id="findPosProfitMoney" resultType="java.util.HashMap">

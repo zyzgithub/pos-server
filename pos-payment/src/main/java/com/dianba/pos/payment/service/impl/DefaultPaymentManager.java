@@ -6,7 +6,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.item.service.PosItemManager;
-import com.dianba.pos.order.service.OrderManager;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantRate;
@@ -41,7 +41,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private static Logger logger = LogManager.getLogger(DefaultAliPayManager.class);
 
     @Autowired
-    private OrderManager orderManager;
+    private LifeOrderManager orderManager;
     @Autowired
     private AliPayManager aliPayManager;
     @Autowired
@@ -191,8 +191,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 }
                 posItemManager.offsetItemRepertory(itemIdMaps);
             }
-            if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)
-                    && OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey() != orderEntry.getType()) {
+            if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
                 Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                 //对商家余额进行偏移计算
                 OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
