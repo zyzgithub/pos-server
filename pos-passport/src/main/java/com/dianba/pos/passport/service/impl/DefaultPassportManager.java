@@ -117,11 +117,15 @@ public class DefaultPassportManager implements PassportManager {
                     return BasicResult.createFailResult(msg);
                 } else {
                     LoginVo loginVo = (LoginVo) JSONObject.parseObject(response.toString(), LoginVo.class);
+
                     loginVo.setAccountType(1);
+
                     loginVo.setAccountTypeName("店员");
                     PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
                             .findPosCashierAccountByCashierId(loginVo.getPassportId());
                     loginVo.setPassportId(posCashierAccount.getMerchantId());
+                    Passport passport=passportJpaRepository.getPassportById(posCashierAccount.getMerchantId());
+                    loginVo.setShowName(passport.getShowName());
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
                     return BasicResult.createSuccessResult("登录成功!", jsonObject1);
                 }
