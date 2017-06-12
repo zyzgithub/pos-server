@@ -95,6 +95,8 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         Integer orderEnterType = enterType;
         Page<MerchantOrderIncomeVo> orderIncomePage = PageHelper.startPage(pageIndex, pageSize)
                 .doSelectPage(() -> merchantOrderMapper.findMerchantIncomeOrder(passportId, orderEnterType, orderDate));
+
+        PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(passportId);
         String beginDate = "";
         String endDate = "";
         for (MerchantOrderIncomeVo orderIncome : orderIncomePage) {
@@ -113,7 +115,6 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                 }
             }
             orderIncome.setAmount(orderIncome.getAmount().setScale(0, BigDecimal.ROUND_HALF_UP));
-            PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(passportId);
             //不是直营店
             if (posMerchantType == null) {
                 orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME);
