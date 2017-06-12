@@ -196,14 +196,12 @@ public class DefaultPassportManager implements PassportManager {
 
             //手机号码
             if (!StringUtil.isEmpty(registerVo.getPhoneNumber())) {
-                passport.setPhoneNumber(registerVo.getPhoneNumber());
-                passportAlias.setAliasName(registerVo.getPhoneNumber());
-            }
+                 passport.setPhoneNumber(registerVo.getPhoneNumber());
+              }
 
             //账号
             if (!StringUtil.isEmpty(registerVo.getName())) {
                 passport.setDefaultName(registerVo.getName());
-                passportAlias1.setAliasName(registerVo.getName());
             }
             //密码
             if (!StringUtil.isEmpty(registerVo.getPassword())) {
@@ -212,8 +210,25 @@ public class DefaultPassportManager implements PassportManager {
 
             passportJpaRepository.save(passport);
 
-            lifePassportAliasJpaRepository.save(passportAlias);
-            lifePassportAliasJpaRepository.save(passportAlias1);
+            if(passportAlias!=null){
+                //手机号码
+                if (!StringUtil.isEmpty(registerVo.getPhoneNumber())) {
+                    passportAlias.setAliasName(registerVo.getPhoneNumber());
+                    lifePassportAliasJpaRepository.save(passportAlias);
+                }
+
+            }
+            if(passportAlias1!=null){
+                //账号
+                if (!StringUtil.isEmpty(registerVo.getName())) {
+                    passportAlias1.setAliasName(registerVo.getName());
+                    lifePassportAliasJpaRepository.save(passportAlias1);
+                }
+
+
+            }
+
+
 
             //签约商家权限
             LifePassportProperties b = lifePassportPropertiesJpaRepository
