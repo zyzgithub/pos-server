@@ -218,6 +218,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     offsetAmount = amount.longValue();
                 } else if (orderTypeEnum.getKey() == OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey()) {
                     offsetAmount = -orderEntry.getTotalPrice();
+                } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey()) {
+                    offsetAmount = orderEntry.getTotalPrice();
                 }
                 if (offsetAmount != 0) {
                     //对商家余额进行余额偏移

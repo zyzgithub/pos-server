@@ -119,10 +119,14 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
             if (posMerchantType == null) {
                 orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME);
             } else {
-                if ("1".equals(orderIncome.getPaymentType())) {
-                    orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME_BALANCE);
+                if (PaymentTypeEnum.CASH.getKey().equals(orderIncome.getTransType())) {
+                    if ("1".equals(orderIncome.getPaymentType())) {
+                        orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME_BALANCE);
+                    } else {
+                        orderIncome.setSettlementTitle(MerchantOrderIncomeVo.NOT_SETTLEMENT);
+                    }
                 } else {
-                    orderIncome.setSettlementTitle(MerchantOrderIncomeVo.NOT_SETTLEMENT);
+                    orderIncome.setSettlementTitle(MerchantOrderIncomeVo.INCOME_BALANCE);
                 }
             }
             try {
