@@ -89,10 +89,7 @@ public class DefaultPassportManager implements PassportManager {
             LifePassportProperties c = lifePassportPropertiesJpaRepository
                     .findLifePassportPropertiesByPassportIdAndKAndV(
                             Long.parseLong(lifePassportAlias.getPassportId()), "pos", "41");
-
-            if (a != null) {
-                return BasicResult.createFailResult("您还没有签约，请联系本公司。");
-            } else if (b != null) {
+             if (b!= null||a!=null) {
                 passportVo.setClientType(3);
                 JSONObject jsonObject = HttpUtil.post(passportProperties.getLogin(), passportVo);
                 logger.info(passportProperties.getLogin());
