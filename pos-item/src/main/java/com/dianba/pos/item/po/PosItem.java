@@ -1,5 +1,6 @@
 package com.dianba.pos.item.po;
 
+import com.dianba.pos.common.util.StringUtil;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -255,7 +256,13 @@ public class PosItem implements Serializable {
 
 
     public String getItemImgUrl() {
-        return itemImgUrl;
+
+        if (StringUtil.isEmpty(itemImgUrl)) {
+            return "";
+        } else {
+            return itemImgUrl;
+        }
+
     }
 
     public void setItemImgUrl(String itemImgUrl) {

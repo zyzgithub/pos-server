@@ -56,6 +56,12 @@ public class PosTypeController {
             } else {
                 LifeItemType itemType = new LifeItemType();
                 itemType.setTitle(title);
+                itemType.setIcon("www.baidu.com");
+                itemType.setImage("www.baidu.com");
+                itemType.setParentId(0L);
+                itemType.setSort(0);
+                itemType.setStatus(0);
+                itemType.setTop(0);
                 itemType.setAscriptionType(1);
                 itemTypeJpaRepository.save(itemType);
 
@@ -90,15 +96,8 @@ public class PosTypeController {
     @RequestMapping("deletePosType")
     public BasicResult deletePosType(Long passportId, Long posTypeId) {
 
-        PosType posType = posTypeManager.getPosTypeById(posTypeId);
-        if (posType != null && posType.getPassportId().equals(passportId)) {
 
-            posTypeJpaRepository.delete(posType);
-            return BasicResult.createSuccessResult("删除商家分类成功!");
-        } else {
-
-            return BasicResult.createFailResult("删除商家分类异常!");
-        }
+        return posTypeManager.deletePosType(passportId,posTypeId);
     }
 
     /**

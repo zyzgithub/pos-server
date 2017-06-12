@@ -14,7 +14,7 @@ import java.util.List;
 public interface PosProtocolJpaRepository extends JpaRepository<PosProtocol,Long> {
 
     PosProtocol findPosProtocolById(Long id);
-    @Query("SELECT pp FROM PosProtocol pp order by pp.createTime desc ")
+    @Query("SELECT pp FROM PosProtocol pp where pp.isDisplay ='Y' and pp.isDelete='N' order by pp.createTime desc ")
     List<PosProtocol> findAll();
 
 }

@@ -443,78 +443,82 @@ public class DefaultPosItemManager implements PosItemManager {
         List<PosItemVo> posItemVos = new ArrayList<>();
         //商品模板ID
         List<Long> itemTemplateIdList = new ArrayList<>();
-        for (PosItem posItem : posItems) {
-            itemTemplateIdList.add(posItem.getItemTemplateId());
-        }
-        List<LifeItemTemplate> itemTemplateList = itemTemplateJpaRepository.findAll(itemTemplateIdList);
-        List<Long> itemUnitIdList = new ArrayList<>();
-        for (LifeItemTemplate itemTemplate : itemTemplateList) {
-            itemUnitIdList.add(itemTemplate.getUnitId());
-        }
-        List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll(itemUnitIdList);
-        Map<Long, LifeItemUnit> itemUnitMap = new HashMap<>();
-        for (LifeItemTemplate itemTemplate : itemTemplateList) {
-            for (LifeItemUnit itemUnit : itemUnits) {
-                if (itemTemplate.getUnitId().longValue() == itemUnit.getId()) {
-                    itemUnitMap.put(itemTemplate.getId(), itemUnit);
+        if(posItems.size()>0){
+
+            for (PosItem posItem : posItems) {
+                itemTemplateIdList.add(posItem.getItemTemplateId());
+            }
+            List<LifeItemTemplate> itemTemplateList = itemTemplateJpaRepository.findAll(itemTemplateIdList);
+            List<Long> itemUnitIdList = new ArrayList<>();
+            for (LifeItemTemplate itemTemplate : itemTemplateList) {
+                itemUnitIdList.add(itemTemplate.getUnitId());
+            }
+            List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll(itemUnitIdList);
+            Map<Long, LifeItemUnit> itemUnitMap = new HashMap<>();
+            for (LifeItemTemplate itemTemplate : itemTemplateList) {
+                for (LifeItemUnit itemUnit : itemUnits) {
+                    if (itemTemplate.getUnitId().longValue() == itemUnit.getId()) {
+                        itemUnitMap.put(itemTemplate.getId(), itemUnit);
+                    }
                 }
             }
-        }
-        //获取所有商品分类id
-        List<Long> itemTypeIdList=new ArrayList<>();
-        for(PosItem posItem : posItems){
-            itemTypeIdList.add(posItem.getItemTypeId());
-        }
+            //获取所有商品分类id
+            List<Long> itemTypeIdList=new ArrayList<>();
+            for(PosItem posItem : posItems){
+                itemTypeIdList.add(posItem.getItemTypeId());
+            }
 
-        //获取所有商品分类
-        List<LifeItemType> itemTypes=lifeItemTypeJpaRepository.findAll(itemTypeIdList);
-        Map<Long, LifeItemType> itemTypeMap = new HashMap<>();
-        for (PosItem posItem : posItems) {
-            for (LifeItemType itemType : itemTypes) {
-                if (posItem.getItemTypeId().longValue() == itemType.getId()) {
-                    itemTypeMap.put(itemType.getId(), itemType);
+            //获取所有商品分类
+            List<LifeItemType> itemTypes=lifeItemTypeJpaRepository.findAll(itemTypeIdList);
+            Map<Long, LifeItemType> itemTypeMap = new HashMap<>();
+            for (PosItem posItem : posItems) {
+                for (LifeItemType itemType : itemTypes) {
+                    if (posItem.getItemTypeId().longValue() == itemType.getId()) {
+                        itemTypeMap.put(itemType.getId(), itemType);
+                    }
                 }
             }
-        }
-        for (PosItem posItem : posItems) {
-            PosItemVo posItemVo = new PosItemVo();
-            posItemVo.setId(posItem.getId());
-            posItemVo.setPosTypeId(posItem.getItemTypeId());
-            LifeItemType itemType = itemTypeMap.get(posItem.getItemTypeId());
-            posItemVo.setPosTypeName(itemType.getTitle());
-            posItemVo.setItemTemplateId(posItem.getItemTemplateId());
-            posItemVo.setItemName(posItem.getItemName());
-            BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
-            BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
-            BigDecimal a = new BigDecimal(100);
-            Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-            posItemVo.setStockPrice(sPrice);
-            posItemVo.setSalesPrice(saPrice);
-            posItemVo.setItemTypeId(posItem.getItemTypeId());
-            posItemVo.setBuyCount(posItem.getBuyCount());
-            posItemVo.setCreateDate(posItem.getCreateTime());
-            posItemVo.setBarcode(posItem.getBarcode());
-            posItemVo.setIsDelete(posItem.getIsDelete());
-            posItemVo.setIsShelve(posItem.getIsShelve());
-            posItemVo.setItemImg(posItem.getItemImgUrl());
-            posItemVo.setRepertory(posItem.getRepertory());
-            posItemVo.setWarningRepertory(posItem.getWarningRepertory());
-            posItemVo.setShelfLife(posItem.getShelfLife());
-            posItemVo.setPassportId(posItem.getPassportId());
-            LifeItemUnit itemUnit = itemUnitMap.get(posItem.getItemTemplateId());
-            String title = "";
-            Long unitId=null;
-            if (itemUnit != null) {
-                title = itemUnit.getTitle();
-                unitId=itemUnit.getId();
-            }
+            for (PosItem posItem : posItems) {
+                PosItemVo posItemVo = new PosItemVo();
+                posItemVo.setId(posItem.getId());
+                posItemVo.setPosTypeId(posItem.getItemTypeId());
+                LifeItemType itemType = itemTypeMap.get(posItem.getItemTypeId());
+                posItemVo.setPosTypeName(itemType.getTitle());
+                posItemVo.setItemTemplateId(posItem.getItemTemplateId());
+                posItemVo.setItemName(posItem.getItemName());
+                BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
+                BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
+                BigDecimal a = new BigDecimal(100);
+                Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                posItemVo.setStockPrice(sPrice);
+                posItemVo.setSalesPrice(saPrice);
+                posItemVo.setItemTypeId(posItem.getItemTypeId());
+                posItemVo.setBuyCount(posItem.getBuyCount());
+                posItemVo.setCreateDate(posItem.getCreateTime());
+                posItemVo.setBarcode(posItem.getBarcode());
+                posItemVo.setIsDelete(posItem.getIsDelete());
+                posItemVo.setIsShelve(posItem.getIsShelve());
+                posItemVo.setItemImg(posItem.getItemImgUrl());
+                posItemVo.setRepertory(posItem.getRepertory());
+                posItemVo.setWarningRepertory(posItem.getWarningRepertory());
+                posItemVo.setShelfLife(posItem.getShelfLife());
+                posItemVo.setPassportId(posItem.getPassportId());
+                LifeItemUnit itemUnit = itemUnitMap.get(posItem.getItemTemplateId());
+                String title = "";
+                Long unitId=null;
+                if (itemUnit != null) {
+                    title = itemUnit.getTitle();
+                    unitId=itemUnit.getId();
+                }
 
-            posItemVo.setItemUnitId(unitId);
-            posItemVo.setItemUnitName(title);
-            posItemVo.setGeneratedDate(posItem.getGeneratedDate());
-            posItemVos.add(posItemVo);
+                posItemVo.setItemUnitId(unitId);
+                posItemVo.setItemUnitName(title);
+                posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+                posItemVos.add(posItemVo);
+            }
         }
+
 
         return posItemVos;
 
@@ -550,19 +554,20 @@ public class DefaultPosItemManager implements PosItemManager {
             //商品分类
             logger.info("获取所有商品分类");
             List<PosType> posTypes = posTypeJpaRepository.getAllByPassportId(Long.parseLong(passportId));
-            List<Long> itemTypeIds = new ArrayList<>();
-            for (PosType posType : posTypes) {
-                itemTypeIds.add(posType.getItemTypeId());
-            }
-            List<Map<String, Object>> itemTypeCountMapList = posItemMapper
-                    .getCountByItemType(Long.parseLong(passportId), itemTypeIds);
-            Map<Long, Integer> itemTypeCountMap = new HashMap<>();
-            for (Map<String, Object> map : itemTypeCountMapList) {
-                itemTypeCountMap.put(Long.parseLong(map.get("item_type_id").toString())
-                        , Integer.parseInt(map.get("count").toString()));
-            }
+
             List<PosTypeVo> posTypeVos = new ArrayList<>();
             if (posTypes.size() > 0) {
+                List<Long> itemTypeIds = new ArrayList<>();
+                for (PosType posType : posTypes) {
+                    itemTypeIds.add(posType.getItemTypeId());
+                }
+                List<Map<String, Object>> itemTypeCountMapList = posItemMapper
+                        .getCountByItemType(Long.parseLong(passportId), itemTypeIds);
+                Map<Long, Integer> itemTypeCountMap = new HashMap<>();
+                for (Map<String, Object> map : itemTypeCountMapList) {
+                    itemTypeCountMap.put(Long.parseLong(map.get("item_type_id").toString())
+                            , Integer.parseInt(map.get("count").toString()));
+                }
                 for (PosType posType : posTypes) {
                     PosTypeVo posTypeVo = new PosTypeVo();
                     posTypeVo.setId(posType.getId());
@@ -601,9 +606,7 @@ public class DefaultPosItemManager implements PosItemManager {
             }
 
             if (posItems.size() == 0) {
-
-                return BasicResult.createFailResult("没有商品信息!");
-
+                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!",posItems);
             } else {
                 List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
                 return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);

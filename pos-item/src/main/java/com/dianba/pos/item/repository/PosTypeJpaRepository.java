@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Transactional
 @Repository
-public interface PosTypeJpaRepository extends JpaRepository<PosType,Integer> {
+public interface PosTypeJpaRepository extends JpaRepository<PosType,Long> {
 
     List<PosType> getAllByPassportId(Long passportId);
 

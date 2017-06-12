@@ -1,6 +1,8 @@
 package com.dianba.pos.item.service;
 
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.item.po.PosType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,4 +23,14 @@ public interface PosTypeManager {
 
 
     PosType getPosTypeById(Long id);
+
+
+    /**
+     * 删除商品商品分类并删除分类以下商品信息
+     * @param passportId
+     * @param posTypeId
+     * @return
+     */
+    @Transactional
+    BasicResult deletePosType(Long passportId, Long posTypeId);
 }
