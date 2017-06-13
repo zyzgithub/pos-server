@@ -344,6 +344,7 @@
         inner JOIN life_passport.passport pt on pt.id=oe.partner_user_id
         INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
         INNER JOIN life_pos.pos_item pi on pi.item_template_id=ois.item_template_id
+        and pi.passport_id=oe.shipping_passport_id
         INNER JOIN life_item.item_type it on it.id=pi.item_type_id
         WHERE pt.id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
         <if test="itId !=null">AND it.id=#{itId}</if>
