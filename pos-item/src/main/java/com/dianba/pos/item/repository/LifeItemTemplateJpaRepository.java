@@ -29,12 +29,10 @@ public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTem
     /**
      * 根据code码搜索商品信息
      *
-     * @param barcode
+     * @param
      * @return
      */
-    @Query("SELECT itemp FROM LifeItemTemplate itemp where itemp.barcode=:barcode and "
-            + "itemp.ascriptionType=1")
-    LifeItemTemplate getItemTemplateByBarcode(@Param("barcode") String barcode);
+    LifeItemTemplate getItemTemplateByBarcode(String barcode);
 
     /***
      * 判断模板名字是否重复
