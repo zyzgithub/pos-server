@@ -1,14 +1,15 @@
 package com.dianba.pos.order.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrderPojo implements Serializable{
 
     private String id;
     private Long passportId;
-    private Double actualPrice;
-    private Double totalPrice;
+    private BigDecimal actualPrice;
+    private BigDecimal totalPrice;
     private String createTime;
     private String paymenTime;
     private List<OrderItemPojo> itemSnapshots;
@@ -29,19 +30,19 @@ public class OrderPojo implements Serializable{
         this.passportId = passportId;
     }
 
-    public Double getActualPrice() {
+    public BigDecimal getActualPrice() {
         return actualPrice;
     }
 
-    public void setActualPrice(Double actualPrice) {
+    public void setActualPrice(BigDecimal actualPrice) {
         this.actualPrice = actualPrice;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 

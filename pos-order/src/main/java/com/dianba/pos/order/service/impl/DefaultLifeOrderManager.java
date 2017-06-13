@@ -13,6 +13,7 @@ import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
+import com.dianba.pos.order.util.OrderSequenceUtil;
 import com.dianba.pos.order.vo.LifeOrderVo;
 import com.dianba.pos.passport.po.LifePassportAddress;
 import com.dianba.pos.passport.po.Passport;
@@ -23,6 +24,7 @@ import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
+import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
@@ -32,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -52,7 +55,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
     @Autowired
     private PassportManager passportManager;
-
+    @Autowired
+    private LifeOrderJpaRepository lifeOrderJpaRepository;
     @Autowired
     private PassportJpaRepository passportJpaRepository;
 
@@ -234,14 +238,69 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         return postOrder(CONFIRM_ORDER, params);
     }
 
+    @Transactional
     public BasicResult syncOfflineOrders(List<OrderPojo> orders) {
-        List<LifeOrder> lifeOrders = new ArrayList<>();
-        //TODO 保存离线订单
         List<Map<String, String>> faileOrderIds = new ArrayList<>();
-        for (OrderPojo orderPojo : orders) {
-            Map<String, String> map = new HashMap<>();
-            map.put("id", orderPojo.getId());
-            faileOrderIds.add(map);
+        try {
+            List<LifeOrder> lifeOrders = new ArrayList<>();
+            Long passportId = null;
+            for (OrderPojo orderPojo : orders) {
+                if (passportId == null) {
+                    passportId = orderPojo.getPassportId();
+                }
+                LifeOrder lifeOrder = new LifeOrder();
+                lifeOrder.setSequenceNumber(OrderSequenceUtil.generateOrderSequence());
+                lifeOrder.setPartnerId(orderPojo.getPassportId() + "");
+                lifeOrder.setPartnerUserId(orderPojo.getPassportId() + "");
+                lifeOrder.setCreateTime(new Date());
+                lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+                lifeOrder.setType(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey());
+                lifeOrder.setPaymentType("-1");
+                lifeOrder.setTransType(PaymentTypeEnum.CASH.getKey());
+                long actualPrice = orderPojo.getActualPrice().multiply(BigDecimal.valueOf(100)).longValue();
+                long totalPrice = orderPojo.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValue();
+                lifeOrder.setActualPrice(BigDecimal.valueOf(actualPrice));
+                lifeOrder.setTotalPrice(BigDecimal.valueOf(totalPrice));
+                if (orderPojo.getCreateTime() != null && !"".equals(orderPojo.getCreateTime())) {
+                    Long createTime = Long.parseLong(orderPojo.getCreateTime()) / 1000;
+                    lifeOrder.setCreateTime(DateUtil.strToDate(DateUtil.stampToDate(createTime)));
+                }
+                if (orderPojo.getPaymenTime() != null && !"".equals(orderPojo.getPaymenTime())) {
+                    Long paymentTime = Long.parseLong(orderPojo.getPaymenTime()) / 1000;
+                    lifeOrder.setCreateTime(DateUtil.strToDate(DateUtil.stampToDate(paymentTime)));
+                }
+                List<LifeOrderItemSnapshot> lifeOrderItemSnapshots = new ArrayList<>();
+                for (OrderItemPojo itemSnapshot : orderPojo.getItemSnapshots()) {
+                    LifeOrderItemSnapshot orderItemSnapshot = new LifeOrderItemSnapshot();
+                    orderItemSnapshot.setItemId(itemSnapshot.getItemId());
+                    orderItemSnapshot.setItemTemplateId(itemSnapshot.getItemTemplateId());
+                    orderItemSnapshot.setItemName(itemSnapshot.getItemName());
+                    orderItemSnapshot.setItemTypeId(itemSnapshot.getItemTypeId());
+                    orderItemSnapshot.setItemTypeName(itemSnapshot.getItemTypeName());
+                    orderItemSnapshot.setItemUnitId(itemSnapshot.getItemTypeUnitId());
+                    orderItemSnapshot.setItemUnitName(itemSnapshot.getItemTypeUnitName());
+                    orderItemSnapshot.setItemBarcode(itemSnapshot.getItemBarcode());
+                    orderItemSnapshot.setCostPrice(itemSnapshot.getCostPrice().multiply(BigDecimal.valueOf(100)));
+                    orderItemSnapshot.setNormalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100)));
+                    orderItemSnapshot.setTotalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100))
+                            .multiply(BigDecimal.valueOf(itemSnapshot.getNormalQuantity())));
+                    orderItemSnapshot.setNormalQuantity(itemSnapshot.getNormalQuantity());
+                    lifeOrderItemSnapshots.add(orderItemSnapshot);
+                }
+                lifeOrder.setItemSnapshots(lifeOrderItemSnapshots);
+                lifeOrders.add(lifeOrder);
+            }
+            Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+            for (LifeOrder lifeOrder : lifeOrders) {
+                lifeOrder.setShippingPassportId(merchantPassport.getId());
+            }
+            lifeOrderJpaRepository.save(lifeOrders);
+        } catch (Exception e) {
+            for (OrderPojo orderPojo : orders) {
+                Map<String, String> map = new HashMap<>();
+                map.put("id", orderPojo.getId());
+                faileOrderIds.add(map);
+            }
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(faileOrderIds);
@@ -354,6 +413,5 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         }
 
     }
-
 
 }
