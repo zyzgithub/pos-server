@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -110,8 +107,6 @@ public class DefaultPosItemManager implements PosItemManager {
                 BigDecimal a = new BigDecimal(100);
                 Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
                 Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                posItemVo.setStockPrice(sPrice);
-                posItemVo.setSalesPrice(saPrice);
                 posItemVo.setStockPrice(sPrice);
                 posItemVo.setSalesPrice(saPrice);
                 //posItemVo.setBuyCount(posItem.getBuyCount());
@@ -274,6 +269,9 @@ public class DefaultPosItemManager implements PosItemManager {
                     } else {
                         itemTemplate.setImageUrl(posItemVo.getItemImg());
                     }
+                    itemTemplate.setDefineCode("POS"+DateUtil.getCurrDate("yyyyMMddHHmmss"));
+                    itemTemplate.setStatus(0);
+                    itemTemplate.setUploadTime(new Date());
                     itemTemplate.setBarcode(posItemVo.getBarcode());
                     itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
                     itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
