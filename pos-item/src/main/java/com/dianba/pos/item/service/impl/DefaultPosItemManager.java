@@ -105,8 +105,15 @@ public class DefaultPosItemManager implements PosItemManager {
                 //posItemVo.setPosTypeName(itemType.getTitle());
                 posItemVo.setItemTemplateId(itemTemplate.getId());
                 posItemVo.setItemName(itemTemplate.getName());
-                posItemVo.setStockPrice(itemTemplate.getCostPrice());
-                posItemVo.setSalesPrice(itemTemplate.getDefaultPrice());
+                BigDecimal sMoney = new BigDecimal(itemTemplate.getCostPrice());
+                BigDecimal saMoney = new BigDecimal(itemTemplate.getDefaultPrice());
+                BigDecimal a = new BigDecimal(100);
+                Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                posItemVo.setStockPrice(sPrice);
+                posItemVo.setSalesPrice(saPrice);
+                posItemVo.setStockPrice(sPrice);
+                posItemVo.setSalesPrice(saPrice);
                 //posItemVo.setBuyCount(posItem.getBuyCount());
                 //posItemVo.setCreateDate(posItem.getCreateTime());
                 posItemVo.setBarcode(itemTemplate.getBarcode());
