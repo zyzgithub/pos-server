@@ -334,14 +334,9 @@ public class DefaultPosItemManager implements PosItemManager {
         return posItems;
     }
 
-    @Override
-    public Map<String, Object> editPosItem(PosItemVo posItemVo) {
+    public Map<String,Object> updatePosItem(PosItem posItem,PosItemVo posItemVo){
 
-        Map<String, Object> map = new HashMap<>();
-        //查询商家是否有此商品信息
-
-        PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(posItemVo.getPassportId()
-                , posItemVo.getBarcode());
+        Map<String,Object> map=new HashMap<>();
         if (posItem == null) {
             map.put("result", "false");
             map.put("msg", "查询商家商品为空!");
@@ -400,6 +395,29 @@ public class DefaultPosItemManager implements PosItemManager {
             map.put("info", posItem);
 
         }
+        return map;
+    }
+    @Override
+    public Map<String, Object> editPosItem(PosItemVo posItemVo) {
+
+        Map<String, Object> map = new HashMap<>();
+        //输入条形码是否为空
+        if(!StringUtil.isEmpty(posItemVo.getBarcode())){
+            PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(posItemVo.getPassportId()
+                    , posItemVo.getBarcode());
+           return updatePosItem(posItem,posItemVo);
+        }else if(posItemVo.getId()!=null){
+            //根据id来编辑
+            PosItem posItem = posItemJpaRepository.getPosItemById(posItemVo.getId());
+            if(posItem.getPassportId().equals(posItemVo.getPassportId())){
+                return updatePosItem(posItem,posItemVo);
+            }else {
+                map.put("result","false");
+                map.put("msg", "此商家没有编辑权限!");
+            }
+
+        }
+
         return map;
     }
 

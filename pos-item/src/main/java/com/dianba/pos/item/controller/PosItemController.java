@@ -147,8 +147,6 @@ public class PosItemController {
     @RequestMapping("editPosItem")
     public BasicResult editPosItem(PosItemVo posItemVo) {
 
-        posItemManager.editPosItem(posItemVo);
-
         Map<String, Object> map = posItemManager.editPosItem(posItemVo);
 
         String result = map.get("result").toString();
