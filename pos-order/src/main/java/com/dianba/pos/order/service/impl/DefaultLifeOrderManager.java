@@ -15,10 +15,10 @@ import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.util.OrderSequenceUtil;
 import com.dianba.pos.order.vo.LifeOrderVo;
-import com.dianba.pos.passport.po.LifePassportAddress;
+import com.dianba.pos.passport.po.LifeAchieve;
 import com.dianba.pos.passport.po.Passport;
-import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
+import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
@@ -50,7 +50,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     @Autowired
     private LifeOrderJpaRepository orderJpaRepository;
     @Autowired
-    private LifePassportAddressJpaRepository passportAddressJpaRepository;
+    private LifeAchieveManager lifeAchieveManager;
     @Autowired
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
     @Autowired
@@ -163,18 +163,15 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         params.put("sequenceNumber", sequenceNumber);
         params.put("partnerUserId", passportId + "");
         params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
-        LifePassportAddress merchantPassportAdress = passportAddressJpaRepository
+        LifeAchieve merchantPassportAdress = lifeAchieveManager
                 .findByPassportId(passportId);
-        if (merchantPassportAdress == null) {
-            throw new PosNullPointerException("商家地址信息不存在！" + passportId);
-        }
         //商家ID
-        params.put("receiptProvince", merchantPassportAdress.getProvince());
-        params.put("receiptCity", merchantPassportAdress.getCity());
-        params.put("receiptDistrict", merchantPassportAdress.getDistrict());
-        params.put("receiptAddress", merchantPassportAdress.getStreet());
-        params.put("receiptNickName", merchantPassportAdress.getName());
-        params.put("receiptPhone", merchantPassportAdress.getPhoneNumber());
+        params.put("receiptProvince", "");
+        params.put("receiptCity", "");
+        params.put("receiptDistrict", "");
+        params.put("receiptAddress", merchantPassportAdress.getAddress());
+        params.put("receiptNickName", merchantPassportAdress.getShowName());
+        params.put("receiptPhone", merchantPassportAdress.getPhoneNumber() + "");
         params.put("receiptLocation", merchantPassportAdress.getLatitude()
                 + "," + merchantPassportAdress.getLongitude());
         JSONObject jsonObject = new JSONObject();

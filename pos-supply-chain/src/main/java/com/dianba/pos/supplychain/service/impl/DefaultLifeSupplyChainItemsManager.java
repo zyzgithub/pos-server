@@ -1,14 +1,13 @@
 package com.dianba.pos.supplychain.service.impl;
 
-import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.item.po.LifeBarcodeRelationship;
 import com.dianba.pos.item.po.LifeItemTemplate;
 import com.dianba.pos.item.po.LifeItemUnit;
 import com.dianba.pos.item.repository.LifeBarcodeRelationshipJpaRepository;
 import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
-import com.dianba.pos.passport.po.LifePassportAddress;
-import com.dianba.pos.passport.repository.LifePassportAddressJpaRepository;
+import com.dianba.pos.passport.po.LifeAchieve;
+import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.supplychain.po.LifeSupplyChainItems;
 import com.dianba.pos.supplychain.repository.LifeSupplyChainItemsJpaRepository;
 import com.dianba.pos.supplychain.service.LifeSupplyChainItemsManager;
@@ -33,7 +32,7 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
     @Autowired
     private LifeSupplyChainWarehouseManager warehouseOrgManager;
     @Autowired
-    private LifePassportAddressJpaRepository passportAddressJpaRepository;
+    private LifeAchieveManager lifeAchieveManager;
     @Autowired
     private LifeItemTemplateJpaRepository itemTemplateJpaRepository;
     @Autowired
@@ -44,10 +43,7 @@ public class DefaultLifeSupplyChainItemsManager implements LifeSupplyChainItemsM
         WarehouseItemsVo warehouseItemsVo = new WarehouseItemsVo();
         List<MatchItemsVo> matchItemsList = new ArrayList<>();
         //获取商家地址
-        LifePassportAddress passportAddress = passportAddressJpaRepository.findByPassportId(passportId);
-        if (passportAddress == null) {
-            throw new PosNullPointerException("商家地址信息不存在！" + passportId);
-        }
+        LifeAchieve passportAddress = lifeAchieveManager.findByPassportId(passportId);
         Long nearbyWarehouseId = warehouseOrgManager.getNearbyWarehouse(
                 passportAddress.getLatitude(), passportAddress.getLongitude());
         if (nearbyWarehouseId <= 0) {
