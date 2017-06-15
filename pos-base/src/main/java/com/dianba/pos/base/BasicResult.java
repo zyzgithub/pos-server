@@ -42,8 +42,12 @@ public class BasicResult {
         return response;
     }
 
-    public void setResponse(JSONObject response) {
+    private void setResponse(JSONObject response) {
         this.response = response;
+    }
+
+    public void setResponse(Object obj) {
+        setResponse(JSONObject.parseObject(JSONObject.toJSON(obj).toString()));
     }
 
     @JsonIgnore

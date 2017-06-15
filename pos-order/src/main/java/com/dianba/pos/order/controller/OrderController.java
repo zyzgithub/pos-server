@@ -1,6 +1,5 @@
 package com.dianba.pos.order.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
@@ -110,7 +109,7 @@ public class OrderController extends BasicWebService {
                     , sequenceNumber, warehouseId, jsonObject);
             if (basicResult.isSuccess()) {
                 LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
-                basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrder).toString()));
+                basicResult.setResponse(lifeOrder);
             }
         }
         return basicResult;
@@ -126,7 +125,7 @@ public class OrderController extends BasicWebService {
     public BasicResult getOrderDetail(long orderId) {
         BasicResult basicResult = BasicResult.createSuccessResult();
         OrderEntry orderEntry = orderManager.getOrder(orderId);
-        basicResult.setResponse(JSONObject.parseObject(JSON.toJSON(orderEntry).toString()));
+        basicResult.setResponse(orderEntry);
         return basicResult;
     }
 

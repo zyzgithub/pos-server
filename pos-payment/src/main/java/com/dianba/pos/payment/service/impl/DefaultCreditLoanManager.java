@@ -44,7 +44,7 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
                 return BasicResult.createFailResult("商家信用卡可用额度不足！");
             }
             BasicResult basicResult = BasicResult.createSuccessResult();
-            basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(creditLoanQuotaVo).toString()));
+            basicResult.setResponse(creditLoanQuotaVo);
             return basicResult;
         } else {
             return BasicResult.createFailResult("商家信用卡信息不存在！");
@@ -116,7 +116,7 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
             //返回订单详情-加商品列表
             LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderEntry.getId());
             basicResult = BasicResult.createSuccessResult();
-            basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrderVo).toString()));
+            basicResult.setResponse(lifeOrderVo);
         }
         return basicResult;
     }

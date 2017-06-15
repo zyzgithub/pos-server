@@ -12,10 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface PassportManager {
 
+    String LOGIN = "passport/loginPassport/";
+
+    String REGISTER = "passport/registerPassport/";
+
     Passport getPassportInfoByCashierId(Long cashierId);
 
     /**
      * 登录
+     *
      * @param passportVo
      * @return
      */
@@ -23,6 +28,7 @@ public interface PassportManager {
 
     /**
      * 注册
+     *
      * @param registerVo
      * @return
      */
@@ -31,6 +37,7 @@ public interface PassportManager {
 
     /**
      * 编辑商家营业员信息
+     *
      * @param registerVo
      * @return
      */
@@ -39,6 +46,7 @@ public interface PassportManager {
 
     /**
      * 删除商家营业员
+     *
      * @param registerVo
      * @return
      */
@@ -47,13 +55,15 @@ public interface PassportManager {
 
     /**
      * 根据商家id获取营业员
-     * @param  registerVo
+     *
+     * @param registerVo
      * @return
      */
     BasicResult getMerchantPosList(RegisterVo registerVo);
 
     /**
      * 获取营业员信息
+     *
      * @param registerVo
      * @return
      */
