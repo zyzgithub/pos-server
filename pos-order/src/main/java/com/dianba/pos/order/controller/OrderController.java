@@ -1,6 +1,5 @@
 package com.dianba.pos.order.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
