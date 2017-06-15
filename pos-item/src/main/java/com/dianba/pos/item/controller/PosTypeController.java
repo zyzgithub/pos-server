@@ -56,8 +56,8 @@ public class PosTypeController {
             } else {
                 LifeItemType itemType = new LifeItemType();
                 itemType.setTitle(title);
-                itemType.setIcon("www.baidu.com");
-                itemType.setImage("www.baidu.com");
+                itemType.setIcon("http://no1.0085.com");
+                itemType.setImage("http://no1.0085.com");
                 itemType.setParentId(0L);
                 itemType.setSort(0);
                 itemType.setStatus(0);
