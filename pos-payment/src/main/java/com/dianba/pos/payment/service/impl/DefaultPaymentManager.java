@@ -235,7 +235,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             }
             //返回订单详情-加商品列表
             LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderEntry.getId());
-            basicResult.setResponse(JSONObject.parseObject(JSONObject.toJSON(lifeOrderVo).toString()));
+            basicResult.setResponse(lifeOrderVo);
             return basicResult;
         } catch (Exception e) {
             logger.error("订单保存异常!" + e.getMessage());
