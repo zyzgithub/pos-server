@@ -69,6 +69,8 @@ public class PosTypeController {
                 posType.setPassportId(Long.parseLong(passportId));
                 posType.setItemTypeId(itemType.getId());
                 posType.setItemTypeTitle(title);
+                posType.setIsDelete("N");
+                posType.setSort(0);
                 posTypeJpaRepository.save(posType);
                 PosTypeVo posTypeVo=new PosTypeVo();
                 posTypeVo.setId(posType.getId());
