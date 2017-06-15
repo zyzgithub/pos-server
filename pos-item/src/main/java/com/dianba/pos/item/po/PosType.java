@@ -23,6 +23,29 @@ public class PosType implements Serializable{
 
     @Column(name = "item_type_title")
     private String itemTypeTitle;
+
+    @Column(name = "is_delete")
+    private String isDelete;
+
+    @Column(name = "sort")
+    private Integer sort;
+
+    public String getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(String isDelete) {
+        this.isDelete = isDelete;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
     public Long getId() {
         return id;
     }

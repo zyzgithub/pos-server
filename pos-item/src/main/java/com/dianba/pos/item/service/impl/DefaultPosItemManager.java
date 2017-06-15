@@ -433,6 +433,9 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setId(posItem.getId());
         posItemVo.setPosTypeId(posItem.getItemTypeId());
         LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
+        if(itemType==null){
+
+        }
         posItemVo.setPosTypeName(itemType.getTitle());
         posItemVo.setItemTemplateId(itemTemplate.getId());
         posItemVo.setItemName(posItem.getItemName());
