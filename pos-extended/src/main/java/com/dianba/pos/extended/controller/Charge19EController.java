@@ -1,4 +1,5 @@
 package com.dianba.pos.extended.controller;
+
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
@@ -102,12 +103,12 @@ public class Charge19EController {
         if (!StringUtil.isEmpty(chargeCallBack.getChargeStatus())) {
             logger.info("话费充值回调类：========");
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
-           // Long times = Long.parseInt(DateUtil.currentTimeMillis().toString());
+            // Long times = Long.parseInt(DateUtil.currentTimeMillis().toString());
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
 
                 //查询此订单是否更新完毕
                 Object ob = orderMapper.getByPayId(merchantOrderId);
-                if (ob!=null&!ob.equals("success")) {
+                if (ob != null & !ob.equals("success")) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     //发货完成
@@ -146,7 +147,7 @@ public class Charge19EController {
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = orderMapper.getByPayId(merOrderNo);
-                if (ob!=null&!ob.equals("success")) {
+                if (ob != null & !ob.equals("success")) {
                     //改变原订单状态
                     orderMapper.editOrderInfoBy19e(8, merOrderNo);
                     //改变第三方订单状态
@@ -174,11 +175,11 @@ public class Charge19EController {
 
     @ApiOperation("增值服务商品信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "type",value = "1话费充值 2流量充值",paramType = "query",required = true)
-            ,@ApiImplicitParam(name = "phone",value = "要操作的手机号码",paramType = "query",required = true)
+            @ApiImplicitParam(name = "type", value = "1话费充值 2流量充值", paramType = "query", required = true)
+            , @ApiImplicitParam(name = "phone", value = "要操作的手机号码", paramType = "query", required = true)
     })
     @ResponseBody
-    @RequestMapping(value = "chargeMenu",method ={RequestMethod.POST,RequestMethod.GET} )
+    @RequestMapping(value = "chargeMenu", method = {RequestMethod.POST, RequestMethod.GET})
     public BasicResult chargeMenu(String type, String phone) {
 
         return charge19eManager.chargeMenu(type, phone);

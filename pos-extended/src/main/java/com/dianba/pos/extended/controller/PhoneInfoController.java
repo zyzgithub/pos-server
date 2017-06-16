@@ -20,9 +20,7 @@ public class PhoneInfoController {
     @ResponseBody
     @RequestMapping("get_phone")
     public BasicResult getPhoneInfo(Long phoneNumber) {
-        ;
         PosPhoneInfo phoneInfo = phoneInfoManager.findByMobileNumber(phoneNumber);
-
         JSONObject jsonObject = (JSONObject) JSONObject.toJSON(phoneInfo);
         return BasicResult.createSuccessResult("请求成功", jsonObject);
     }

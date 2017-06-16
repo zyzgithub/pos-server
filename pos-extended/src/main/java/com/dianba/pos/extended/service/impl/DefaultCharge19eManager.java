@@ -61,6 +61,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
+
     @Override
     public boolean hfCharge(Order19EDto or) {
 
@@ -68,7 +69,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         Charge19E charge19E = new Charge19E();
         charge19E.setChargeNumber(or.getMobile());
 
-        String money=or.getMenuName().replace("元","");
+        String money = or.getMenuName().replace("元", "");
         charge19E.setChargeMoney(money);
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
@@ -84,7 +85,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
             logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile()
                     + ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
             //修改订单信息状态 2 发货中
-            orderMapper.editOrderInfoBy19e(2,orderNum);
+            orderMapper.editOrderInfoBy19e(2, orderNum);
             flag = true;
 
         }
@@ -97,7 +98,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态,并且未发货状态去发货
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(1,0);
+        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(1, 0);
         for (Order19EDto od : list) {
             if (!StringUtil.isEmpty(od.getMobile())) {
                 //查询此订单的充值次数
@@ -123,7 +124,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
-                + RandomStringUtils.random(4, "0123456789")+ order19EDto.getOrderId();
+                + RandomStringUtils.random(4, "0123456789") + order19EDto.getOrderId();
 
         cf.setMerOrderNo(orderNum);
         cf.setProductId(order19EDto.getMenuKey());
@@ -149,9 +150,9 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态都去充值
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(2,0);
+        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(2, 0);
         for (Order19EDto od : list) {
-            logger.info("要进行充值的订单号码为："+od.getOrderNum()+",商品订单号为"+od.getMenuKey());
+            logger.info("要进行充值的订单号码为：" + od.getOrderNum() + ",商品订单号为" + od.getMenuKey());
             //查询此订单的充值次数
             Integer count = charge19eMapper.chargeCountByOrder(od.getOrderId());
             if (count < 3) { //没有充值3次
@@ -214,7 +215,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
     public BasicResult chargeMenu(String type, String phone) {
 
         if (StringUtil.isEmpty(type) || StringUtil.isEmpty(phone)) {
-           return BasicResult.createFailResult("参数输入有误");
+            return BasicResult.createFailResult("参数输入有误");
         } else {
             Integer isFlash = Integer.parseInt(type);
 
@@ -224,13 +225,14 @@ public class DefaultCharge19eManager implements Charge19eManager {
             } else {
                 if (type.equals("1")) {
                     // 关联menu表中的print_type ; 1.电信2.联通3.移动;
-                    Long id = Long.parseLong(phoneInfo.getPrintType().toString());String mobilePrefix = phone.substring(0, 7);
+                    Long id = Long.parseLong(phoneInfo.getPrintType().toString());
+                    String mobilePrefix = phone.substring(0, 7);
                     Long phonel = Long.parseLong(mobilePrefix);
                     List<MenuDto> menulst = posItemMapper.getMenuListByPhoneAndType(phonel);
-                    JSONObject jsonObject=new JSONObject();
+                    JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", menulst);
-                    return BasicResult.createSuccessResult("获取话费充值商品成功",jsonObject);
+                    return BasicResult.createSuccessResult("获取话费充值商品成功", jsonObject);
                 } else if (type.equals("2")) {
                     Product pd = new Product();
                     pd.setMobile(phone);
@@ -246,8 +248,8 @@ public class DefaultCharge19eManager implements Charge19eManager {
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
                             logger.info("根据第三方商品id获取本地商品:====" + productId);
-                            PosItem menu = posItemJpaRepository.findAllByMenuKeyAndIsShelveAndIsDelete
-                                    (productId, "Y", "N");
+                            PosItem menu = posItemJpaRepository
+                                    .findAllByMenuKeyAndIsShelveAndIsDelete(productId, "Y", "N");
                             MenuDto menuDto = new MenuDto();
                             if (menu != null) {
                                 menuDto.setMenuId(menu.getId().toString());
@@ -264,11 +266,11 @@ public class DefaultCharge19eManager implements Charge19eManager {
                             }
                         }
                     }
-                    JSONObject jsonObject=new JSONObject();
+                    JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", menulst);
-                    return BasicResult.createSuccessResult("获取流量充值商品成功",jsonObject);
-                }else {
+                    return BasicResult.createSuccessResult("获取流量充值商品成功", jsonObject);
+                } else {
                     return BasicResult.createFailResult("请求异常");
                 }
             }
