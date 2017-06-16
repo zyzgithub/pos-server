@@ -70,30 +70,27 @@
             #{remark}
         </foreach>
     </select>
-    <!--获取增值服务平台订单支付成功,未请求第三方服务type：3话费充值4流量充值-->
+    <!--获取增值服务平台订单支付成功,未请求第三方服务type：1话费充值2流量充值 deliver_statues 0 未发货 2 发货中 8 发货成功-->
     <select id="getOrderListBy19EMenu" resultType="com.dianba.pos.order.vo.Order19EDto">
-          SELECT
-             o.id orderId,
-             o.pay_id orderNum,
-             m.price price,
-             m.name menuName,
-             o.mobile mobile,
-             o.pay_state payState,
-             m.is_flash type,
-             m.menu_key menuKey
-          FROM `order` o
-          JOIN order_menu om on om.order_id=o.id
-          JOIN  menu m on m.id=om.menu_id
-          WHERE m.merchant_id=#{merchantId}
-          AND o.pay_state=#{payState} and o.charge_state in ('undefined','error')
-          and m.is_flash=#{type}
+        SELECT
+        o.id orderId,
+        o.order_sequence_number orderNum,
+        pi.sales_price price,
+        pi.item_name menuName,
+        o.receipt_phone mobile,
+        o.status payState,
+        pi.menu_key menuKey
+        FROM life_order.order_entry o
+        JOIN life_order.order_item_snapshot ois on ois.order_id=o.id
+        JOIN life_pos.pos_item pi on pi.id=ois.item_id
+        WHERE pi.passport_id=-1 and o.type=9 and o.status=8
+        AND pi.is_type=#{type} and o.deliver_status=#{deliverStatus}
     </select>
     <!--根据商家订单号更新原订单信息-->
     <update id="editOrderInfoBy19e" parameterType="java.util.Map">
-        UPDATE `order` o
-        SET o.complete_time=#{completeTime}
-        ,o.charge_state=#{chargeState}
-        WHERE o.id =(SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
+        UPDATE life_order.order_entry oe set oe.deliver_status=#{deliverStatus},oe.confirm_time=now()
+        WHERE oe.id=(SELECT order_id FROM life_pos.pos_charge_19e_order WHERE merchant_order_id=#{orderNum})
+        and  SELECT count(1) from life_pos.pos_charge_19e_order ch WHERE  ch.order_id=
     </update>
     <!--查询此订单号是否被更新过了-->
     <select id="getByPayId" resultType="java.lang.Object">

@@ -40,12 +40,12 @@ public class MerchantDayReportVo {
     /**
      * 商品总金额
      **/
-    private Long sumCostMoney;
+    private BigDecimal sumCostMoney;
 
     /**
      * 商品销售总金额
      **/
-    private Long sumTotalMoney;
+    private BigDecimal sumTotalMoney;
 
 
 
@@ -54,29 +54,26 @@ public class MerchantDayReportVo {
     private BigDecimal a = new BigDecimal(100);
 
 
-    public Double getCostMoney() {
-        BigDecimal sumMoneyBd = new BigDecimal(sumCostMoney);
-        return sumMoneyBd.divide(a, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    public BigDecimal getCostMoney() {
+
+        return sumCostMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP);
     }
 
 
-    public Double getTotalMoney() {
-        BigDecimal sumTotalMoneyBd = new BigDecimal(sumTotalMoney);
-        return sumTotalMoneyBd.divide(a, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    public BigDecimal getTotalMoney() {
+
+        return sumTotalMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP);
     }
 
 
-    public Double getMarginMoney(){
+    public BigDecimal getMarginMoney(){
 
-        BigDecimal sumTotalMoneyBd=new BigDecimal(Double.toString(getCostMoney()));
-        BigDecimal b=new BigDecimal(Double.toString(getTotalMoney()));
-        return b.subtract(sumTotalMoneyBd).doubleValue();
+
+        return getCostMoney().subtract(getTotalMoney());
     }
 
     public String getGrossMargin() {
-        BigDecimal abc = new BigDecimal(getMarginMoney());
-        BigDecimal abcd = new BigDecimal(getTotalMoney());
-        Double c = abc.multiply(a).divide(abcd, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        BigDecimal c = getMarginMoney().multiply(a).divide(getTotalMoney(), 2, BigDecimal.ROUND_HALF_UP);
         return c+"%";
     }
 
@@ -129,19 +126,19 @@ public class MerchantDayReportVo {
         this.sumCount = sumCount;
     }
 
-    public Long getSumCostMoney() {
+    public BigDecimal getSumCostMoney() {
         return sumCostMoney;
     }
 
-    public void setSumCostMoney(Long sumCostMoney) {
+    public void setSumCostMoney(BigDecimal sumCostMoney) {
         this.sumCostMoney = sumCostMoney;
     }
 
-    public Long getSumTotalMoney() {
+    public BigDecimal getSumTotalMoney() {
         return sumTotalMoney;
     }
 
-    public void setSumTotalMoney(Long sumTotalMoney) {
+    public void setSumTotalMoney(BigDecimal sumTotalMoney) {
         this.sumTotalMoney = sumTotalMoney;
     }
 }

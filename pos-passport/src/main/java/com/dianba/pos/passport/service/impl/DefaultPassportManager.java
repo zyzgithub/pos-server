@@ -318,7 +318,7 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
         List<RegisterVo> registerVos = new ArrayList<>();
         if (posCashierAccountList.size() == 0) {
 
-            return BasicResult.createFailResult("获取商家营业员信息失败");
+            return BasicResult.createSuccessResult("此商家没有pos营业员请添加一个");
         } else {
             for (PosCashierAccount posCashierAccount : posCashierAccountList) {
 

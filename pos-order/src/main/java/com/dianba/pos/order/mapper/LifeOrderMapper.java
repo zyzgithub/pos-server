@@ -31,14 +31,13 @@ public interface LifeOrderMapper {
     /**
      * 获取未充值订单
      */
-    List<Order19EDto> getOrderListBy19EMenu(@Param("merchantId") Integer merchantId
-            , @Param("payState") String payState, @Param("type") Integer type);
+    List<Order19EDto> getOrderListBy19EMenu(@Param("type") Integer type,@Param("deliverStatus") Integer deliverStatus);
 
     /**
      * 更新增值服务订单信息为成功状态
      */
-    void editOrderInfoBy19e(@Param("chargeState") String payState
-            , @Param("orderNum") String orderNum, @Param("completeTime") int timestamp);
+    void editOrderInfoBy19e(@Param("deliverStatus") Integer deliverStatus,@Param("orderNum") String orderNum);
+
 
     Object getByPayId(@Param("orderNum") String orderNum);
 
