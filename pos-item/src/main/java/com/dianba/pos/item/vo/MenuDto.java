@@ -1,5 +1,7 @@
 package com.dianba.pos.item.vo;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Administrator on 2017/5/8 0008.
  */
@@ -9,12 +11,12 @@ public class MenuDto {
 
     private String menuName;
 
-    private Double price;
+    private BigDecimal price;
 
-    private Double stockPrice;
+    private BigDecimal stockPrice;
 
-    private Integer type;
 
+    private BigDecimal a = new BigDecimal(100);
     public String getMenuId() {
         return menuId;
     }
@@ -31,27 +33,20 @@ public class MenuDto {
         this.menuName = menuName;
     }
 
-    public Double getPrice() {
-        return price;
+    public BigDecimal getPrice() {
+
+        return price.divide(a,2,BigDecimal.ROUND_HALF_DOWN);
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public Double getStockPrice() {
-        return stockPrice;
+    public BigDecimal getStockPrice() {
+        return stockPrice.divide(a,2,BigDecimal.ROUND_HALF_DOWN);
     }
 
-    public void setStockPrice(Double stockPrice) {
+    public void setStockPrice(BigDecimal stockPrice) {
         this.stockPrice = stockPrice;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
     }
 }

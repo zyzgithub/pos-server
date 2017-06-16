@@ -69,6 +69,9 @@ public interface PosItemJpaRepository extends JpaRepository<PosItem, Long> {
             , @Param("passportId") Long passportId);
 
     PosItem getPosItemByPassportIdAndBarcode(Long passportId,String barcode);
+
+
+    PosItem findAllByMenuKeyAndIsShelveAndIsDelete(String menuKey,String isShelve,String IsDelete);
 }
 
 

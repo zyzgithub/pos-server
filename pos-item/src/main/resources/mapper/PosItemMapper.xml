@@ -67,4 +67,20 @@
         </foreach>
         group by item_type_id
     </select>
+
+    <!--获取话费充值商品信息-->
+    <select id="getMenuListByPhoneAndType" resultType="com.dianba.pos.item.vo.MenuDto">
+        SELECT me.id menuId,
+        me.item_name menuName,
+        me.sales_price price,
+        me.stock_price stockPrice
+        FROM life_pos.pos_item me
+        INNER JOIN life_pos.pos_phone_info pi
+        on pi.code=me.code_id and
+        pi.print_type=me.operator_type
+        where me.passport_id=-1
+        and pi.id=#{phone}
+        and me.is_shelve='Y' and me.is_delete='N'
+        ORDER BY price
+    </select>
 </mapper>
