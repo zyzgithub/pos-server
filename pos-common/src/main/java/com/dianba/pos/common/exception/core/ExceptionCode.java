@@ -1,4 +1,0 @@
-package com.dianba.pos.common.exception.core;
-
-public interface ExceptionCode {
-}
