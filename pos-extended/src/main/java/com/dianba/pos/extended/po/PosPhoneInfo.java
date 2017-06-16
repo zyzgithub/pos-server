@@ -4,22 +4,22 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "PHONE_INFO")
+@Table(name = "life_pos.pos_phone_info")
 public class PosPhoneInfo implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private long id;
-    @Column(name = "PROVINCE")
+    @Column(name = "province")
     private String province;
-    @Column(name = "CITY")
+    @Column(name = "city")
     private String city;
-    @Column(name = "AREACODE")
+    @Column(name = "areaCode")
     private String areaCode;
-    @Column(name = "ZIP")
+    @Column(name = "zip")
     private String zip;
-    @Column(name = "COMPANY")
+    @Column(name = "company")
     private String company;
 
     @Column(name = "code")

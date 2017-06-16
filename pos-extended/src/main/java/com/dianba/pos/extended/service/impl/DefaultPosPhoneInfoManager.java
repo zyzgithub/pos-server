@@ -1,16 +1,16 @@
 package com.dianba.pos.extended.service.impl;
 
 import com.dianba.pos.extended.po.PosPhoneInfo;
-import com.dianba.pos.extended.repository.PhoneInfoJpaRepository;
-import com.dianba.pos.extended.service.PhoneInfoManager;
+import com.dianba.pos.extended.repository.PosPhoneInfoJpaRepository;
+import com.dianba.pos.extended.service.PosPhoneInfoManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DefaultPhoneInfoManager implements PhoneInfoManager {
+public class DefaultPosPhoneInfoManager implements PosPhoneInfoManager {
 
     @Autowired
-    private PhoneInfoJpaRepository phoneInfoJpaRepository;
+    private PosPhoneInfoJpaRepository phoneInfoJpaRepository;
 
     public PosPhoneInfo findByMobileNumber(Long mobileNumber) {
         String mobilePrefix = (mobileNumber + "").substring(0, 7);

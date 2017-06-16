@@ -1,5 +1,6 @@
 package com.dianba.pos.extended.service;
 
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.ChargeResult;
 import com.dianba.pos.order.vo.Order19EDto;
@@ -45,4 +46,12 @@ public interface Charge19eManager {
      * @param order19EDto
      */
     void saveFlowChargeTable(Order19EDto order19EDto, ChargeFlowResult chargeFlowResult);
+
+    /**
+     * 获取增值服务商品信息 1 话费 2 流量
+     * @param type
+     * @param phone
+     * @return
+     */
+    BasicResult chargeMenu(String type, String phone);
 }
