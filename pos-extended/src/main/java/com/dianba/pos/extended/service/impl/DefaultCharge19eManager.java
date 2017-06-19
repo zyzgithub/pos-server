@@ -230,6 +230,16 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     String mobilePrefix = phone.substring(0, 7);
                     Long phonel = Long.parseLong(mobilePrefix);
                     List<PosItemVo> menulst = posItemMapper.getMenuListByPhoneAndType(phonel);
+                    List<PosItemVo> posItemVos=new ArrayList<>();
+                    BigDecimal a=new BigDecimal(100);
+                    for(PosItemVo posItemVo :menulst){
+                        PosItemVo posItemVo1=new PosItemVo();
+                        posItemVo1=posItemVo;
+
+                        posItemVo1.setSalesPrice(posItemVo.getSalesPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+
+                        posItemVo1.setStockPrice(posItemVo.getStockPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+                    }
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", menulst);

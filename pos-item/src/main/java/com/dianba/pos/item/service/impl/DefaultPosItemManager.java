@@ -105,8 +105,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 BigDecimal sMoney = new BigDecimal(itemTemplate.getCostPrice());
                 BigDecimal saMoney = new BigDecimal(itemTemplate.getDefaultPrice());
                 BigDecimal a = new BigDecimal(100);
-                Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                BigDecimal sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP);
+                BigDecimal saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP);
                 posItemVo.setStockPrice(sPrice);
                 posItemVo.setSalesPrice(saPrice);
                 //posItemVo.setBuyCount(posItem.getBuyCount());
@@ -134,16 +134,16 @@ public class DefaultPosItemManager implements PosItemManager {
         if (StringUtil.isEmpty(posItemVo.getBarcode())) {
             map.put("result", "false");
             map.put("msg", "商品入库码不能为空!");
-        } else if (posItemVo.getStockPrice() == 0L) {
+        } else if (posItemVo.getStockPrice().equals(0.0)) {
             map.put("result", "false");
             map.put("msg", "商品进货价不能为空");
-        } else if (posItemVo.getSalesPrice() == 0L) {
+        } else if (posItemVo.getSalesPrice().equals(0.0)) {
             map.put("result", "false");
             map.put("msg", "商品零售价不能为空");
         } else if (posItemVo.getRepertory().equals(0)) {
             map.put("result", "false");
             map.put("msg", "商品库存不能为空");
-        } else if (posItemVo.getSalesPrice() < posItemVo.getStockPrice()) {
+        } else if (posItemVo.getSalesPrice().doubleValue() < posItemVo.getStockPrice().doubleValue()) {
             map.put("result", "false");
             map.put("msg", "零售价格小于进货价哦");
         } else if (posItemVo.getPassportId() == null) {
@@ -208,11 +208,11 @@ public class DefaultPosItemManager implements PosItemManager {
         if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
             posItem.setBarcode(posItemVo.getBarcode());
         }
-        if (posItemVo.getStockPrice() != 0.0) {
-            posItem.setStockPrice((long) (posItemVo.getStockPrice() * 100));
+        if (posItemVo.getStockPrice() .equals(0.0)) {
+            posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
         }
-        if (posItemVo.getSalesPrice() != 0.0) {
-            posItem.setSalesPrice((long) (posItemVo.getSalesPrice() * 100));
+        if (posItemVo.getSalesPrice().equals(0.0)) {
+            posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
         }
 
         if (StringUtil.isEmpty(posItemVo.getItemImg())) {
@@ -273,8 +273,8 @@ public class DefaultPosItemManager implements PosItemManager {
                     itemTemplate.setStatus(0);
                     itemTemplate.setUploadTime(new Date());
                     itemTemplate.setBarcode(posItemVo.getBarcode());
-                    itemTemplate.setCostPrice((long) posItemVo.getStockPrice() * 100);
-                    itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice() * 100);
+                    itemTemplate.setCostPrice((long) posItemVo.getStockPrice().doubleValue() * 100);
+                    itemTemplate.setDefaultPrice((long) posItemVo.getSalesPrice().doubleValue() * 100);
                     itemTemplate.setUnitId(posItemVo.getItemUnitId());
                     itemTemplate.setTypeId(posItemVo.getItemTypeId());
                     itemTemplate.setName(posItemVo.getItemName());
@@ -367,11 +367,11 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
                 posItem.setBarcode(posItemVo.getBarcode());
             }
-            if (posItemVo.getStockPrice() != 0.0) {
-                posItem.setStockPrice((long) (posItemVo.getStockPrice() * 100));
+            if (!posItemVo.getStockPrice().equals(0.0)) {
+                posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
             }
-            if (posItemVo.getSalesPrice() != 0.0) {
-                posItem.setSalesPrice((long) (posItemVo.getSalesPrice() * 100));
+            if (!posItemVo.getSalesPrice().equals(0.0)) {
+                posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
             }
 
             if (!StringUtil.isEmpty(posItemVo.getItemImg())) {
@@ -442,8 +442,8 @@ public class DefaultPosItemManager implements PosItemManager {
         BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
         BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
         BigDecimal a = new BigDecimal(100);
-        Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-        Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+        BigDecimal sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP);
+        BigDecimal saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP);
         posItemVo.setStockPrice(sPrice);
         posItemVo.setSalesPrice(saPrice);
         posItemVo.setItemTypeId(posItem.getItemTypeId());
@@ -515,8 +515,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
                 BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
                 BigDecimal a = new BigDecimal(100);
-                Double sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
-                Double saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP).doubleValue();
+                BigDecimal sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP);
+                BigDecimal saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP);
                 posItemVo.setStockPrice(sPrice);
                 posItemVo.setSalesPrice(saPrice);
                 posItemVo.setItemTypeId(posItem.getItemTypeId());

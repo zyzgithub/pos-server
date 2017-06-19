@@ -1,6 +1,8 @@
 package com.dianba.pos.item.vo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.math.BigDecimal;
+
 
 /**
  * Created by zhangyong on 2017/5/26.
@@ -82,12 +84,12 @@ public class PosItemVo {
      * 原价
      **/
 
-    private double stockPrice;
+    private BigDecimal stockPrice;
     /**
      * 销售价格
      **/
 
-    private double salesPrice;
+    private BigDecimal salesPrice;
 
 
     public Long getId() {
@@ -189,9 +191,7 @@ public class PosItemVo {
     }
 
 
-    public void setSalesPrice(Long salesPrice) {
-        this.salesPrice = salesPrice;
-    }
+
 
 
     public String getItemName() {
@@ -256,19 +256,19 @@ public class PosItemVo {
     }
 
 
-    public double getStockPrice() {
+    public BigDecimal getStockPrice() {
         return stockPrice;
     }
 
-    public void setStockPrice(double stockPrice) {
+    public void setStockPrice(BigDecimal stockPrice) {
         this.stockPrice = stockPrice;
     }
 
-    public double getSalesPrice() {
+    public BigDecimal getSalesPrice() {
         return salesPrice;
     }
 
-    public void setSalesPrice(double salesPrice) {
+    public void setSalesPrice(BigDecimal salesPrice) {
         this.salesPrice = salesPrice;
     }
 

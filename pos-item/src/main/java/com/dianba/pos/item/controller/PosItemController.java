@@ -188,11 +188,11 @@ public class PosItemController {
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {
                 posItem.setItemName(posItemVo.getItemName());
             }
-            if (posItemVo.getStockPrice() != 0.0) {
-                posItem.setStockPrice((long) posItemVo.getStockPrice() * 100);
+            if (!posItemVo.getStockPrice() .equals(0.0)) {
+                posItem.setStockPrice((long) posItemVo.getStockPrice().doubleValue() * 100);
             }
-            if (posItemVo.getSalesPrice() != 0.0) {
-                posItem.setSalesPrice((long) posItemVo.getSalesPrice() * 100);
+            if (!posItemVo.getSalesPrice().equals(0.0)) {
+                posItem.setSalesPrice((long) posItemVo.getSalesPrice().doubleValue() * 100);
 
             }
             if (posItemVo.getRepertory() != null) {

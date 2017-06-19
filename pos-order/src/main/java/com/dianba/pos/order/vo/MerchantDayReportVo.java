@@ -69,7 +69,7 @@ public class MerchantDayReportVo {
     public BigDecimal getMarginMoney(){
 
 
-        return getCostMoney().subtract(getTotalMoney());
+        return getTotalMoney().subtract(getCostMoney());
     }
 
     public String getGrossMargin() {
