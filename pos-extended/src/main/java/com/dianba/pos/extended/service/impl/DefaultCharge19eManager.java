@@ -18,6 +18,9 @@ import com.dianba.pos.extended.util.HfCharge19EApi;
 import com.dianba.pos.extended.util.HfCharge19EUtil;
 import com.dianba.pos.extended.vo.*;
 import com.dianba.pos.item.mapper.PosItemMapper;
+import com.dianba.pos.item.po.LifeItemTemplate;
+import com.dianba.pos.item.po.LifeItemType;
+import com.dianba.pos.item.po.LifeItemUnit;
 import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.vo.MenuDto;
@@ -33,7 +36,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/5/9 0009.
@@ -250,42 +255,64 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
                     String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
                     JSONObject jb = JSON.parseObject(result);
-                    List<MenuDto> menulst = new ArrayList<>();
+                    List<PosItemVo> posItemVos = new ArrayList<>();
                     if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
                         JSONArray ja = jb.getJSONArray("productList");
                         List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
                         logger.info("流量充值商品列表信息：====" + ja.toString());
+
                         for (ProductListDto pl : lst) {
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
                             logger.info("根据第三方商品id获取本地商品:====" + productId);
-                            PosItem menu = posItemJpaRepository
+                            PosItem posItem = posItemJpaRepository
                                     .findAllByMenuKeyAndIsShelveAndIsDelete(productId, "Y", "N");
-                            MenuDto menuDto = new MenuDto();
-                            if (menu != null) {
-                                menuDto.setMenuId(menu.getId().toString());
-                                menuDto.setMenuName(menu.getItemName());
+                            PosItemVo posItemVo = new PosItemVo();
 
-                                BigDecimal sMoney = new BigDecimal(menu.getStockPrice());
-                                BigDecimal saMoney = new BigDecimal(menu.getSalesPrice());
+                            if (posItem != null) {
+                                posItemVo.setId(posItem.getId());
+                                posItemVo.setPosTypeId(posItem.getItemTypeId());
+                                posItemVo.setPosTypeName("");
+                                posItemVo.setItemTemplateId(posItem.getItemTemplateId());
+                                posItemVo.setItemName(posItem.getItemName());
+                                BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
+                                BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
                                 BigDecimal a = new BigDecimal(100);
                                 BigDecimal sPrice = sMoney.divide(a, 2, BigDecimal.ROUND_UP);
                                 BigDecimal saPrice = saMoney.divide(a, 2, BigDecimal.ROUND_UP);
-                                menuDto.setPrice(saPrice);
-                                menuDto.setStockPrice(sPrice);
-                                menulst.add(menuDto);
+                                posItemVo.setStockPrice(sPrice);
+                                posItemVo.setSalesPrice(saPrice);
+                                posItemVo.setItemTypeId(posItem.getItemTypeId());
+                                posItemVo.setBuyCount(posItem.getBuyCount());
+                                posItemVo.setCreateDate(posItem.getCreateTime());
+                                posItemVo.setBarcode(posItem.getBarcode());
+                                posItemVo.setIsDelete(posItem.getIsDelete());
+                                posItemVo.setIsShelve(posItem.getIsShelve());
+                                posItemVo.setItemImg(posItem.getItemImgUrl());
+                                posItemVo.setRepertory(posItem.getRepertory());
+                                posItemVo.setWarningRepertory(posItem.getWarningRepertory());
+                                posItemVo.setShelfLife(posItem.getShelfLife());
+                                posItemVo.setPassportId(posItem.getPassportId());
+                                posItemVo.setItemUnitId(1L);
+                                posItemVo.setItemUnitName("");
+                                posItemVo.setGeneratedDate(posItem.getGeneratedDate());
+                                posItemVos.add(posItemVo);
                             }
+
                         }
+
                     }
+
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
-                    jsonObject.put("menuList", menulst);
+                    jsonObject.put("menuList", posItemVos);
                     return BasicResult.createSuccessResult("获取流量充值商品成功", jsonObject);
-                } else {
-                    return BasicResult.createFailResult("请求异常");
+                }else {
+                    return BasicResult.createSuccessResult("获取流量充值商品成功");
                 }
             }
-        }
+            }
+
 
     }
 
