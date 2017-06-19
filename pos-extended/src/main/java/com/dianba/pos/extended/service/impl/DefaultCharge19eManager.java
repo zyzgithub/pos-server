@@ -18,12 +18,8 @@ import com.dianba.pos.extended.util.HfCharge19EApi;
 import com.dianba.pos.extended.util.HfCharge19EUtil;
 import com.dianba.pos.extended.vo.*;
 import com.dianba.pos.item.mapper.PosItemMapper;
-import com.dianba.pos.item.po.LifeItemTemplate;
-import com.dianba.pos.item.po.LifeItemType;
-import com.dianba.pos.item.po.LifeItemUnit;
 import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
-import com.dianba.pos.item.vo.MenuDto;
 import com.dianba.pos.item.vo.PosItemVo;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.repository.OrderJpaRepository;
@@ -36,9 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2017/5/9 0009.
