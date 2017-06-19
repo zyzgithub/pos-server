@@ -1,7 +1,5 @@
 package com.dianba.pos.item.mapper;
-
 import com.dianba.pos.item.po.PosItem;
-import com.dianba.pos.item.vo.MenuDto;
 import com.dianba.pos.item.vo.PosItemVo;
 import com.dianba.pos.item.vo.PosTypeVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,6 +26,6 @@ public interface PosItemMapper {
      * @param phone
      * @return
      */
-    List<MenuDto> getMenuListByPhoneAndType(Long phone);
+    List<PosItemVo> getMenuListByPhoneAndType(Long phone);
 
 }

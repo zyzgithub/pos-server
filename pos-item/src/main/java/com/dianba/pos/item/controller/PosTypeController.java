@@ -76,6 +76,7 @@ public class PosTypeController {
                 posTypeVo.setId(posType.getId());
                 posTypeVo.setItemTypeId(posType.getItemTypeId());
                 posTypeVo.setTitle(posType.getItemTypeTitle());
+
                 posTypeVo.setTypeCount(0);
                 JSONObject jsonObject=(JSONObject)JSONObject.toJSON(posTypeVo);
                 return BasicResult.createSuccessResult("添加商家分类成功!",jsonObject);

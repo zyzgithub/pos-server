@@ -21,6 +21,7 @@ import com.dianba.pos.item.mapper.PosItemMapper;
 import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.vo.MenuDto;
+import com.dianba.pos.item.vo.PosItemVo;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.repository.OrderJpaRepository;
 import com.dianba.pos.order.vo.Order19EDto;
@@ -228,7 +229,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     Long id = Long.parseLong(phoneInfo.getPrintType().toString());
                     String mobilePrefix = phone.substring(0, 7);
                     Long phonel = Long.parseLong(mobilePrefix);
-                    List<MenuDto> menulst = posItemMapper.getMenuListByPhoneAndType(phonel);
+                    List<PosItemVo> menulst = posItemMapper.getMenuListByPhoneAndType(phonel);
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", menulst);

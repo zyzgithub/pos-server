@@ -1,5 +1,4 @@
 package com.dianba.pos.order.mapper;
-
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
@@ -31,7 +30,7 @@ public interface LifeOrderMapper {
     /**
      * 获取未充值订单
      */
-    List<Order19EDto> getOrderListBy19EMenu(@Param("type") Integer type,@Param("deliverStatus") Integer deliverStatus);
+    List<Order19EDto> getOrderListBy19EMenu(@Param("type") Integer type, @Param("deliverStatus") Integer deliverStatus);
 
     /**
      * 更新增值服务订单信息为成功状态
