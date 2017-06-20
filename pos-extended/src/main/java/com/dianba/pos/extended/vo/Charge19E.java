@@ -229,7 +229,7 @@ public class Charge19E {
     public static void main(String[] args) {
         Charge19E ch = new Charge19E();
         ch.setChargeNumber("13249196270");
-        ch.setChargeMoney("10");
+        ch.setChargeMoney("1");
         ch.setChargeType("0");
         ch.setMerchantOrderId("111111111111111");
         ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
@@ -237,6 +237,7 @@ public class Charge19E {
         ch.setProvinceId("");
         ch.setFillType("0");
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, ch);
+
         //System.out.println(cr.toString());
 //        HfOrderQuery hq = new HfOrderQuery();
 //        hq.setMerchantOrderId("testRollbackOrder113");

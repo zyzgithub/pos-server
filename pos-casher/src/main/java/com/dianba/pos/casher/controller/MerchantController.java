@@ -1,6 +1,7 @@
 package com.dianba.pos.casher.controller;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.casher.config.CasherUrlConstant;
 import com.dianba.pos.order.service.LifeOrderManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 商家控制器
  */
 @Controller
-@RequestMapping("/merchant")
+@RequestMapping(CasherUrlConstant.MERCHANT)
 public class MerchantController {
-
 
     @Autowired
     private LifeOrderManager orderManager;
