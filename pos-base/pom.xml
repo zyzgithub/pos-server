@@ -20,17 +20,6 @@
 
         <dependency>
             <groupId>life</groupId>
-            <artifactId>datamanager</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>life</groupId>
             <artifactId>datamodel</artifactId>
             <version>1.0.1-SNAPSHOT</version>
             <exclusions>

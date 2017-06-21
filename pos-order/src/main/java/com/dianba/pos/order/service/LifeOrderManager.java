@@ -9,8 +9,8 @@ import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public interface LifeOrderManager {
 
@@ -27,7 +27,7 @@ public interface LifeOrderManager {
     String CONFIRM_ORDER = BASE_URL + "confirmOrder";
 
     /**
-     * 获取订单详情
+     * 获取订单详情-2.0
      */
     OrderEntry getOrder(long orderId);
 
@@ -42,35 +42,37 @@ public interface LifeOrderManager {
     LifeOrder getLifeOrder(String sequenceNumber);
 
     /*
-     * 预创建订单
+     * 预创建订单-2.0
      */
     BasicResult prepareCreateOrder(long passportId, OrderTypeEnum orderType);
 
     /**
-     * 生成一个订单
+     * 生成一个订单-2.0
      */
     BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
-            , long actualPrice, long totalPrice
+            , long actualPrice
             , List<OrderItemPojo> orderItems) throws Exception;
 
     /**
-     * 生成一键采购订单
-     */
-    BasicResult generatePurchaseOrder(long passportId, String sequenceNumber, Long warehouseId
-            , Map<String, Object> itemSet) throws Exception;
-
-    /**
-     * 确认支付订单
+     * 确认支付订单-2.0
      */
     BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum);
 
     /**
-     * 确认完成订单
+     * 确认完成订单-2.0
      */
     BasicResult confirmOrder(long passportId, long orderId);
 
     /**
+     * 创建订单
+     */
+    BasicResult createOrder(Long passportId, Integer orderType, BigDecimal actualPrice
+            , String phoneNumber
+            , List<OrderItemPojo> orderItems) throws Exception;
+
+    /**
      * 批量保存离线订单
+     *
      * @param orders
      * @return
      */
@@ -83,8 +85,7 @@ public interface LifeOrderManager {
     BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize);
 
-    BasicResult getMerchantProfitInfo(Long merchantId,String phone);
-
+    BasicResult getMerchantProfitInfo(Long merchantId, String phone);
 
 
 }

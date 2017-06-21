@@ -11,15 +11,19 @@ import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.LifeItemTemplateJpaRepository;
 import com.dianba.pos.item.repository.LifeItemTypeJpaRepository;
 import com.dianba.pos.item.repository.LifeItemUnitJpaRepository;
+import com.dianba.pos.passport.po.LifeAchieve;
 import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.purchase.mapper.OneKeyPurchaseMapper;
 import com.dianba.pos.purchase.pojo.OneKeyPurchase;
-import com.dianba.pos.purchase.service.OneKeyPurchaseManager;
+import com.dianba.pos.purchase.service.PurchaseManager;
+import com.dianba.pos.purchase.support.PurchaseRemoteService;
 import com.dianba.pos.supplychain.service.LifeSupplyChainItemsManager;
 import com.dianba.pos.supplychain.vo.ItemsVo;
 import com.dianba.pos.supplychain.vo.MatchItemsVo;
 import com.dianba.pos.supplychain.vo.WarehouseItemsVo;
+import com.xlibao.common.constant.device.DeviceTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,10 +40,10 @@ import java.util.Map;
 
 
 @Service
-public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
+public class DefaultPurchaseManager extends PurchaseRemoteService implements PurchaseManager {
 
 
-    private static Logger logger = LogManager.getLogger(DefaultOneKeyPurchaseManager.class);
+    private static Logger logger = LogManager.getLogger(DefaultPurchaseManager.class);
     @Autowired
     private OneKeyPurchaseMapper oneKeyPurchaseMapper;
     @Autowired
@@ -54,6 +58,8 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
     private PosItemMapper posItemMapper;
     @Autowired
     private PassportManager passportManager;
+    @Autowired
+    private LifeAchieveManager lifeAchieveManager;
 
     public List<OneKeyPurchase> getWarnRepertoryItems(Long passportId) {
         List<OneKeyPurchase> oneKeyPurchases = oneKeyPurchaseMapper.findWarnSaleItems(passportId);
@@ -131,7 +137,7 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
                 item.setBuyRate(buyRate + "%");
                 BigDecimal saleRate = salesPrice
                         .subtract(item.getPrice().multiply(BigDecimal.valueOf(item.getStandard())))
-                        .divide(salesPrice,4, BigDecimal.ROUND_HALF_UP)
+                        .divide(salesPrice, 4, BigDecimal.ROUND_HALF_UP)
                         .multiply(new BigDecimal(100))
                         .setScale(2, BigDecimal.ROUND_HALF_UP);
                 item.setSaleRate(saleRate + "%");
@@ -246,5 +252,33 @@ public class DefaultOneKeyPurchaseManager implements OneKeyPurchaseManager {
             remainder = 1;
         }
         return need / standard + remainder;
+    }
+
+    public BasicResult generatePurchaseOrder(long passportId, String sequenceNumber, Long warehouseId
+            , Map<String, Object> itemSet) throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("passportId", passportId + "");
+        params.put("sequenceNumber", sequenceNumber);
+        params.put("partnerUserId", passportId + "");
+        params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
+        LifeAchieve merchantPassportAdress = lifeAchieveManager
+                .findByPassportId(passportId);
+        //商家ID
+        params.put("receiptProvince", "");
+        params.put("receiptCity", "");
+        params.put("receiptDistrict", "");
+        params.put("receiptAddress", merchantPassportAdress.getAddress());
+        params.put("receiptNickName", merchantPassportAdress.getShowName());
+        params.put("receiptPhone", merchantPassportAdress.getPhoneNumber() + "");
+        params.put("receiptLocation", merchantPassportAdress.getLatitude()
+                + "," + merchantPassportAdress.getLongitude());
+        JSONObject jsonObject = new JSONObject();
+        for (String key : itemSet.keySet()) {
+            jsonObject.put(key, warehouseId);
+        }
+        params.put("warehouseRemarkSet", jsonObject.toJSONString());
+        JSONObject itemSetObj = (JSONObject) itemSet;
+        params.put("itemSet", itemSetObj.toJSONString());
+        return postPurchaseOrder(GENERATE_ORDER, params);
     }
 }

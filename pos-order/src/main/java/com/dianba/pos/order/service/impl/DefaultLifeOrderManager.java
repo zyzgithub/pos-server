@@ -2,6 +2,7 @@ package com.dianba.pos.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.JsonHelper;
@@ -15,10 +16,8 @@ import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.util.OrderSequenceUtil;
 import com.dianba.pos.order.vo.LifeOrderVo;
-import com.dianba.pos.passport.po.LifeAchieve;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
-import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.supplychain.service.LifeSupplyChainPrinterManager;
 import com.github.pagehelper.Page;
@@ -49,8 +48,6 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     private LifeOrderMapper orderMapper;
     @Autowired
     private LifeOrderJpaRepository orderJpaRepository;
-    @Autowired
-    private LifeAchieveManager lifeAchieveManager;
     @Autowired
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
     @Autowired
@@ -129,8 +126,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public BasicResult generateOrder(long passportId, String sequenceNumber, String phoneNumber
-            , long actualPrice, long totalPrice
-            , List<OrderItemPojo> orderItems) throws Exception {
+            , long actualPrice, List<OrderItemPojo> orderItems) throws Exception {
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         Map<String, String> params = new HashMap<>();
         params.put("sequenceNumber", sequenceNumber);
@@ -146,45 +142,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         if (!StringUtils.isEmpty(phoneNumber)) {
             params.put("receipt_phone", phoneNumber);
         }
-        //订单应收费用
+        //订单实收金额
         params.put("actualAmount", actualPrice + "");
-        //订单实际收费
-        params.put("totalAmount", totalPrice + "");
         params.put("discountAmount", "0");
         params.put("priceLogger", "0");
-        params.put("items", JsonHelper.toJSONString(createOrderItemSnapshots(orderItems)));
-        return postOrder(GENERATE_ORDER, params);
-    }
-
-    public BasicResult generatePurchaseOrder(long passportId, String sequenceNumber, Long warehouseId
-            , Map<String, Object> itemSet) throws Exception {
-        Map<String, String> params = new HashMap<>();
-        params.put("passportId", passportId + "");
-        params.put("sequenceNumber", sequenceNumber);
-        params.put("partnerUserId", passportId + "");
-        params.put("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey() + "");
-        LifeAchieve merchantPassportAdress = lifeAchieveManager
-                .findByPassportId(passportId);
-        //商家ID
-        params.put("receiptProvince", "");
-        params.put("receiptCity", "");
-        params.put("receiptDistrict", "");
-        params.put("receiptAddress", merchantPassportAdress.getAddress());
-        params.put("receiptNickName", merchantPassportAdress.getShowName());
-        params.put("receiptPhone", merchantPassportAdress.getPhoneNumber() + "");
-        params.put("receiptLocation", merchantPassportAdress.getLatitude()
-                + "," + merchantPassportAdress.getLongitude());
-        JSONObject jsonObject = new JSONObject();
-        for (String key : itemSet.keySet()) {
-            jsonObject.put(key, warehouseId);
-        }
-        params.put("warehouseRemarkSet", jsonObject.toJSONString());
-        JSONObject itemSetObj = (JSONObject) itemSet;
-        params.put("itemSet", itemSetObj.toJSONString());
-        return postPurchaseOrder(GENERATE_ORDER, params);
-    }
-
-    private List<OrderItemSnapshot> createOrderItemSnapshots(List<OrderItemPojo> orderItems) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
         List<OrderItemSnapshot> orderItemSnapshots = new ArrayList<>();
         for (OrderItemPojo item : orderItems) {
             long itemCostPrice = item.getCostPrice().multiply(BigDecimal.valueOf(100))
@@ -205,8 +167,12 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             orderItemSnapshot.setTotalPrice(itemSalePrice * item.getNormalQuantity());
             orderItemSnapshot.setNormalQuantity(item.getNormalQuantity());
             orderItemSnapshots.add(orderItemSnapshot);
+            totalPrice = totalPrice.add(BigDecimal.valueOf(orderItemSnapshot.getNormalPrice()));
         }
-        return orderItemSnapshots;
+        params.put("items", JsonHelper.toJSONString(orderItemSnapshots));
+        //订单总金额
+        params.put("totalAmount", totalPrice + "");
+        return postOrder(GENERATE_ORDER, params);
     }
 
     public BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum) {
@@ -235,6 +201,97 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         return postOrder(CONFIRM_ORDER, params);
     }
 
+    public BasicResult createOrder(Long passportId, Integer orderType, BigDecimal actualPrice
+            , String phoneNumber
+            , List<OrderItemPojo> orderItems) throws Exception {
+        if (orderItems == null || orderItems.size() < 0) {
+            return BasicResult.createFailResult("订单商品为空！");
+        }
+        if (OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey() == orderType) {
+            orderType = OrderTypeEnum.SCAN_ORDER_TYPE.getKey();
+        }
+        if (OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey() == orderType) {
+            return createExtendOrder(passportId, phoneNumber, actualPrice, orderItems);
+        } else if (OrderTypeEnum.SCAN_ORDER_TYPE.getKey() == orderType) {
+            BasicResult basicResult = prepareCreateOrder(passportId, OrderTypeEnum.SCAN_ORDER_TYPE);
+            if (basicResult.isSuccess()) {
+                String sequenceNumber = basicResult.getResponse().getString("sequenceNumber");
+                basicResult = generateOrder(passportId, sequenceNumber, phoneNumber
+                        , actualPrice.multiply(BigDecimal.valueOf(100)).longValue()
+                        , orderItems);
+            }
+            return basicResult;
+        }
+        throw new PosIllegalArgumentException("订单类型非法！" + orderType);
+    }
+
+    public LifeOrder buildLifeOrder(Long passportId, String phoneNumber, Long merchantPassportId
+            , OrderStatusEnum orderStatus, OrderTypeEnum orderType, PaymentTypeEnum paymentType
+            , Date createTime, Date paymentTime
+            , BigDecimal actualPrice
+            , List<OrderItemPojo> orderItems) {
+        LifeOrder lifeOrder = new LifeOrder();
+        if (merchantPassportId != null) {
+            lifeOrder.setShippingPassportId(merchantPassportId);
+        }
+        if (phoneNumber != null) {
+            lifeOrder.setReceiptPhone(phoneNumber);
+        }
+        lifeOrder.setSequenceNumber(OrderSequenceUtil.generateOrderSequence());
+        lifeOrder.setPartnerId(passportId + "");
+        lifeOrder.setPartnerUserId(passportId + "");
+        lifeOrder.setStatus(orderStatus.getKey());
+        lifeOrder.setType(orderType.getKey());
+        lifeOrder.setPaymentType("-1");
+        lifeOrder.setTransType(paymentType.getKey());
+        lifeOrder.setActualPrice(actualPrice.multiply(BigDecimal.valueOf(100)));
+        lifeOrder.setCreateTime(createTime);
+        if (paymentTime != null) {
+            lifeOrder.setPaymentTime(paymentTime);
+        }
+        List<LifeOrderItemSnapshot> lifeOrderItemSnapshots = new ArrayList<>();
+        for (OrderItemPojo itemSnapshot : orderItems) {
+            LifeOrderItemSnapshot orderItemSnapshot = new LifeOrderItemSnapshot();
+            orderItemSnapshot.setItemId(itemSnapshot.getItemId());
+            orderItemSnapshot.setItemTemplateId(itemSnapshot.getItemTemplateId());
+            orderItemSnapshot.setItemName(itemSnapshot.getItemName());
+            orderItemSnapshot.setItemTypeId(itemSnapshot.getItemTypeId());
+            orderItemSnapshot.setItemTypeName(itemSnapshot.getItemTypeName());
+            orderItemSnapshot.setItemUnitId(itemSnapshot.getItemTypeUnitId());
+            orderItemSnapshot.setItemUnitName(itemSnapshot.getItemTypeUnitName());
+            orderItemSnapshot.setItemBarcode(itemSnapshot.getItemBarcode());
+            orderItemSnapshot.setCostPrice(itemSnapshot.getCostPrice().multiply(BigDecimal.valueOf(100)));
+            orderItemSnapshot.setNormalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100)));
+            orderItemSnapshot.setNormalQuantity(itemSnapshot.getNormalQuantity());
+            orderItemSnapshot.setTotalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100))
+                    .multiply(BigDecimal.valueOf(itemSnapshot.getNormalQuantity())));
+            lifeOrder.setTotalPrice(lifeOrder.getTotalPrice().add(itemSnapshot.getTotalPrice()));
+            lifeOrderItemSnapshots.add(orderItemSnapshot);
+        }
+        if (lifeOrderItemSnapshots.size() > 0) {
+            lifeOrder.setItemSnapshots(lifeOrderItemSnapshots);
+        }
+        return lifeOrder;
+    }
+
+    @Transactional
+    public BasicResult createExtendOrder(Long passportId, String phoneNumber
+            , BigDecimal actualPrice, List<OrderItemPojo> orderItems) {
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+        LifeOrder lifeOrder = buildLifeOrder(passportId, phoneNumber, merchantPassport.getId()
+                , OrderStatusEnum.ORDER_STATUS_DEFAULT, OrderTypeEnum.POS_EXTENDED_ORDER_TYPE
+                , PaymentTypeEnum.UNKNOWN, new Date(), null, actualPrice, orderItems);
+        lifeOrder = lifeOrderJpaRepository.save(lifeOrder);
+        if (lifeOrder.getId() != null) {
+            BasicResult basicResult = BasicResult.createSuccessResult();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("orderId", lifeOrder.getId());
+            basicResult.setResponse(jsonObject);
+            return basicResult;
+        }
+        return BasicResult.createFailResult("下单失败！");
+    }
+
     @Transactional
     public BasicResult syncOfflineOrders(List<OrderPojo> orders) {
         List<Map<String, String>> faileOrderIds = new ArrayList<>();
@@ -245,46 +302,22 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 if (passportId == null) {
                     passportId = orderPojo.getPassportId();
                 }
-                LifeOrder lifeOrder = new LifeOrder();
-                lifeOrder.setSequenceNumber(OrderSequenceUtil.generateOrderSequence());
-                lifeOrder.setPartnerId(orderPojo.getPassportId() + "");
-                lifeOrder.setPartnerUserId(orderPojo.getPassportId() + "");
-                lifeOrder.setCreateTime(new Date());
-                lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
-                lifeOrder.setType(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey());
-                lifeOrder.setPaymentType("-1");
-                lifeOrder.setTransType(PaymentTypeEnum.CASH.getKey());
-                long actualPrice = orderPojo.getActualPrice().multiply(BigDecimal.valueOf(100)).longValue();
-                long totalPrice = orderPojo.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValue();
-                lifeOrder.setActualPrice(BigDecimal.valueOf(actualPrice));
-                lifeOrder.setTotalPrice(BigDecimal.valueOf(totalPrice));
+                Date createDate = new Date();
                 if (orderPojo.getCreateTime() != null && !"".equals(orderPojo.getCreateTime())) {
                     Long createTime = Long.parseLong(orderPojo.getCreateTime()) / 1000;
-                    lifeOrder.setCreateTime(DateUtil.strToDate(DateUtil.stampToDate(createTime)));
+                    createDate = DateUtil.strToDate(DateUtil.stampToDate(createTime));
                 }
+                Date paymentDate = null;
                 if (orderPojo.getPaymenTime() != null && !"".equals(orderPojo.getPaymenTime())) {
                     Long paymentTime = Long.parseLong(orderPojo.getPaymenTime()) / 1000;
-                    lifeOrder.setCreateTime(DateUtil.strToDate(DateUtil.stampToDate(paymentTime)));
+                    paymentDate = DateUtil.strToDate(DateUtil.stampToDate(paymentTime));
                 }
-                List<LifeOrderItemSnapshot> lifeOrderItemSnapshots = new ArrayList<>();
-                for (OrderItemPojo itemSnapshot : orderPojo.getItemSnapshots()) {
-                    LifeOrderItemSnapshot orderItemSnapshot = new LifeOrderItemSnapshot();
-                    orderItemSnapshot.setItemId(itemSnapshot.getItemId());
-                    orderItemSnapshot.setItemTemplateId(itemSnapshot.getItemTemplateId());
-                    orderItemSnapshot.setItemName(itemSnapshot.getItemName());
-                    orderItemSnapshot.setItemTypeId(itemSnapshot.getItemTypeId());
-                    orderItemSnapshot.setItemTypeName(itemSnapshot.getItemTypeName());
-                    orderItemSnapshot.setItemUnitId(itemSnapshot.getItemTypeUnitId());
-                    orderItemSnapshot.setItemUnitName(itemSnapshot.getItemTypeUnitName());
-                    orderItemSnapshot.setItemBarcode(itemSnapshot.getItemBarcode());
-                    orderItemSnapshot.setCostPrice(itemSnapshot.getCostPrice().multiply(BigDecimal.valueOf(100)));
-                    orderItemSnapshot.setNormalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100)));
-                    orderItemSnapshot.setTotalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100))
-                            .multiply(BigDecimal.valueOf(itemSnapshot.getNormalQuantity())));
-                    orderItemSnapshot.setNormalQuantity(itemSnapshot.getNormalQuantity());
-                    lifeOrderItemSnapshots.add(orderItemSnapshot);
-                }
-                lifeOrder.setItemSnapshots(lifeOrderItemSnapshots);
+                LifeOrder lifeOrder = buildLifeOrder(orderPojo.getPassportId(), null, null
+                        , OrderStatusEnum.ORDER_STATUS_PAYMENT, OrderTypeEnum.POS_SCAN_ORDER_TYPE
+                        , PaymentTypeEnum.CASH
+                        , createDate, paymentDate
+                        , orderPojo.getActualPrice()
+                        , orderPojo.getItemSnapshots());
                 lifeOrders.add(lifeOrder);
             }
             Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);

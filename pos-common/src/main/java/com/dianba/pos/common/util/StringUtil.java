@@ -995,4 +995,17 @@ public class StringUtil {
         }
         return str.toLowerCase();
     }
+
+    public static String lpad(String str, int targetLength, char appendChar) {
+        if (isBlank(str)) {
+            return "";
+        }
+        if (str.length() >= targetLength) {
+            return str;
+        } else {
+            str = appendChar + str;
+            str = lpad(str, targetLength, appendChar);
+        }
+        return str;
+    }
 }
