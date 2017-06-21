@@ -9,6 +9,7 @@ public class CreditLoanQuotaVo {
     private Integer accountPeriodDays;
     private String cardName;
     private String busType;
+    private String content;
 
     public BigDecimal getNowQuota() {
         return nowQuota;
@@ -48,5 +49,13 @@ public class CreditLoanQuotaVo {
 
     public void setBusType(String busType) {
         this.busType = busType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

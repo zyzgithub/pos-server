@@ -2,6 +2,8 @@ package com.dianba.pos.payment.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.service.CreditLoanManager;
 import com.dianba.pos.payment.service.PaymentManager;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
+
 @Controller
 @RequestMapping(PaymentURLConstant.PAYMENT_ORDER)
 public class PaymentController extends BasicWebService {
@@ -25,6 +29,8 @@ public class PaymentController extends BasicWebService {
     private PaymentManager paymentManager;
     @Autowired
     private CreditLoanManager creditLoanManager;
+    @Autowired
+    private LifeOrderManager lifeOrderManager;
 
     /**
      * 支付订单
@@ -54,11 +60,16 @@ public class PaymentController extends BasicWebService {
      */
     @ResponseBody
     @RequestMapping("passport_currency")
-    public BasicResult passportCurrency(long passportId) throws Exception {
+    public BasicResult passportCurrency(Long passportId, Long orderId) throws Exception {
         BasicResult basicResult = paymentManager.passportCurrency(passportId);
         JSONObject jsonObject = basicResult.getResponse();
         BasicResult creditResult = creditLoanManager.isHaveCreditLoanQuota(passportId);
         if (creditResult.isSuccess()) {
+            LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(orderId);
+            BigDecimal amount = lifeOrder.getTotalPrice()
+                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            BasicResult result = creditLoanManager.calculationPayAmount(passportId, amount);
+            creditResult.getResponse().put("items", result.getResponse().get("list"));
             jsonObject.putAll(creditResult.getResponse());
         }
         return basicResult;

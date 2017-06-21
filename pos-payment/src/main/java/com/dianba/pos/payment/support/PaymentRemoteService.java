@@ -44,20 +44,22 @@ public class PaymentRemoteService {
         return postPayWithCallBack(url, null, params);
     }
 
-    protected JSONObject postCreditLoan(String requestUrl, Long passportId, Map<String, String> params) {
+    protected BasicResult postCreditLoan(String requestUrl, Long passportId, Map<String, String> params) {
         String randomParameter = DefineRandom.randomString(32);
         Map<String, Object> signParams = new LinkedHashMap<>();
         signParams.put("sp_id", creditLoanConfig.getCode());
         signParams.put("nonce_str", randomParameter);
         signParams.put("secret_key", creditLoanConfig.getSecretKey());
         signParams.put("card_id", passportId);
-        String sign = HttpUtils.toRequestPrams(signParams) + "&param_count=" + (params.size()+5);
+        String sign = HttpUtils.toRequestPrams(signParams) + "&param_count=" + (params.size() + 5);
         String md5Sign = MD5.encode(sign).toUpperCase();
         params.put("sign", md5Sign);
         for (String key : signParams.keySet()) {
             params.put(key, signParams.get(key).toString());
         }
         String data = HttpRequest.post(appConfig.getPosFinanceUrl() + requestUrl, params);
-        return JSONObject.parseObject(data);
+        JSONObject jsonObject = JSONObject.parseObject(data);
+        BasicResult basicResult = jsonObject.toJavaObject(BasicResult.class);
+        return basicResult;
     }
 }

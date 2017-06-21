@@ -1,6 +1,5 @@
 package com.dianba.pos.payment.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosRuntimeException;
@@ -54,17 +53,17 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
     @Override
     public CreditLoanQuotaVo getQuota(Long passportId) throws Exception {
         Passport passport = passportManager.getPassportInfoByCashierId(passportId);
-        JSONObject result = postCreditLoan(GET_QUOTA, passport.getId(), new HashMap<>());
-        JSONObject jsonObject = result.getJSONObject("response");
-        if (jsonObject == null || jsonObject.size() == 0) {
+        BasicResult result = postCreditLoan(GET_QUOTA, passport.getId(), new HashMap<>());
+        if (result.getResponse() == null || result.getResponse().size() == 0) {
             return null;
         }
         CreditLoanQuotaVo creditLoanQuotaVo = new CreditLoanQuotaVo();
-        creditLoanQuotaVo.setNowQuota(jsonObject.getBigDecimal("now_quota"));
-        creditLoanQuotaVo.setSurplusQuota(jsonObject.getBigDecimal("surplus_quota"));
-        creditLoanQuotaVo.setAccountPeriodDays(jsonObject.getInteger("account_period_days"));
-        creditLoanQuotaVo.setCardName(jsonObject.getString("card_name"));
-        creditLoanQuotaVo.setBusType(jsonObject.getString("bus_type"));
+        creditLoanQuotaVo.setNowQuota(result.getResponse().getBigDecimal("now_quota"));
+        creditLoanQuotaVo.setSurplusQuota(result.getResponse().getBigDecimal("surplus_quota"));
+        creditLoanQuotaVo.setAccountPeriodDays(result.getResponse().getInteger("account_period_days"));
+        creditLoanQuotaVo.setCardName(result.getResponse().getString("card_name"));
+        creditLoanQuotaVo.setBusType(result.getResponse().getString("bus_type"));
+        creditLoanQuotaVo.setContent(result.getResponse().getString("content"));
         return creditLoanQuotaVo;
     }
 
@@ -97,14 +96,12 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
             itemDeatils = itemDeatils.substring(0, itemDeatils.length() - 1);
         }
         params.put("commodity_detail", itemDeatils);
-        JSONObject result = postCreditLoan(SUBMIT_ORDER, passport.getId(), params);
-        JSONObject jsonObject = result.getJSONObject("response");
-        if (jsonObject == null || jsonObject.size() == 0) {
-            String msg = result.getString("msg");
-            throw new PosRuntimeException(msg);
+        BasicResult result = postCreditLoan(SUBMIT_ORDER, passport.getId(), params);
+        if (result.getResponse() == null || result.getResponse().size()==0) {
+            throw new PosRuntimeException(result.getMsg());
         }
-        String orderNum = jsonObject.getString("platform_ordernum");
-        String surplusQuota = jsonObject.getString("surplus_quota");
+        String orderNum = result.getResponse().getString("platform_ordernum");
+        String surplusQuota = result.getResponse().getString("surplus_quota");
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.UNKNOWN;
         //保存支付信息
         transLoggerManager.saveTransLog(orderEntry.getSequenceNumber()
@@ -118,6 +115,14 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
             basicResult = BasicResult.createSuccessResult();
             basicResult.setResponse(lifeOrderVo);
         }
+        return basicResult;
+    }
+
+    @Override
+    public BasicResult calculationPayAmount(Long passportId, BigDecimal orderAmount) {
+        Map<String, String> params = new HashMap<>();
+        params.put("amount", orderAmount + "");
+        BasicResult basicResult = postCreditLoan(QUOTA_CALCULATION, passportId, params);
         return basicResult;
     }
 }
