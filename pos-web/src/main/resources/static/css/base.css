@@ -1,0 +1,19 @@
+﻿body,div,ul,li,ol,dl,dt,p,dd,img,input,a,span,h1,h2,h3,h4,figure,video{
+	padding: 0;
+	margin: 0;
+	border: 0;
+	list-style: none;
+}
+body,html{  color:#3e3e3e; font-family: "微软雅黑", arial; background:#efefef; min-height: 100%;}
+img { display: black; height:auto; width:100%;}
+a{ text-decoration:none; color:#333;}
+a:hover{ text-decoration: none;}
+
+.clearfix:after { content: "微软雅黑"; display: block; height: 0; clear: both; visibility: hidden; }
+.clearfix { display: inline-table; }
+*html .clearfix { height: 1%; }
+.clearfix { display: block; }
+*+html .clearfix { min-height: 1%; }
+img { width: 100%; height: auto; display: block;}
+i{ font-style: normal;}
+.num{ font-family: arial;}

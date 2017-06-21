@@ -1,0 +1,37 @@
+
+.keyboard{
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	font-size: 24px;
+	font-family: sans-serif;
+	z-index: 100;
+	display: none;
+	list-style: none;
+	padding: 0px;
+    margin: 0px;
+}
+
+.keyboard li {
+    float: left;
+    line-height: 80px;
+    text-align: center;
+    background: #fff;
+}
+.keyboard .pay{
+	position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background-color: #ea4a4d;
+    color:#fff;
+}
+
+.clear{
+    clear: left;
+}
+.b-t{
+    border-top: 1px solid #f1f1f1;
+}
+.b-r{
+    border-right: 1px solid #f1f1f1;
+}

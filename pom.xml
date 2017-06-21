@@ -33,6 +33,7 @@
         <module>pos-report-form</module>
         <module>pos-passport</module>
         <module>pos-settlement</module>
+        <module>pos-qrcode</module>
     </modules>
 
     <dependencies>

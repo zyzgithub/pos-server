@@ -1,0 +1,22 @@
+.payTitle .logo{ height: 85px; width: 85px; background: url(../img/logo.png) no-repeat; background-size: contain; float: right;}
+.payTitle .payTitle-right{ float: left; width: 50%;}
+.payTitle .payTitle-right p{ margin: 8% 0 0 0%;}
+.payTitle .payTitle-right p:nth-child(1){ color: #333; font-size: 20px;}
+.payTitle .payTitle-right p:nth-child(2){ color: #666; font-size: 14px;}
+.payTitle{ height: auto; width: 100%; margin: 35px auto 0; }
+.logoLeft{ height: auto; width: 45%; float: left;}
+
+.payInput{ height: 85px; width: 86%; padding:0 22px; box-sizing: border-box; border: 1px solid #9fa2a7; border-radius: 5px; margin: 25px auto 0; background: #fff;}
+.money{ font-size: 22px; line-height: 85px; color: #666; float: left; width:50%; }
+.num{ float: right; width: 50%; }
+.num .payNum{ text-align: right; outline: initial; font-size: 31px;width: 100%; background: none; line-height: 85px; }
+
+.warn{ height: auto; width: 86%; margin: 40px auto 0; font-size: 16px;}
+.warn p{ color: #b5b5b5; text-align: center; position: relative;}
+.warn p:before{ height: 1px; width: 18%; position: absolute; background: #b5b5b5; display: block; content: ""; top: 50%;}
+.warn p:after{ height: 1px; width: 18%; position: absolute; background: #b5b5b5; display: block; content: ""; top: 50%; right: 0;}
+
+textarea{ resize: none; border:0px; overflow: hidden; background: none; height: 31px !important; width: 100% !important; outline: none; font-size: 31px; text-align: right; padding: 0; margin-top: 24px;}
+.downIcon{ height: 25px; width: 24px; margin: 29px auto 0; vertical-align: middle; }
+.keyboard .pay{ font-size: 16px; background: #eee; color: #666;}
+.removeIcon{height: 36px; width: 40px; margin: 29px auto 0; vertical-align: middle; }
