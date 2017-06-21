@@ -340,7 +340,7 @@
         INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
         INNER JOIN life_pos.pos_item pi on pi.id=ois.item_id
         INNER JOIN life_item.item_type it on it.id=pi.item_type_id
-        WHERE oe.partner_user_id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
+        WHERE pi.passport_id=#{merchantId} AND oe.type=4 AND oe.status =8 and to_days(oe.create_time)= to_days(now())
         <if test="itId !=null">AND it.id=#{itId}</if>
         <if test="itemName !=null and itemName!=''">AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
         GROUP BY ois.item_id ORDER BY sumCount desc;

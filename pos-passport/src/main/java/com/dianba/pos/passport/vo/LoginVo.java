@@ -44,15 +44,7 @@ public class LoginVo {
         private int accountType;
 
         private String accountTypeName;
-        private Long cashierId;
 
-    public Long getCashierId() {
-        return cashierId;
-    }
-
-    public void setCashierId(Long cashierId) {
-        this.cashierId = cashierId;
-    }
 
     public String getRealName() {
             return realName;

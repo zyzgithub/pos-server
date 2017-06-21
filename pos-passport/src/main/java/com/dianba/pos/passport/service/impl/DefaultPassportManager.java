@@ -88,7 +88,6 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                     loginVo.setAccountType(0);
                     loginVo.setAccountTypeName("店长");
                     loginVo.setPassportId(loginVo.getPassportId());
-                    loginVo.setCashierId(loginVo.getPassportId());
                     basicResult.setResponse(loginVo);
                     return basicResult;
                 }
@@ -103,8 +102,7 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                     loginVo.setAccountTypeName("店员");
                     PosCashierAccount posCashierAccount = posCashierAccountJpaRepository
                             .findPosCashierAccountByCashierId(loginVo.getPassportId());
-                    loginVo.setCashierId(loginVo.getPassportId());
-                    loginVo.setPassportId(posCashierAccount.getMerchantId());
+                   // loginVo.setPassportId(posCashierAccount.getMerchantId());
                     Passport passport = passportJpaRepository.getPassportById(posCashierAccount.getMerchantId());
                     loginVo.setShowName(passport.getShowName());
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);

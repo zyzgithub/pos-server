@@ -6,6 +6,8 @@ import com.dianba.pos.item.po.PosType;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.repository.PosTypeJpaRepository;
 import com.dianba.pos.item.service.PosTypeManager;
+import com.dianba.pos.passport.mapper.PassportMapper;
+import com.dianba.pos.passport.po.Passport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +26,20 @@ public class DefaultPosTypeManager implements PosTypeManager {
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
 
+    @Autowired
+    private PassportMapper passportMapper;
     @Override
     public List<PosType> getAllByPassportId(Long passportId) {
-        return posTypeJpaRepository.getAllByPassportId(passportId);
+        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        return posTypeJpaRepository.getAllByPassportId(passport.getId());
+
+
     }
 
     @Override
     public PosType getPosTypeByPassportIdAndItemTypeTitle(Long passportId, String title) {
-        return posTypeJpaRepository.getPosTypeByPassportIdAndItemTypeTitle(passportId, title);
+        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        return posTypeJpaRepository.getPosTypeByPassportIdAndItemTypeTitle(passport.getId(), title);
     }
 
     @Override
@@ -42,7 +50,8 @@ public class DefaultPosTypeManager implements PosTypeManager {
     @Override
     public BasicResult deletePosType(Long passportId, Long posTypeId) {
         PosType posType = posTypeJpaRepository.findOne(posTypeId);
-        if (posType != null && posType.getPassportId().equals(passportId)) {
+        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        if (posType != null && posType.getPassportId().equals(passport.getId())) {
 
             posTypeJpaRepository.delete(posType);
             //删除商品

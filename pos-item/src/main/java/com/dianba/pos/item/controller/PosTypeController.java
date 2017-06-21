@@ -11,6 +11,8 @@ import com.dianba.pos.item.config.MenuUrlConstant;
 import com.dianba.pos.item.po.PosType;
 import com.dianba.pos.item.service.PosTypeManager;
 import com.dianba.pos.item.vo.PosTypeVo;
+import com.dianba.pos.passport.mapper.PassportMapper;
+import com.dianba.pos.passport.po.Passport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,8 @@ public class PosTypeController {
     @Autowired
     private PosTypeManager posTypeManager;
 
+    @Autowired
+    private PassportMapper passportMapper;
     /**
      * 新增商家商品分类
      *
@@ -48,7 +52,8 @@ public class PosTypeController {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
 
-            PosType posType = posTypeManager.getPosTypeByPassportIdAndItemTypeTitle(Long.parseLong(passportId), title);
+            Passport passport=passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
+            PosType posType = posTypeManager.getPosTypeByPassportIdAndItemTypeTitle(passport.getId(), title);
             if (posType != null) {
 
                 return BasicResult.createFailResult("商家分类名称重复了。");
@@ -66,7 +71,8 @@ public class PosTypeController {
                 itemTypeJpaRepository.save(itemType);
 
                 posType = new PosType();
-                posType.setPassportId(Long.parseLong(passportId));
+
+                posType.setPassportId(passport.getId());
                 posType.setItemTypeId(itemType.getId());
                 posType.setItemTypeTitle(title);
                 posType.setIsDelete("N");
@@ -99,8 +105,8 @@ public class PosTypeController {
     @RequestMapping("deletePosType")
     public BasicResult deletePosType(Long passportId, Long posTypeId) {
 
-
-        return posTypeManager.deletePosType(passportId,posTypeId);
+        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        return posTypeManager.deletePosType(passport.getId(),posTypeId);
     }
 
     /**
@@ -116,7 +122,8 @@ public class PosTypeController {
     public BasicResult editPosType(Long passportId, Long posTypeId, String title) {
 
         PosType posType = posTypeManager.getPosTypeById(posTypeId);
-        if (posType != null && posType.getPassportId().equals(passportId)) {
+        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        if (posType != null && posType.getPassportId().equals(passport.getId())) {
             LifeItemType itemType = itemTypeManager.getItemTypeById(posType.getItemTypeId());
             itemType.setTitle(title);
             itemTypeJpaRepository.save(itemType);
