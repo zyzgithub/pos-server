@@ -170,8 +170,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             return completeOrder(basicResult, orderEntry, passportId, paymentTypeEnum, transTypeEnum);
         } else {
             basicResult = BasicResult.createFailResult(barcodePayResponse.getMsg());
-            logger.info("支付失败！订单ID：" + orderId + "，返回：" + barcodePayResponse.getMsg()
-                    + "，body：" + barcodePayResponse.getResponse().getBody().toString());
+            logger.info("支付失败！订单ID：" + orderId + "，返回：" + barcodePayResponse.getMsg());
             return basicResult;
         }
     }

@@ -167,7 +167,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             orderItemSnapshot.setTotalPrice(itemSalePrice * item.getNormalQuantity());
             orderItemSnapshot.setNormalQuantity(item.getNormalQuantity());
             orderItemSnapshots.add(orderItemSnapshot);
-            totalPrice = totalPrice.add(BigDecimal.valueOf(orderItemSnapshot.getNormalPrice()));
+            totalPrice = totalPrice.add(BigDecimal.valueOf(orderItemSnapshot.getTotalPrice()));
         }
         params.put("items", JsonHelper.toJSONString(orderItemSnapshots));
         //订单总金额
