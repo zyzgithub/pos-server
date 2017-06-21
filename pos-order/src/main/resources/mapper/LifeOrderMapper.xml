@@ -85,6 +85,7 @@
         JOIN life_pos.pos_item pi on pi.id=ois.item_id
         WHERE pi.passport_id=-1 and o.type=9 and o.status=8
         AND pi.is_type=#{type} and o.deliver_status=#{deliverStatus} and pi.is_shelve='Y' and is_delete='N'
+        ORDER BY price
     </select>
     <!--根据商家订单号更新原订单信息-->
     <update id="editOrderInfoBy19e" parameterType="java.util.Map">

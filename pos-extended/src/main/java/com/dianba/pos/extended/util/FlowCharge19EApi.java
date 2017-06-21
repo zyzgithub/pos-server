@@ -49,6 +49,7 @@ public class FlowCharge19EApi {
         String tojson = "";
         ChargeFlowResult cf=new ChargeFlowResult();
         try {
+            logger.info("流量充值url:"+chargeUrl);
             URL realUrl = new URL(chargeUrl);
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
