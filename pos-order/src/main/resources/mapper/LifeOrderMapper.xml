@@ -74,7 +74,7 @@
     <select id="getOrderListBy19EMenu" resultType="com.dianba.pos.order.vo.Order19EDto">
         SELECT
         o.id orderId,
-        o.sequence_number orderNum,e
+        o.sequence_number orderNum,
         pi.sales_price price,
         pi.item_name menuName,
         o.receipt_phone mobile,

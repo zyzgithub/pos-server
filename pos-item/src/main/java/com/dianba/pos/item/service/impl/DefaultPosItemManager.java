@@ -217,10 +217,10 @@ public class DefaultPosItemManager implements PosItemManager {
         if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
             posItem.setBarcode(posItemVo.getBarcode());
         }
-        if (!posItemVo.getStockPrice() .equals(0.0)) {
+        if (posItemVo.getStockPrice()!=null) {
             posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
         }
-        if (!posItemVo.getSalesPrice().equals(0.0)) {
+        if (posItemVo.getSalesPrice()!=null) {
             posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
         }
 
@@ -375,10 +375,10 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
                 posItem.setBarcode(posItemVo.getBarcode());
             }
-            if (!posItemVo.getStockPrice().equals(0.0)) {
+            if (posItemVo.getStockPrice()!=null) {
                 posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
             }
-            if (!posItemVo.getSalesPrice().equals(0.0)) {
+            if (posItemVo.getSalesPrice()!=null) {
                 posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
             }
 
