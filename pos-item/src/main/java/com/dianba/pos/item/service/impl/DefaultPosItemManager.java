@@ -143,10 +143,10 @@ public class DefaultPosItemManager implements PosItemManager {
         if (StringUtil.isEmpty(posItemVo.getBarcode())) {
             map.put("result", "false");
             map.put("msg", "商品入库码不能为空!");
-        } else if (posItemVo.getStockPrice().equals(0.0)) {
+        } else if (posItemVo.getStockPrice()==null) {
             map.put("result", "false");
             map.put("msg", "商品进货价不能为空");
-        } else if (posItemVo.getSalesPrice().equals(0.0)) {
+        } else if (posItemVo.getSalesPrice()==null) {
             map.put("result", "false");
             map.put("msg", "商品零售价不能为空");
         } else if (posItemVo.getRepertory().equals(0)) {
