@@ -1,5 +1,7 @@
 package com.dianba.pos.order.po;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -107,6 +109,7 @@ public class LifeOrder implements Serializable {
     private Date confirmTime = new Date(0L);
 
     @OneToMany
+    @Cascade(CascadeType.PERSIST)
     @JoinColumn(name = "order_id")
     private List<LifeOrderItemSnapshot> itemSnapshots;
 
