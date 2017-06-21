@@ -147,13 +147,6 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         params.put("discountAmount", "0");
         params.put("priceLogger", "0");
         BigDecimal totalPrice = BigDecimal.ZERO;
-        params.put("items", JsonHelper.toJSONString(createOrderItemSnapshots(orderItems, totalPrice)));
-        //订单总金额
-        params.put("totalAmount", totalPrice + "");
-        return postOrder(GENERATE_ORDER, params);
-    }
-
-    private List<OrderItemSnapshot> createOrderItemSnapshots(List<OrderItemPojo> orderItems, BigDecimal totalPrice) {
         List<OrderItemSnapshot> orderItemSnapshots = new ArrayList<>();
         for (OrderItemPojo item : orderItems) {
             long itemCostPrice = item.getCostPrice().multiply(BigDecimal.valueOf(100))
@@ -176,7 +169,10 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             orderItemSnapshots.add(orderItemSnapshot);
             totalPrice = totalPrice.add(BigDecimal.valueOf(orderItemSnapshot.getNormalPrice()));
         }
-        return orderItemSnapshots;
+        params.put("items", JsonHelper.toJSONString(orderItemSnapshots));
+        //订单总金额
+        params.put("totalAmount", totalPrice + "");
+        return postOrder(GENERATE_ORDER, params);
     }
 
     public BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum) {
