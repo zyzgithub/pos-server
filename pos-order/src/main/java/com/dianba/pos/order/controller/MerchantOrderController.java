@@ -4,12 +4,17 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
+@Api("商家订单管理器")
 @Controller
 @RequestMapping(OrderURLConstant.MERCHANT)
 public class MerchantOrderController {
@@ -69,5 +74,16 @@ public class MerchantOrderController {
     @RequestMapping("findMerchantDayReport")
     public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email){
        return merchantOrderManager.findMerchantDayReport(merchantId, itId, itemName, email);
+    }
+
+    @ApiOperation("商家收银员每日盈利信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "merchantId", value = "商家id", paramType = "query", required = true)
+            ,@ApiImplicitParam(name = "createTime", value = "要查询的时间", paramType = "query")
+    })
+    @ResponseBody
+    @RequestMapping(value = "findMerchantCashierDayProfitInfo",method = {RequestMethod.POST, RequestMethod.GET})
+    public BasicResult findMerchantCashierDayProfitInfo(Long merchantId,String createTime){
+        return merchantOrderManager.findMerchantCashierDayProfitInfo(merchantId, createTime);
     }
 }

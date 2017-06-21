@@ -9,10 +9,7 @@ import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
 import com.dianba.pos.order.service.MerchantOrderManager;
-import com.dianba.pos.order.vo.MerchantDayReportVo;
-import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
-import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
-import com.dianba.pos.order.vo.MerchantOrderVo;
+import com.dianba.pos.order.vo.*;
 import com.dianba.pos.passport.mapper.PassportMapper;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantType;
@@ -180,6 +177,17 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         }
 
     }
+
+    @Override
+    public BasicResult findMerchantCashierDayProfitInfo(Long merchantId, String createTime) {
+        if(StringUtil.isEmpty(createTime)){
+            createTime=DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss");
+        }
+        List<MerchantCashierDayProfitInfo> merchantCashierDayProfitInfos=orderMapper.findMerchantCashierDayProfitInfo(
+                merchantId,createTime);
+        return BasicResult.createSuccessResultWithDatas("获取成功",merchantCashierDayProfitInfos);
+    }
+
 
     private void sendEmail(List<MerchantDayReportVo> lineList, String email, String merchantName) {
         List<String> title = Arrays.asList("排名", "商品名称", "所属分类", "实时销售数"

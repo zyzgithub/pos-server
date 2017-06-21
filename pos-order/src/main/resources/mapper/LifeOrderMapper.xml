@@ -345,4 +345,13 @@
         <if test="itemName !=null and itemName!=''">AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
         GROUP BY ois.item_id ORDER BY sumCount desc;
     </select>
+
+    <select id="findMerchantCashierDayProfitInfo" resultType="com.dianba.pos.order.vo.MerchantCashierDayProfitInfo">
+        SELECT psd.passport_id cashierId,pass.real_name realName,sum(psd.amount*100) sumTotalPrice
+        ,pca.cashier_photo cashierPhoto,#{createTime} time FROM life_pos.pos_settlement_dayly psd
+        JOIN life_pos.pos_cashier_account pca on pca.cashier_id=psd.passport_id
+        JOIN life_passport.passport pass on pass.id=psd.passport_id
+        WHERE psd.merchant_passport_id=#{merchantId} and to_days(psd.create_time)=to_days(#{createTime})AND psd.is_paid=1
+        GROUP BY psd.passport_id ORDER BY psd.create_time DESC;
+    </select>
 </mapper>

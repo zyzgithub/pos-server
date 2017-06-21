@@ -21,4 +21,4 @@
 
 ## pos_casher 金融接口对接
 
-  MerchantController 商家控制器
+MerchantController 商家控制器

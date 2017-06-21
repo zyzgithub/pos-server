@@ -14,7 +14,8 @@ import java.util.List;
 @Repository
 public interface PosCashierAccountJpaRepository extends JpaRepository<PosCashierAccount,Long> {
 
-    List<PosCashierAccount> findAllByMerchantIdOrderByAccountType(Long merchantId);
+    List<PosCashierAccount> findAllByMerchantId(Long merchantId);
+
 
     PosCashierAccount findPosCashierAccountByCashierId(Long cashierId);
 

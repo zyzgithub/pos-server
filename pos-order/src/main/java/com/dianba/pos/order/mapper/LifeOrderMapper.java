@@ -1,5 +1,6 @@
 package com.dianba.pos.order.mapper;
 import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.vo.MerchantCashierDayProfitInfo;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.order.vo.Order19EDto;
@@ -76,4 +77,7 @@ public interface LifeOrderMapper {
 
     List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
             , @Param("itemName") String itemName);
+
+    List<MerchantCashierDayProfitInfo> findMerchantCashierDayProfitInfo(@Param("merchantId") Long merchantId
+            ,@Param("createTime") String createTime);
 }

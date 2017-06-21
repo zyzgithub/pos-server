@@ -12,4 +12,5 @@ public interface MerchantOrderManager {
             , Integer pageIndex, Integer pageSize, String date);
 
     BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email);
+    BasicResult findMerchantCashierDayProfitInfo(Long merchantId,String createTime);
 }
