@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
-
 @Controller
 @RequestMapping(PaymentURLConstant.PAYMENT_ORDER)
 public class PaymentController extends BasicWebService {
@@ -66,9 +64,8 @@ public class PaymentController extends BasicWebService {
         BasicResult creditResult = creditLoanManager.isHaveCreditLoanQuota(passportId);
         if (creditResult.isSuccess()) {
             LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(orderId);
-            BigDecimal amount = lifeOrder.getTotalPrice()
-                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-            BasicResult result = creditLoanManager.calculationPayAmount(passportId, amount);
+            BasicResult result = creditLoanManager.calculationPayAmount(passportId, lifeOrder.getTotalPrice());
+            creditResult.getResponse().put("payAmount", result.getResponse().get("result"));
             creditResult.getResponse().put("items", result.getResponse().get("list"));
             jsonObject.putAll(creditResult.getResponse());
         }
