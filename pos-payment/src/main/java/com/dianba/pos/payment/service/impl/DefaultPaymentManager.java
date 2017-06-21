@@ -142,8 +142,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             transTypeEnum = TransTypeEnum.SUPPLYCHAIN_INCOME;
         }
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(paymentTypeKey);
-        long totalPrice = orderEntry.getTotalPrice() < orderEntry.getActualPrice()
-                ? orderEntry.getActualPrice() : orderEntry.getTotalPrice();
         BarcodePayResponse barcodePayResponse;
         if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.ALIPAY.getKey())) {
             if (StringUtils.isEmpty(authCode)) {
@@ -168,7 +166,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         if (barcodePayResponse.isSuccess()) {
             //保存支付信息
             transLoggerManager.saveTransLog(orderEntry.getSequenceNumber()
-                    , passportId, authCode, paymentTypeEnum, transTypeEnum, totalPrice);
+                    , passportId, authCode, paymentTypeEnum, transTypeEnum, orderEntry.getTotalPrice());
             return completeOrder(basicResult, orderEntry, passportId, paymentTypeEnum, transTypeEnum);
         } else {
             basicResult = BasicResult.createFailResult(barcodePayResponse.getMsg());

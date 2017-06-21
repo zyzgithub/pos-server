@@ -211,7 +211,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             orderType = OrderTypeEnum.SCAN_ORDER_TYPE.getKey();
         }
         if (OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey() == orderType) {
-            return createExtendOrder(passportId, phoneNumber, actualPrice, orderItems);
+            return createExtendOrder(passportId, phoneNumber, orderItems);
         } else if (OrderTypeEnum.SCAN_ORDER_TYPE.getKey() == orderType) {
             BasicResult basicResult = prepareCreateOrder(passportId, OrderTypeEnum.SCAN_ORDER_TYPE);
             if (basicResult.isSuccess()) {
@@ -265,7 +265,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             orderItemSnapshot.setNormalQuantity(itemSnapshot.getNormalQuantity());
             orderItemSnapshot.setTotalPrice(itemSnapshot.getTotalPrice().multiply(BigDecimal.valueOf(100))
                     .multiply(BigDecimal.valueOf(itemSnapshot.getNormalQuantity())));
-            lifeOrder.setTotalPrice(lifeOrder.getTotalPrice().add(itemSnapshot.getTotalPrice()));
+            lifeOrder.setTotalPrice(lifeOrder.getTotalPrice().add(orderItemSnapshot.getTotalPrice()));
             lifeOrderItemSnapshots.add(orderItemSnapshot);
         }
         if (lifeOrderItemSnapshots.size() > 0) {
@@ -275,12 +275,14 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     @Transactional
-    public BasicResult createExtendOrder(Long passportId, String phoneNumber
-            , BigDecimal actualPrice, List<OrderItemPojo> orderItems) {
+    public BasicResult createExtendOrder(Long passportId, String phoneNumber, List<OrderItemPojo> orderItems) {
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         LifeOrder lifeOrder = buildLifeOrder(passportId, phoneNumber, merchantPassport.getId()
                 , OrderStatusEnum.ORDER_STATUS_DEFAULT, OrderTypeEnum.POS_EXTENDED_ORDER_TYPE
-                , PaymentTypeEnum.UNKNOWN, new Date(), null, actualPrice, orderItems);
+                , PaymentTypeEnum.UNKNOWN, new Date(), null, BigDecimal.ZERO, orderItems);
+        for (LifeOrderItemSnapshot lifeOrderItemSnapshot : lifeOrder.getItemSnapshots()) {
+            lifeOrder.setActualPrice(lifeOrder.getActualPrice().add(lifeOrderItemSnapshot.getCostPrice()));
+        }
         lifeOrder = lifeOrderJpaRepository.save(lifeOrder);
         if (lifeOrder.getId() != null) {
             BasicResult basicResult = BasicResult.createSuccessResult();
