@@ -13,6 +13,7 @@ import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderVo;
+import com.dianba.pos.passport.mapper.PassportMapper;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantType;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
@@ -45,6 +46,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     private PassportJpaRepository passportJpaRepository;
     @Autowired
     private PosMerchantTypeManager posMerchantTypeManager;
+
+    @Autowired
+    private PassportMapper passportMapper;
 
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
         Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
@@ -164,12 +168,13 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Override
     public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
+        Passport passport=passportMapper.getPassportInfoByCashierId(merchantId);
         List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
-                .findMerchantDayReport(merchantId, itId, itemName);
+                .findMerchantDayReport(passport.getId(), itId, itemName);
         if (StringUtil.isEmpty(email)) {
             return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
         } else {
-            Passport passport = passportJpaRepository.getPassportById(merchantId);
+
             sendEmail(merchantDayReportVos, email, "_" + passport.getShowName() + "_");
             return BasicResult.createSuccessResult("商家日销售报表导出成功");
         }

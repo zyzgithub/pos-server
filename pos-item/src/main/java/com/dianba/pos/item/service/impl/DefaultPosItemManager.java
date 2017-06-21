@@ -235,7 +235,8 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setShelfLife(posItemVo.getShelfLife());
         } //商家id，以后收银员账号查询关联商家
         if (posItemVo.getPassportId() != null) {
-            posItem.setPassportId(posItemVo.getPassportId());
+            Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+            posItem.setPassportId(passport.getId());
         }
         if (posItemVo.getPosTypeId() != null) {
             posItem.setPosTypeId(posItemVo.getPosTypeId());
@@ -296,9 +297,7 @@ public class DefaultPosItemManager implements PosItemManager {
                     map.put("result", "true");
                     map.put("msg", "商品入库成功!");
                     map.put("info", posItem);
-
                 }
-
             } else {
                 //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
                 //查询商家是否有入库此模板信息
@@ -310,7 +309,6 @@ public class DefaultPosItemManager implements PosItemManager {
                     posItem = convertToClass(posItemVo, itemTemplate);
                     //添加商家商品信息
                     posItemJpaRepository.save(posItem);
-
                     map.put("result", "true");
                     map.put("msg", "商品入库成功!");
                     map.put("info", posItem);
@@ -395,7 +393,8 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setShelfLife(posItemVo.getShelfLife());
             } //商家id，以后收银员账号查询关联商家
             if (posItemVo.getPassportId() != null) {
-                posItem.setPassportId(posItemVo.getPassportId());
+                Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+                posItem.setPassportId(passport.getId());
             }
             if (posItemVo.getPosTypeId() != null) {
                 posItem.setPosTypeId(posItemVo.getPosTypeId());
@@ -419,7 +418,6 @@ public class DefaultPosItemManager implements PosItemManager {
         //输入条形码是否为空
         Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
         if(!StringUtil.isEmpty(posItemVo.getBarcode())){
-
             PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcode(passport.getId()
                     , posItemVo.getBarcode());
            return updatePosItem(posItem,posItemVo);
@@ -474,7 +472,6 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setGeneratedDate(posItem.getGeneratedDate());
         return posItemVo;
     }
-
     @Override
     public List<PosItemVo> convertToVos(List<PosItem> posItems) {
         List<PosItemVo> posItemVos = new ArrayList<>();
