@@ -11,6 +11,7 @@ import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.po.LifeOrderItemSnapshot;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
+import com.dianba.pos.order.repository.LifeOrderItemSnapshotJpaRepository;
 import com.dianba.pos.order.repository.LifeOrderJpaRepository;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
@@ -54,6 +55,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     private PassportManager passportManager;
     @Autowired
     private LifeOrderJpaRepository lifeOrderJpaRepository;
+    @Autowired
+    private LifeOrderItemSnapshotJpaRepository itemSnapshotJpaRepository;
     @Autowired
     private PassportJpaRepository passportJpaRepository;
 
@@ -341,13 +344,22 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
 
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize) {
-        Page<List<LifeOrder>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+        Page<LifeOrder> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForPos(passportId, orderType, orderStatus));
-        if (orderPage.size() > 0) {
-            List<LifeOrder> lifeOrders = (ArrayList) orderPage;
-            for (LifeOrder lifeOrder : lifeOrders) {
-                lifeOrderTransformation(lifeOrder);
+        List<Long> orderIds = new ArrayList<>();
+        for (LifeOrder lifeOrder : orderPage) {
+            orderIds.add(lifeOrder.getId());
+        }
+        List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
+        for (LifeOrder lifeOrder : orderPage) {
+            List<LifeOrderItemSnapshot> itemSnapshots = new ArrayList<>();
+            for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
+                if (itemSnapshot.getOrderId().longValue() == lifeOrder.getId().longValue()) {
+                    itemSnapshots.add(itemSnapshot);
+                }
             }
+            lifeOrder.setItemSnapshots(itemSnapshots);
+            lifeOrderTransformation(lifeOrder);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);

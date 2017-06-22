@@ -1,16 +1,28 @@
 package com.dianba.pos.order.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class MerchantOrderVo implements Serializable{
 
+    @JsonIgnore
+    private Long orderId;
     private String showName;
     private String sequenceNumber;
     private String createTime;
     private Long totalPrice;
     private String status;
     private List<MerchantOrderItemSnapshotVo> itemSnapshots;
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
     public String getShowName() {
         return showName;

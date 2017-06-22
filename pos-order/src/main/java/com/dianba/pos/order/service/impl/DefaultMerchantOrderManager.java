@@ -8,12 +8,13 @@ import com.dianba.pos.common.util.SimpleExcelWriter;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
 import com.dianba.pos.order.mapper.MerchantOrderMapper;
+import com.dianba.pos.order.po.LifeOrderItemSnapshot;
+import com.dianba.pos.order.repository.LifeOrderItemSnapshotJpaRepository;
 import com.dianba.pos.order.service.MerchantOrderManager;
 import com.dianba.pos.order.vo.*;
 import com.dianba.pos.passport.mapper.PassportMapper;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantType;
-import com.dianba.pos.passport.repository.PassportJpaRepository;
 import com.dianba.pos.passport.service.PosMerchantTypeManager;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -40,7 +41,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Autowired
     private LifeOrderMapper lifeOrderMapper;
     @Autowired
-    private PassportJpaRepository passportJpaRepository;
+    private LifeOrderItemSnapshotJpaRepository itemSnapshotJpaRepository;
     @Autowired
     private PosMerchantTypeManager posMerchantTypeManager;
 
@@ -48,8 +49,26 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     private PassportMapper passportMapper;
 
     public BasicResult getOrderForMerchant(Long merchantPassportId, Integer pageNum, Integer pageSize) {
-        Page<List<MerchantOrderVo>> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
-                -> orderMapper.findOrderForMerchant(merchantPassportId));
+        Page<MerchantOrderVo> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+                -> merchantOrderMapper.findOrderForMerchant(merchantPassportId));
+        List<Long> orderIds = new ArrayList<>();
+        for (MerchantOrderVo merchantOrder : orderPage) {
+            orderIds.add(merchantOrder.getOrderId());
+        }
+        List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
+        for (MerchantOrderVo merchantOrder : orderPage) {
+            List<MerchantOrderItemSnapshotVo> itemSnapshots = new ArrayList<>();
+            for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
+                if (merchantOrder.getOrderId().longValue() == itemSnapshot.getOrderId().longValue()) {
+                    MerchantOrderItemSnapshotVo orderItemSnapshotVo = new MerchantOrderItemSnapshotVo();
+                    orderItemSnapshotVo.setItemName(itemSnapshot.getItemName());
+                    orderItemSnapshotVo.setNormalPrice(itemSnapshot.getNormalPrice().longValue());
+                    orderItemSnapshotVo.setNormalQuantity(itemSnapshot.getNormalQuantity());
+                    itemSnapshots.add(orderItemSnapshotVo);
+                }
+            }
+            merchantOrder.setItemSnapshots(itemSnapshots);
+        }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);
         basicResult.getResponse().put("pageNum", pageNum);
@@ -165,7 +184,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Override
     public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
-        Passport passport=passportMapper.getPassportInfoByCashierId(merchantId);
+        Passport passport = passportMapper.getPassportInfoByCashierId(merchantId);
         List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
                 .findMerchantDayReport(passport.getId(), itId, itemName);
         if (StringUtil.isEmpty(email)) {
@@ -180,12 +199,12 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
 
     @Override
     public BasicResult findMerchantCashierDayProfitInfo(Long merchantId, String createTime) {
-        if(StringUtil.isEmpty(createTime)){
-            createTime=DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss");
+        if (StringUtil.isEmpty(createTime)) {
+            createTime = DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss");
         }
-        List<MerchantCashierDayProfitInfo> merchantCashierDayProfitInfos=orderMapper.findMerchantCashierDayProfitInfo(
-                merchantId,createTime);
-        return BasicResult.createSuccessResultWithDatas("获取成功",merchantCashierDayProfitInfos);
+        List<MerchantCashierDayProfitInfo> merchantCashierDayProfitInfos = orderMapper.findMerchantCashierDayProfitInfo(
+                merchantId, createTime);
+        return BasicResult.createSuccessResultWithDatas("获取成功", merchantCashierDayProfitInfos);
     }
 
 

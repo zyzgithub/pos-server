@@ -22,7 +22,6 @@ import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.vo.PosItemVo;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
-import com.dianba.pos.order.repository.OrderJpaRepository;
 import com.dianba.pos.order.vo.Order19EDto;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -45,8 +44,6 @@ public class DefaultCharge19eManager implements Charge19eManager {
     @Autowired
     private Charge19eJpaRepository charge19eJpaRepository;
 
-    @Autowired
-    private OrderJpaRepository orderJpaRepository;
     @Autowired
     private LifeOrderMapper orderMapper;
 
@@ -229,15 +226,15 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     String mobilePrefix = phone.substring(0, 7);
                     Long phonel = Long.parseLong(mobilePrefix);
                     List<PosItemVo> menulst = posItemMapper.getMenuListByPhoneAndType(phonel);
-                    List<PosItemVo> posItemVos=new ArrayList<>();
-                    BigDecimal a=new BigDecimal(100);
-                    for(PosItemVo posItemVo :menulst){
-                        PosItemVo posItemVo1=new PosItemVo();
-                        posItemVo1=posItemVo;
+                    List<PosItemVo> posItemVos = new ArrayList<>();
+                    BigDecimal a = new BigDecimal(100);
+                    for (PosItemVo posItemVo : menulst) {
+                        PosItemVo posItemVo1 = new PosItemVo();
+                        posItemVo1 = posItemVo;
 
-                        posItemVo1.setSalesPrice(posItemVo.getSalesPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+                        posItemVo1.setSalesPrice(posItemVo.getSalesPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
 
-                        posItemVo1.setStockPrice(posItemVo.getStockPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+                        posItemVo1.setStockPrice(posItemVo.getStockPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                     }
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
@@ -301,11 +298,11 @@ public class DefaultCharge19eManager implements Charge19eManager {
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", posItemVos);
                     return BasicResult.createSuccessResult("获取流量充值商品成功", jsonObject);
-                }else {
+                } else {
                     return BasicResult.createSuccessResult("获取流量充值商品成功");
                 }
             }
-            }
+        }
 
 
     }

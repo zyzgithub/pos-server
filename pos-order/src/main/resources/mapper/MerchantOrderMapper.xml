@@ -2,6 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dianba.pos.order.mapper.MerchantOrderMapper">
 
+    <resultMap id="merchantOrderResultMap" type="com.dianba.pos.order.vo.MerchantOrderVo">
+        <result column="order_id" property="orderId"/>
+        <result column="show_name" property="showName"/>
+        <result column="sequence_number" property="sequenceNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="status" property="status"/>
+        <!--<collection property="itemSnapshots" ofType="com.dianba.pos.order.vo.MerchantOrderItemSnapshotVo">-->
+            <!--<result column="item_name" property="itemName"/>-->
+            <!--<result column="normal_quantity" property="normalQuantity"/>-->
+            <!--<result column="normal_price" property="normalPrice"/>-->
+        <!--</collection>-->
+    </resultMap>
+
+    <select id="findOrderForMerchant" resultMap="merchantOrderResultMap">
+        select o.id order_id,p.show_name,o.sequence_number,concat(o.create_time,'') create_time
+        -- ,item_snapshot.item_name,item_snapshot.normal_quantity,item_snapshot.normal_price
+        ,o.total_price,o.status
+        from life_order.order_entry o
+        inner join life_passport.passport p on p.id=o.shipping_passport_id
+        -- inner join life_order.order_item_snapshot item_snapshot on item_snapshot.order_id=o.id
+        where o.shipping_passport_id=#{merchantPassportId}
+        and o.type in(4,9) and o.status =8
+        order by o.create_time desc
+    </select>
 
     <!--商家今日本月总收入-->
     <select id="findTodayAndMonthIncomeAmount" resultType="java.util.Map">

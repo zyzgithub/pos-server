@@ -2,6 +2,7 @@ package com.dianba.pos.order.mapper;
 
 import com.dianba.pos.order.vo.MerchantOrderDayIncomeVo;
 import com.dianba.pos.order.vo.MerchantOrderIncomeVo;
+import com.dianba.pos.order.vo.MerchantOrderVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,6 +11,14 @@ import java.util.Map;
 
 @Mapper
 public interface MerchantOrderMapper {
+
+    /**
+     * 根据商家ID获取订单
+     *
+     * @param merchantPassportId 商家ID
+     * @return
+     */
+    List<MerchantOrderVo> findOrderForMerchant(@Param("merchantPassportId") Long merchantPassportId);
 
     Map<String, Object> findTodayAndMonthIncomeAmount(Long passportId);
 

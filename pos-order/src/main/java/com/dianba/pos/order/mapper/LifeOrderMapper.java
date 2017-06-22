@@ -1,8 +1,8 @@
 package com.dianba.pos.order.mapper;
+
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantCashierDayProfitInfo;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
-import com.dianba.pos.order.vo.MerchantOrderVo;
 import com.dianba.pos.order.vo.Order19EDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,20 +14,6 @@ import java.util.Map;
 @Mapper
 public interface LifeOrderMapper {
 
-
-    /**
-     * 获取商家使用pos机的时间
-     */
-    Long getPosStrtTimeByMerchant(Long id);
-
-    /**
-     * 获取商家注册时间
-     */
-    Long getMerchantCreate(Long id);
-
-
-    Integer getRemarkCount(List<String> remark);
-
     /**
      * 获取未充值订单
      */
@@ -36,18 +22,10 @@ public interface LifeOrderMapper {
     /**
      * 更新增值服务订单信息为成功状态
      */
-    void editOrderInfoBy19e(@Param("deliverStatus") Integer deliverStatus,@Param("orderNum") String orderNum);
+    void editOrderInfoBy19e(@Param("deliverStatus") Integer deliverStatus, @Param("orderNum") String orderNum);
 
 
     Object getByPayId(@Param("orderNum") String orderNum);
-
-    /**
-     * 根据商家ID获取订单
-     *
-     * @param merchantPassportId 商家ID
-     * @return
-     */
-    List<MerchantOrderVo> findOrderForMerchant(@Param("merchantPassportId") Long merchantPassportId);
 
     /**
      * 根据商家ID，类型状态获取订单
@@ -61,7 +39,7 @@ public interface LifeOrderMapper {
             , @Param("orderType") Integer orderType, @Param("orderStatus") Integer orderStatus);
 
     List<LifeOrder> findOrderByPartnerUserAndPaymentTime(@Param("passportId") Long passportId
-            ,@Param("date") String date);
+            , @Param("date") String date);
 
     /**
      * 查询商家使用pos盈利信息
@@ -79,5 +57,5 @@ public interface LifeOrderMapper {
             , @Param("itemName") String itemName);
 
     List<MerchantCashierDayProfitInfo> findMerchantCashierDayProfitInfo(@Param("merchantId") Long merchantId
-            ,@Param("createTime") String createTime);
+            , @Param("createTime") String createTime);
 }
