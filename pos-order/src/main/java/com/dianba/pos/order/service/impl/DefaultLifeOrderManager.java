@@ -350,16 +350,18 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         for (LifeOrder lifeOrder : orderPage) {
             orderIds.add(lifeOrder.getId());
         }
-        List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
-        for (LifeOrder lifeOrder : orderPage) {
-            List<LifeOrderItemSnapshot> itemSnapshots = new ArrayList<>();
-            for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
-                if (itemSnapshot.getOrderId().longValue() == lifeOrder.getId().longValue()) {
-                    itemSnapshots.add(itemSnapshot);
+        if (orderIds.size() != 0) {
+            List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
+            for (LifeOrder lifeOrder : orderPage) {
+                List<LifeOrderItemSnapshot> itemSnapshots = new ArrayList<>();
+                for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
+                    if (itemSnapshot.getOrderId().longValue() == lifeOrder.getId().longValue()) {
+                        itemSnapshots.add(itemSnapshot);
+                    }
                 }
+                lifeOrder.setItemSnapshots(itemSnapshots);
+                lifeOrderTransformation(lifeOrder);
             }
-            lifeOrder.setItemSnapshots(itemSnapshots);
-            lifeOrderTransformation(lifeOrder);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);

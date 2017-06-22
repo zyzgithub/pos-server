@@ -55,19 +55,21 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         for (MerchantOrderVo merchantOrder : orderPage) {
             orderIds.add(merchantOrder.getOrderId());
         }
-        List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
-        for (MerchantOrderVo merchantOrder : orderPage) {
-            List<MerchantOrderItemSnapshotVo> itemSnapshots = new ArrayList<>();
-            for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
-                if (merchantOrder.getOrderId().longValue() == itemSnapshot.getOrderId().longValue()) {
-                    MerchantOrderItemSnapshotVo orderItemSnapshotVo = new MerchantOrderItemSnapshotVo();
-                    orderItemSnapshotVo.setItemName(itemSnapshot.getItemName());
-                    orderItemSnapshotVo.setNormalPrice(itemSnapshot.getNormalPrice().longValue());
-                    orderItemSnapshotVo.setNormalQuantity(itemSnapshot.getNormalQuantity());
-                    itemSnapshots.add(orderItemSnapshotVo);
+        if (orderIds.size() != 0) {
+            List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
+            for (MerchantOrderVo merchantOrder : orderPage) {
+                List<MerchantOrderItemSnapshotVo> itemSnapshots = new ArrayList<>();
+                for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
+                    if (merchantOrder.getOrderId().longValue() == itemSnapshot.getOrderId().longValue()) {
+                        MerchantOrderItemSnapshotVo orderItemSnapshotVo = new MerchantOrderItemSnapshotVo();
+                        orderItemSnapshotVo.setItemName(itemSnapshot.getItemName());
+                        orderItemSnapshotVo.setNormalPrice(itemSnapshot.getNormalPrice().longValue());
+                        orderItemSnapshotVo.setNormalQuantity(itemSnapshot.getNormalQuantity());
+                        itemSnapshots.add(orderItemSnapshotVo);
+                    }
                 }
+                merchantOrder.setItemSnapshots(itemSnapshots);
             }
-            merchantOrder.setItemSnapshots(itemSnapshots);
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(orderPage);
