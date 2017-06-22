@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.maintenance.mapper.MTOrderMapper">
+
+    <resultMap id="SingleOrderResultMap" type="com.dianba.pos.order.po.LifeOrder">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sequence_number" jdbcType="VARCHAR" property="sequenceNumber"/>
+        <result column="partner_id" jdbcType="VARCHAR" property="partnerId"/>
+        <result column="partner_user_id" jdbcType="VARCHAR" property="partnerUserId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="deliver_status" jdbcType="INTEGER" property="deliverStatus"/>
+        <result column="refund_status" jdbcType="INTEGER" property="refundStatus"/>
+        <result column="payment_type" jdbcType="TINYINT" property="paymentType"/>
+        <result column="trans_type" jdbcType="VARCHAR" property="transType"/>
+        <!--<result column="user_source" jdbcType="INTEGER" property="userSource"/>-->
+        <!--<result column="day_sort_number" jdbcType="INTEGER" property="daySortNumber"/>-->
+        <!--<result column="push_type" jdbcType="INTEGER" property="pushType"/>-->
+        <result column="shipping_passport_id" jdbcType="BIGINT" property="shippingPassportId"/>
+        <result column="shipping_nick_name" jdbcType="VARCHAR" property="shippingNickName"/>
+        <result column="shipping_province" jdbcType="VARCHAR" property="shippingProvince"/>
+        <result column="shipping_city" jdbcType="VARCHAR" property="shippingCity"/>
+        <result column="shipping_district" jdbcType="VARCHAR" property="shippingDistrict"/>
+        <result column="shipping_address" jdbcType="VARCHAR" property="shippingAddress"/>
+        <result column="shipping_location" jdbcType="VARCHAR" property="shippingLocation"/>
+        <result column="shipping_phone" jdbcType="VARCHAR" property="shippingPhone"/>
+        <result column="receipt_user_id" jdbcType="VARCHAR" property="receiptUserId"/>
+        <result column="receipt_nick_name" jdbcType="VARCHAR" property="receiptNickName"/>
+        <result column="receipt_province" jdbcType="VARCHAR" property="receiptProvince"/>
+        <result column="receipt_city" jdbcType="VARCHAR" property="receiptCity"/>
+        <result column="receipt_district" jdbcType="VARCHAR" property="receiptDistrict"/>
+        <result column="receipt_address" jdbcType="VARCHAR" property="receiptAddress"/>
+        <result column="receipt_phone" jdbcType="VARCHAR" property="receiptPhone"/>
+        <result column="receipt_location" jdbcType="VARCHAR" property="receiptLocation"/>
+        <result column="courier_passport_id" jdbcType="BIGINT" property="courierPassportId"/>
+        <result column="courier_nick_name" jdbcType="VARCHAR" property="courierNickName"/>
+        <result column="courier_phone" jdbcType="VARCHAR" property="courierPhone"/>
+        <result column="total_distance" jdbcType="BIGINT" property="totalDistance"/>
+        <result column="current_location" jdbcType="VARCHAR" property="currentLocation"/>
+        <result column="collecting_fees" jdbcType="TINYINT" property="collectingFees"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="actual_price" jdbcType="BIGINT" property="actualPrice"/>
+        <result column="total_price" jdbcType="BIGINT" property="totalPrice"/>
+        <result column="discount_price" jdbcType="BIGINT" property="discountPrice"/>
+        <result column="distribution_fee" jdbcType="BIGINT" property="distributionFee"/>
+        <result column="price_logger" jdbcType="VARCHAR" property="priceLogger"/>
+        <result column="cancel_logger" jdbcType="VARCHAR" property="cancelLogger"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+        <result column="confirm_time" jdbcType="TIMESTAMP" property="confirmTime"/>
+    </resultMap>
+
+    <select id="findNoneOffsetAmountOrders" resultMap="SingleOrderResultMap">
+        select * from life_order.order_entry o
+        where o.type in(3,4,8,9) and o.status=8 and o.trans_type in('ALIPAY','WEIXIN_NATIVE')
+        and not exists(
+          select 1 from life_payment.payment_currency_offset_logger t where t.relation_trans_sequence=o.sequence_number
+        )
+        order by id desc
+    </select>
+</mapper>

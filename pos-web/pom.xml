@@ -61,6 +61,11 @@
             <artifactId>pos-qrcode</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.dianba</groupId>
+            <artifactId>pos-maintenance</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

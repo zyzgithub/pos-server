@@ -34,6 +34,7 @@
         <module>pos-passport</module>
         <module>pos-settlement</module>
         <module>pos-qrcode</module>
+        <module>pos-maintenance</module>
     </modules>
 
     <dependencies>
