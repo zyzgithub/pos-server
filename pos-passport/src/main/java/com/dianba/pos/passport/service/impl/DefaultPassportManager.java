@@ -100,6 +100,8 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                     loginVo.setAccountType(1);
                     loginVo.setAccountTypeName("店员");
                     JSONObject jsonObject1 = (JSONObject) JSONObject.toJSON(loginVo);
+                    Passport passport=passportMapper.getPassportInfoByCashierId(loginVo.getPassportId());
+                    loginVo.setShowName(passport.getShowName());
                     return BasicResult.createSuccessResult("登录成功!", jsonObject1);
                 }
                 return basicResult;

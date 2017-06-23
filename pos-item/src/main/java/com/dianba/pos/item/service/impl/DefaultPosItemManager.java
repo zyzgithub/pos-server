@@ -574,7 +574,56 @@ public class DefaultPosItemManager implements PosItemManager {
         }
         posItemJpaRepository.save(posItems);
     }
+    public void addPosItem(Long passportId){
+        //保存商家自由价商品
+        PosItem posItem=new PosItem();
+        posItem.setBarcode("8888888888888");
+        posItem.setBuyCount(0);
+        posItem.setCodeId(0);
+        posItem.setCreateTime("");
+        posItem.setDescription("");
+        posItem.setGeneratedDate(0L);
+        posItem.setIsDelete("N");
+        posItem.setSalesPrice(500L);
+        posItem.setIsShelve("Y");
+        posItem.setItemImgUrl("");
+        posItem.setItemName("自由价商品");
+        posItem.setPassportId(passportId);
+        posItem.setStockPrice(500L);
+        posItem.setWarningRepertory(20);
+        posItem.setItemTemplateId(0L);
+        posItem.setItemTypeId(0L);
+        posItemJpaRepository.save(posItem);
+    }
+    public void addItemTemplateAndPosItem(Long passportId){
+        //检测商家有没有只有价商品没有就新增一个
+        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("8888888888888");
+        if(itemTemplate==null){
+            LifeItemTemplate lifeItemTemplate=new LifeItemTemplate();
+            itemTemplate.setAscriptionType(1);
+            itemTemplate.setImageUrl("http://no1.0085.com");
+            itemTemplate.setDefineCode("POS111111111111");
+            itemTemplate.setStatus(0);
+            itemTemplate.setUploadTime(new Date());
+            itemTemplate.setBarcode("8888888888888");
+            itemTemplate.setCostPrice(0L);
+            itemTemplate.setDefaultPrice(0L);
+            itemTemplate.setUnitId(1L);
+            itemTemplate.setTypeId(0L);
+            itemTemplate.setName("POS自由价商品");
+            //添加模板信息
+            itemTemplateJpaRepository.save(itemTemplate);
+            addPosItem(passportId);
+        }else{
+            //查看商家是否添加自由价商品
+            PosItem posItem=posItemJpaRepository.getPosItemByPassportIdAndBarcode(passportId,"8888888888888");
 
+            if(posItem==null){
+                addPosItem(passportId);
+            }
+
+        }
+    }
     @Override
     public BasicResult getItemUnitAndType(String passportId) {
         if (StringUtil.isEmpty(passportId)) {
@@ -588,6 +637,8 @@ public class DefaultPosItemManager implements PosItemManager {
             //商品分类
             logger.info("获取所有商品分类");
             Passport passport=passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
+            //添加商家自由价商品
+            addItemTemplateAndPosItem(passport.getId());
             List<PosType> posTypes = posTypeJpaRepository.getAllByPassportId(passport.getId());
             List<PosTypeVo> posTypeVos = new ArrayList<>();
             if (posTypes.size() > 0) {

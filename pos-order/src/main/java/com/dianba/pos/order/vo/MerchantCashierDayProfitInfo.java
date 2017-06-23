@@ -1,7 +1,5 @@
 package com.dianba.pos.order.vo;
 
-import java.math.BigDecimal;
-
 /**
  * Created by zhangyong on 2017/6/21.
  */
@@ -9,11 +7,9 @@ public class MerchantCashierDayProfitInfo {
 
     private Long cashierId;
     private String realName;
-    private BigDecimal sumTotalPrice;
+    private Long sumTotalPrice;
     private String cashierPhoto;
-
     private String time;
-    private  BigDecimal a=new BigDecimal(100);
     public Long getCashierId() {
         return cashierId;
     }
@@ -30,11 +26,11 @@ public class MerchantCashierDayProfitInfo {
         this.realName = realName;
     }
 
-    public BigDecimal getSumTotalPrice() {
-        return sumTotalPrice.divide(a,2,BigDecimal.ROUND_HALF_UP);
+    public Long getSumTotalPrice() {
+        return sumTotalPrice;
     }
 
-    public void setSumTotalPrice(BigDecimal sumTotalPrice) {
+    public void setSumTotalPrice(Long sumTotalPrice) {
         this.sumTotalPrice = sumTotalPrice;
     }
 
