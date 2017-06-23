@@ -577,7 +577,7 @@ public class DefaultPosItemManager implements PosItemManager {
     public void addPosItem(Long passportId){
         //保存商家自由价商品
         PosItem posItem=new PosItem();
-        posItem.setBarcode("8888888888888");
+        posItem.setBarcode("BBBBBBBBBBBBBB");
         posItem.setBuyCount(0);
         posItem.setCodeId(0);
         posItem.setCreateTime("");
@@ -597,7 +597,7 @@ public class DefaultPosItemManager implements PosItemManager {
     }
     public void addItemTemplateAndPosItem(Long passportId){
         //检测商家有没有只有价商品没有就新增一个
-        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("8888888888888");
+        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("BBBBBBBBBBBBBB");
         if(itemTemplate==null){
             LifeItemTemplate lifeItemTemplate=new LifeItemTemplate();
             itemTemplate.setAscriptionType(1);
@@ -605,7 +605,7 @@ public class DefaultPosItemManager implements PosItemManager {
             itemTemplate.setDefineCode("POS111111111111");
             itemTemplate.setStatus(0);
             itemTemplate.setUploadTime(new Date());
-            itemTemplate.setBarcode("8888888888888");
+            itemTemplate.setBarcode("BBBBBBBBBBBBBB");
             itemTemplate.setCostPrice(0L);
             itemTemplate.setDefaultPrice(0L);
             itemTemplate.setUnitId(1L);
@@ -616,7 +616,7 @@ public class DefaultPosItemManager implements PosItemManager {
             addPosItem(passportId);
         }else{
             //查看商家是否添加自由价商品
-            PosItem posItem=posItemJpaRepository.getPosItemByPassportIdAndBarcode(passportId,"8888888888888");
+            PosItem posItem=posItemJpaRepository.getPosItemByPassportIdAndBarcode(passportId,"BBBBBBBBBBBBBB");
 
             if(posItem==null){
                 addPosItem(passportId);
