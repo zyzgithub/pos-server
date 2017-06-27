@@ -3,7 +3,7 @@ package com.dianba.pos.extended.service;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.ChargeResult;
-import com.dianba.pos.order.vo.Order19EDto;
+import com.dianba.pos.extended.vo.Order19EDto;
 
 
 /**

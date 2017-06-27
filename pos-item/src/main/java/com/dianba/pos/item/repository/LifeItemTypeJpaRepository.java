@@ -18,6 +18,7 @@ public interface LifeItemTypeJpaRepository extends JpaRepository<LifeItemType, L
 
     LifeItemType getItemTypeById(Long id);
 
+    LifeItemType findByAscriptionType(Integer type);
 }
 
 

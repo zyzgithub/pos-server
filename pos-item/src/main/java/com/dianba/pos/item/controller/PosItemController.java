@@ -188,10 +188,10 @@ public class PosItemController {
             if (!StringUtil.isEmpty(posItemVo.getItemName())) {
                 posItem.setItemName(posItemVo.getItemName());
             }
-            if (!posItemVo.getStockPrice() .equals(0.0)) {
+            if (posItemVo.getStockPrice()!=null) {
                 posItem.setStockPrice((long) posItemVo.getStockPrice().doubleValue() * 100);
             }
-            if (!posItemVo.getSalesPrice().equals(0.0)) {
+            if (posItemVo.getSalesPrice()!=null) {
                 posItem.setSalesPrice((long) posItemVo.getSalesPrice().doubleValue() * 100);
 
             }
@@ -212,9 +212,7 @@ public class PosItemController {
     @ResponseBody
     @RequestMapping("getListBySearchText")
     public BasicResult getListBySearchText(String searchText, Long passportId) {
-
        return posItemManager.getListBySearchText(searchText,passportId);
-
     }
 
 

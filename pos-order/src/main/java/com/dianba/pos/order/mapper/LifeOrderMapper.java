@@ -3,7 +3,6 @@ package com.dianba.pos.order.mapper;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantCashierDayProfitInfo;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
-import com.dianba.pos.order.vo.Order19EDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,19 +12,6 @@ import java.util.Map;
 
 @Mapper
 public interface LifeOrderMapper {
-
-    /**
-     * 获取未充值订单
-     */
-    List<Order19EDto> getOrderListBy19EMenu(@Param("type") Integer type, @Param("deliverStatus") Integer deliverStatus);
-
-    /**
-     * 更新增值服务订单信息为成功状态
-     */
-    void editOrderInfoBy19e(@Param("deliverStatus") Integer deliverStatus, @Param("orderNum") String orderNum);
-
-
-    Object getByPayId(@Param("orderNum") String orderNum);
 
     /**
      * 根据商家ID，类型状态获取订单

@@ -3,6 +3,7 @@ package com.dianba.pos.extended.controller;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.AjaxJson;
 import com.dianba.pos.common.util.DateUtil;
+import com.dianba.pos.common.util.OrderDeliverStatusEnum;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
@@ -107,12 +108,12 @@ public class Charge19EController {
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
 
                 //查询此订单是否更新完毕
-                Object ob = orderMapper.getByPayId(merchantOrderId);
-                if (ob != null & !ob.equals("success")) {
+                Object ob = charge19eMapper.getByPayId(merchantOrderId);
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     //发货完成
-                    orderMapper.editOrderInfoBy19e(8, merchantOrderId);
+                    charge19eMapper.editOrderInfoBy19e(8, merchantOrderId);
                     //改变第三方订单状态
                     charge19eMapper.editCharge19e("success", date, merchantOrderId);
                     logger.info("话费订单充值成功!" + ",订单号为：" + chargeCallBack.getMerchantOrderId() + ",充值金额为：");
@@ -120,7 +121,7 @@ public class Charge19EController {
 
             } else {
                 logger.info("话费充值回调返回：ERROR=====================");
-                orderMapper.editOrderInfoBy19e(3, merchantOrderId);
+                charge19eMapper.editOrderInfoBy19e(3, merchantOrderId);
             }
         }
 
@@ -146,17 +147,17 @@ public class Charge19EController {
                 logger.info("流量充值回调返回为SUCCESS状态：==========");
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
-                Object ob = orderMapper.getByPayId(merOrderNo);
-                if (ob != null & !ob.equals("success")) {
+                Object ob = charge19eMapper.getByPayId(merOrderNo);
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
                     //改变原订单状态
-                    orderMapper.editOrderInfoBy19e(8, merOrderNo);
+                    charge19eMapper.editOrderInfoBy19e(8, merOrderNo);
                     //改变第三方订单状态
                     charge19eMapper.editCharge19e("success", date, merOrderNo);
                 }
                 result = "resultCode=SUCCESS";
                 logger.info("流量充值回调操作成功!SUCCESS，");
             } else {
-                orderMapper.editOrderInfoBy19e(3, merOrderNo);
+                charge19eMapper.editOrderInfoBy19e(3, merOrderNo);
                 logger.info("流量充值回调返回充值失败!ERROR");
             }
 
