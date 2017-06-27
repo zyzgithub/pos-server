@@ -5,7 +5,7 @@ import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.order.service.LifeOrderManager;
-import com.dianba.pos.payment.util.MD5Util;
+import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.qrcode.config.QRCodeURLConstant;
 import com.dianba.pos.qrcode.config.QRWeChatConfig;
 import com.dianba.pos.qrcode.config.WeChatURLConstant;
@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -46,6 +45,8 @@ public class QRCodeController {
     private PosQRCodeManager posQRCodeManager;
     @Autowired
     private LifeOrderManager lifeOrderManager;
+    @Autowired
+    private QROrderManager qrOrderManager;
     @Autowired
     private AppConfig appConfig;
     @Autowired
@@ -80,9 +81,11 @@ public class QRCodeController {
         String qrcodeFormat = "png";
         HashMap<EncodeHintType, String> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        String url = "http://apptest.0085.com/pos/qrcode/manager/qr_order/10000/6323";
+//        String url = "http://192.168.1.115:8080/pos/qrcode/manager/qr_order/10000/6323";
+
         BitMatrix bitMatrix = new MultiFormatWriter()
-                .encode("http://192.168.3.13:8080/pos/qrcode/manager/qr_order/10000/6323"
-                        , BarcodeFormat.QR_CODE, qrcodeWidth, qrcodeHeight, hints);
+                .encode(url, BarcodeFormat.QR_CODE, qrcodeWidth, qrcodeHeight, hints);
         MatrixToImageWriter.writeToStream(bitMatrix, qrcodeFormat, response.getOutputStream());
     }
 
@@ -134,42 +137,5 @@ public class QRCodeController {
             logger.info("微信授权回调结束！");
         }
         return "pay";
-    }
-
-    /**
-     * 扫码下单支付
-     *
-     * @return
-     */
-    @RequestMapping(value = "pay_order", method = RequestMethod.GET)
-    public void payQROrder(HttpServletRequest request
-            , String scope) {
-
-    }
-
-    private static String urlEncodeUTF8(String source) {
-        String result = source;
-        try {
-            result = java.net.URLEncoder.encode(source, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static void main(String[] args) {
-        String appSecret = MD5Util.md5("dianba0085tan0085");
-        String code = "081WAZo022TM1Y07z9r02r4Ro02WAZoK";
-        String authTokenUrl = WeChatURLConstant.getAuthTokenUrl("wxdcc86bc0e6e451a6"
-                , appSecret, code);
-//        c6a10ab01fa29ef6f55e26c6d3f750ba
-//        710d0f94e79c0999c5b497ef240d7d4b
-//        0085abcdefghijklmnopqrstuvwxyz00
-        JSONObject jsonObject = HttpUtil.post(authTokenUrl, new JSONObject());
-        if (jsonObject != null) {
-            for (String key : jsonObject.keySet()) {
-                System.out.println("key:" + key + "  vlaue:" + jsonObject.get(key));
-            }
-        }
     }
 }

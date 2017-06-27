@@ -82,7 +82,7 @@ public class MapUtil {
         Set<Map.Entry<String, String>> set = map.entrySet();
         StringBuffer sb = new StringBuffer();
         //取出排序后的参数，逐一连接起来
-        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext(); ) {
             Map.Entry<String, String> me = it.next();
             sb.append(me.getValue() + "|");
         }
@@ -116,6 +116,7 @@ public class MapUtil {
 
         return prestr;
     }
+
     public static Map<String, Object> beanToMap(Object obj) {
         Map<String, Object> params = new HashMap<String, Object>(0);
         try {
@@ -125,7 +126,7 @@ public class MapUtil {
             for (int i = 0; i < descriptors.length; i++) {
                 String name = descriptors[i].getName();
                 if (!"class".equals(name)) {
-                    params.put(name, propertyUtilsBean.getNestedProperty(obj,name));
+                    params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
                 }
             }
         } catch (Exception e) {

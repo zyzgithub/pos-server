@@ -5,14 +5,21 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
+import com.dianba.pos.payment.config.WechatConfig;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping(PaymentURLConstant.WAP)
@@ -20,9 +27,14 @@ public class WapPaymentController {
 
     @Autowired
     private AlipayConfig alipayConfig;
+    @Autowired
+    private WechatConfig wechatConfig;
+    @Autowired
+    private QROrderManager qrOrderManager;
 
-    @RequestMapping("pay")
-    public void payAndGenerateOrder(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResponseBody
+    @RequestMapping("alipay")
+    public BasicResult aliPay(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String orderNum = "09876543456789";
         // 订单名称，必填
         String subject = "sdsa";
@@ -66,8 +78,18 @@ public class WapPaymentController {
             response.getWriter().flush();
             response.getWriter().close();
         } catch (AlipayApiException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return BasicResult.createSuccessResult();
+    }
+
+    @ResponseBody
+    @RequestMapping("wechatPay")
+    public BasicResult wechatPay(HttpServletRequest request, HttpServletResponse response
+            , Long passportId, String openId, BigDecimal amount) {
+        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.WEIXIN_JS;
+        LifeOrder lifeOrder = qrOrderManager.generateQROrder(passportId, paymentTypeEnum, amount);
+
+        return BasicResult.createSuccessResult();
     }
 }

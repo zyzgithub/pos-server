@@ -98,9 +98,4 @@ public class XMLUtil {
                 + "]]></return_msg></xml>";
     }
 
-    public static void main(String[] args) throws JDOMException, IOException {
-        String string = PayService.createFailXml("ERROR");
-        System.out.println(doXMLParse(string));
-    }
-
 }

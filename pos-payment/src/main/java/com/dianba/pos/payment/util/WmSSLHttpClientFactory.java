@@ -46,7 +46,7 @@ public final class WmSSLHttpClientFactory {
             , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
 
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        String path = WmHttpsRequest.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String path = HttpsRequest.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         InputStream inputStream = this.getClass().getResourceAsStream("/apiclient_cert_product.p12");
         if (inputStream == null) {
             logger.error("证书文件不存在,路径:{},无法初始化...apiclient_cert_product.p12");

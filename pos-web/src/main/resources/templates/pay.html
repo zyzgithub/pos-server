@@ -52,8 +52,7 @@
                 $('.keyboard .pay').css({"background": "#eee", "color": "#666"});
                 return false;
             }
-            window.location.href="/pos/qrcode/manager/pay_order?openId="+openId;
-            alert("点击 收款.!   ￥：" + $('#money').val());
+            window.location.href = "/pos/qrcode/manager/pay_order?openId=" + openId + "&amount=" + $('#money').val();
         }
 
     });

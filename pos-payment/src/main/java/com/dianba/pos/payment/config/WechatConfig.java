@@ -39,6 +39,9 @@ public class WechatConfig {
     @Value("${wechat.kfz.apikey}")
     private String apiKey;
 
+    @Value("${wechat.barcode.pay_url}")
+    private String barcodePayUrl;
+
     public String getAppId() {
         return appId;
     }
@@ -93,5 +96,13 @@ public class WechatConfig {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getBarcodePayUrl() {
+        return barcodePayUrl;
+    }
+
+    public void setBarcodePayUrl(String barcodePayUrl) {
+        this.barcodePayUrl = barcodePayUrl;
     }
 }

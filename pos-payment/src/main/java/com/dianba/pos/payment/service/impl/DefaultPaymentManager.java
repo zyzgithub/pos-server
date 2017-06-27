@@ -197,6 +197,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 }
                 posItemManager.offsetItemRepertory(itemIdMaps);
             }
+            BigDecimal offsetRewardAmount = BigDecimal.ZERO;
             if (basicResult.isSuccess()) {
                 if (!paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
                     Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
@@ -239,7 +240,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     }
                 }
                 //消费返现
-                BigDecimal offsetRewardAmount = posRewardManager
+                offsetRewardAmount = posRewardManager
                         .offsetRewardAmount(passportId, orderEntry.getId(), orderEntry.getType(), paymentTypeEnum);
                 offsetVipBalance(passportId, orderEntry.getSequenceNumber(), offsetRewardAmount, paymentTypeEnum);
             } else {
@@ -248,6 +249,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             //返回订单详情-加商品列表
             LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderEntry.getId());
             basicResult.setResponse(lifeOrderVo);
+            basicResult.getResponse().put("rewardAmount", offsetRewardAmount.multiply(BigDecimal.valueOf(100))
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
             return basicResult;
         } catch (Exception e) {
             e.printStackTrace();
