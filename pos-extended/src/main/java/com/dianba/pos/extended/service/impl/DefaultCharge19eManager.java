@@ -6,6 +6,7 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
+import com.dianba.pos.extended.config.ExtendedConfig;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
 import com.dianba.pos.extended.po.PosCharge19eOrder;
 import com.dianba.pos.extended.po.PosPhoneInfo;
@@ -59,7 +60,7 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
     private PosItemJpaRepository posItemJpaRepository;
 
     @Autowired
-    private AppConfig appConfig;
+    private ExtendedConfig extendedConfig;
     @Override
     public boolean hfCharge(Order19EDto or) {
 
@@ -68,17 +69,17 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
         charge19E.setChargeNumber(or.getMobile());
         String money = or.getMenuName().replace("元", "");
         charge19E.setChargeMoney(money);
-        charge19E.setMerchantId(appConfig.getExtendedHfMerchantId());
-        charge19E.setKey(appConfig.getExtendedHfKey());
+        charge19E.setMerchantId(extendedConfig.getExtendedHfMerchantId());
+        charge19E.setKey(extendedConfig.getExtendedHfKey());
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
                 + RandomStringUtils.random(4, "0123456789") + or.getOrderId();
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
-        charge19E.setSendNotifyUrl(appConfig.getExtendedHfNotifyUrl());
+        charge19E.setSendNotifyUrl(extendedConfig.getExtendedHfNotifyUrl());
        // ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
-        ChargeResult cr = hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
+        ChargeResult cr = hfCharge(charge19E);
         if (cr.getResultCode().equals("SUCCESS")) {
             //保存话费充值订单信息
             saveHfChargeTable(or, cr);
@@ -119,7 +120,7 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
 
         boolean flag = false;
         ChargeFlow cf = new ChargeFlow();
-        cf.setMerchantId(appConfig.getExtendedFlowMerchantId());
+        cf.setMerchantId(extendedConfig.getExtendedFlowMerchantId());
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
                 + RandomStringUtils.random(4, "0123456789") + order19EDto.getOrderId();
@@ -128,8 +129,8 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
         cf.setProductId(order19EDto.getMenuKey());
         cf.setMobile(order19EDto.getMobile());
         cf.setRemark("流量充值!");
-       // ChargeFlowResult chargeFlowResult = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
-        ChargeFlowResult chargeFlowResult = flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL,cf);
+        // ChargeFlowResult chargeFlowResult = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
+        ChargeFlowResult chargeFlowResult = flowCharge(cf);
         //保存流量充值订单信息
         saveFlowChargeTable(order19EDto, chargeFlowResult);
         if (chargeFlowResult.getResultCode().equals("00000")) {

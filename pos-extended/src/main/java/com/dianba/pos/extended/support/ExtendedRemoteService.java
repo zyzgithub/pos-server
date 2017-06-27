@@ -1,9 +1,9 @@
 package com.dianba.pos.extended.support;
 import com.alibaba.fastjson.JSONObject;
-import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.common.util.MapUtil;
 import com.dianba.pos.common.util.Md5Util;
+import com.dianba.pos.extended.config.ExtendedConfig;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
 import com.dianba.pos.extended.util.FlowChargeSign;
 import com.dianba.pos.extended.vo.*;
@@ -17,16 +17,18 @@ import java.util.Map;
  * Created by zhangyong on 2017/6/22.
  */
 public class ExtendedRemoteService {
-    private static Logger logger= LogManager.getLogger(ExtendedRemoteService.class);
+    private static Logger logger = LogManager.getLogger(ExtendedRemoteService.class);
     @Autowired
-    private AppConfig appConfig;
+    private ExtendedConfig extendedConfig;
+
     /**
      * 话费充值请求
-     * @param chargeUrl
+     *
+     * @param
      * @param param
      * @return
      */
-    protected  ChargeResult hfCharge(String chargeUrl, Charge19E param){
+    protected ChargeResult hfCharge(Charge19E param) {
         //签名
         String sign = param.sign();
         //签名加密
@@ -34,18 +36,19 @@ public class ExtendedRemoteService {
         // 发送请求参数
         String params = param.params(md5);
         //发送话费充值请求
-        String result=  HttpUtil.postParams(appConfig.getExtendedHfChargeIpPort()+chargeUrl,params);
-        ChargeResult chargeResult=JSONObject.parseObject(result,ChargeResult.class);
+        String result = HttpUtil.postParams(extendedConfig.getExtendedHfChargeUrl(), params);
+        ChargeResult chargeResult = JSONObject.parseObject(result, ChargeResult.class);
         return chargeResult;
     }
 
     /**
      * 流量充值
-     * @param chargeUrl
+     *
+     * @param
      * @param flow
      * @return
      */
-    protected ChargeFlowResult flowCharge(String chargeUrl, ChargeFlow flow) {
+    protected ChargeFlowResult flowCharge(ChargeFlow flow) {
 
         Map map = new HashMap<>();
         map.put("signType", flow.getSignType());
@@ -62,12 +65,13 @@ public class ExtendedRemoteService {
         map.put("sign", md5);
         Map<String, Object> sortMapByKey = MapUtil.sortMapByKey(map);
         String params = MapUtil.createLinkString(sortMapByKey);
-        logger.info("流量充值参数:"+params);
-        String result = HttpUtil.postParams(appConfig.getExtendedFlowChargeIpPort() + chargeUrl, params);
-        logger.info("流量充值返回结果:"+result);
-        ChargeFlowResult chargeFlowResult=JSONObject.parseObject(result,ChargeFlowResult.class);
+        logger.info("流量充值参数:" + params);
+        String result = HttpUtil.postParams(extendedConfig.getExtendedFlowChargeUrl(), params);
+        logger.info("流量充值返回结果:" + result);
+        ChargeFlowResult chargeFlowResult = JSONObject.parseObject(result, ChargeFlowResult.class);
         return chargeFlowResult;
     }
+
     /***根据手机号等参数获取产品信息**/
     protected String queryProduct(String chargeUrl, Product pd) {
 
@@ -81,11 +85,11 @@ public class ExtendedRemoteService {
         map.put("mobile", pd.getMobile());
         Map<String, Object> pdmap = MapUtil.sortMapByKey(map);
         String sign = MapUtil.createLinkString(pdmap);
-        String md5 = FlowCharge19EUtil.getKeyedDigest(sign, appConfig.getExtendedFlowKey());
+        String md5 = FlowCharge19EUtil.getKeyedDigest(sign, extendedConfig.getExtendedFlowKey());
         map.put("sign", md5);
         Map<String, Object> sortMapByKey = MapUtil.sortMapByKey(map);
         String params = MapUtil.createLinkString(sortMapByKey);
-        String result = HttpUtil.postParams(appConfig.getExtendedFlowChargeIpPort() + chargeUrl, params);
+        String result = HttpUtil.postParams(extendedConfig.getExtendedFlowProductUrl(), params);
         return result;
 
     }

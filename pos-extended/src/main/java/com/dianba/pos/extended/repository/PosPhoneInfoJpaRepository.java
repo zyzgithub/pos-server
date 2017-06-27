@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * Created by zhangyong on 2017/6/16.
  */
 @Repository
-public interface PosPhoneInfoJpaRepository extends JpaRepository<PosPhoneInfo,Long> {
+public interface PosPhoneInfoJpaRepository extends JpaRepository<PosPhoneInfo, Long> {
 }
