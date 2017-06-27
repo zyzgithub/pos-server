@@ -17,7 +17,7 @@ public class FlowCharge19EUtil {
 
     /***流量充值*/
 //    public static final String FLOW_CHARGE_URL = FLOW_CHARGET_IP_PORT +"flow_center/createOrder/createOrder.jhtml";
-   public static final String FLOW_CHARGE_URL = FLOW_CHARGET_IP_PORT + "createOrder/createOrder.jhtml";
+   public static final String FLOW_CHARGE_URL = "createOrder/createOrder.jhtml";
 
 
     /******根据手机号等参数获取产品信息***/

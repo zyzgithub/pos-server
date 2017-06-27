@@ -29,7 +29,7 @@ public interface PosItemManager {
      * @param itemId
      * @return
      */
-    PosItem getPosItemByPassportIdAndItemTemplateId(Long passportId, Long itemId);
+    PosItem getPosItemByPassportIdAndItemTemplateIdAndIsDelete(Long passportId, Long itemId,String isDelete);
 
 
     PosItemVo getItemByBarcode(String barcode, String passportId);

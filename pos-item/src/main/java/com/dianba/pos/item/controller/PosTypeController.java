@@ -48,7 +48,6 @@ public class PosTypeController {
     public BasicResult addPosType(String passportId, String title) {
 
         if (StringUtil.isEmpty(passportId) || StringUtil.isEmpty(title)) {
-
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
 

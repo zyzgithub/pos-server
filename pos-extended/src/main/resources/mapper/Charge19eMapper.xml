@@ -9,4 +9,31 @@
         UPDATE life_pos.pos_charge_19e_order SET charge_state =#{chargeState},finish_time=#{finishTime}
         WHERE merchantOrderId=#{merchantOrderId}
     </update>
+    <!--获取增值服务平台订单支付成功,未请求第三方服务type：1话费充值2流量充值 deliver_statues 0 未发货 2 发货中 8 发货成功-->
+    <select id="getOrderListBy19EMenu" resultType="com.dianba.pos.extended.vo.Order19EDto">
+        SELECT
+        o.id orderId,
+        o.sequence_number orderNum,
+        pi.sales_price price,
+        pi.item_name menuName,
+        o.receipt_phone mobile,
+        o.status payState,
+        pi.menu_key menuKey
+        FROM life_order.order_entry o
+        JOIN life_order.order_item_snapshot ois on ois.order_id=o.id
+        JOIN life_pos.pos_item pi on pi.id=ois.item_id
+        WHERE pi.passport_id=-1 and o.type=9 and o.status=8
+        AND pi.is_type=#{type} and o.deliver_status=#{deliverStatus} and pi.is_shelve='Y' and is_delete='N'
+        ORDER BY price
+    </select>
+    <!--根据商家订单号更新原订单信息-->
+    <update id="editOrderInfoBy19e" parameterType="java.util.Map">
+        UPDATE life_order.order_entry oe set oe.deliver_status=#{deliverStatus},oe.confirm_time=now()
+        WHERE oe.id=(SELECT order_id FROM life_pos.pos_charge_19e_order WHERE merchant_order_id=#{orderNum})
+    </update>
+    <!--查询此订单号是否被更新过了-->
+    <select id="getByPayId" resultType="java.lang.Object">
+        SELECT deliver_status FROM  life_order.order_entry WHERE id =
+        (SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
+    </select>
 </mapper>

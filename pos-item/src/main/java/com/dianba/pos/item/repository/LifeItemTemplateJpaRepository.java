@@ -44,5 +44,6 @@ public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTem
 
     LifeItemTemplate getItemTemplateById(Long id);
 
+    LifeItemTemplate findByAscriptionType(Integer type);
     List<LifeItemTemplate> findByBarcodeIn(List<String> barcodes);
 }

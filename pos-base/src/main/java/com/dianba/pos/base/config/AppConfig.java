@@ -29,6 +29,24 @@ public class AppConfig {
     @Value("${pos.callback.host}")
     private String posCallBackHost;
 
+    @Value("${extended.flow.CHARGE_IP_PORT}")
+    private String extendedFlowChargeIpPort;
+    @Value("${extended.flow.MERCHANT_ID}")
+    private String extendedFlowMerchantId;
+    @Value("${extended.flow.KEY}")
+    private String extendedFlowKey;
+    @Value("${extended.hf.CHARGE_IP_PORT}")
+    private String extendedHfChargeIpPort;
+    @Value("${extended.hf.MERCHANT_ID}")
+    private String extendedHfMerchantId;
+    @Value("${extended.hf.KEY}")
+    private String extendedHfKey;
+    @Value("${extended.hf.NOTIFY_URL}")
+    private String extendedHfNotifyUrl;
+
+    public String getExtendedHfNotifyUrl() {
+        return extendedHfNotifyUrl;
+    }
     @Value("${pos.wechat.callback.host}")
     private String posWechatCallBackHost;
 
@@ -66,6 +84,31 @@ public class AppConfig {
 
     public String getPosCallBackHost() {
         return posCallBackHost;
+    }
+
+
+    public String getExtendedFlowChargeIpPort() {
+        return extendedFlowChargeIpPort;
+    }
+
+    public String getExtendedFlowMerchantId() {
+        return extendedFlowMerchantId;
+    }
+
+    public String getExtendedFlowKey() {
+        return extendedFlowKey;
+    }
+
+    public String getExtendedHfChargeIpPort() {
+        return extendedHfChargeIpPort;
+    }
+
+    public String getExtendedHfMerchantId() {
+        return extendedHfMerchantId;
+    }
+
+    public String getExtendedHfKey() {
+        return extendedHfKey;
     }
 
     public String getPosWechatCallBackHost() {

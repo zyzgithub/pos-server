@@ -1,9 +1,9 @@
 package com.dianba.pos.extended.service.impl;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
@@ -12,9 +12,9 @@ import com.dianba.pos.extended.po.PosPhoneInfo;
 import com.dianba.pos.extended.repository.Charge19eJpaRepository;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PosPhoneInfoManager;
+import com.dianba.pos.extended.support.ExtendedRemoteService;
 import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
-import com.dianba.pos.extended.util.HfCharge19EApi;
 import com.dianba.pos.extended.util.HfCharge19EUtil;
 import com.dianba.pos.extended.vo.*;
 import com.dianba.pos.item.mapper.PosItemMapper;
@@ -22,13 +22,12 @@ import com.dianba.pos.item.po.PosItem;
 import com.dianba.pos.item.repository.PosItemJpaRepository;
 import com.dianba.pos.item.vo.PosItemVo;
 import com.dianba.pos.order.mapper.LifeOrderMapper;
-import com.dianba.pos.order.vo.Order19EDto;
+import com.dianba.pos.extended.vo.Order19EDto;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,7 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 @Service
-public class DefaultCharge19eManager implements Charge19eManager {
+public class DefaultCharge19eManager extends ExtendedRemoteService implements Charge19eManager {
 
     private static Logger logger = LogManager.getLogger(DefaultCharge19eManager.class);
     @Autowired
@@ -59,35 +58,37 @@ public class DefaultCharge19eManager implements Charge19eManager {
     @Autowired
     private PosItemJpaRepository posItemJpaRepository;
 
+    @Autowired
+    private AppConfig appConfig;
     @Override
     public boolean hfCharge(Order19EDto or) {
 
         boolean flag = false;
         Charge19E charge19E = new Charge19E();
         charge19E.setChargeNumber(or.getMobile());
-
         String money = or.getMenuName().replace("元", "");
         charge19E.setChargeMoney(money);
+        charge19E.setMerchantId(appConfig.getExtendedHfMerchantId());
+        charge19E.setKey(appConfig.getExtendedHfKey());
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
                 + RandomStringUtils.random(4, "0123456789") + or.getOrderId();
         charge19E.setMerchantOrderId(orderNum);
         charge19E.setFillType("0");
         charge19E.setChargeType("0");
-        charge19E.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
-        ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
+        charge19E.setSendNotifyUrl(appConfig.getExtendedHfNotifyUrl());
+       // ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
+        ChargeResult cr = hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, charge19E);
         if (cr.getResultCode().equals("SUCCESS")) {
             //保存话费充值订单信息
             saveHfChargeTable(or, cr);
             logger.info("19e话费下单成功并保存订单信息成功！订单号：" + cr.getMerchantOrderId() + ",充值手机：" + or.getMobile()
                     + ",充值金额：" + or.getPrice() + ",第三方订单号：" + cr.getEhfOrderId());
             //修改订单信息状态 2 发货中
-            orderMapper.editOrderInfoBy19e(2, orderNum);
+            charge19eMapper.editOrderInfoBy19e(2, orderNum);
             flag = true;
-
         }
         return flag;
-
     }
 
     @Override
@@ -95,7 +96,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态,并且未发货状态去发货
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(1, 0);
+        List<Order19EDto> list = charge19eMapper.getOrderListBy19EMenu(1, 0);
         for (Order19EDto od : list) {
             if (!StringUtil.isEmpty(od.getMobile())) {
                 //查询此订单的充值次数
@@ -118,7 +119,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
 
         boolean flag = false;
         ChargeFlow cf = new ChargeFlow();
-        cf.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
+        cf.setMerchantId(appConfig.getExtendedFlowMerchantId());
         //默认生成的订单号
         String orderNum = DateUtil.getCurrDate("yyyyMMddHHmmss")
                 + RandomStringUtils.random(4, "0123456789") + order19EDto.getOrderId();
@@ -127,14 +128,15 @@ public class DefaultCharge19eManager implements Charge19eManager {
         cf.setProductId(order19EDto.getMenuKey());
         cf.setMobile(order19EDto.getMobile());
         cf.setRemark("流量充值!");
-        ChargeFlowResult chargeFlowResult = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
+       // ChargeFlowResult chargeFlowResult = FlowCharge19EApi.flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL, cf);
+        ChargeFlowResult chargeFlowResult = flowCharge(FlowCharge19EUtil.FLOW_CHARGE_URL,cf);
         //保存流量充值订单信息
         saveFlowChargeTable(order19EDto, chargeFlowResult);
         if (chargeFlowResult.getResultCode().equals("00000")) {
             logger.info("19e流量下单成功并保存订单信息成功！订单号：" + chargeFlowResult.getMerOrderNo() + ",充值手机："
                     + chargeFlowResult.getMobile() + ",充值金额：" + order19EDto.getPrice() + ",第三方订单号："
                     + chargeFlowResult.getOrderNo());
-            orderMapper.editOrderInfoBy19e(2, orderNum);
+            charge19eMapper.editOrderInfoBy19e(2, orderNum);
             flag = true;
         }
         return flag;
@@ -147,7 +149,7 @@ public class DefaultCharge19eManager implements Charge19eManager {
         /**
          * 如果订单为为成功状态都去充值
          */
-        List<Order19EDto> list = orderMapper.getOrderListBy19EMenu(2, 0);
+        List<Order19EDto> list = charge19eMapper.getOrderListBy19EMenu(2, 0);
         for (Order19EDto od : list) {
             logger.info("要进行充值的订单号码为：" + od.getOrderNum() + ",商品订单号为" + od.getMenuKey());
             //查询此订单的充值次数
@@ -289,7 +291,6 @@ public class DefaultCharge19eManager implements Charge19eManager {
                                 posItemVo.setGeneratedDate(posItem.getGeneratedDate());
                                 posItemVos.add(posItemVo);
                             }
-
                         }
 
                     }

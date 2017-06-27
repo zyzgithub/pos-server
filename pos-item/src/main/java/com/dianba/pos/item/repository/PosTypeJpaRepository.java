@@ -17,7 +17,7 @@ import java.util.List;
 public interface PosTypeJpaRepository extends JpaRepository<PosType,Long> {
 
 
-    @Query("select pt from PosType  pt where pt.passportId =:passportId ORDER BY pt.sort")
+    @Query("select pt from PosType  pt where pt.passportId =:passportId  ORDER BY pt.sort")
     List<PosType> getAllByPassportId(@Param("passportId") Long passportId);
 
     /**

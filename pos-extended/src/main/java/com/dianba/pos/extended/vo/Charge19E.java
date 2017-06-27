@@ -34,7 +34,7 @@ public class Charge19E {
     private String chargeType;
 
     /***商户id（为19e平台注册的商户的id 长度40位）--必填**/
-    private String merchantId = HfCharge19EUtil.MERCHANT_ID;
+    private String merchantId ;
 
     /**
      * 订单id长度50位
@@ -76,6 +76,19 @@ public class Charge19E {
      */
     private String version = "1.0";
 
+    private String key;
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getSign() {
         return sign;
@@ -208,7 +221,7 @@ public class Charge19E {
                         + "merchantId=" + merchantId + '&' + "merchantOrderId=" + merchantOrderId + '&'
                         + "sendNotifyUrl=" + sendNotifyUrl + '&' + "ispId=" + ispId + '&'
                         + "provinceId=" + provinceId + '&' + "timestamp=" + timestamp + '&'
-                        + "key=" + HfCharge19EUtil.KEY;
+                        + "key=" + key;
 
 
     }
