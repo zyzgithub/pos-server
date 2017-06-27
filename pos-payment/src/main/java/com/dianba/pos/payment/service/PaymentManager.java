@@ -1,7 +1,10 @@
 package com.dianba.pos.payment.service;
 
 import com.dianba.pos.base.BasicResult;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
+
+import java.math.BigDecimal;
 
 public interface PaymentManager {
 
@@ -45,6 +48,12 @@ public interface PaymentManager {
     /**
      * 商户余额变更
      */
-    BasicResult offsetBalance(long passportId, String transSequenceNumber
-            , long offsetAmount, TransTypeEnum transTypeEnum);
+    BasicResult offsetBalance(Long passportId, String transSequenceNumber
+            , Long offsetAmount, TransTypeEnum transTypeEnum);
+
+    /**
+     * 商户会员余额变更
+     */
+    public void offsetVipBalance(Long passportId, String transSequenceNumber
+            , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum);
 }

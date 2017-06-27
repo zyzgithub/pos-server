@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-common</artifactId>
+            <artifactId>pos-payment</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

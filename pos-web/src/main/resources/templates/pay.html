@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -34,7 +34,10 @@
 </div>
 
 
-<script>
+<script th:inline="javascript">
+    var openId = [[${openId}]];
+    if (openId == null) {
+    }
     $(function () {
         keyBoard({
             type: 'tel',
@@ -49,10 +52,11 @@
                 $('.keyboard .pay').css({"background": "#eee", "color": "#666"});
                 return false;
             }
+            window.location.href="/pos/qrcode/manager/pay_order?openId="+openId;
             alert("点击 收款.!   ￥：" + $('#money').val());
         }
 
-    })
+    });
 
     /*点击金额弹出弹窗*/
     function inputshow() {
@@ -61,7 +65,6 @@
         }
         $(".keyboard").show();
     }
-
 </script>
 </body>
 </html>

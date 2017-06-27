@@ -12,14 +12,16 @@ import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosMerchantRate;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosMerchantRateManager;
+import com.dianba.pos.payment.po.LifePaymentCurrencyAccount;
+import com.dianba.pos.payment.po.LifePaymentCurrencyOffsetLogger;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
-import com.dianba.pos.payment.service.AliPayManager;
-import com.dianba.pos.payment.service.PaymentManager;
-import com.dianba.pos.payment.service.TransLoggerManager;
-import com.dianba.pos.payment.service.WechatPayManager;
+import com.dianba.pos.payment.repository.LifePaymentCurrencyAccountJpaRepository;
+import com.dianba.pos.payment.repository.LifePaymentCurrencyOffsetLoggerJpaRepository;
+import com.dianba.pos.payment.service.*;
 import com.dianba.pos.payment.support.PaymentRemoteService;
 import com.dianba.pos.payment.vo.PassportCurrencyVo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
+import com.xlibao.common.constant.payment.CurrencyTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
@@ -28,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -45,7 +48,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     @Autowired
     private AliPayManager aliPayManager;
     @Autowired
-    private WechatPayManager wechatPayManager;
+    private BarCodeWeChatPayManager barCodeWeChatPayManager;
     @Autowired
     private TransLoggerManager transLoggerManager;
     @Autowired
@@ -54,6 +57,12 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private PassportManager passportManager;
     @Autowired
     private PosItemManager posItemManager;
+    @Autowired
+    private LifePaymentCurrencyAccountJpaRepository currencyAccountJpaRepository;
+    @Autowired
+    private LifePaymentCurrencyOffsetLoggerJpaRepository currencyOffsetLoggerJpaRepository;
+    @Autowired
+    private PosRewardManager posRewardManager;
 
     @Autowired
     private AppConfig appConfig;
@@ -154,7 +163,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 return BasicResult.createFailResult("用户条码不能为空！");
             }
             //微信条码支付
-            barcodePayResponse = wechatPayManager.barcodePayment(passportId, orderId, authCode
+            barcodePayResponse = barCodeWeChatPayManager.barcodePayment(passportId, orderId, authCode
                     , "", "");
         } else if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.CASH.getKey())) {
             //现金支付，直接返回成功，不校验
@@ -188,46 +197,52 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 }
                 posItemManager.offsetItemRepertory(itemIdMaps);
             }
-            if (basicResult.isSuccess() && !paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
-                Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
-                //对商家余额进行偏移计算
-                OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
-                long offsetAmount = 0;
-                if (orderTypeEnum.getKey() == OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey()) {
-                    if (orderEntry.getTotalPrice() > orderEntry.getActualPrice()) {
-                        offsetAmount = orderEntry.getTotalPrice() - orderEntry.getActualPrice();
+            if (basicResult.isSuccess()) {
+                if (!paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
+                    Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+                    //对商家余额进行偏移计算
+                    OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
+                    long offsetAmount = 0;
+                    if (orderTypeEnum.getKey() == OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey()) {
+                        if (orderEntry.getTotalPrice() > orderEntry.getActualPrice()) {
+                            offsetAmount = orderEntry.getTotalPrice() - orderEntry.getActualPrice();
+                        }
+                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.SCAN_ORDER_TYPE.getKey()) {
+                        //进行扣点计算
+                        PosMerchantRate posMerchantRate = posMerchantRateManager
+                                .findByMerchantPassportId(merchantPassport.getId());
+                        BigDecimal commissionRate = PosMerchantRate.COMMISSION_RATE;
+                        if (posMerchantRate != null) {
+                            if (1 == posMerchantRate.getIsNeed()) {
+                                commissionRate = posMerchantRate.getCommissionRate();
+                            } else {
+                                commissionRate = BigDecimal.ZERO;
+                            }
+                        }
+                        BigDecimal amount = BigDecimal.valueOf(orderEntry.getTotalPrice()).subtract(
+                                BigDecimal.valueOf(orderEntry.getTotalPrice()).multiply(commissionRate)
+                        ).setScale(0, BigDecimal.ROUND_HALF_UP);
+                        offsetAmount = amount.longValue();
+                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey()) {
+                        offsetAmount = -orderEntry.getTotalPrice();
+                    } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey()) {
+                        offsetAmount = orderEntry.getTotalPrice();
                     }
-                } else if (orderTypeEnum.getKey() == OrderTypeEnum.SCAN_ORDER_TYPE.getKey()) {
-                    //进行扣点计算
-                    PosMerchantRate posMerchantRate = posMerchantRateManager
-                            .findByMerchantPassportId(merchantPassport.getId());
-                    BigDecimal commissionRate = PosMerchantRate.COMMISSION_RATE;
-                    if (posMerchantRate != null) {
-                        if (1 == posMerchantRate.getIsNeed()) {
-                            commissionRate = posMerchantRate.getCommissionRate();
-                        } else {
-                            commissionRate = BigDecimal.ZERO;
+                    if (offsetAmount != 0) {
+                        //对商家余额进行余额偏移
+                        basicResult = offsetBalance(merchantPassport.getId(), orderEntry.getSequenceNumber()
+                                , offsetAmount, transTypeEnum);
+                        if (!basicResult.isSuccess()) {
+                            logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId()
+                                    + "，错误消息：" + basicResult.getMsg());
                         }
                     }
-                    BigDecimal amount = BigDecimal.valueOf(orderEntry.getTotalPrice()).subtract(
-                            BigDecimal.valueOf(orderEntry.getTotalPrice()).multiply(commissionRate)
-                    ).setScale(0, BigDecimal.ROUND_HALF_UP);
-                    offsetAmount = amount.longValue();
-                } else if (orderTypeEnum.getKey() == OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey()) {
-                    offsetAmount = -orderEntry.getTotalPrice();
-                } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey()) {
-                    offsetAmount = orderEntry.getTotalPrice();
                 }
-                if (offsetAmount != 0) {
-                    //对商家余额进行余额偏移
-                    basicResult = offsetBalance(merchantPassport.getId(), orderEntry.getSequenceNumber()
-                            , offsetAmount, transTypeEnum);
-                    if (!basicResult.isSuccess()) {
-                        logger.info("余额偏移处理失败！订单ID:" + orderEntry.getId()
-                                + "，错误消息：" + basicResult.getMsg());
-                    }
-                }
-            } else if (!basicResult.isSuccess()) {
+                //消费返现
+                BigDecimal offsetRewardAmount = posRewardManager
+                        .offsetRewardAmount(passportId, orderEntry.getId(), orderEntry.getType(), paymentTypeEnum);
+                offsetVipBalance(passportId, orderEntry.getSequenceNumber(), offsetRewardAmount, paymentTypeEnum);
+            } else {
                 logger.info("订单确认支付失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
             }
             //返回订单详情-加商品列表
@@ -235,14 +250,13 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             basicResult.setResponse(lifeOrderVo);
             return basicResult;
         } catch (Exception e) {
-            logger.error("订单保存异常!" + e.getMessage());
+            e.printStackTrace();
         }
         return basicResult;
     }
 
-    @Override
-    public BasicResult offsetBalance(long passportId, String transSequenceNumber
-            , long offsetAmount, TransTypeEnum transTypeEnum) {
+    public BasicResult offsetBalance(Long passportId, String transSequenceNumber
+            , Long offsetAmount, TransTypeEnum transTypeEnum) {
         Map<String, String> params = new HashMap<>();
         params.put("passportId", String.valueOf(passportId));
         //余额偏移数额
@@ -254,5 +268,37 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         //交易订单号
         params.put("transSequenceNumber", transSequenceNumber + "");
         return postPay(OFFSET_BALANCE, params);
+    }
+
+    @Transactional
+    public void offsetVipBalance(Long passportId, String transSequenceNumber
+            , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum) {
+        Passport passport = passportManager.findById(passportId);
+        if (offsetAmount.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+        LifePaymentCurrencyAccount paymentCurrencyAccount = currencyAccountJpaRepository
+                .findByPassportIdAndChannelIdAndCurrencyType(passportId, passport.getFromChannel()
+                        , CurrencyTypeEnum.VIP_BALANCE.getKey());
+        LifePaymentCurrencyOffsetLogger currencyOffsetLogger = new LifePaymentCurrencyOffsetLogger();
+        currencyOffsetLogger.setPassportId(passportId);
+        currencyOffsetLogger.setChannelId(passport.getFromChannel());
+        currencyOffsetLogger.setCurrencyType(CurrencyTypeEnum.VIP_BALANCE.getKey());
+        currencyOffsetLogger.setBeforeAmount(paymentCurrencyAccount.getCurrentAmount());
+        currencyOffsetLogger.setOffsetAmount(offsetAmount);
+        currencyOffsetLogger.setAfterAmount(paymentCurrencyAccount.getCurrentAmount().add(offsetAmount));
+        currencyOffsetLogger.setTransType(paymentTypeEnum.getKey());
+        currencyOffsetLogger.setTransTitle(paymentTypeEnum.getValue());
+        currencyOffsetLogger.setRelationTransType(TransTypeEnum.PAYMENT.getKey());
+        currencyOffsetLogger.setRelationTransSequence(transSequenceNumber);
+        paymentCurrencyAccount.setCurrentAmount(paymentCurrencyAccount.getCurrentAmount().add(offsetAmount));
+        if (offsetAmount.compareTo(BigDecimal.ZERO) > 0) {
+            paymentCurrencyAccount.setTotalIntoAmount(paymentCurrencyAccount.getTotalIntoAmount().add(offsetAmount));
+        } else {
+            paymentCurrencyAccount.setTotalOutputAmount(paymentCurrencyAccount.getTotalOutputAmount()
+                    .add(offsetAmount.abs()));
+        }
+        currencyAccountJpaRepository.save(paymentCurrencyAccount);
+        currencyOffsetLoggerJpaRepository.save(currencyOffsetLogger);
     }
 }

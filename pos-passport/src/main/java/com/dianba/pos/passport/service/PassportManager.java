@@ -16,6 +16,8 @@ public interface PassportManager {
 
     String REGISTER = "passport/registerPassport/";
 
+    Passport findById(Long passportId);
+
     Passport getPassportInfoByCashierId(Long cashierId);
 
     /**

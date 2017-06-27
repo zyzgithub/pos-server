@@ -29,6 +29,9 @@ public class AppConfig {
     @Value("${pos.callback.host}")
     private String posCallBackHost;
 
+    @Value("${pos.wechat.callback.host}")
+    private String posWechatCallBackHost;
+
     public String getPosPassportUrl() {
         return posPassportUrl;
     }
@@ -63,5 +66,9 @@ public class AppConfig {
 
     public String getPosCallBackHost() {
         return posCallBackHost;
+    }
+
+    public String getPosWechatCallBackHost() {
+        return posWechatCallBackHost;
     }
 }
