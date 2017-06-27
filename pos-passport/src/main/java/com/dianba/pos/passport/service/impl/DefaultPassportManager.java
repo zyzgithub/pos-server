@@ -47,6 +47,11 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
     private LifePassportPropertiesJpaRepository lifePassportPropertiesJpaRepository;
 
     @Override
+    public Passport findById(Long passportId) {
+        return passportJpaRepository.findOne(passportId);
+    }
+
+    @Override
     public Passport getPassportInfoByCashierId(Long cashierId) {
         Passport passport = passportMapper.getPassportInfoByCashierId(cashierId);
         if (passport == null) {
@@ -298,14 +303,15 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
             }
         }
     }
+
     @Override
     public BasicResult getMerchantPosList(RegisterVo registerVo) {
         List<PosCashierAccount> posCashierAccountList = posCashierAccountJpaRepository
                 .findAllByMerchantId(registerVo.getAccountId());
         Passport passport = null;
         List<RegisterVo> registerVos = new ArrayList<>();
-        boolean flag=false;
-        Long userId=registerVo.getAccountId();
+        boolean flag = false;
+        Long userId = registerVo.getAccountId();
         if (posCashierAccountList.size() == 0) {
 
             return BasicResult.createSuccessResult("此商家没有pos营业员请添加一个");
@@ -313,7 +319,7 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
             for (PosCashierAccount posCashierAccount : posCashierAccountList) {
                 if (posCashierAccount.getAccountType() == 0) {
                     passport = passportJpaRepository.getPassportById(posCashierAccount.getMerchantId());
-                    flag=true;
+                    flag = true;
                 } else if (posCashierAccount.getAccountType() == 1) {
                     passport = passportJpaRepository.getPassportById(posCashierAccount.getCashierId());
                 }
@@ -337,7 +343,7 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                         registerVo.setAccountTypeName("店长");
                         registerVo.setAccountId(posCashierAccount.getMerchantId());
                         registerVo.setClientType(3);
-                        flag=true;
+                        flag = true;
                     } else if (posCashierAccount.getAccountType().equals(1)) {
                         registerVo.setAccountTypeName("店员");
                         registerVo.setAccountId(posCashierAccount.getCashierId());
@@ -353,7 +359,7 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
 
 
             }
-            if(!flag){ //注册一个店长信息
+            if (!flag) { //注册一个店长信息
                 PosCashierAccount posCashierAccount1 = new PosCashierAccount();
                 posCashierAccount1.setAccountType(0);
                 posCashierAccount1.setCashierPhoto(registerVo.getCashierPhoto());

@@ -47,6 +47,9 @@ public class AppConfig {
     public String getExtendedHfNotifyUrl() {
         return extendedHfNotifyUrl;
     }
+    @Value("${pos.wechat.callback.host}")
+    private String posWechatCallBackHost;
+
     public String getPosPassportUrl() {
         return posPassportUrl;
     }
@@ -106,5 +109,9 @@ public class AppConfig {
 
     public String getExtendedHfKey() {
         return extendedHfKey;
+    }
+
+    public String getPosWechatCallBackHost() {
+        return posWechatCallBackHost;
     }
 }

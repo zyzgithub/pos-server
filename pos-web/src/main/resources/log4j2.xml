@@ -22,8 +22,9 @@
         <logger name="net.sf.ehcache" level="INFO"/>
         <logger name="com.alibaba.druid" level="INFO"/>
         <logger name="springfox.documentation" level="INFO"/>
+        <logger name="org.thymeleaf" level="INFO"/>
 
-        <root level="DEBUG">
+        <root level="INFO">
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Console"/>
         </root>

@@ -9,6 +9,24 @@ import java.util.UUID;
 
 public class PayService {
 
+    public static String createQRCodeJSPackage(String body, String money, String orderNo, String openId
+            , String ip, String notifyUrl) {   //参数：商品描述、金额、订单号
+        SortedMap<String, String> parameters = new TreeMap<String, String>();
+        parameters.put("appid", ConfigUtil.APPID_KFZ);
+        parameters.put("mch_id", ConfigUtil.MCH_ID_KFZ);
+        parameters.put("nonce_str", PayCommonUtil.createNoncestr());
+        parameters.put("body", body);
+        parameters.put("out_trade_no", orderNo);
+        parameters.put("total_fee", money);
+        parameters.put("spbill_create_ip", ip);
+        parameters.put("notify_url", notifyUrl);
+        parameters.put("trade_type", "APP");
+        parameters.put("openid", openId);
+        String sign = PayCommonUtil.createSign("UTF-8", parameters, ConfigUtil.API_KEY);
+        parameters.put("sign", sign);
+        return PayCommonUtil.getRequestXml(parameters);
+    }
+
     /**
      * 创建扫用户微信条形码支付参数的xml
      *
