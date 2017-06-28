@@ -105,7 +105,7 @@
     <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderIncomeVo">
         select a.*,a.total_price-a.total_price*a.rate amount from (
             select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,sequence_number transSequence
-            ,t.total_price,t.trans_type transType
+            ,t.total_price,t.trans_type transType,ps.real_name realName
             ,case t.trans_type
             when 'CASH' then 0
             when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
@@ -113,6 +113,7 @@
             else 0 end rate
             ,t.payment_type paymentType
             from life_order.order_entry t
+            inner join life_passport.passport ps on ps.id=t.partner_user_id
             inner join (
                 select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
                 union
