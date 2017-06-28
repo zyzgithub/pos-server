@@ -109,11 +109,14 @@ public class OrderController extends BasicWebService {
             ,@ApiImplicitParam(name = "enterType", value = "要查询类型1 日查询 2 月查询", paramType = "query"
             ,required = true)
             ,@ApiImplicitParam(name= "createTime", value = "请求时间", paramType = "query", required = true)
+            ,@ApiImplicitParam(name= "pageNum", value = "要查询的页数", paramType = "query", required = true)
+            ,@ApiImplicitParam(name= "pageSize", value = "请求时间", paramType = "query", required = true)
 
     })
     @ResponseBody
     @RequestMapping(value = "getOrderTransactionRecord",method = {RequestMethod.GET,RequestMethod.POST})
-    public BasicResult getOrderTransactionRecord(Long passportId,Integer enterType,String createTime){
-        return orderManager.findOrderTransactionRecord(passportId, enterType, createTime);
+    public BasicResult getOrderTransactionRecord(Long passportId,Integer enterType,String createTime,Integer pageNum
+            , Integer pageSize){
+        return orderManager.findOrderTransactionRecord(passportId, enterType, createTime,pageNum,pageSize);
     }
 }

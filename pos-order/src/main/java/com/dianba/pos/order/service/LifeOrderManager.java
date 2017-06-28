@@ -93,7 +93,8 @@ public interface LifeOrderManager {
      * @param createTime
      * @return
      */
-    BasicResult findOrderTransactionRecord(Long merchantId,Integer enterType,String createTime);
+    BasicResult findOrderTransactionRecord(Long merchantId,Integer enterType,String createTime
+            ,Integer pageNum, Integer pageSize);
 
 
 }

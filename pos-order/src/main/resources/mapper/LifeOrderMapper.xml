@@ -233,7 +233,7 @@
     </select>
     <!--商家收银员每日盈利信息-->
     <select id="findMerchantCashierDayProfitInfo" resultType="com.dianba.pos.order.vo.MerchantCashierDayProfitInfo">
-        SELECT psd.passport_id cashierId,pass.real_name realName,sum(psd.amount*100) sumTotalPrice
+        SELECT psd.passport_id cashierId,pass.real_name realName,sum(psd.amount) sumTotalPrice
         ,pca.cashier_photo cashierPhoto,#{createTime} time FROM life_pos.pos_settlement_dayly psd
         JOIN life_pos.pos_cashier_account pca on pca.cashier_id=psd.passport_id
         JOIN life_passport.passport pass on pass.id=psd.passport_id
@@ -242,19 +242,35 @@
     </select>
     <!--pos端交易记录-->
     <select id="findOrderTransactionRecord" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
-        SELECT
-          oe.id id,ois.item_name itemName,oe.sequence_number sequenceNumber,oe.trans_type transType
-          ,date_format(oe.payment_time,'%Y-%m-%d %H:%i:%s')
-          paymentTime,oe.total_price totalPrice,oe.actual_price actualPrice,count(1) count
-        FROM life_order.order_entry oe
-        INNER join life_order.order_item_snapshot ois on ois.order_id=oe.id
-        WHERE oe.shipping_passport_id=#{passportId} and oe.type in (4,9) and oe.status=8
+
+        SELECT * FROM (
+        select a.*,a.total_price-a.total_price*a.rate totalPrice from (
+        select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') paymentTime,sequence_number sequenceNumber
+        ,t.total_price,t.trans_type transType,ps.real_name realName,ois.item_name itemName,count(1) count
+        ,t.actual_price actualPrice
+        ,case t.trans_type
+        when 'CASH' then 0
+        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
+        else 0 end rate
+        ,t.payment_type paymentType
+        from life_order.order_entry t
+        inner join life_passport.passport ps on ps.id=t.partner_user_id
+        INNER join life_order.order_item_snapshot ois on ois.order_id=t.id
+        inner join (
+        select t.is_need,t.commission_rate from life_pos.pos_merchant_rate t where t.passport_id=#{passportId}
+        union
+        select 1,0.0038
+        limit 1
+        ) b on 1=1
+        where t.shipping_passport_id=#{passportId}
+        and t.type in(4,9) and t.status =8
         <if test="enterType==1">
-            and date_format(oe.payment_time,'%Y-%m-%d')=date_format(#{createTime},'%Y-%m-%d')
+            and date_format(t.payment_time,'%Y-%m-%d')=date_format(#{createTime},'%Y-%m-%d')
         </if>
         <if test="enterType==2">
-            and date_format(oe.payment_time,'%Y-%m')=date_format(#{createTime},'%Y-%m')
+            and date_format(t.payment_time,'%Y-%m')=date_format(#{createTime},'%Y-%m')
         </if>
-        GROUP BY ois.order_id ORDER BY oe.payment_time DESC
+        GROUP BY ois.order_id  ) a order by a.paymentTime desc)c
     </select>
 </mapper>

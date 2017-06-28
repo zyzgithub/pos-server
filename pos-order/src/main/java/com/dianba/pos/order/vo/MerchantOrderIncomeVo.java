@@ -21,6 +21,7 @@ public class MerchantOrderIncomeVo implements Serializable {
     @JsonIgnore
     private String paymentType;
 
+    private String realName;
     public Integer getId() {
         return id;
     }
@@ -83,5 +84,13 @@ public class MerchantOrderIncomeVo implements Serializable {
 
     public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 }

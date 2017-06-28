@@ -43,7 +43,7 @@
       SELECT pt.id id,it.title title,count(1) typeCount ,it.id itemTypeId FROM life_pos.pos_type pt
       LEFT JOIN life_item.item_type it on it.id=pt.item_type_id
       LEFT JOIN life_pos.pos_item pi on pi.item_type_id=pt.item_type_id AND  pi.passport_id=pt.passport_id
-      WHERE pi.passport_id=#{passportId} GROUP BY pt.item_type_id ORDER BY typeCount desc
+      WHERE pi.passport_id=#{passportId} AND pi.is_delete='N' GROUP BY pt.item_type_id ORDER BY typeCount desc
     </select>
 
     <select id="getListBySearchText" resultType="com.dianba.pos.item.vo.PosItemVo">
@@ -61,7 +61,7 @@
     </select>
     <select id="getCountByItemType" resultType="java.util.Map">
         select item_type_id,count(1) count from life_pos.pos_item WHERE passport_id=#{passportId}
-        AND item_type_id in
+        AND is_delete = 'N' AND item_type_id in
         <foreach collection="itemTypeIds" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>

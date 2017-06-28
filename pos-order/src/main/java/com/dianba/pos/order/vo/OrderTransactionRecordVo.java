@@ -14,7 +14,7 @@ public class OrderTransactionRecordVo {
     private BigDecimal actualPrice;
     private Integer count;
 
-    private BigDecimal a=new BigDecimal(100);
+
     public Long getId() {
         return id;
     }
@@ -56,7 +56,7 @@ public class OrderTransactionRecordVo {
     }
 
     public BigDecimal getTotalPrice() {
-        return totalPrice.divide(a,2,BigDecimal.ROUND_HALF_UP);
+        return totalPrice;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {
@@ -64,7 +64,7 @@ public class OrderTransactionRecordVo {
     }
 
     public BigDecimal getActualPrice() {
-        return actualPrice.divide(a,2,BigDecimal.ROUND_HALF_UP);
+        return actualPrice;
     }
 
     public void setActualPrice(BigDecimal actualPrice) {
