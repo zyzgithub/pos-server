@@ -1,5 +1,8 @@
 package com.dianba.pos.payment.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.payment.mapper.PosRewardMapper;
 import com.dianba.pos.payment.po.PosMerchantQuota;
 import com.dianba.pos.payment.po.PosReward;
 import com.dianba.pos.payment.po.PosRewardLogger;
@@ -27,6 +30,8 @@ public class DefaultPosRewardManager implements PosRewardManager {
     private PosRewardLoggerJpaRepository posRewardLoggerJpaRepository;
     @Autowired
     private PosMerchantQuotaManager posMerchantQuotaManager;
+    @Autowired
+    private PosRewardMapper posRewardMapper;
 
     public Map<String, BigDecimal> getTotalRewardQuota(Integer rewardType) {
         List<PosReward> posRewards = posRewardJpaRepository.findByStatusAndType(1, rewardType);
@@ -83,5 +88,19 @@ public class DefaultPosRewardManager implements PosRewardManager {
         posRewardLogger.setReward(reward);
         posRewardLoggerJpaRepository.save(posRewardLogger);
         return reward;
+    }
+
+    @Override
+    public BasicResult getTotalRewarAmountByDate(Long passportId, String date) {
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> rewardMap = posRewardMapper.findTotalRewardAmountByDate(passportId, date);
+        if (rewardMap!=null){
+            jsonObject.put("rewardAmount", rewardMap.get("reward_amount"));
+        }else {
+            jsonObject.put("rewardAmount", 0);
+        }
+        basicResult.setResponse(jsonObject);
+        return basicResult;
     }
 }
