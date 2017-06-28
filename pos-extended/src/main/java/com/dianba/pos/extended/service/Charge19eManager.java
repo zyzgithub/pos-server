@@ -49,6 +49,7 @@ public interface Charge19eManager {
 
     /**
      * 获取增值服务商品信息 1 话费 2 流量
+     *
      * @param type
      * @param phone
      * @return

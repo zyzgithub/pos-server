@@ -6,14 +6,17 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
-import com.xlibao.common.constant.payment.PaymentTypeEnum;
+import com.dianba.pos.payment.service.WapPaymentManager;
+import com.dianba.pos.payment.util.IPUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,12 +28,16 @@ import java.math.BigDecimal;
 @RequestMapping(PaymentURLConstant.WAP)
 public class WapPaymentController {
 
+    private static Logger logger = LogManager.getLogger(WapPaymentController.class);
+
     @Autowired
     private AlipayConfig alipayConfig;
     @Autowired
     private WechatConfig wechatConfig;
     @Autowired
     private QROrderManager qrOrderManager;
+    @Autowired
+    private WapPaymentManager wapPaymentManager;
 
     @ResponseBody
     @RequestMapping("alipay")
@@ -84,12 +91,24 @@ public class WapPaymentController {
     }
 
     @ResponseBody
-    @RequestMapping("wechatPay")
+    @RequestMapping("wechatPay/{openId}")
     public BasicResult wechatPay(HttpServletRequest request, HttpServletResponse response
-            , Long passportId, String openId, BigDecimal amount) {
-        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.WEIXIN_JS;
-        LifeOrder lifeOrder = qrOrderManager.generateQROrder(passportId, paymentTypeEnum, amount);
+            , @PathVariable(name = "openId") String openId)
+            throws Exception {
+        Long passportId = 100045L;
+        BigDecimal amount = BigDecimal.valueOf(0.01);
+        String ip = IPUtil.getRemoteIp(request);
+        return wapPaymentManager.wechatPay(passportId, openId, ip, amount);
+    }
 
+    @RequestMapping("notify_url/{sequenceNumber}")
+    public BasicResult notifyUrl(HttpServletRequest request
+            , @PathVariable(name = "orderId") String sequenceNumber) {
+        logger.info("开始接收微信回调消息：" + sequenceNumber);
+        for (Object key : request.getParameterMap().keySet()) {
+            logger.info("key=" + key + " value=" + request.getParameter(key.toString()));
+        }
+        logger.info("结束接收！暂时不返回接收成功！");
         return BasicResult.createSuccessResult();
     }
 }

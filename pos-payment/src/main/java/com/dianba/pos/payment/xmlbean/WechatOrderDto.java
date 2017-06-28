@@ -2,6 +2,8 @@ package com.dianba.pos.payment.xmlbean;
 
 import com.dianba.pos.common.util.JaxbUtil;
 import com.dianba.pos.payment.util.MD5Util;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -17,6 +19,8 @@ import java.util.TreeMap;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "xml")
 public class WechatOrderDto {
+
+    private static Logger logger = LogManager.getLogger(WechatOrderDto.class);
 
     @XmlElement(required = true)
     private String appid;
@@ -39,7 +43,7 @@ public class WechatOrderDto {
     @XmlElement(name = "out_trade_no", required = true)
     private String outTradeNo;
     @XmlElement(name = "fee_type")
-    private String feeType = "CNY";
+    private String feeType;
     @XmlElement(name = "total_fee", required = true)
     private Integer totalFee;
     @XmlElement(name = "spbill_create_ip", required = true)
@@ -116,7 +120,7 @@ public class WechatOrderDto {
     }
 
     public void setBody(String body) {
-        this.body = "<![CDATA[" + body + "]]>";
+        this.body = body;
     }
 
     public String getDetail() {
@@ -124,7 +128,7 @@ public class WechatOrderDto {
     }
 
     public void setDetail(String detail) {
-        this.detail = "<![CDATA[" + detail + "]]>";
+        this.detail = detail;
     }
 
     public String getAttach() {
@@ -253,8 +257,8 @@ public class WechatOrderDto {
                 sb = sb.append(key).append("=").append(sortedMap.get(key)).append("&");
             }
             sb = sb.append("key=").append(secrectKey);
-            String sign = MD5Util.md5(sb.toString());
-            this.sign = sign;
+            logger.info("参数验签:" + sb.toString());
+            this.sign = MD5Util.md5(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

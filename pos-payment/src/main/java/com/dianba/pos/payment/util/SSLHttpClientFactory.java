@@ -1,5 +1,6 @@
 package com.dianba.pos.payment.util;
 
+import com.dianba.pos.payment.config.WechatConfig;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
@@ -14,9 +15,9 @@ import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 
-public final class WmSSLHttpClientFactory {
+public final class SSLHttpClientFactory {
 
-    private static Logger logger = LogManager.getLogger(WmSSLHttpClientFactory.class);
+    private static Logger logger = LogManager.getLogger(SSLHttpClientFactory.class);
 
     //连接超时时间，默认10秒
     private static int socketTimeout = 10000;
@@ -27,24 +28,21 @@ public final class WmSSLHttpClientFactory {
     //SSL连接工厂
     private static SSLConnectionSocketFactory sslsf;
 
-    private static WmSSLHttpClientFactory instance = null;
+    private static SSLHttpClientFactory instance = null;
 
     //请求器的配置
     private static RequestConfig requestConfig;
 
-    public static synchronized WmSSLHttpClientFactory getInstance()
-            throws IOException, KeyStoreException
-            , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
+    public static synchronized SSLHttpClientFactory getInstance(WechatConfig wechatConfig) throws IOException
+            , KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
         if (instance == null) {
-            return new WmSSLHttpClientFactory();
+            return new SSLHttpClientFactory(wechatConfig);
         }
         return instance;
     }
 
-    private void init()
-            throws IOException, KeyStoreException
-            , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
-
+    private void init(WechatConfig wechatConfig) throws IOException, KeyStoreException, UnrecoverableKeyException
+            , NoSuchAlgorithmException, KeyManagementException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         String path = HttpsRequest.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         InputStream inputStream = this.getClass().getResourceAsStream("/apiclient_cert_product.p12");
@@ -53,8 +51,8 @@ public final class WmSSLHttpClientFactory {
             throw new RuntimeException("证书文件不存在");
         }
         try {
-            logger.info("ConfigUtil.MCH_ID_KFZ:" + ConfigUtil.MCH_ID_KFZ);
-            keyStore.load(inputStream, ConfigUtil.MCH_ID_KFZ.toCharArray());//设置证书密码
+            logger.info("ConfigUtil.MCH_ID_KFZ:" + wechatConfig.getKfzMerchantId());
+            keyStore.load(inputStream, wechatConfig.getKfzMerchantId().toCharArray());//设置证书密码
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -62,10 +60,9 @@ public final class WmSSLHttpClientFactory {
         } finally {
             inputStream.close();
         }
-
         // Trust own CA and all self-signed certs
         SSLContext sslcontext = SSLContexts.custom()
-                .loadKeyMaterial(keyStore, ConfigUtil.MCH_ID_KFZ.toCharArray())
+                .loadKeyMaterial(keyStore, wechatConfig.getKfzMerchantId().toCharArray())
                 .build();
 
         // Allow TLSv1 protocol only
@@ -81,9 +78,9 @@ public final class WmSSLHttpClientFactory {
     }
 
 
-    private WmSSLHttpClientFactory() throws IOException, KeyStoreException
+    private SSLHttpClientFactory(WechatConfig wechatConfig) throws IOException, KeyStoreException
             , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
-        init();
+        init(wechatConfig);
     }
 
     public CloseableHttpClient getDefaultClient() {

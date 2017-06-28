@@ -1,5 +1,6 @@
 package com.dianba.pos.payment.util;
 
+import com.dianba.pos.payment.config.WechatConfig;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,9 +24,10 @@ public class HttpsRequest {
 
     private static Logger logger = LogManager.getLogger(HttpsRequest.class);
 
-    public static String sendPost(String url, String postDataXML) throws IOException, KeyStoreException
-            , UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
-        CloseableHttpClient httpClient = WmSSLHttpClientFactory.getInstance().getDefaultClient();
+    public static String sendPost(WechatConfig wechatConfig, String url, String postDataXML) throws IOException
+            , KeyStoreException, UnrecoverableKeyException
+            , NoSuchAlgorithmException, KeyManagementException {
+        CloseableHttpClient httpClient = SSLHttpClientFactory.getInstance(wechatConfig).getDefaultClient();
         String result = null;
         HttpPost httpPost = new HttpPost(url);
         logger.info("API，POST过去的数据是：{}", postDataXML);
@@ -34,7 +36,7 @@ public class HttpsRequest {
         httpPost.addHeader("Content-Type", "text/xml");
         httpPost.setEntity(postEntity);
         //设置请求器的配置
-        httpPost.setConfig(WmSSLHttpClientFactory.getRequestConfig());
+        httpPost.setConfig(SSLHttpClientFactory.getRequestConfig());
         logger.info("executing request" + httpPost.getRequestLine());
         try {
             HttpResponse response = httpClient.execute(httpPost);

@@ -3,28 +3,23 @@ package com.dianba.pos.common.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.http.HttpUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 
 public class HttpUtil {
 
-    /**
-     * @param url
-     * @param params
-     * @return
-     */
-    @Deprecated
+    private static Logger logger = LogManager.getLogger(HttpUtil.class);
+
     public static JSONObject sendGet(String url, JSONObject params) {
         return HttpUtils.get(url, params);
     }
 
-    public static JSONObject get(String url, Object objects){
+    public static JSONObject get(String url, Object objects) {
         String requestJson = JSONObject.toJSON(objects).toString();
         JSONObject jsonObject = HttpUtils.get(url, JSON.parseObject(requestJson));
         return jsonObject;
@@ -37,7 +32,33 @@ public class HttpUtil {
         return jsonObject;
     }
 
-    public static String postParams(String url,String params){
+    public static String postXml(String requestUrl, String xml) {
+        String respStr = "";
+        try {
+            URL url = new URL(requestUrl);
+            URLConnection con = url.openConnection();
+            con.setDoOutput(true);
+            con.setRequestProperty("Pragma:", "no-cache");
+            con.setRequestProperty("Cache-Control", "no-cache");
+            con.setRequestProperty("Content-Type", "text/xml");
+            OutputStreamWriter out = new OutputStreamWriter(con
+                    .getOutputStream());
+            out.write(new String(xml.getBytes("UTF-8")));
+            out.flush();
+            out.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(con
+                    .getInputStream()));
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                respStr = respStr + line;
+            }
+            logger.info(respStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return respStr;
+    }
+
+    public static String postParams(String url, String params) {
 
         PrintWriter out = null;
         BufferedReader in = null;
@@ -70,7 +91,7 @@ public class HttpUtil {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            result= URLDecoder.decode(result, "UTF-8");
+            result = URLDecoder.decode(result, "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

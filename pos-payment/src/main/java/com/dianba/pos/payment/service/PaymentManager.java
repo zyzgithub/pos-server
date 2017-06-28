@@ -54,6 +54,6 @@ public interface PaymentManager {
     /**
      * 商户会员余额变更
      */
-    public void offsetVipBalance(Long passportId, String transSequenceNumber
+    void offsetVipBalance(Long passportId, String transSequenceNumber
             , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum);
 }

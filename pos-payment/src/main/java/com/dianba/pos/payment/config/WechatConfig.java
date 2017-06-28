@@ -4,105 +4,127 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * 微信开发者账号配置
  */
 @Configuration
 @PropertySource("classpath:properties/wechat.properties")
 public class WechatConfig {
-
-    // 公众号APPID
-    @Value("${wechat.appid}")
-    private String appId;
-
-    // 公众号应用密码
-    @Value("${wechat.appsecrect}")
-    private String appSecrect;
-
-    // 公众号的商户号
-    @Value("${wechat.merchantid}")
-    private String merchantId;
+    //获取网页授权地址
+    @Value("${wechat.auth_code.url}")
+    private String authCodeUrl;
+    //访问授权地址
+    @Value("${wechat.access_token.url}")
+    private String accessTokenUrl;
+    //统一下单地址
+    @Value("${wechat.pay.url}")
+    private String orderPayUrl;
+    //条码下单地址
+    @Value("${wechat.barcode.pay.url}")
+    private String barcodePayUrl;
+    //条码订单付款状态查询地址
+    @Value("${wechat.order.query.url}")
+    private String orderQueryUrl;
+    //条码订单撤销地址
+    @Value("${wechat.order.reverse.url}")
+    private String orderReverseUrl;
 
     // 公众号APPID
     @Value("${wechat.kfz.appid}")
-    private String appIdKFZ;
-
-    // 公众号应用密码
+    private String kfzAppId;
+    // 公众号应用秘钥
     @Value("${wechat.kfz.appsecrect}")
-    private String appSecrectKFZ;
-
+    private String kfzAppSecrect;
     // 公众号的商户号
     @Value("${wechat.kfz.merchantid}")
-    private String merchantIdKFZ;
-
+    private String kfzMerchantId;
     // API密钥，在公众平台上设置好api证书好，自己设置的密码
     @Value("${wechat.kfz.apikey}")
-    private String apiKey;
+    private String kfzApiKey;
 
-    @Value("${wechat.barcode.pay_url}")
-    private String barcodePayUrl;
+    //公众平台APPID
+    @Value("${wechat.public.appid}")
+    private String publicAppId;
+    //公众平台商户号ID
+    @Value("${wechat.public.merchant_id}")
+    private String publicMerchantId;
+    //公众平台商户秘钥
+    @Value("${wechat.public.app_secrect}")
+    private String publicAppSecrect;
+    //公众平台商户支付秘钥
+    @Value("${wechat.public.apikey}")
+    private String publicApiKey;
 
-    public String getAppId() {
-        return appId;
+    public String getAuthCodeUrl(String redirectUrl, String state) {
+        String callBackUrl = "";
+        try {
+            callBackUrl = java.net.URLEncoder
+                    .encode(redirectUrl
+                            , "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (state == null) {
+            state = "STATE";
+        }
+        return authCodeUrl.replace("APPID", publicAppId)
+                .replace("REDIRECT_URI", callBackUrl)
+                .replace("STATE", state);
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public String getAccessTokenUrl(String code) {
+        return accessTokenUrl.replace("APPID", publicAppId)
+                .replace("SECRET", publicAppSecrect)
+                .replace("CODE", code);
     }
 
-    public String getAppSecrect() {
-        return appSecrect;
-    }
-
-    public void setAppSecrect(String appSecrect) {
-        this.appSecrect = appSecrect;
-    }
-
-    public String getMerchantId() {
-        return merchantId;
-    }
-
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
-    }
-
-    public String getAppIdKFZ() {
-        return appIdKFZ;
-    }
-
-    public void setAppIdKFZ(String appIdKFZ) {
-        this.appIdKFZ = appIdKFZ;
-    }
-
-    public String getAppSecrectKFZ() {
-        return appSecrectKFZ;
-    }
-
-    public void setAppSecrectKFZ(String appSecrectKFZ) {
-        this.appSecrectKFZ = appSecrectKFZ;
-    }
-
-    public String getMerchantIdKFZ() {
-        return merchantIdKFZ;
-    }
-
-    public void setMerchantIdKFZ(String merchantIdKFZ) {
-        this.merchantIdKFZ = merchantIdKFZ;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public String getOrderPayUrl() {
+        return orderPayUrl;
     }
 
     public String getBarcodePayUrl() {
         return barcodePayUrl;
     }
 
-    public void setBarcodePayUrl(String barcodePayUrl) {
-        this.barcodePayUrl = barcodePayUrl;
+    public String getOrderQueryUrl() {
+        return orderQueryUrl;
+    }
+
+    public String getOrderReverseUrl() {
+        return orderReverseUrl;
+    }
+
+    public String getKfzAppId() {
+        return kfzAppId;
+    }
+
+    public String getKfzAppSecrect() {
+        return kfzAppSecrect;
+    }
+
+    public String getKfzMerchantId() {
+        return kfzMerchantId;
+    }
+
+    public String getKfzApiKey() {
+        return kfzApiKey;
+    }
+
+    public String getPublicAppId() {
+        return publicAppId;
+    }
+
+    public String getPublicMerchantId() {
+        return publicMerchantId;
+    }
+
+    public String getPublicAppSecrect() {
+        return publicAppSecrect;
+    }
+
+    public String getPublicApiKey() {
+        return publicApiKey;
     }
 }

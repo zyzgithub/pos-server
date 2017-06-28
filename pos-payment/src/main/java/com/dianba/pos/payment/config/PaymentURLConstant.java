@@ -11,4 +11,6 @@ public class PaymentURLConstant {
     public static final String QRCODE_ORDER = BASE_URL + "qr_code";
 
     public static final String WAP = BASE_URL + "wap/";
+
+    public static final String REWARD = BASE_URL + "reward/";
 }

@@ -6,9 +6,8 @@ import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.service.QROrderManager;
+import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.qrcode.config.QRCodeURLConstant;
-import com.dianba.pos.qrcode.config.QRWeChatConfig;
-import com.dianba.pos.qrcode.config.WeChatURLConstant;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
 import com.dianba.pos.qrcode.util.QRCodeUtil;
@@ -50,7 +49,7 @@ public class QRCodeController {
     @Autowired
     private AppConfig appConfig;
     @Autowired
-    private QRWeChatConfig qrWeChatConfig;
+    private WechatConfig wechatConfig;
 
     @ApiOperation("通过商家ID下载商家二维码")
     @ApiImplicitParam(name = "passportId", value = "商家ID", required = true)
@@ -97,9 +96,9 @@ public class QRCodeController {
             throws Exception {
         //TODO 记录state访问uuid,安全校验
         UUID uuid = UUID.randomUUID();
-        String authCodeUrl = WeChatURLConstant.getAuthCodeUrl(qrWeChatConfig.getAppId()
-                , appConfig.getPosWechatCallBackHost() + QRCodeURLConstant.WECHAT_CALLBACK_URL
-                , uuid.toString());
+        String authCodeUrl = wechatConfig
+                .getAuthCodeUrl(appConfig.getPosWechatCallBackHost() + QRCodeURLConstant.WECHAT_CALLBACK_URL
+                        , uuid.toString());
         model.addAttribute("url", authCodeUrl);
         return "auth_code";
     }
@@ -120,8 +119,7 @@ public class QRCodeController {
             logger.info("微信授权回调开始！");
             String state = request.getParameter("state");
             logger.info(code + " " + state);
-            String authTokenUrl = WeChatURLConstant.getAuthTokenUrl(qrWeChatConfig.getAppId()
-                    , qrWeChatConfig.getSecrectKey(), code);
+            String authTokenUrl = wechatConfig.getAccessTokenUrl(code);
             JSONObject jsonObject = HttpUtil.post(authTokenUrl, new JSONObject());
             if (jsonObject != null) {
                 if (null == jsonObject.get("errcode")) {
@@ -130,11 +128,14 @@ public class QRCodeController {
                     model.addAttribute("refresh_token", jsonObject.getString("refresh_token"));
                     model.addAttribute("openid", jsonObject.getString("openid"));
                     model.addAttribute("scope", jsonObject.getString("scope"));
+                    request.setAttribute("openId", jsonObject.getString("openid"));
                 } else {
                     throw new PosIllegalArgumentException(jsonObject.toJSONString());
                 }
             }
             logger.info("微信授权回调结束！");
+        } else {
+            request.setAttribute("openId", "fuckyou");
         }
         return "pay";
     }

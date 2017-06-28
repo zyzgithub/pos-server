@@ -48,7 +48,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     @Autowired
     private AliPayManager aliPayManager;
     @Autowired
-    private BarCodeWeChatPayManager barCodeWeChatPayManager;
+    private WeChatPayManager weChatPayManager;
     @Autowired
     private TransLoggerManager transLoggerManager;
     @Autowired
@@ -163,7 +163,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 return BasicResult.createFailResult("用户条码不能为空！");
             }
             //微信条码支付
-            barcodePayResponse = barCodeWeChatPayManager.barcodePayment(passportId, orderId, authCode
+            barcodePayResponse = weChatPayManager.barcodePayment(passportId, orderId, authCode
                     , "", "");
         } else if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.CASH.getKey())) {
             //现金支付，直接返回成功，不校验

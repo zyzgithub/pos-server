@@ -36,6 +36,7 @@
 
 <script th:inline="javascript">
     var openId = [[${openId}]];
+    alert(openId)
     if (openId == null) {
     }
     $(function () {
@@ -52,7 +53,7 @@
                 $('.keyboard .pay').css({"background": "#eee", "color": "#666"});
                 return false;
             }
-            window.location.href = "/pos/qrcode/manager/pay_order?openId=" + openId + "&amount=" + $('#money').val();
+            window.location.href = "/pos/payment/wap/wechatPay/" + openId;
         }
 
     });
