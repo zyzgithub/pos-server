@@ -17,6 +17,7 @@ import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.support.OrderRemoteService;
 import com.dianba.pos.order.util.OrderSequenceUtil;
 import com.dianba.pos.order.vo.LifeOrderVo;
+import com.dianba.pos.order.vo.OrderTransactionRecordVo;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.repository.PassportJpaRepository;
 import com.dianba.pos.passport.service.PassportManager;
@@ -416,7 +417,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     public BasicResult getMerchantProfitInfo(Long merchantId, String phone) {
 
         JSONObject jsonObject = new JSONObject();
-        Passport passport = passportJpaRepository.getPassportById(merchantId);
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(merchantId);
+        Passport passport = passportJpaRepository.getPassportById(merchantPassport.getId());
         if (passport == null) {
             return BasicResult.createFailResult("获取失败,没有此商家账号");
         } else {
@@ -458,6 +460,56 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             return BasicResult.createSuccessResult("获取成功", jsonObject);
         }
 
+    }
+
+    @Override
+    public BasicResult findOrderTransactionRecord(Long merchantId, Integer enterType, String createTime) {
+
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(merchantId);
+        List<OrderTransactionRecordVo> list=orderMapper.findOrderTransactionRecord(merchantPassport.getId(),enterType
+                ,createTime);
+        List<OrderTransactionRecordVo> lst=new ArrayList<>();
+        Integer sum=0;
+        Integer wxSum=0;
+        Integer cashSum=0;
+        Integer zfbSum=0;
+        BigDecimal sumMoney=new BigDecimal(0);
+        BigDecimal wxMoney=new BigDecimal(0);
+        BigDecimal cashMoney=new BigDecimal(0);
+        BigDecimal zfbMoney=new BigDecimal(0);
+        if(list.size()>0){
+            for(OrderTransactionRecordVo recordVo : list){
+                if(recordVo.getCount()>1){
+                    sum+=1;
+                    recordVo.setItemName(recordVo.getItemName()+"等..."+recordVo.getCount()+"种商品");
+                    sumMoney=sumMoney.add(recordVo.getTotalPrice());
+                    lst.add(recordVo);
+                }
+                //现金支付
+                if(PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())){
+                    cashSum+=1;
+                    cashMoney=cashMoney.add(recordVo.getTotalPrice());
+                }else if(PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())){ //支付宝支付
+                    zfbSum+=1;
+                    zfbMoney=zfbMoney.add(recordVo.getTotalPrice());
+                }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
+                    wxSum+=1;
+                    wxMoney=wxMoney.add(recordVo.getTotalPrice());
+                }
+            }
+        }
+
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("sumCount",sum);
+        jsonObject.put("sumMoney",sumMoney);
+        jsonObject.put("wxSum",wxSum);
+        jsonObject.put("cashSum",cashSum);
+        jsonObject.put("zfbSum",zfbSum);
+        jsonObject.put("wxMoney",wxMoney);
+        jsonObject.put("cashMoney",cashMoney);
+        jsonObject.put("zfbMoney",zfbMoney);
+        jsonObject.put("transactionRecordList",lst);
+        return BasicResult.createSuccessResult("获取交易记录成功",jsonObject);
     }
 
 }

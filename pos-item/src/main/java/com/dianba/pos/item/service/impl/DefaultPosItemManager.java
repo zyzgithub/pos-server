@@ -597,6 +597,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItem.setPassportId(passportId);
         posItem.setStockPrice(500L);
         posItem.setWarningRepertory(20);
+        posItem.setRepertory(1000);
         LifeItemTemplate itemTemplate=itemTemplateJpaRepository.findByAscriptionType(8);
         posItem.setItemTemplateId(itemTemplate.getId());
         LifeItemType itemType=itemTypeJpaRepository.findByAscriptionType(8);
@@ -619,7 +620,6 @@ public class DefaultPosItemManager implements PosItemManager {
             itemType.setAscriptionType(8);
             itemTypeJpaRepository.save(itemType);
         }
-
         //检测商家有没有只有价商品没有就新增一个
         LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("BBBBBBBBBBBBBB");
         if(itemTemplate==null){
@@ -652,10 +652,8 @@ public class DefaultPosItemManager implements PosItemManager {
     @Override
     public BasicResult getItemUnitAndType(String passportId) {
         if (StringUtil.isEmpty(passportId)) {
-
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
-
             logger.info("获取所有商品单位规格。。");
             //规格
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();

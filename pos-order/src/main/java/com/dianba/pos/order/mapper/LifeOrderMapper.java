@@ -3,6 +3,7 @@ package com.dianba.pos.order.mapper;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantCashierDayProfitInfo;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
+import com.dianba.pos.order.vo.OrderTransactionRecordVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -44,4 +45,13 @@ public interface LifeOrderMapper {
 
     List<MerchantCashierDayProfitInfo> findMerchantCashierDayProfitInfo(@Param("merchantId") Long merchantId
             , @Param("createTime") String createTime);
+
+    /**
+     * pos端交易记录
+     * @param merchantId
+     * @param enterType 1 日,2 月
+     * @return
+     */
+    List<OrderTransactionRecordVo> findOrderTransactionRecord(@Param("passportId") Long merchantId
+            , @Param("enterType") Integer enterType,@Param("createTime") String createTime);
 }

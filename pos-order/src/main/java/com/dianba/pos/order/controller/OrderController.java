@@ -9,11 +9,15 @@ import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.metadata.order.OrderEntry;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -96,5 +100,20 @@ public class OrderController extends BasicWebService {
             }
         }
         return orderManager.syncOfflineOrders(orderPojos);
+    }
+
+
+    @ApiOperation("pos端交易记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "passportId", value = "请求id", paramType = "query", required = true)
+            ,@ApiImplicitParam(name = "enterType", value = "要查询类型1 日查询 2 月查询", paramType = "query"
+            ,required = true)
+            ,@ApiImplicitParam(name= "createTime", value = "请求时间", paramType = "query", required = true)
+
+    })
+    @ResponseBody
+    @RequestMapping(value = "getOrderTransactionRecord",method = {RequestMethod.GET,RequestMethod.POST})
+    public BasicResult getOrderTransactionRecord(Long passportId,Integer enterType,String createTime){
+        return orderManager.findOrderTransactionRecord(passportId, enterType, createTime);
     }
 }

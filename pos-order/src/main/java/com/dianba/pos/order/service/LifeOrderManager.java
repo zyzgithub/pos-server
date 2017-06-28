@@ -8,7 +8,6 @@ import com.dianba.pos.order.vo.LifeOrderVo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -86,6 +85,15 @@ public interface LifeOrderManager {
             , Integer pageNum, Integer pageSize);
 
     BasicResult getMerchantProfitInfo(Long merchantId, String phone);
+
+    /**
+     * POS端交易记录
+     * @param merchantId
+     * @param enterType
+     * @param createTime
+     * @return
+     */
+    BasicResult findOrderTransactionRecord(Long merchantId,Integer enterType,String createTime);
 
 
 }
