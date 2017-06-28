@@ -1,7 +1,7 @@
 package com.dianba.pos.payment.support;
 
+import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.payment.config.WechatConfig;
-import com.dianba.pos.payment.util.HttpsRequest;
 import com.dianba.pos.payment.util.XMLUtil;
 import com.dianba.pos.payment.xmlbean.WechatOrderDto;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +68,7 @@ public class WechatPayRemoteService {
         wechatOrderDto.setBody(body);
         wechatOrderDto.setDetail(detail);
         wechatOrderDto.setOutTradeNo(outTradeNo);
-        wechatOrderDto.setNotifyUrl("http://apptest.0085.com/pos/payment/wap/notify_url/"+outTradeNo);
+        wechatOrderDto.setNotifyUrl("http://apptest.0085.com/pos/payment/wap/notify_url/" + outTradeNo);
         if (!StringUtils.isEmpty(attach)) {
             wechatOrderDto.setAttach(attach);
         }
@@ -129,7 +129,8 @@ public class WechatPayRemoteService {
 
     private Map<String, String> postXml(String url, String xml) {
         try {
-            String resp = HttpsRequest.sendPost(wechatConfig, url, xml);
+            String resp = HttpUtil.postXml(url, xml);
+//            String resp = HttpsRequest.sendPost(wechatConfig, url, xml);
             return XMLUtil.doXMLParse(resp);
         } catch (Exception e) {
             e.printStackTrace();
