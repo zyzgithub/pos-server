@@ -597,7 +597,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItem.setPassportId(passportId);
         posItem.setStockPrice(500L);
         posItem.setWarningRepertory(20);
-        posItem.setRepertory(1000);
+        posItem.setRepertory(999999);
         LifeItemTemplate itemTemplate=itemTemplateJpaRepository.findByAscriptionType(8);
         posItem.setItemTemplateId(itemTemplate.getId());
         LifeItemType itemType=itemTypeJpaRepository.findByAscriptionType(8);

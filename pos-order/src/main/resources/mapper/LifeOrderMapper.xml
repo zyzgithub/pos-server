@@ -226,7 +226,7 @@
         INNER JOIN life_order.order_item_snapshot ois on ois.order_id=oe.id
         INNER JOIN life_pos.pos_item pi on pi.id=ois.item_id
         INNER JOIN life_item.item_type it on it.id=pi.item_type_id
-        WHERE pi.passport_id=#{merchantId} AND oe.type in(4,9) AND oe.status =8 and to_days(oe.create_time)= to_days(now())
+        WHERE oe.shipping_passport_id=#{merchantId} AND oe.type in(4,9) AND oe.status =8 and to_days(oe.create_time)= to_days(now())
         <if test="itId !=null">AND it.id=#{itId}</if>
         <if test="itemName !=null and itemName!=''">AND pi.item_name like CONCAT('%', #{itemName}, '%')</if>
         GROUP BY ois.item_id ORDER BY sumCount desc
@@ -243,7 +243,7 @@
     <!--pos端交易记录-->
     <select id="findOrderTransactionRecord" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
         SELECT * FROM (
-        select a.*,a.total_price-a.total_price*a.rate totalPrice from (
+        select a.*,a.sum-a.sum*a.rate totalPrice from (
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') paymentTime,sequence_number sequenceNumber
         ,t.total_price,t.trans_type transType,ps.real_name realName,ois.item_name itemName,count(1) count
         ,t.actual_price actualPrice
@@ -252,6 +252,8 @@
         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
         else 0 end rate
+        ,CASE t.type WHEN 9 then sum(t.total_price-t.actual_price)
+        else sum(t.total_price) END sum
         ,t.payment_type paymentType
         from life_order.order_entry t
         inner join life_passport.passport ps on ps.id=t.partner_user_id
@@ -273,20 +275,19 @@
         GROUP BY ois.order_id  ) a order by a.paymentTime desc)c
     </select>
     <select id="findOrderTransactionRecordSum" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
-        SELECT c.*,c.sum-c.sum*c.rate totalPrice FROM (
-        SELECT count(1) count,sum(oe.actual_price) actualPrice,oe.trans_type transType,CASE oe.type WHEN 9 then
-        sum(oe.total_price-oe.actual_price) else sum(oe.total_price) END sum
+        SELECT c.*,sum(c.sum-c.sum*c.rate) totalPrice,count(1) count FROM (
+        SELECT oe.actual_price actualPrice,oe.trans_type transType,CASE oe.type WHEN 9 then oe.total_price-oe.actual_price else oe.total_price END sum
         ,case oe.trans_type
         when 'CASH' then 0
         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
         else 0 end rate FROM life_order.order_entry oe
         inner join (
-               select t.is_need,t.commission_rate from life_pos.pos_merchant_rate t where t.passport_id=#{passportId}
-               union
-               select 1,0.0038
-               limit 1
-             ) b on 1=1
+        select t.is_need,t.commission_rate from life_pos.pos_merchant_rate t where t.passport_id=#{passportId}
+        union
+        select 1,0.0038
+        limit 1
+        ) b on 1=1
         WHERE oe.shipping_passport_id=#{passportId}  and oe.type in(4,9) and oe.status =8
         <if test="enterType==1">
             and date_format(oe.payment_time,'%Y-%m-%d')=date_format(#{createTime},'%Y-%m-%d')
@@ -294,6 +295,7 @@
         <if test="enterType==2">
             and date_format(oe.payment_time,'%Y-%m')=date_format(#{createTime},'%Y-%m')
         </if>
-        GROUP BY oe.trans_type) c
+        ) c GROUP BY c.transType
+
     </select>
 </mapper>
