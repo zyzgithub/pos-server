@@ -2,6 +2,7 @@ package com.dianba.pos.payment.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.passport.service.PosBlackListManager;
 import com.dianba.pos.payment.mapper.PosRewardMapper;
 import com.dianba.pos.payment.po.PosMerchantQuota;
 import com.dianba.pos.payment.po.PosReward;
@@ -32,6 +33,8 @@ public class DefaultPosRewardManager implements PosRewardManager {
     private PosMerchantQuotaManager posMerchantQuotaManager;
     @Autowired
     private PosRewardMapper posRewardMapper;
+    @Autowired
+    private PosBlackListManager posBlackListManager;
 
     public Map<String, BigDecimal> getTotalRewardQuota(Integer rewardType) {
         List<PosReward> posRewards = posRewardJpaRepository.findByStatusAndType(1, rewardType);
@@ -65,6 +68,11 @@ public class DefaultPosRewardManager implements PosRewardManager {
         } else {
             return BigDecimal.ZERO;
         }
+        //是否黑名单用户
+        boolean isBlackMerchant = posBlackListManager.isBlackMerchat(passportId);
+        if (isBlackMerchant) {
+            return BigDecimal.ZERO;
+        }
         PosMerchantQuota posMerchantQuota = posMerchantQuotaManager.getMerchantQuota(passportId, type);
         if (posMerchantQuota == null || posMerchantQuota.getRemainingReward().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
@@ -95,9 +103,9 @@ public class DefaultPosRewardManager implements PosRewardManager {
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
         Map<String, Object> rewardMap = posRewardMapper.findTotalRewardAmountByDate(passportId, date);
-        if (rewardMap!=null){
+        if (rewardMap != null) {
             jsonObject.put("rewardAmount", rewardMap.get("reward_amount"));
-        }else {
+        } else {
             jsonObject.put("rewardAmount", 0);
         }
         basicResult.setResponse(jsonObject);
