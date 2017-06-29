@@ -465,7 +465,6 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     @Override
     public BasicResult findOrderTransactionRecord(Long merchantId, Integer enterType, String createTime
             ,Integer pageNum, Integer pageSize) {
-        pageNum=1;pageSize=100;
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(merchantId);
         Page<OrderTransactionRecordVo> list=PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 ->orderMapper.findOrderTransactionRecord(merchantPassport.getId(),enterType,createTime));
@@ -482,22 +481,34 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 if(recordVo.getCount()>1){
                     recordVo.setItemName(recordVo.getItemName()+"等..."+recordVo.getCount()+"件商品");
                 }
-
+                //现金支付
+                if(PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())){
+                    recordVo.setTransType("现金");
+                }else if(PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())){ //支付宝支付
+                    recordVo.setTransType("支付宝");
+                }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
+                    recordVo.setTransType("微信");
+                }
+                recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+                recordVo.setActualPrice(recordVo.getActualPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
+                lst.add(recordVo);
+            }
+        }
+        List<OrderTransactionRecordVo> recordVos=orderMapper.findOrderTransactionRecord(
+                merchantPassport.getId(),enterType,createTime);
+        if(recordVos.size()>0){
+            for(OrderTransactionRecordVo recordVo : recordVos){
                 //现金支付
                 if(PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())){
                     cashSum+=1;
                     cashMoney=cashMoney.add(recordVo.getTotalPrice());
-                    recordVo.setTransType("现金");
                 }else if(PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())){ //支付宝支付
                     zfbSum+=1;
                     zfbMoney=zfbMoney.add(recordVo.getTotalPrice());
-                    recordVo.setTransType("支付宝");
                 }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
                     wxSum+=1;
                     wxMoney=wxMoney.add(recordVo.getTotalPrice());
-                    recordVo.setTransType("微信");
                 }
-                lst.add(recordVo);
             }
         }
         logger.info("总订单数量:"+lst.size());
