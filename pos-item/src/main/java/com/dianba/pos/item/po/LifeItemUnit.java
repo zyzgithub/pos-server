@@ -7,6 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "life_item.item_unit")
+@Cacheable
 public class LifeItemUnit {
 
     @Id
