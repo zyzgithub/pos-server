@@ -233,16 +233,15 @@
     </select>
     <!--商家收银员每日盈利信息-->
     <select id="findMerchantCashierDayProfitInfo" resultType="com.dianba.pos.order.vo.MerchantCashierDayProfitInfo">
-        SELECT psd.passport_id cashierId,pass.real_name realName,sum(psd.amount) sumTotalPrice
+        SELECT psd.passport_id cashierId,pass.real_name realName,sum(psd.amount*100) sumTotalPrice
         ,pca.cashier_photo cashierPhoto,#{createTime} time FROM life_pos.pos_settlement_dayly psd
-        JOIN life_pos.pos_cashier_account pca on pca.cashier_id=psd.passport_id
+        LEFT JOIN life_pos.pos_cashier_account pca on pca.cashier_id=psd.passport_id
         JOIN life_passport.passport pass on pass.id=psd.passport_id
         WHERE psd.merchant_passport_id=#{merchantId} and to_days(psd.create_time)=to_days(#{createTime})AND psd.is_paid=1
         GROUP BY psd.passport_id ORDER BY psd.create_time DESC;
     </select>
     <!--pos端交易记录-->
     <select id="findOrderTransactionRecord" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
-
         SELECT * FROM (
         select a.*,a.total_price-a.total_price*a.rate totalPrice from (
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') paymentTime,sequence_number sequenceNumber

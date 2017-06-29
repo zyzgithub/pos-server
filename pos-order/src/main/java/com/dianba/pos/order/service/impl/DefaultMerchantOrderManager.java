@@ -202,7 +202,7 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     @Override
     public BasicResult findMerchantCashierDayProfitInfo(Long merchantId, String createTime) {
         if (StringUtil.isEmpty(createTime)) {
-            createTime = DateUtil.befoDay();
+            createTime = DateUtil.getCurrDate("yyyy-MM-dd");
         }
         List<MerchantCashierDayProfitInfo> merchantCashierDayProfitInfos = orderMapper.findMerchantCashierDayProfitInfo(
                 merchantId, createTime);
