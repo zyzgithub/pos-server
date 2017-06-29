@@ -523,7 +523,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }
             }
         }
-        logger.info("总订单数量:"+lst.size());
+        logger.info("总订单数量:"+recordVos.size());
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("sumCount",wxSum+cashSum+zfbSum);
         jsonObject.put("sumMoney",wxMoney.add(cashMoney).add(zfbMoney).divide(a,2,BigDecimal.ROUND_HALF_UP));
