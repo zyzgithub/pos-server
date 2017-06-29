@@ -77,8 +77,14 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public LifeOrderVo getLifeOrder(long orderId) {
+        return getLifeOrder(orderId, true);
+    }
+
+    public LifeOrderVo getLifeOrder(long orderId, boolean convertRMBUnit) {
         LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
-        lifeOrderTransformation(lifeOrder);
+        if (convertRMBUnit) {
+            lifeOrderTransformation(lifeOrder);
+        }
         LifeOrderVo lifeOrderVo = new LifeOrderVo();
         BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
@@ -92,8 +98,14 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public LifeOrder getLifeOrder(String sequenceNumber) {
+        return getLifeOrder(sequenceNumber, true);
+    }
+
+    public LifeOrder getLifeOrder(String sequenceNumber, boolean convertRMBUnit) {
         LifeOrder lifeOrder = orderJpaRepository.findBySequenceNumber(sequenceNumber);
-        lifeOrderTransformation(lifeOrder);
+        if (convertRMBUnit) {
+            lifeOrderTransformation(lifeOrder);
+        }
         return lifeOrder;
     }
 

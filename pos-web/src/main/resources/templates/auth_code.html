@@ -5,16 +5,18 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>用户鉴权中</title>
+    <title></title>
 </head>
 <script th:inline="javascript">
+    var passportId = [[${passportId}]];
     var ua = navigator.userAgent.toLowerCase();
     if (ua.match("micromessenger")) {
         //微信浏览器
         window.location.href = [[${url}]];
     } else if (ua.match("alipayclient")) {
-        window.location.href = "/pos/qrcode/manager/to_pay";
+        window.location.href = "/pos/qrcode/manager/to_pay/" + passportId;
     }
+    window.location.href = "/pos/qrcode/manager/to_pay/" + passportId;
 </script>
 <body>
 ERROR! 请选择使用支付宝或者微信扫码！!

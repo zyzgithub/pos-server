@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 
 public interface QROrderManager {
 
-    LifeOrder generateQROrder(Long passportId, PaymentTypeEnum paymentTypeEnum, BigDecimal amount);
+    LifeOrder generateQROrder(Long passportId, PaymentTypeEnum paymentTypeEnum, BigDecimal amount, String openId);
 }

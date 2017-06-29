@@ -84,7 +84,7 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
                 BasicResult basicResult = BasicResult.createSuccessResult();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("sequenceNumber", lifeOrder.getSequenceNumber());
-                jsonObject.put("prepay_id", result.get("prepay_id"));
+                jsonObject.putAll(buildJsBridge(result.get("prepay_id")));
                 basicResult.setResponse(jsonObject);
                 return basicResult;
             } else if (null != result.get("err_code_des")) {

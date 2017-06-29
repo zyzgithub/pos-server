@@ -19,10 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 
 @Controller
 @RequestMapping(PaymentURLConstant.WAP)
@@ -91,14 +91,21 @@ public class WapPaymentController {
     }
 
     @ResponseBody
-    @RequestMapping("wechatPay/{openId}")
-    public BasicResult wechatPay(HttpServletRequest request, HttpServletResponse response
-            , @PathVariable(name = "openId") String openId)
+    @RequestMapping("wechatPay/{sequenceNumber}")
+    public ModelAndView wechatPay(HttpServletRequest request, HttpServletResponse response
+            , @PathVariable(name = "sequenceNumber") String sequenceNumber)
             throws Exception {
-        Long passportId = 100045L;
-        BigDecimal amount = BigDecimal.valueOf(0.01);
+        ModelAndView modelAndView = new ModelAndView();
         String ip = IPUtil.getRemoteIp(request);
-        return wapPaymentManager.wechatPay(passportId, openId, ip, amount);
+        BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip);
+        if (basicResult.isSuccess()) {
+            modelAndView.addAllObjects(basicResult.getResponse());
+            modelAndView.setViewName("wechat_js_pay");
+        } else {
+            logger.info(basicResult.getResponse().toJSONString());
+            modelAndView.setViewName("pay_error");
+        }
+        return modelAndView;
     }
 
     @RequestMapping("notify_url/{sequenceNumber}")

@@ -2,6 +2,8 @@ package com.dianba.pos.payment.support;
 
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.payment.config.WechatConfig;
+import com.dianba.pos.payment.util.MD5Util;
+import com.dianba.pos.payment.util.ParamUtil;
 import com.dianba.pos.payment.util.XMLUtil;
 import com.dianba.pos.payment.xmlbean.WechatOrderDto;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +14,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class WechatPayRemoteService {
 
@@ -89,6 +93,23 @@ public class WechatPayRemoteService {
         }
         String payParamXml = wechatOrderDto.buildSign(wechatConfig.getPublicApiKey());
         return postXml(wechatConfig.getOrderPayUrl(), payParamXml);
+    }
+
+    /**
+     * 构造微信JS支付所需参数
+     */
+    protected Map<String, String> buildJsBridge(String prepayId) {
+        SortedMap<String, String> sortedMap = new TreeMap<>();
+        sortedMap.put("appId", wechatConfig.getPublicAppId());
+        sortedMap.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+        sortedMap.put("nonceStr", createNoncestr());
+        sortedMap.put("package", "prepay_id=" + prepayId);
+        sortedMap.put("signType", "MD5");
+        String paramStr = ParamUtil.buildHttpGetStr(sortedMap);
+        paramStr = paramStr + "key=" + wechatConfig.getPublicApiKey();
+        String sign = MD5Util.md5(paramStr);
+        sortedMap.put("paySign", sign);
+        return sortedMap;
     }
 
     /**

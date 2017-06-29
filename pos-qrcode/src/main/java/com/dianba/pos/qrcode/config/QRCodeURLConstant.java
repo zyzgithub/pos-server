@@ -6,5 +6,5 @@ public class QRCodeURLConstant {
 
     public static final String MANAGER = BASE_URL + "manager/";
 
-    public static final String WECHAT_CALLBACK_URL = MANAGER + "to_pay";
+    public static final String WECHAT_CALLBACK_URL = MANAGER + "to_pay/";
 }

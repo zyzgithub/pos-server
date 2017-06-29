@@ -2,14 +2,12 @@ package com.dianba.pos.payment.service.impl;
 
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.service.WeChatPayManager;
-import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 @Service
 public class DefaultWapPaymentManager implements WapPaymentManager {
@@ -18,14 +16,15 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
     private QROrderManager qrOrderManager;
     @Autowired
     private WeChatPayManager weChatPayManager;
+    @Autowired
+    private LifeOrderManager lifeOrderManager;
 
-    public BasicResult wechatPay(Long passportId, String openId, String spBillCreateIP, BigDecimal amount)
-            throws Exception {
-        PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.WEIXIN_JS;
-        LifeOrder lifeOrder = qrOrderManager.generateQROrder(passportId, paymentTypeEnum, amount);
+    @Override
+    public BasicResult wechatPay(String sequenceNumber, String spBillCreateIP) throws Exception {
+        LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(sequenceNumber, false);
         if (lifeOrder != null) {
-            return weChatPayManager.jsPayment(lifeOrder, openId, "WEP", spBillCreateIP);
+            return weChatPayManager.jsPayment(lifeOrder, lifeOrder.getReceiptUserId(), "WEP", spBillCreateIP);
         }
-        return BasicResult.createFailResult("订单创建失败！");
+        return BasicResult.createFailResult("订单不存在！");
     }
 }

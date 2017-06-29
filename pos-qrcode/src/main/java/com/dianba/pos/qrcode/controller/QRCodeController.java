@@ -23,10 +23,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,15 +92,17 @@ public class QRCodeController {
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
      */
     @RequestMapping(value = "qr_order/{type}/{code}", method = RequestMethod.GET)
-    public String payQROrder(Model model, @PathVariable("type") String type, @PathVariable("code") String code)
+    public ModelAndView payQROrder(@PathVariable("type") String type, @PathVariable("code") String code)
             throws Exception {
-        //TODO 记录state访问uuid,安全校验
+        ModelAndView modelAndView = new ModelAndView("auth_code");
+        //TODO 记录state访问uuid,安全校验,查出商家ID
+        Long passportId = 100348L;
         UUID uuid = UUID.randomUUID();
-        String authCodeUrl = wechatConfig
-                .getAuthCodeUrl(appConfig.getPosWechatCallBackHost() + QRCodeURLConstant.WECHAT_CALLBACK_URL
-                        , uuid.toString());
-        model.addAttribute("url", authCodeUrl);
-        return "auth_code";
+        String authCodeUrl = wechatConfig.getAuthCodeUrl(appConfig.getPosWechatCallBackHost()
+                + QRCodeURLConstant.WECHAT_CALLBACK_URL + passportId, uuid.toString());
+        modelAndView.addObject("url", authCodeUrl);
+        modelAndView.addObject("passportId", passportId);
+        return modelAndView;
     }
 
     /**
@@ -110,9 +112,11 @@ public class QRCodeController {
      * @param response
      * @return
      */
-    @RequestMapping("to_pay")
-    public String toPay(HttpServletRequest request, HttpServletResponse response
-            , Model model) {
+    @RequestMapping(value = "to_pay/{passportId}", method = RequestMethod.GET)
+    public ModelAndView toPay(HttpServletRequest request, HttpServletResponse response
+            , @PathVariable(name = "passportId") Long passportId) {
+        ModelAndView modelAndView = new ModelAndView("pay");
+        modelAndView.addObject("passportId", passportId);
         //TODO 校验state是否正确,安全校验
         String code = request.getParameter("code");
         if (code != null) {
@@ -123,20 +127,17 @@ public class QRCodeController {
             JSONObject jsonObject = HttpUtil.post(authTokenUrl, new JSONObject());
             if (jsonObject != null) {
                 if (null == jsonObject.get("errcode")) {
-                    model.addAttribute("access_token", jsonObject.getString("access_token"));
-                    model.addAttribute("expires_in", jsonObject.getString("expires_in"));
-                    model.addAttribute("refresh_token", jsonObject.getString("refresh_token"));
-                    model.addAttribute("openid", jsonObject.getString("openid"));
-                    model.addAttribute("scope", jsonObject.getString("scope"));
-                    request.setAttribute("openId", jsonObject.getString("openid"));
+                    modelAndView.addObject("access_token", jsonObject.getString("access_token"));
+                    modelAndView.addObject("expires_in", jsonObject.getString("expires_in"));
+                    modelAndView.addObject("refresh_token", jsonObject.getString("refresh_token"));
+                    modelAndView.addObject("openId", jsonObject.getString("openid"));
+                    modelAndView.addObject("scope", jsonObject.getString("scope"));
                 } else {
                     throw new PosIllegalArgumentException(jsonObject.toJSONString());
                 }
             }
             logger.info("微信授权回调结束！");
-        } else {
-            request.setAttribute("openId", "fuckyou");
         }
-        return "pay";
+        return modelAndView;
     }
 }

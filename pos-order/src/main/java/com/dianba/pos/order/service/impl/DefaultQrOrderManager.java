@@ -25,7 +25,7 @@ public class DefaultQrOrderManager implements QROrderManager {
     private PassportManager passportManager;
 
     @Transactional
-    public LifeOrder generateQROrder(Long passportId, PaymentTypeEnum paymentType, BigDecimal amount) {
+    public LifeOrder generateQROrder(Long passportId, PaymentTypeEnum paymentType, BigDecimal amount, String openId) {
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         LifeOrder lifeOrder = new LifeOrder();
         lifeOrder.setSequenceNumber(OrderSequenceUtil.generateOrderSequence());
@@ -33,6 +33,7 @@ public class DefaultQrOrderManager implements QROrderManager {
         lifeOrder.setPartnerUserId(passportId + "");
         lifeOrder.setCreateTime(new Date());
         lifeOrder.setShippingPassportId(merchantPassport.getId());
+        lifeOrder.setReceiptUserId(openId);
         lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
         lifeOrder.setType(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey());
         lifeOrder.setPaymentType("-1");

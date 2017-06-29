@@ -8,6 +8,7 @@ import com.dianba.pos.order.vo.LifeOrderVo;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -36,9 +37,19 @@ public interface LifeOrderManager {
     LifeOrderVo getLifeOrder(long orderId);
 
     /**
+     * 获取订单详情，使用orderId
+     */
+    LifeOrderVo getLifeOrder(long orderId, boolean convertRMBUnit);
+
+    /**
      * 获取订单详情，使用订单编码
      */
     LifeOrder getLifeOrder(String sequenceNumber);
+
+    /**
+     * 获取订单详情，使用订单编码
+     */
+    LifeOrder getLifeOrder(String sequenceNumber, boolean convertRMBUnit);
 
     /*
      * 预创建订单-2.0

@@ -7,6 +7,7 @@ import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.service.LifeOrderManager;
+import com.dianba.pos.order.vo.LifeOrderVo;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.metadata.order.OrderEntry;
 import io.swagger.annotations.ApiImplicitParam;
@@ -63,10 +64,15 @@ public class OrderController extends BasicWebService {
      */
     @ResponseBody
     @RequestMapping("order_detail")
-    public BasicResult getOrderDetail(long orderId) {
+    public BasicResult getOrderDetail(Long orderId, Boolean convertRMBUnit) {
         BasicResult basicResult = BasicResult.createSuccessResult();
-        OrderEntry orderEntry = orderManager.getOrder(orderId);
-        basicResult.setResponse(orderEntry);
+        if (null != convertRMBUnit && convertRMBUnit) {
+            LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderId);
+            basicResult.setResponse(lifeOrderVo);
+        } else {
+            OrderEntry orderEntry = orderManager.getOrder(orderId);
+            basicResult.setResponse(orderEntry);
+        }
         return basicResult;
     }
 
