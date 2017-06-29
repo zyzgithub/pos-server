@@ -515,13 +515,13 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 //现金支付
                 if(PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())){
                     cashSum=recordVo.getCount();
-                    cashMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
+                    cashMoney=recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP);
                 }else if(PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())){ //支付宝支付
                     zfbSum=recordVo.getCount();
-                    zfbMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
+                    zfbMoney=recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP);
                 }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
                     wxSum=recordVo.getCount();
-                    wxMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
+                    wxMoney=recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
