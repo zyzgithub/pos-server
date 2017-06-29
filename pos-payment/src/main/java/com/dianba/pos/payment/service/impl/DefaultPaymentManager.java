@@ -199,8 +199,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             }
             BigDecimal offsetRewardAmount = BigDecimal.ZERO;
             if (basicResult.isSuccess()) {
+                Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                 if (!paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
-                    Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
                     //对商家余额进行偏移计算
                     OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderEntry.getType());
                     long offsetAmount = 0;
@@ -240,9 +240,10 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                     }
                 }
                 //消费返现
-                offsetRewardAmount = posRewardManager
-                        .offsetRewardAmount(passportId, orderEntry.getId(), orderEntry.getType(), paymentTypeEnum);
-                offsetVipBalance(passportId, orderEntry.getSequenceNumber(), offsetRewardAmount, paymentTypeEnum);
+                offsetRewardAmount = posRewardManager.offsetRewardAmount(merchantPassport.getId(), orderEntry.getId()
+                        , orderEntry.getType(), paymentTypeEnum);
+                offsetVipBalance(merchantPassport.getId(), orderEntry.getSequenceNumber()
+                        , offsetRewardAmount, paymentTypeEnum);
             } else {
                 logger.info("订单确认支付失败！订单ID:" + orderEntry.getId() + "，错误消息：" + basicResult.getMsg());
             }
