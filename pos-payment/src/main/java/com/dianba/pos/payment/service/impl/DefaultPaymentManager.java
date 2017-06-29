@@ -249,7 +249,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             //返回订单详情-加商品列表
             LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(orderEntry.getId());
             basicResult.setResponse(lifeOrderVo);
-            basicResult.getResponse().put("rewardAmount", offsetRewardAmount.multiply(BigDecimal.valueOf(100))
+            basicResult.getResponse().put("rewardAmount", offsetRewardAmount
+                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP)
                     .setScale(2, BigDecimal.ROUND_HALF_UP));
             return basicResult;
         } catch (Exception e) {

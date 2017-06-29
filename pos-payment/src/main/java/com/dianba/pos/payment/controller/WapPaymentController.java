@@ -108,9 +108,16 @@ public class WapPaymentController {
         return modelAndView;
     }
 
+    /**
+     * 微信JS支付成功回调
+     * @param request
+     * @param sequenceNumber
+     * @return
+     */
+    @ResponseBody
     @RequestMapping("notify_url/{sequenceNumber}")
     public BasicResult notifyUrl(HttpServletRequest request
-            , @PathVariable(name = "orderId") String sequenceNumber) {
+            , @PathVariable(name = "sequenceNumber") String sequenceNumber) {
         logger.info("开始接收微信回调消息：" + sequenceNumber);
         for (Object key : request.getParameterMap().keySet()) {
             logger.info("key=" + key + " value=" + request.getParameter(key.toString()));

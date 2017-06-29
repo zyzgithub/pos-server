@@ -31,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Api("商家二维码管理器")
@@ -100,6 +101,7 @@ public class QRCodeController {
         UUID uuid = UUID.randomUUID();
         String authCodeUrl = wechatConfig.getAuthCodeUrl(appConfig.getPosWechatCallBackHost()
                 + QRCodeURLConstant.WECHAT_CALLBACK_URL + passportId, uuid.toString());
+        logger.info("回调地址：" + authCodeUrl);
         modelAndView.addObject("url", authCodeUrl);
         modelAndView.addObject("passportId", passportId);
         return modelAndView;
@@ -112,13 +114,18 @@ public class QRCodeController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "to_pay/{passportId}", method = RequestMethod.GET)
+    @RequestMapping("to_pay/{passportId}")
     public ModelAndView toPay(HttpServletRequest request, HttpServletResponse response
-            , @PathVariable(name = "passportId") Long passportId) {
+            , @PathVariable(name = "passportId") Long passportId
+            , String code) {
         ModelAndView modelAndView = new ModelAndView("pay");
         modelAndView.addObject("passportId", passportId);
         //TODO 校验state是否正确,安全校验
-        String code = request.getParameter("code");
+        logger.info("微信校验code:" + code);
+        Map<String, Object> map = request.getParameterMap();
+        for (String key : map.keySet()) {
+            logger.info("key:" + key + " vlaue:" + request.getParameter(key));
+        }
         if (code != null) {
             logger.info("微信授权回调开始！");
             String state = request.getParameter("state");
