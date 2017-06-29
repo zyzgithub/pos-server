@@ -481,9 +481,10 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         Page<OrderTransactionRecordVo> list=PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 ->orderMapper.findOrderTransactionRecord(merchantPassport.getId(),enterType,createTime));
         List<OrderTransactionRecordVo> lst=new ArrayList<>();
+
         Integer wxSum=0;
-        Integer cashSum=0;
         Integer zfbSum=0;
+        Integer cashSum=0;
         BigDecimal wxMoney=new BigDecimal(0);
         BigDecimal cashMoney=new BigDecimal(0);
         BigDecimal zfbMoney=new BigDecimal(0);
@@ -501,38 +502,36 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
                     recordVo.setTransType("微信");
                 }
+
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
                 lst.add(recordVo);
             }
         }
-        List<OrderTransactionRecordVo> recordVos=orderMapper.findOrderTransactionRecord(
-                merchantPassport.getId(),enterType,createTime);
-        if(recordVos.size()>0){
-            for(OrderTransactionRecordVo recordVo : recordVos){
+
+        List<OrderTransactionRecordVo> map=orderMapper.findOrderTransactionRecordSum(merchantId, enterType, createTime);
+        if(map!=null&&map.size()>0){
+            for(OrderTransactionRecordVo recordVo :map){
                 //现金支付
                 if(PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())){
-                    cashSum+=1;
-                    cashMoney=cashMoney.add(recordVo.getTotalPrice());
+                    wxSum=recordVo.getCount();
+                    cashMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
                 }else if(PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())){ //支付宝支付
-                    zfbSum+=1;
-                    zfbMoney=zfbMoney.add(recordVo.getTotalPrice());
+                    zfbMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
                 }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
-                    wxSum+=1;
-                    wxMoney=wxMoney.add(recordVo.getTotalPrice());
+                    wxMoney=recordVo.getTotalPrice().divide(a,BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
-        logger.info("总订单数量:"+recordVos.size());
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("sumCount",wxSum+cashSum+zfbSum);
-        jsonObject.put("sumMoney",wxMoney.add(cashMoney).add(zfbMoney).divide(a,2,BigDecimal.ROUND_HALF_UP));
+        jsonObject.put("sumMoney",wxMoney.add(cashMoney).add(zfbMoney));
         jsonObject.put("wxSum",wxSum);
         jsonObject.put("cashSum",cashSum);
         jsonObject.put("zfbSum",zfbSum);
-        jsonObject.put("wxMoney",wxMoney.divide(a,2,BigDecimal.ROUND_HALF_UP));
-        jsonObject.put("cashMoney",cashMoney.divide(a,2,BigDecimal.ROUND_HALF_UP));
-        jsonObject.put("zfbMoney",zfbMoney.divide(a,2,BigDecimal.ROUND_HALF_UP));
+        jsonObject.put("wxMoney",wxMoney);
+        jsonObject.put("cashMoney",cashMoney);
+        jsonObject.put("zfbMoney",zfbMoney);
         jsonObject.put("transactionRecordList",lst);
         return BasicResult.createSuccessResult("获取交易记录成功",jsonObject);
     }

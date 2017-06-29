@@ -54,4 +54,7 @@ public interface LifeOrderMapper {
      */
     List<OrderTransactionRecordVo> findOrderTransactionRecord(@Param("passportId") Long merchantId
             , @Param("enterType") Integer enterType,@Param("createTime") String createTime);
+
+    List<OrderTransactionRecordVo> findOrderTransactionRecordSum(@Param("passportId") Long merchantId
+            , @Param("enterType") Integer enterType,@Param("createTime") String createTime);
 }
