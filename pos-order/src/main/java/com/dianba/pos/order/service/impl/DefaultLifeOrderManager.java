@@ -502,14 +502,14 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }else if(PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())){//微信支付
                     recordVo.setTransType("微信");
                 }
-
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a,2,BigDecimal.ROUND_HALF_UP));
                 lst.add(recordVo);
             }
         }
 
-        List<OrderTransactionRecordVo> map=orderMapper.findOrderTransactionRecordSum(merchantId, enterType, createTime);
+        List<OrderTransactionRecordVo> map=orderMapper.findOrderTransactionRecordSum(merchantPassport.getId()
+                , enterType, createTime);
         if(map!=null&&map.size()>0){
             for(OrderTransactionRecordVo recordVo :map){
                 //现金支付

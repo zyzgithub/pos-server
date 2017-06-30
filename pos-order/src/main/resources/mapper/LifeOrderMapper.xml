@@ -252,8 +252,8 @@
         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
         else 0 end rate
-        ,CASE t.type WHEN 9 then sum(t.total_price-t.actual_price)
-        else sum(t.total_price) END sum
+        ,CASE t.type WHEN 9 then t.total_price-t.actual_price
+        else t.total_price END sum
         ,t.payment_type paymentType
         from life_order.order_entry t
         inner join life_passport.passport ps on ps.id=t.partner_user_id
@@ -296,6 +296,5 @@
             and date_format(oe.payment_time,'%Y-%m')=date_format(#{createTime},'%Y-%m')
         </if>
         ) c GROUP BY c.transType
-
     </select>
 </mapper>

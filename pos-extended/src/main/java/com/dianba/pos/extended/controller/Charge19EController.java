@@ -106,7 +106,6 @@ public class Charge19EController {
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
             // Long times = Long.parseInt(DateUtil.currentTimeMillis().toString());
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
-
                 //查询此订单是否更新完毕
                 Object ob = charge19eMapper.getByPayId(merchantOrderId);
                 if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {

@@ -6,6 +6,7 @@ import com.dianba.pos.common.util.Md5Util;
 import com.dianba.pos.extended.config.ExtendedConfig;
 import com.dianba.pos.extended.util.FlowCharge19EUtil;
 import com.dianba.pos.extended.util.FlowChargeSign;
+import com.dianba.pos.extended.util.HfCharge19EUtil;
 import com.dianba.pos.extended.vo.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +38,9 @@ public class ExtendedRemoteService {
         String params = param.params(md5);
         //发送话费充值请求
         String result = HttpUtil.postParams(extendedConfig.getExtendedHfChargeUrl(), params);
-        ChargeResult chargeResult = JSONObject.parseObject(result, ChargeResult.class);
+        logger.info("话费充值返回:"+result);
+        String json = HfCharge19EUtil.toJson(result);
+        ChargeResult chargeResult =JSONObject.parseObject(json, ChargeResult.class);
         return chargeResult;
     }
 
@@ -68,7 +71,7 @@ public class ExtendedRemoteService {
         logger.info("流量充值参数:" + params);
         String result = HttpUtil.postParams(extendedConfig.getExtendedFlowChargeUrl(), params);
         logger.info("流量充值返回结果:" + result);
-        ChargeFlowResult chargeFlowResult = JSONObject.parseObject(result, ChargeFlowResult.class);
+        ChargeFlowResult chargeFlowResult =(ChargeFlowResult)JSONObject.parseObject(result, ChargeFlowResult.class);
         return chargeFlowResult;
     }
 

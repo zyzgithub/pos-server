@@ -242,17 +242,21 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
                     jsonObject.put("menuList", menulst);
                     return BasicResult.createSuccessResult("获取话费充值商品成功", jsonObject);
                 } else if (type.equals("2")) {
+                    long starTime=System.currentTimeMillis();
+                    logger.info("=====================获取流量充值商品开始时间===============:"+starTime);
                     Product pd = new Product();
                     pd.setMobile(phone);
-                    pd.setMerchantId(FlowCharge19EUtil.MERCHANT_ID);
-                    String result = FlowCharge19EApi.queryProduct(FlowCharge19EUtil.QUERY_PRODUCT, pd);
+                    pd.setMerchantId(extendedConfig.getExtendedFlowMerchantId());
+                    String result = FlowCharge19EApi.queryProduct(extendedConfig.getExtendedFlowProductUrl(), pd);
                     JSONObject jb = JSON.parseObject(result);
+                    long endTime=0L;
                     List<PosItemVo> posItemVos = new ArrayList<>();
                     if (jb.get("resultCode").equals("00000") && jb.get("resultDesc").equals("SUCCESS")) {
                         JSONArray ja = jb.getJSONArray("productList");
                         List<ProductListDto> lst = JSONArray.parseArray(ja.toString(), ProductListDto.class);
                         logger.info("流量充值商品列表信息：====" + ja.toString());
-
+                        endTime=System.currentTimeMillis();
+                        logger.info("=====================获取流量充值商品列表时间===============:"+(endTime-starTime));
                         for (ProductListDto pl : lst) {
                             //根据第三方商品id获取本地商品信息
                             String productId = pl.getProductId();
@@ -260,7 +264,6 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
                             PosItem posItem = posItemJpaRepository
                                     .findAllByMenuKeyAndIsShelveAndIsDelete(productId, "Y", "N");
                             PosItemVo posItemVo = new PosItemVo();
-
                             if (posItem != null) {
                                 posItemVo.setId(posItem.getId());
                                 posItemVo.setPosTypeId(posItem.getItemTypeId());
@@ -297,6 +300,8 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("phoneInfo", phoneInfo);
                     jsonObject.put("menuList", posItemVos);
+                    long time=System.currentTimeMillis();
+                    logger.info("=====================获取流量充值商品成功时间===============:"+ (time-endTime));
                     return BasicResult.createSuccessResult("获取流量充值商品成功", jsonObject);
                 } else {
                     return BasicResult.createSuccessResult("获取流量充值商品成功");

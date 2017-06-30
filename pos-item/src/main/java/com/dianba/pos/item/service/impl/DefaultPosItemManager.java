@@ -563,7 +563,6 @@ public class DefaultPosItemManager implements PosItemManager {
         return posItemVos;
 
     }
-
     @Transactional
     public void offsetItemRepertory(Map<Long, Integer> itemIdMaps) {
         if (itemIdMaps == null || itemIdMaps.size() == 0) {
@@ -654,7 +653,8 @@ public class DefaultPosItemManager implements PosItemManager {
         if (StringUtil.isEmpty(passportId)) {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
-            logger.info("获取所有商品单位规格。。");
+
+            logger.info("===Start获取所有商品单位规格Start==="+DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
             //规格
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
             //商品分类
@@ -694,7 +694,9 @@ public class DefaultPosItemManager implements PosItemManager {
             jo.put("itemTypes", posTypeVos);
             BasicResult basicResult = BasicResult.createSuccessResult();
             basicResult.setResponse(jo);
+            logger.info("===Start获取所有商品单位规格Start==="+DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
             return basicResult;
+
         }
     }
 
@@ -713,15 +715,12 @@ public class DefaultPosItemManager implements PosItemManager {
                         , Long.parseLong(itemTypeId));
 
             }
-
             if (posItems.size() == 0) {
                 return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!",posItems);
             } else {
                 List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
                 return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
             }
-
-
         }
     }
 
