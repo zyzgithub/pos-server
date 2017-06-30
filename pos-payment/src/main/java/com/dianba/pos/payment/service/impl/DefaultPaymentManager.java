@@ -303,6 +303,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             paymentCurrencyAccount.setTotalOutputAmount(paymentCurrencyAccount.getTotalOutputAmount()
                     .add(offsetAmount.abs()));
         }
+        transLoggerManager.saveTransLog(transSequenceNumber,passportId,"",paymentTypeEnum
+                ,TransTypeEnum.RECHARGE,offsetAmount.longValue());
         currencyAccountJpaRepository.save(paymentCurrencyAccount);
         currencyOffsetLoggerJpaRepository.save(currencyOffsetLogger);
     }
