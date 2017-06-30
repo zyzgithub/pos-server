@@ -510,7 +510,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             }
         }
 
-        List<OrderTransactionRecordVo> map = orderMapper.findOrderTransactionRecordSum(merchantId
+        List<OrderTransactionRecordVo> map = orderMapper.findOrderTransactionRecordSum(merchantPassport.getId()
                 , enterType, createTime);
         if (map != null && map.size() > 0) {
             for (OrderTransactionRecordVo recordVo : map) {
