@@ -6,5 +6,8 @@ public class QRCodeURLConstant {
 
     public static final String MANAGER = BASE_URL + "manager/";
 
+    //扫码访问地址
+    public static final String QRCODE_URL = MANAGER + "qr_scan/";
+    //微信授权回调地址
     public static final String WECHAT_CALLBACK_URL = MANAGER + "to_pay/";
 }

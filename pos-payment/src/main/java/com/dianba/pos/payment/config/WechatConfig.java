@@ -1,5 +1,8 @@
 package com.dianba.pos.payment.config;
 
+import com.dianba.pos.payment.util.MD5Util;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -12,6 +15,9 @@ import java.io.UnsupportedEncodingException;
 @Configuration
 @PropertySource("classpath:properties/wechat.properties")
 public class WechatConfig {
+
+    private static Logger logger = LogManager.getLogger(WechatConfig.class);
+
     //获取网页授权地址
     @Value("${wechat.auth_code.url}")
     private String authCodeUrl;
@@ -57,7 +63,7 @@ public class WechatConfig {
     @Value("${wechat.public.apikey}")
     private String publicApiKey;
 
-    public String getAuthCodeUrl(String redirectUrl, String state) {
+    public String getAuthCodeUrl(String redirectUrl) {
         String callBackUrl = "";
         try {
             callBackUrl = java.net.URLEncoder
@@ -66,12 +72,12 @@ public class WechatConfig {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if (state == null) {
-            state = "STATE";
-        }
-        return authCodeUrl.replace("APPID", publicAppId)
+        String state = MD5Util.md5(redirectUrl + publicAppSecrect);
+        authCodeUrl = authCodeUrl.replace("APPID", publicAppId)
                 .replace("REDIRECT_URI", callBackUrl)
                 .replace("STATE", state);
+        logger.info("微信授权回调地址：" + authCodeUrl);
+        return authCodeUrl;
     }
 
     public String getAccessTokenUrl(String code) {

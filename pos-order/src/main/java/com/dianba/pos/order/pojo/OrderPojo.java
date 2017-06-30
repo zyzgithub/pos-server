@@ -11,7 +11,7 @@ public class OrderPojo implements Serializable{
     private BigDecimal actualPrice;
     private BigDecimal totalPrice;
     private String createTime;
-    private String paymenTime;
+    private String paymentTime;
     private List<OrderItemPojo> itemSnapshots;
 
     public String getId() {
@@ -54,12 +54,12 @@ public class OrderPojo implements Serializable{
         this.createTime = createTime;
     }
 
-    public String getPaymenTime() {
-        return paymenTime;
+    public String getPaymentTime() {
+        return paymentTime;
     }
 
-    public void setPaymenTime(String paymenTime) {
-        this.paymenTime = paymenTime;
+    public void setPaymentTime(String paymentTime) {
+        this.paymentTime = paymentTime;
     }
 
     public List<OrderItemPojo> getItemSnapshots() {

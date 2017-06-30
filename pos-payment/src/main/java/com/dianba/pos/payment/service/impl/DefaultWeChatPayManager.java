@@ -24,7 +24,7 @@ import java.util.Map;
 public class DefaultWeChatPayManager extends WechatPayRemoteService implements WeChatPayManager {
 
     private static Logger logger = LogManager.getLogger(DefaultWeChatPayManager.class);
-    private static final int RETRY_TIMES = 12;
+    private static final int RETRY_TIMES = 60;
 
     @Autowired
     private LifeOrderManager orderManager;
@@ -152,10 +152,14 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
         Map<String, String> query = null;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 query = queryOrder(outTradeNo);
                 if (query != null) {
                     if (StringUtils.equals(query.get("trade_state"), BarcodePayResponse.WX_TRADE_STATE_ERROR)) {
+                        return BarcodePayResponse.FAILURE;
+                    }
+                    if (StringUtils.equals(query.get("trade_state"), "NOTPAY")) {
+                        //用户取消支付！
                         return BarcodePayResponse.FAILURE;
                     }
                     if (isTradeStateSuccess(query)) {
