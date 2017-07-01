@@ -120,7 +120,7 @@ public class WechatOrderDto {
     }
 
     public void setBody(String body) {
-        this.body = "<![CDATA[" + body + "]]>";
+        this.body = body;
     }
 
     public String getDetail() {
@@ -128,7 +128,7 @@ public class WechatOrderDto {
     }
 
     public void setDetail(String detail) {
-        this.detail = "<![CDATA[" + detail + "]]>";
+        this.detail = detail;
     }
 
     public String getAttach() {
@@ -136,7 +136,7 @@ public class WechatOrderDto {
     }
 
     public void setAttach(String attach) {
-        this.attach = "<![CDATA[" + attach + "]]>";
+        this.attach = attach;
     }
 
     public String getOutTradeNo() {
