@@ -5,6 +5,6 @@ import com.xlibao.common.constant.payment.TransTypeEnum;
 
 public interface TransLoggerManager {
 
-    public void saveTransLog(String transSequenceNumber, Long passportId, String authCode
+    void saveTransLog(String transSequenceNumber, Long passportId, String authCode
             , PaymentTypeEnum paymentType, TransTypeEnum transType, Long transAmount);
 }
