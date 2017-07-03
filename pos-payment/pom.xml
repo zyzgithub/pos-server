@@ -32,16 +32,16 @@
             <artifactId>alipay-sdk</artifactId>
             <version>1.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>alipay-sdk-java</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
-            <artifactId>alipay-trade-sdk</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.dianba</groupId>-->
+            <!--<artifactId>alipay-sdk-java</artifactId>-->
+            <!--<version>1.0.1</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.dianba</groupId>-->
+            <!--<artifactId>alipay-trade-sdk</artifactId>-->
+            <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -52,12 +52,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
             <version>2.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.7</version>
         </dependency>
 
         <dependency>
@@ -73,6 +67,11 @@
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>pos-passport</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dianba</groupId>
+            <artifactId>pos-qrcode</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

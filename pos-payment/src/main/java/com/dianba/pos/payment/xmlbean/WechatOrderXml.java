@@ -18,9 +18,9 @@ import java.util.TreeMap;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "xml")
-public class WechatOrderDto {
+public class WechatOrderXml {
 
-    private static Logger logger = LogManager.getLogger(WechatOrderDto.class);
+    private static Logger logger = LogManager.getLogger(WechatOrderXml.class);
 
     @XmlElement(required = true)
     private String appid;

@@ -1,11 +1,13 @@
 package com.dianba.pos.payment.support;
 
+import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.HttpUtil;
+import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.payment.util.MD5Util;
 import com.dianba.pos.payment.util.ParamUtil;
 import com.dianba.pos.payment.util.XMLUtil;
-import com.dianba.pos.payment.xmlbean.WechatOrderDto;
+import com.dianba.pos.payment.xmlbean.WechatOrderXml;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
@@ -23,6 +25,8 @@ public class WechatPayRemoteService {
 
     @Autowired
     private WechatConfig wechatConfig;
+    @Autowired
+    private AppConfig appConfig;
 
     /**
      * 微信付款条形码付款：订单付款
@@ -30,31 +34,31 @@ public class WechatPayRemoteService {
     protected Map<String, String> payOrder(String authCode, String body, String outTradeNo
             , String attach, Integer totalFee, String deviceInfo, String spBillCreateIP
             , String goodsTag) {
-        WechatOrderDto wechatOrderDto = new WechatOrderDto();
-        wechatOrderDto.setAppid(wechatConfig.getKfzAppId());
-        wechatOrderDto.setMchId(wechatConfig.getKfzMerchantId());
-        wechatOrderDto.setAuthCode(authCode);
-        wechatOrderDto.setBody(body);
-        wechatOrderDto.setOutTradeNo(outTradeNo);
+        WechatOrderXml wechatOrderXml = new WechatOrderXml();
+        wechatOrderXml.setAppid(wechatConfig.getKfzAppId());
+        wechatOrderXml.setMchId(wechatConfig.getKfzMerchantId());
+        wechatOrderXml.setAuthCode(authCode);
+        wechatOrderXml.setBody(body);
+        wechatOrderXml.setOutTradeNo(outTradeNo);
         if (!StringUtils.isEmpty(attach)) {
-            wechatOrderDto.setAttach(attach);
+            wechatOrderXml.setAttach(attach);
         }
-        wechatOrderDto.setTotalFee(totalFee);
-        wechatOrderDto.setNonceStr(createNoncestr());
+        wechatOrderXml.setTotalFee(totalFee);
+        wechatOrderXml.setNonceStr(createNoncestr());
         if (!StringUtils.isEmpty(deviceInfo)) {
-            wechatOrderDto.setDeviceInfo(deviceInfo);
+            wechatOrderXml.setDeviceInfo(deviceInfo);
         }
         if (!StringUtils.isEmpty(spBillCreateIP)) {
-            wechatOrderDto.setSpbillCreateIp(spBillCreateIP);
+            wechatOrderXml.setSpbillCreateIp(spBillCreateIP);
         }
         String timeStart = DateTime.now().toString("yyyyMMddHHmmss");
         String timeExpire = DateTime.now().plusMinutes(5).toString("yyyyMMddHHmmss");
-        wechatOrderDto.setTimeStart(timeStart);
-        wechatOrderDto.setTimeExpire(timeExpire);
+        wechatOrderXml.setTimeStart(timeStart);
+        wechatOrderXml.setTimeExpire(timeExpire);
         if (!StringUtils.isEmpty(goodsTag)) {
-            wechatOrderDto.setGoodsTag(goodsTag);
+            wechatOrderXml.setGoodsTag(goodsTag);
         }
-        String payParamXml = wechatOrderDto.buildSign(wechatConfig.getKfzApiKey());
+        String payParamXml = wechatOrderXml.buildSign(wechatConfig.getKfzApiKey());
         return postXml(wechatConfig.getBarcodePayUrl(), payParamXml);
     }
 
@@ -64,34 +68,35 @@ public class WechatPayRemoteService {
     protected Map<String, String> payOrderByJSAPI(String openId, String body, String detail, String outTradeNo
             , String attach, Integer totalFee, String deviceInfo, String spBillCreateIP
             , String goodsTag) {
-        WechatOrderDto wechatOrderDto = new WechatOrderDto();
-        wechatOrderDto.setAppid(wechatConfig.getPublicAppId());
-        wechatOrderDto.setMchId(wechatConfig.getPublicMerchantId());
-        wechatOrderDto.setTradeType("JSAPI");
-        wechatOrderDto.setOpenid(openId);
-        wechatOrderDto.setBody(body);
-        wechatOrderDto.setDetail(detail);
-        wechatOrderDto.setOutTradeNo(outTradeNo);
-        wechatOrderDto.setNotifyUrl("http://apptest.0085.com/pos/payment/wap/notify_url/" + outTradeNo);
+        WechatOrderXml wechatOrderXml = new WechatOrderXml();
+        wechatOrderXml.setAppid(wechatConfig.getPublicAppId());
+        wechatOrderXml.setMchId(wechatConfig.getPublicMerchantId());
+        wechatOrderXml.setTradeType("JSAPI");
+        wechatOrderXml.setOpenid(openId);
+        wechatOrderXml.setBody(body);
+        wechatOrderXml.setDetail(detail);
+        wechatOrderXml.setOutTradeNo(outTradeNo);
+        wechatOrderXml.setNotifyUrl(appConfig.getPosCallBackHost()
+                + PaymentURLConstant.WAP_WETCHAT_PAY_CALL_BACK_URL + outTradeNo);
         if (!StringUtils.isEmpty(attach)) {
-            wechatOrderDto.setAttach(attach);
+            wechatOrderXml.setAttach(attach);
         }
-        wechatOrderDto.setTotalFee(totalFee);
-        wechatOrderDto.setNonceStr(createNoncestr());
+        wechatOrderXml.setTotalFee(totalFee);
+        wechatOrderXml.setNonceStr(createNoncestr());
         if (!StringUtils.isEmpty(deviceInfo)) {
-            wechatOrderDto.setDeviceInfo(deviceInfo);
+            wechatOrderXml.setDeviceInfo(deviceInfo);
         }
         if (!StringUtils.isEmpty(spBillCreateIP)) {
-            wechatOrderDto.setSpbillCreateIp(spBillCreateIP);
+            wechatOrderXml.setSpbillCreateIp(spBillCreateIP);
         }
         String timeStart = DateTime.now().toString("yyyyMMddHHmmss");
         String timeExpire = DateTime.now().plusMinutes(5).toString("yyyyMMddHHmmss");
-        wechatOrderDto.setTimeStart(timeStart);
-        wechatOrderDto.setTimeExpire(timeExpire);
+        wechatOrderXml.setTimeStart(timeStart);
+        wechatOrderXml.setTimeExpire(timeExpire);
         if (!StringUtils.isEmpty(goodsTag)) {
-            wechatOrderDto.setGoodsTag(goodsTag);
+            wechatOrderXml.setGoodsTag(goodsTag);
         }
-        String payParamXml = wechatOrderDto.buildSign(wechatConfig.getPublicApiKey());
+        String payParamXml = wechatOrderXml.buildSign(wechatConfig.getPublicApiKey());
         return postXml(wechatConfig.getOrderPayUrl(), payParamXml);
     }
 
@@ -116,12 +121,12 @@ public class WechatPayRemoteService {
      * 微信付款条形码付款：查询订单的付款状态
      */
     protected Map<String, String> queryOrder(String outTradeNo) {
-        WechatOrderDto wechatOrderDto = new WechatOrderDto();
-        wechatOrderDto.setAppid(wechatConfig.getKfzAppId());
-        wechatOrderDto.setMchId(wechatConfig.getKfzMerchantId());
-        wechatOrderDto.setNonceStr(createNoncestr());
-        wechatOrderDto.setOutTradeNo(outTradeNo);
-        String orderQueryXml = wechatOrderDto.buildSign(wechatConfig.getKfzApiKey());
+        WechatOrderXml wechatOrderXml = new WechatOrderXml();
+        wechatOrderXml.setAppid(wechatConfig.getKfzAppId());
+        wechatOrderXml.setMchId(wechatConfig.getKfzMerchantId());
+        wechatOrderXml.setNonceStr(createNoncestr());
+        wechatOrderXml.setOutTradeNo(outTradeNo);
+        String orderQueryXml = wechatOrderXml.buildSign(wechatConfig.getKfzApiKey());
         return postXml(wechatConfig.getOrderQueryUrl(), orderQueryXml);
     }
 
@@ -129,12 +134,12 @@ public class WechatPayRemoteService {
      * 微信订单撤销
      */
     protected Map<String, String> reverseOrder(String outTradeNo) {
-        WechatOrderDto wechatOrderDto = new WechatOrderDto();
-        wechatOrderDto.setAppid(wechatConfig.getKfzAppId());
-        wechatOrderDto.setMchId(wechatConfig.getKfzMerchantId());
-        wechatOrderDto.setNonceStr(createNoncestr());
-        wechatOrderDto.setOutTradeNo(outTradeNo);
-        String orderReverseXml = wechatOrderDto.buildSign(wechatConfig.getKfzApiKey());
+        WechatOrderXml wechatOrderXml = new WechatOrderXml();
+        wechatOrderXml.setAppid(wechatConfig.getKfzAppId());
+        wechatOrderXml.setMchId(wechatConfig.getKfzMerchantId());
+        wechatOrderXml.setNonceStr(createNoncestr());
+        wechatOrderXml.setOutTradeNo(outTradeNo);
+        String orderReverseXml = wechatOrderXml.buildSign(wechatConfig.getKfzApiKey());
         return postXml(wechatConfig.getOrderReverseUrl(), orderReverseXml);
     }
 

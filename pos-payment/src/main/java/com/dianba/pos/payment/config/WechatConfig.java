@@ -64,6 +64,7 @@ public class WechatConfig {
     private String publicApiKey;
 
     public String getAuthCodeUrl(String redirectUrl) {
+        String state = MD5Util.md5(redirectUrl + publicAppSecrect);
         String callBackUrl = "";
         try {
             callBackUrl = java.net.URLEncoder
@@ -72,7 +73,6 @@ public class WechatConfig {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String state = MD5Util.md5(redirectUrl + publicAppSecrect);
         authCodeUrl = authCodeUrl.replace("APPID", publicAppId)
                 .replace("REDIRECT_URI", callBackUrl)
                 .replace("STATE", state);

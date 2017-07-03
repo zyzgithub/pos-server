@@ -24,11 +24,6 @@
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
-            <artifactId>pos-merchant</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dianba</groupId>
             <artifactId>pos-passport</artifactId>
             <version>${project.version}</version>
         </dependency>

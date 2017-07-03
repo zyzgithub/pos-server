@@ -35,6 +35,7 @@
 
 
 <script th:inline="javascript">
+    var paymentType = [[${paymentType}]];
     $(function () {
         keyBoard({
             type: 'tel',
@@ -43,28 +44,31 @@
                 '确认付款': pay
             }
         });
-        alert([[${openId}]]);
         /*点击支付事件*/
         function pay() {
-//            if ($("#money").val().length == 0 || parseFloat($("#money").val()).toString() == "NaN") {
-//                $('.keyboard .pay').css({"background": "#eee", "color": "#666"});
-//                return false;
-//            }
+            if ($("#money").val().length == 0 || parseFloat($("#money").val()).toString() == "NaN") {
+                $('.keyboard .pay').css({"background": "#eee", "color": "#666"});
+                return false;
+            }
             $.ajax({
                 type: 'post',
                 url: "/pos/order/qr/create_order",
                 data: {
                     passportId: [[${passportId}]],
-                    paymentType: 'WEIXIN_JS',
+                    paymentType: paymentType,
                     amount: $('#money').val(),
                     openId: [[${openId}]]
                 },
                 dataType: 'json',
                 success: function (data) {
-                    window.location.href = "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
+                    if (paymentType == "WEIXIN_JS") {
+                        window.location.href = "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
+                    } else if (paymentType == "ALIPAY") {
+                        window.location.href = "/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                    }
                 },
                 error: function (data) {
-                    alert(data.msg + ' ' + data.code + ' ' + data.response.sequenceNumber);
+                    alert("支付失败！");
                 }
             });
         }

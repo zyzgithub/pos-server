@@ -3,7 +3,6 @@ package com.dianba.pos.payment.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.JsonHelper;
 import com.dianba.pos.item.service.PosItemManager;
 import com.dianba.pos.order.service.LifeOrderManager;
@@ -63,9 +62,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private LifePaymentCurrencyOffsetLoggerJpaRepository currencyOffsetLoggerJpaRepository;
     @Autowired
     private PosRewardManager posRewardManager;
-
-    @Autowired
-    private AppConfig appConfig;
 
     public BasicResult balancePayment(long passportId, long orderId, String paymentPassword) {
         OrderEntry orderEntry = orderManager.getOrder(orderId);
@@ -303,8 +299,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             paymentCurrencyAccount.setTotalOutputAmount(paymentCurrencyAccount.getTotalOutputAmount()
                     .add(offsetAmount.abs()));
         }
-        transLoggerManager.saveTransLog(transSequenceNumber,passportId,"",paymentTypeEnum
-                ,TransTypeEnum.RECHARGE,offsetAmount.longValue());
+        transLoggerManager.saveTransLog(transSequenceNumber, passportId, "", paymentTypeEnum
+                , TransTypeEnum.RECHARGE, offsetAmount.longValue());
         currencyAccountJpaRepository.save(paymentCurrencyAccount);
         currencyOffsetLoggerJpaRepository.save(currencyOffsetLogger);
     }
