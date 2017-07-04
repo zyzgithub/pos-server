@@ -1,12 +1,8 @@
 package com.dianba.pos.payment.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
@@ -16,11 +12,9 @@ import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
-import com.dianba.pos.payment.pojo.BizContent;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.util.IPUtil;
 import com.dianba.pos.payment.util.MD5Util;
-import com.dianba.pos.payment.util.OrderInfoUtil;
 import com.dianba.pos.payment.xmlbean.WechatReturnXml;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
@@ -127,53 +121,17 @@ public class WapPaymentController {
     }
 
 
+    /**
+     * 支付宝WAP支付
+     * @param request
+     * @param response
+     * @param sequenceNumber
+     * @throws Exception
+     */
     @RequestMapping("alipay/{sequenceNumber}")
     public void aliPay(HttpServletRequest request, HttpServletResponse response
             , @PathVariable(name = "sequenceNumber") String sequenceNumber) throws Exception {
-        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do"
-                , alipayConfig.getAppid(), alipayConfig.getRsaRrivateKey(), "json", AlipayConfig.CHARSET
-                , alipayConfig.getAlipayPublicKey());
-//        AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
-//        alipayRequest.setReturnUrl("http://apptest.0085.com/pos/qrcode/manager/show_qrcode/EWM00000051");
-//        alipayRequest.setNotifyUrl("http://apptest.0085.com/pos/qrcode/manager/show_qrcode/EWM00000051");
-//        alipayRequest.setBizContent("{" +
-//                "    \"out_trade_no\":\"98765456787654332\"," +
-//                "    \"total_amount\":0.01," +
-//                "    \"subject\":\"Iphone6 16G\"," +
-//                "    \"seller_id\":\"1212121\"," +
-//                "    \"product_code\":\"QUICK_WAP_PAY\"" +
-//                "  }");//填充业务参数
-//        String form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
-//        response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
-//        response.getWriter().write(form);//直接将完整的表单html输出到页面
-//        response.getWriter().flush();
-        String body = "我是测试数据";
-        String subject = "Javen 测试";
-        String totalAmount = "0.01";
-        String passbackParams = "1";
-
-        BizContent content = new BizContent();
-        content.setBody(body);
-        content.setOutTradeNo(OrderInfoUtil.getOutTradeNo());
-        content.setPassbackParams(passbackParams);
-        content.setSubject(subject);
-        content.setTotalAmount(totalAmount);
-        content.setProductCode("QUICK_WAP_PAY");
-        try {
-            AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
-            //在公共参数中设置回跳和通知地址
-            alipayRequest.setReturnUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_RETURN_URL);
-            alipayRequest.setNotifyUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_NOTIFY_URL);
-            //参数参考 https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1#s0
-            System.out.println(JSON.toJSONString(content));
-            alipayRequest.setBizContent(JSON.toJSONString(content));//填充业务参数
-            String form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
-            response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
-            response.getWriter().write(form);//直接将完整的表单html输出到页面
-            response.getWriter().flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        wapPaymentManager.aliPayByOutHtml(response, sequenceNumber);
     }
 
     @RequestMapping("aliPayReturnUrl")

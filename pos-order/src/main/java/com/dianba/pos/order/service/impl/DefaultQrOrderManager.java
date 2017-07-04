@@ -33,6 +33,7 @@ public class DefaultQrOrderManager implements QROrderManager {
         lifeOrder.setPartnerUserId(passportId + "");
         lifeOrder.setCreateTime(new Date());
         lifeOrder.setShippingPassportId(merchantPassport.getId());
+        lifeOrder.setShippingNickName(merchantPassport.getShowName());
         lifeOrder.setReceiptUserId(openId);
         lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
         lifeOrder.setType(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey());
