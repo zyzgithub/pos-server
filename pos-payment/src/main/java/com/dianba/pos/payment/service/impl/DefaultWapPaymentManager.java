@@ -15,7 +15,6 @@ import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.pojo.BizContent;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.service.WeChatPayManager;
-import com.dianba.pos.payment.util.OrderInfoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +54,7 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
             String passbackParams = "1";
             BizContent content = new BizContent();
             content.setBody(body);
-            content.setOutTradeNo(OrderInfoUtil.getOutTradeNo());
+            content.setOutTradeNo(sequenceNumber);
             content.setPassbackParams(passbackParams);
             content.setSubject(body);
             content.setTotalAmount(lifeOrder.getTotalPrice() + "");
@@ -75,7 +74,8 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            throw new PosNullPointerException("订单不存在!");
         }
-        throw new PosNullPointerException("订单不存在!");
     }
 }

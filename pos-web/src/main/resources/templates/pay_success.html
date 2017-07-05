@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
 >
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title></title>
     <link th:href="@{/css/base.css}" rel="stylesheet"/>
@@ -20,7 +20,7 @@
         }
 
         .payTitle {
-            color: #666;
+            color: #4EC320;
             text-align: center;
             font-size: 16px;
         }
@@ -36,7 +36,7 @@
         .payBtn {
             height: auto;
             width: 70%;
-            background: #D81e06;
+            background: #44C013;
             color: #fff;
             font-size: 14px;
             text-align: center;
@@ -49,8 +49,10 @@
 </head>
 <body>
 <div class="success">
-    <img class="successLogo" th:src="@{/img/error.png}"/>
-    <p class="payTitle">支付失败</p>
+    <img class="successLogo" th:src="@{/img/success.png}"/>
+    <p class="payTitle">支付成功</p>
+    <p class="num" th:value="${amount}">0</p>
+    <a href="javascript:AlipayJSBridge.call('closeWebview');" class="payBtn">完成</a>
 </div>
 <script>
 </script>

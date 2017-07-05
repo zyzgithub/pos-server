@@ -1,5 +1,7 @@
 package com.dianba.pos.payment.util;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -20,5 +22,13 @@ public class ParamUtil {
             sb = sb.append(key).append("=").append(map.get(key)).append("&");
         }
         return sb.toString();
+    }
+
+    public static Map<String, String> convertRequestMap(HttpServletRequest request) {
+        Map<String, String> paramsMap = new HashMap<>();
+        for (Object key : request.getParameterMap().keySet()) {
+            paramsMap.put(key.toString(), request.getParameter(key.toString()));
+        }
+        return paramsMap;
     }
 }

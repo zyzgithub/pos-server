@@ -63,7 +63,8 @@ public class DefaultPosRewardManager implements PosRewardManager {
         if (PaymentTypeEnum.CASH.getKey().equals(paymentTypeEnum.getKey())) {
             type = 0;
         } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(paymentTypeEnum.getKey())
-                || PaymentTypeEnum.ALIPAY.getKey().equals(paymentTypeEnum.getKey())) {
+                || PaymentTypeEnum.ALIPAY.getKey().equals(paymentTypeEnum.getKey())
+                || PaymentTypeEnum.WEIXIN_JS.getKey().equals(paymentTypeEnum.getKey())) {
             type = 1;
         } else {
             return BigDecimal.ZERO;
