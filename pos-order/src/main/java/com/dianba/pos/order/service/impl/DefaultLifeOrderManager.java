@@ -82,10 +82,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
 
     public LifeOrderVo getLifeOrder(long orderId, boolean convertRMBUnit) {
         LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
-        if (convertRMBUnit) {
-            lifeOrderTransformation(lifeOrder);
-        }
         LifeOrderVo lifeOrderVo = new LifeOrderVo();
+        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
+        if (convertRMBUnit) {
+            lifeOrderTransformation(lifeOrderVo);
+        }
         BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
@@ -97,19 +98,21 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         return lifeOrderVo;
     }
 
-    public LifeOrder getLifeOrder(String sequenceNumber) {
+    public LifeOrderVo getLifeOrder(String sequenceNumber) {
         return getLifeOrder(sequenceNumber, true);
     }
 
-    public LifeOrder getLifeOrder(String sequenceNumber, boolean convertRMBUnit) {
+    public LifeOrderVo getLifeOrder(String sequenceNumber, boolean convertRMBUnit) {
         LifeOrder lifeOrder = orderJpaRepository.findBySequenceNumber(sequenceNumber);
+        LifeOrderVo lifeOrderVo = new LifeOrderVo();
+        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (convertRMBUnit) {
-            lifeOrderTransformation(lifeOrder);
+            lifeOrderTransformation(lifeOrderVo);
         }
-        return lifeOrder;
+        return lifeOrderVo;
     }
 
-    private void lifeOrderTransformation(LifeOrder lifeOrder) {
+    private void lifeOrderTransformation(LifeOrderVo lifeOrder) {
         lifeOrder.setActualPrice(lifeOrder.getActualPrice()
                 .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
         lifeOrder.setTotalPrice(lifeOrder.getTotalPrice()
@@ -358,15 +361,21 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
 
     public BasicResult getOrderForPos(Long passportId, Integer orderType, Integer orderStatus
             , Integer pageNum, Integer pageSize) {
-        Page<LifeOrder> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
+        Page<LifeOrderVo> orderPage = PageHelper.startPage(pageNum, pageSize).doSelectPage(()
                 -> orderMapper.findOrderForPos(passportId, orderType, orderStatus));
+        List<LifeOrderVo> lifeOrderVos = new ArrayList<>();
+        for (int i = 0; i < orderPage.size(); i++) {
+            LifeOrderVo lifeOrderVo = new LifeOrderVo();
+            BeanUtils.copyProperties(orderPage.get(i), lifeOrderVo);
+            lifeOrderVos.add(lifeOrderVo);
+        }
         List<Long> orderIds = new ArrayList<>();
-        for (LifeOrder lifeOrder : orderPage) {
+        for (LifeOrderVo lifeOrder : lifeOrderVos) {
             orderIds.add(lifeOrder.getId());
         }
         if (orderIds.size() != 0) {
             List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
-            for (LifeOrder lifeOrder : orderPage) {
+            for (LifeOrderVo lifeOrder : lifeOrderVos) {
                 List<LifeOrderItemSnapshot> itemSnapshots = new ArrayList<>();
                 for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
                     if (itemSnapshot.getOrderId().longValue() == lifeOrder.getId().longValue()) {
@@ -378,7 +387,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             }
         }
         BasicResult basicResult = BasicResult.createSuccessResult();
-        basicResult.setResponseDatas(orderPage);
+        basicResult.setResponseDatas(lifeOrderVos);
         basicResult.getResponse().put("pageNum", pageNum);
         basicResult.getResponse().put("pageSize", pageSize);
         basicResult.getResponse().put("total", orderPage.getTotal());

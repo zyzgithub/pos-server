@@ -1,5 +1,6 @@
 package com.dianba.pos.payment.po;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "life_payment.payment_currency_account")
 @DynamicUpdate
+@DynamicInsert
 public class LifePaymentCurrencyAccount {
 
     @Id

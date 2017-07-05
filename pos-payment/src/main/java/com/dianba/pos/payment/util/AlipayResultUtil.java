@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 
 public class AlipayResultUtil {
 
-    public static final String ALIPAY_SUCCESS = "SUCCESS";
+    public static final String ALIPAY_SUCCESS = "TRADE_SUCCESS";
 
     public static boolean isSuccess(HttpServletRequest request) {
         String tradeStatus = request.getParameter("trade_status");

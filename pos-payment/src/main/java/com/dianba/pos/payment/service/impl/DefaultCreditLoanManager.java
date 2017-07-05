@@ -109,7 +109,7 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.UNKNOWN;
         //保存支付信息
         transLoggerManager.saveTransLog(orderEntry.getSequenceNumber()
-                , passportId, "", paymentTypeEnum, TransTypeEnum.SUPPLYCHAIN_INCOME
+                , passportId, paymentTypeEnum, TransTypeEnum.SUPPLYCHAIN_INCOME
                 , orderEntry.getTotalPrice());
         //通知订单系统，订单已经支付
         basicResult = orderManager.paymentOrder(orderEntry.getId(), paymentTypeEnum);

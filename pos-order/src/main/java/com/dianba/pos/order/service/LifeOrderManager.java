@@ -1,7 +1,6 @@
 package com.dianba.pos.order.service;
 
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.pojo.OrderItemPojo;
 import com.dianba.pos.order.pojo.OrderPojo;
 import com.dianba.pos.order.vo.LifeOrderVo;
@@ -44,12 +43,12 @@ public interface LifeOrderManager {
     /**
      * 获取订单详情，使用订单编码
      */
-    LifeOrder getLifeOrder(String sequenceNumber);
+    LifeOrderVo getLifeOrder(String sequenceNumber);
 
     /**
      * 获取订单详情，使用订单编码
      */
-    LifeOrder getLifeOrder(String sequenceNumber, boolean convertRMBUnit);
+    LifeOrderVo getLifeOrder(String sequenceNumber, boolean convertRMBUnit);
 
     /*
      * 预创建订单-2.0
@@ -99,13 +98,14 @@ public interface LifeOrderManager {
 
     /**
      * POS端交易记录
+     *
      * @param merchantId
      * @param enterType
      * @param createTime
      * @return
      */
-    BasicResult findOrderTransactionRecord(Long merchantId,Integer enterType,String createTime
-            ,Integer pageNum, Integer pageSize);
+    BasicResult findOrderTransactionRecord(Long merchantId, Integer enterType, String createTime
+            , Integer pageNum, Integer pageSize);
 
 
 }

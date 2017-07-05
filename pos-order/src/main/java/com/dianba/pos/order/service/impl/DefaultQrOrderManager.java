@@ -36,7 +36,7 @@ public class DefaultQrOrderManager implements QROrderManager {
         lifeOrder.setShippingNickName(merchantPassport.getShowName());
         lifeOrder.setReceiptUserId(openId);
         lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
-        lifeOrder.setType(OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey());
+        lifeOrder.setType(OrderTypeEnum.SCAN_ORDER_TYPE.getKey());
         lifeOrder.setPaymentType("-1");
         lifeOrder.setTransType(paymentType.getKey());
         long price = amount.multiply(BigDecimal.valueOf(100)).longValue();

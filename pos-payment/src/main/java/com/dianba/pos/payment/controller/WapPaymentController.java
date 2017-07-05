@@ -143,13 +143,10 @@ public class WapPaymentController {
             boolean verifyResult = AlipaySignature.rsaCheckV1(ParamUtil.convertRequestMap(request)
                     , alipayConfig.getAlipayPublicKey()
                     , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);//调用SDK验证签名
-            if (verifyResult) {
-                String amount = request.getParameter("total_amount");
-                modelAndView.setViewName("pay_success");
-                modelAndView.addObject("amount", amount);
-            } else {
-                modelAndView.setViewName("pay_error");
-            }
+            logger.info("验签结果：" + verifyResult);
+            String amount = request.getParameter("total_amount");
+            modelAndView.setViewName("pay_success");
+            modelAndView.addObject("amount", amount);
         } catch (AlipayApiException e) {
             modelAndView.setViewName("pay_error");
             e.printStackTrace();
@@ -161,22 +158,20 @@ public class WapPaymentController {
     @RequestMapping("aliPayNotifyUrl")
     public void aliPayNotifyUrl(HttpServletRequest request, HttpServletResponse response) {
         logger.info("支付宝异步通知开始！");
-        String text;
+        String text = "success";
         try {
-            logger.info("alipayPulicKey>" + alipayConfig.getAlipayPublicKey());
             boolean signVerified = AlipaySignature.rsaCheckV1(ParamUtil.convertRequestMap(request)
                     , alipayConfig.getAlipayPublicKey()
-                    , AlipayConfig.CHARSET); //调用SDK验证签名
+                    , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE); //调用SDK验证签名
+            logger.info("验签结果：" + signVerified);
             if (signVerified) {
                 if (AlipayResultUtil.isSuccess(request)) {
                     String sequenceNumber = request.getParameter("out_trade_no");
                     String buyerId = request.getParameter("buyer_id");
+                    logger.info("支付宝扫码订单更新！" + sequenceNumber);
                     paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
-                            , false);
+                            , false, false);
                 }
-                text = "success";
-            } else {
-                text = "failure";
             }
         } catch (AlipayApiException e) {
             text = "failure";
@@ -226,7 +221,8 @@ public class WapPaymentController {
             String squenceNumber = resultMap.get("out_trade_no");
             String totalAmount = resultMap.get("total_fee");
             String openId = resultMap.get("openid");
-            paymentManager.processPaidOrder(squenceNumber, openId, PaymentTypeEnum.WEIXIN_JS, false);
+            paymentManager.processPaidOrder(squenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
+                    , false, false);
         } else {
             String errMsg = WechatResultUtil.getErrorMsg(resultMap);
             logger.info("支付失败！" + errMsg);

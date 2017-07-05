@@ -107,7 +107,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             params.put("paymentPassword", paymentPassword);
             basicResult = postPay(BALANCE_PAYMENT, params);
             if (basicResult.isSuccess()) {
-                return completeOrder(lifeOrder, PaymentTypeEnum.BALANCE, TransTypeEnum.PAYMENT, true);
+                return completeOrder(lifeOrder, "", PaymentTypeEnum.BALANCE, TransTypeEnum.PAYMENT
+                        , false, true);
             }
         }
         return basicResult;
@@ -141,10 +142,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     public BasicResult payOrder(long passportId, long orderId, String paymentTypeKey
             , String authCode) throws Exception {
         LifeOrder lifeOrder = orderManager.getLifeOrder(orderId, false);
-        TransTypeEnum transTypeEnum = TransTypeEnum.PAYMENT;
-        if (OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey() == lifeOrder.getType()) {
-            transTypeEnum = TransTypeEnum.SUPPLYCHAIN_INCOME;
-        }
         PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(paymentTypeKey);
         BarcodePayResponse barcodePayResponse;
         if (paymentTypeEnum.getKey().equals(PaymentTypeEnum.ALIPAY.getKey())) {
@@ -167,16 +164,17 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             throw new Exception("不支持的支付类型！" + paymentTypeEnum.getKey());
         }
         if (barcodePayResponse.isSuccess()) {
-            return processPaidOrder(lifeOrder, authCode, paymentTypeEnum, true);
+            return processPaidOrder(lifeOrder, authCode, paymentTypeEnum, true, true);
         } else {
             logger.info("支付失败！订单ID：" + orderId + "，返回：" + barcodePayResponse.getMsg());
             return BasicResult.createFailResult(barcodePayResponse.getMsg());
         }
     }
 
-    private BasicResult completeOrder(LifeOrder lifeOrder
+    @Transactional
+    private BasicResult completeOrder(LifeOrder lifeOrder, String userCode
             , PaymentTypeEnum paymentTypeEnum, TransTypeEnum transTypeEnum
-            , boolean returnOrderInfo) {
+            , boolean rewardOrder, boolean returnOrderInfo) {
         BasicResult basicResult = BasicResult.createSuccessResult();
         try {
             //通知订单系统，订单已经支付
@@ -194,10 +192,10 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 if (!paymentTypeEnum.equals(PaymentTypeEnum.CASH)) {
                     //对商家余额进行偏移计算
                     OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(lifeOrder.getType());
-                    long offsetAmount = 0;
+                    BigDecimal offsetAmount = BigDecimal.ZERO;
                     if (orderTypeEnum.getKey() == OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey()) {
                         if (lifeOrder.getTotalPrice().compareTo(lifeOrder.getActualPrice()) > 0) {
-                            offsetAmount = lifeOrder.getTotalPrice().subtract(lifeOrder.getActualPrice()).longValue();
+                            offsetAmount = lifeOrder.getTotalPrice().subtract(lifeOrder.getActualPrice());
                         }
                     } else if (orderTypeEnum.getKey() == OrderTypeEnum.SCAN_ORDER_TYPE.getKey()) {
                         //进行扣点计算
@@ -211,30 +209,27 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                                 commissionRate = BigDecimal.ZERO;
                             }
                         }
-                        BigDecimal amount = lifeOrder.getTotalPrice().subtract(
+                        offsetAmount = lifeOrder.getTotalPrice().subtract(
                                 lifeOrder.getTotalPrice().multiply(commissionRate)
                         ).setScale(0, BigDecimal.ROUND_HALF_UP);
-                        offsetAmount = amount.longValue();
                     } else if (orderTypeEnum.getKey() == OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey()) {
-                        offsetAmount = -lifeOrder.getTotalPrice().longValue();
+                        offsetAmount = BigDecimal.ZERO.subtract(lifeOrder.getTotalPrice());
                     } else if (orderTypeEnum.getKey() == OrderTypeEnum.POS_SETTLEMENT_ORDER_TYPE.getKey()) {
-                        offsetAmount = lifeOrder.getTotalPrice().longValue();
+                        offsetAmount = lifeOrder.getTotalPrice();
                     }
-                    if (offsetAmount != 0) {
+                    if (offsetAmount.compareTo(BigDecimal.ZERO) != 0) {
                         //对商家余额进行余额偏移
-                        basicResult = offsetBalance(lifeOrder.getShippingPassportId(), lifeOrder.getSequenceNumber()
-                                , offsetAmount, transTypeEnum);
-                        if (!basicResult.isSuccess()) {
-                            logger.info("余额偏移处理失败！订单ID:" + lifeOrder.getId()
-                                    + "，错误消息：" + basicResult.getMsg());
-                        }
+                        offsetBalance(lifeOrder.getShippingPassportId(), lifeOrder.getSequenceNumber()
+                                , offsetAmount, paymentTypeEnum, transTypeEnum);
                     }
                 }
-                //消费返现
-                offsetRewardAmount = posRewardManager.offsetRewardAmount(lifeOrder.getShippingPassportId()
-                        , lifeOrder.getId(), lifeOrder.getType(), paymentTypeEnum);
-                offsetVipBalance(lifeOrder.getShippingPassportId(), lifeOrder.getSequenceNumber()
-                        , offsetRewardAmount, paymentTypeEnum);
+                if (rewardOrder) {
+                    //消费返现
+                    offsetRewardAmount = posRewardManager.offsetRewardAmount(lifeOrder.getShippingPassportId()
+                            , lifeOrder.getId(), lifeOrder.getType(), paymentTypeEnum);
+                    offsetVipBalance(lifeOrder.getShippingPassportId(), lifeOrder.getSequenceNumber()
+                            , offsetRewardAmount, paymentTypeEnum);
+                }
             } else {
                 logger.info("订单确认支付失败！订单ID:" + lifeOrder.getId() + "，错误消息：" + basicResult.getMsg());
             }
@@ -253,19 +248,40 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         return basicResult;
     }
 
-    public BasicResult offsetBalance(Long passportId, String transSequenceNumber
-            , Long offsetAmount, TransTypeEnum transTypeEnum) {
-        Map<String, String> params = new HashMap<>();
-        params.put("passportId", String.valueOf(passportId));
-        //余额偏移数额
-        params.put("offsetAmount", offsetAmount + "");
-        //交易标题
-        params.put("transTitle", transTypeEnum.getValue());
-        //交易类型
-        params.put("transType", transTypeEnum.getKey() + "");
-        //交易订单号
-        params.put("transSequenceNumber", transSequenceNumber + "");
-        return postPay(OFFSET_BALANCE, params);
+    @Transactional
+    public void offsetBalance(Long passportId, String transSequenceNumber
+            , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum, TransTypeEnum transTypeEnum) {
+        Passport passport = passportManager.findById(passportId);
+        if (offsetAmount.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+        LifePaymentCurrencyAccount paymentCurrencyAccount = currencyAccountJpaRepository
+                .findByPassportIdAndChannelIdAndCurrencyType(passportId, passport.getFromChannel()
+                        , CurrencyTypeEnum.BALANCE.getKey());
+        LifePaymentCurrencyOffsetLogger currencyOffsetLogger = new LifePaymentCurrencyOffsetLogger();
+        currencyOffsetLogger.setPassportId(passportId);
+        currencyOffsetLogger.setChannelId(passport.getFromChannel());
+        currencyOffsetLogger.setCurrencyType(CurrencyTypeEnum.BALANCE.getKey());
+        currencyOffsetLogger.setBeforeAmount(paymentCurrencyAccount.getCurrentAmount());
+        currencyOffsetLogger.setOffsetAmount(offsetAmount);
+        currencyOffsetLogger.setAfterAmount(paymentCurrencyAccount.getCurrentAmount().add(offsetAmount));
+        currencyOffsetLogger.setTransType(PaymentTypeEnum.BALANCE.getKey());
+        currencyOffsetLogger.setTransTitle(TransTypeEnum.PAYMENT.getValue());
+        currencyOffsetLogger.setRelationTransType(TransTypeEnum.PAYMENT.getKey());
+        currencyOffsetLogger.setRelationTransSequence(transSequenceNumber);
+        paymentCurrencyAccount.setCurrentAmount(paymentCurrencyAccount.getCurrentAmount().add(offsetAmount));
+        if (offsetAmount.compareTo(BigDecimal.ZERO) > 0) {
+            paymentCurrencyAccount.setTotalIntoAmount(paymentCurrencyAccount.getTotalIntoAmount().add(offsetAmount));
+        } else {
+            paymentCurrencyAccount.setTotalOutputAmount(paymentCurrencyAccount.getTotalOutputAmount()
+                    .add(offsetAmount.abs()));
+        }
+        //保存余额流水
+        transLoggerManager.saveTransLog(transSequenceNumber
+                , passportId, PaymentTypeEnum.BALANCE, transTypeEnum, offsetAmount.longValue());
+        currencyAccountJpaRepository.save(paymentCurrencyAccount);
+        currencyOffsetLogger = currencyOffsetLoggerJpaRepository.save(currencyOffsetLogger);
+        logger.info(currencyOffsetLogger.getId());
     }
 
     @Transactional
@@ -296,29 +312,28 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             paymentCurrencyAccount.setTotalOutputAmount(paymentCurrencyAccount.getTotalOutputAmount()
                     .add(offsetAmount.abs()));
         }
-        transLoggerManager.saveTransLog(transSequenceNumber, passportId, "", paymentTypeEnum
+        //保存充值返利流水
+        transLoggerManager.saveTransLog(transSequenceNumber, passportId, paymentTypeEnum
                 , TransTypeEnum.RECHARGE, offsetAmount.longValue());
         currencyAccountJpaRepository.save(paymentCurrencyAccount);
         currencyOffsetLoggerJpaRepository.save(currencyOffsetLogger);
     }
 
-    @Override
+    @Transactional
     public BasicResult processPaidOrder(LifeOrder lifeOrder, String userCode, PaymentTypeEnum paymentTypeEnum
-            , boolean returnOrderInfo) {
+            , boolean rewardOrder, boolean returnOrderInfo) {
         TransTypeEnum transTypeEnum = TransTypeEnum.PAYMENT;
-        BasicResult basicResult = completeOrder(lifeOrder, paymentTypeEnum, transTypeEnum, returnOrderInfo);
-        if (basicResult.isSuccess()) {
-            //保存支付信息
-            transLoggerManager.saveTransLog(lifeOrder.getSequenceNumber()
-                    , lifeOrder.getShippingPassportId(), userCode
-                    , paymentTypeEnum, transTypeEnum, lifeOrder.getTotalPrice().longValue());
+        if (OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey() == lifeOrder.getType()) {
+            transTypeEnum = TransTypeEnum.SUPPLYCHAIN_INCOME;
         }
-        return basicResult;
+        return completeOrder(lifeOrder, userCode, paymentTypeEnum, transTypeEnum
+                , rewardOrder, returnOrderInfo);
     }
 
+    @Transactional
     public BasicResult processPaidOrder(String sequenceNum, String userCode, PaymentTypeEnum paymentTypeEnum
-            , boolean returnOrderInfo) {
+            , boolean rewardOrder, boolean returnOrderInfo) {
         LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNum, false);
-        return processPaidOrder(lifeOrder, userCode, paymentTypeEnum, returnOrderInfo);
+        return processPaidOrder(lifeOrder, userCode, paymentTypeEnum, rewardOrder, returnOrderInfo);
     }
 }

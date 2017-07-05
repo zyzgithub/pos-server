@@ -51,7 +51,7 @@
 <div class="success">
     <img class="successLogo" th:src="@{/img/success.png}"/>
     <p class="payTitle">支付成功</p>
-    <p class="num" th:value="${amount}">0</p>
+    <p class="num" th:text="${amount}">0</p>
     <a href="javascript:AlipayJSBridge.call('closeWebview');" class="payBtn">完成</a>
 </div>
 <script>

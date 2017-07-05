@@ -24,7 +24,7 @@ public class DefaultTransLoggerManager implements TransLoggerManager {
     private LifePaymentTransLoggerJpaRepository transLoggerJpaRepository;
 
     @Transactional
-    public void saveTransLog(String transSequenceNumber, Long passportId, String authCode
+    public void saveTransLog(String transSequenceNumber, Long passportId
             , PaymentTypeEnum paymentType, TransTypeEnum transType, Long transAmount) {
         LifePaymentTransactionLogger transactionLogger = new LifePaymentTransactionLogger();
         transactionLogger.setTransSequenceNumber(transSequenceNumber);
@@ -44,7 +44,7 @@ public class DefaultTransLoggerManager implements TransLoggerManager {
         transactionLogger.setPartnerId(appConfig.getPosPartnerId());
         transactionLogger.setAppId(appConfig.getPosAppId());
         transactionLogger.setPartnerUserId(passportId + "");
-        transactionLogger.setPartnerTradeNumber(authCode);
+        transactionLogger.setPartnerTradeNumber("");
         transactionLogger.setChannelId(paymentType.getChannelId());
         transactionLogger.setTransUnitAmount(transAmount);
         transactionLogger.setTransNumber(1);

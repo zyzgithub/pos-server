@@ -30,7 +30,7 @@ public class DefaultMTOrderManager implements MTOrderManager {
         List<LifeOrder> fixedOrders = new ArrayList<>();
         for (LifeOrder lifeOrder : lifeOrders) {
             BasicResult basicResult = paymentManager.processPaidOrder(lifeOrder.getSequenceNumber()
-                    , "", PaymentTypeEnum.WEIXIN_NATIVE, false);
+                    , "", PaymentTypeEnum.WEIXIN_NATIVE, true, false);
             if (basicResult.isSuccess()) {
                 fixedOrders.add(lifeOrder);
             } else {
