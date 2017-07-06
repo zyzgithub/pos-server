@@ -1,4 +1,5 @@
 package com.dianba.pos.order.vo;
+import com.dianba.pos.common.util.StringUtil;
 import java.math.BigDecimal;
 
 /**
@@ -13,7 +14,15 @@ public class OrderTransactionRecordVo {
     private BigDecimal totalPrice;
     private BigDecimal actualPrice;
     private Integer count;
+    private Integer countMap;
 
+    public Integer getCountMap() {
+        return countMap;
+    }
+
+    public void setCountMap(Integer countMap) {
+        this.countMap = countMap;
+    }
 
     public Long getId() {
         return id;
@@ -24,7 +33,12 @@ public class OrderTransactionRecordVo {
     }
 
     public String getItemName() {
-        return itemName;
+        if(StringUtil.isEmpty(itemName)){
+            return "扫码支付";
+        }else{
+            return itemName;
+        }
+
     }
 
     public void setItemName(String itemName) {
@@ -72,7 +86,13 @@ public class OrderTransactionRecordVo {
     }
 
     public Integer getCount() {
-        return count;
+
+        if(StringUtil.isEmpty(itemName)){
+            return 1;
+        }else {
+            return count;
+        }
+
     }
 
     public void setCount(Integer count) {

@@ -548,17 +548,34 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         BigDecimal cashMoney = new BigDecimal(0);
         BigDecimal zfbMoney = new BigDecimal(0);
         BigDecimal a = new BigDecimal(100);
+        List<Long> orderIds = new ArrayList<>();
+        for (OrderTransactionRecordVo lifeOrder : list) {
+            orderIds.add(lifeOrder.getId());
+        }
         if (list.size() > 0) {
+            List<LifeOrderItemSnapshot> orderItemSnapshots = itemSnapshotJpaRepository.findByOrderIdIn(orderIds);
             for (OrderTransactionRecordVo recordVo : list) {
-                if (recordVo.getCount() > 1) {
-                    recordVo.setItemName(recordVo.getItemName() + "等..." + recordVo.getCount() + "件商品");
+                List<LifeOrderItemSnapshot> itemSnapshots = new ArrayList<>();
+                for (LifeOrderItemSnapshot itemSnapshot : orderItemSnapshots) {
+                    if (itemSnapshot.getOrderId().longValue() == recordVo.getId().longValue()) {
+                        itemSnapshots.add(itemSnapshot);
+                        recordVo.setItemName(itemSnapshot.getItemName());
+                    }
+                }
+                recordVo.setCount(itemSnapshots.size());
+            }
+
+            for (OrderTransactionRecordVo recordVo : list) {
+                if (recordVo.getCount()>1) {
+                    recordVo.setItemName(recordVo.getItemName() + "等..." + recordVo.getCount()+ "件商品");
                 }
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType("现金");
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
                     recordVo.setTransType("支付宝");
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
+                        ||PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     recordVo.setTransType("微信");
                 }
 
@@ -574,13 +591,13 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             for (OrderTransactionRecordVo recordVo : map) {
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
-                    cashSum = recordVo.getCount();
+                    cashSum = recordVo.getCountMap();
                     cashMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
-                    zfbSum = recordVo.getCount();
+                    zfbSum = recordVo.getCountMap();
                     zfbMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
-                    wxSum = recordVo.getCount();
+                    wxSum = recordVo.getCountMap();
                     wxMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }
             }
