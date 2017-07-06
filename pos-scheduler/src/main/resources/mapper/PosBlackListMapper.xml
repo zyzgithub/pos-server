@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.scheduler.mapper.PosBlackListMapper">
+
+    <!-- 先查找出未刷单的商家,然后检测每个商家是否进行过刷单,有就添加到黑名单进行处理-->
+    <select id="findWhiteList" resultType="java.util.Map">
+        SELECT shipping_passport_id passportId FROM life_order.order_entry WHERE type in (4,9)
+        AND date_format(create_time, '%Y-%m-%d %k:%i:%s') > (SUBDATE(now(),interval 10 minute))
+        AND shipping_passport_id not in (SELECT passport_id FROM life_pos.pos_black_list)
+        GROUP BY shipping_passport_id
+    </select>
+    <!--根据白名单用户进行刷单行为检测,并进行拉黑处理-->
+    <select id="findScalpListByPassport" resultType="com.dianba.pos.scheduler.vo.ScalpListByPassportVo">
+        SELECT * FROM (
+        SELECT
+        A.shippingPassportId passportId,TIMESTAMPDIFF(SECOND,B.createTime,A.createTime) seconds
+        FROM (
+        SELECT
+        a.shipping_passport_id shippingPassportId,
+        a.create_time createTime,
+        (@i := @i + 1) AS num
+        FROM life_order.order_entry a, (SELECT @i := 1) d
+        WHERE date_format(a.create_time, '%Y-%m-%d %k:%i:%s') > (SUBDATE(now(),interval 10 minute))
+        AND a.shipping_passport_id = #{passportId}
+        ORDER BY a.create_time DESC
+        ) AS A
+        LEFT JOIN (
+        SELECT
+        b.create_time createTime,
+        (@j := @j + 1) AS num
+        FROM life_order.order_entry b, (SELECT @j := 0) c
+        WHERE date_format(b.create_time, '%Y-%m-%d %k:%i:%s') > (SUBDATE(now(),interval 10 minute))
+        AND b.shipping_passport_id = #{passportId}
+        ORDER BY b.create_time DESC
+        ) AS B ON A.num=B.num
+        ) sb
+    </select>
+</mapper>
