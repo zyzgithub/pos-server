@@ -578,8 +578,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
                 } else if(PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())){
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
+                } else if(PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())){
+                    recordVo.setTransType(PaymentTypeEnum.UNKNOWN.getValue());
                 }
-
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 lst.add(recordVo);
