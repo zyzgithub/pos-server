@@ -1,6 +1,7 @@
 package com.dianba.pos.payment.service;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.order.po.LifeOrder;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
 
@@ -48,12 +49,30 @@ public interface PaymentManager {
     /**
      * 商户余额变更
      */
-    BasicResult offsetBalance(Long passportId, String transSequenceNumber
-            , Long offsetAmount, TransTypeEnum transTypeEnum);
+    void offsetBalance(Long passportId, String transSequenceNumber
+            , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum, TransTypeEnum transTypeEnum);
 
     /**
      * 商户会员余额变更
      */
     void offsetVipBalance(Long passportId, String transSequenceNumber
             , BigDecimal offsetAmount, PaymentTypeEnum paymentTypeEnum);
+
+    /**
+     * 处理已支付订单（更新为已支付，且增加余额，返利等）
+     *
+     * @param lifeOrder 订单
+     * @param userCode  authcode用户条码/openid用户公众号ID
+     */
+    BasicResult processPaidOrder(LifeOrder lifeOrder, String userCode, PaymentTypeEnum paymentTypeEnum
+            , boolean rewardOrder, boolean returnOrderInfo);
+
+    /**
+     * 处理已支付订单（更新为已支付，且增加余额，返利等）
+     *
+     * @param sequenceNum 订单编号
+     * @param userCode    authcode用户条码/openid用户公众号ID
+     */
+    BasicResult processPaidOrder(String sequenceNum, String userCode, PaymentTypeEnum paymentTypeEnum
+            , boolean rewardOrder, boolean returnOrderInfo);
 }

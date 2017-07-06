@@ -123,13 +123,13 @@
 					shift = false;
 				}
 				/* 添加字符 */
-				if($write.val().length>5) return false;
-				var addtextNum = _tool.getCursortPosition();
-				var addArr = $write.val().split("");
-				addArr.splice(addtextNum,0,character);
-				addArr = addArr.join(",").replace(/,/g, "");
-				$write.val(addArr);
-				//$write.val($write.val() + character);
+//				if($write.val().length>5) return false;
+//				var addtextNum = _tool.getCursortPosition();
+//				var addArr = $write.val().split("");
+//				addArr.splice(addtextNum,0,character);
+//				addArr = addArr.join(",").replace(/,/g, "");
+//				$write.val(addArr);
+				$write.val($write.val() + character);
 				
 				// 存在change事件 则执行
 				if($write.attr('event-change')){
@@ -154,8 +154,8 @@
 	        }
 	       	 return pos;
 		}
-	}
-	
+	};
+
 	// 键盘配置
 	var _option = {
 		tel : {
@@ -178,14 +178,14 @@
 				,"<li class='b-r b-t'>1</li>"
 				,"<li class='b-r b-t'>2</li>"
 				,"<li class='b-r b-t'>3</li>"
-				,"<li class='b-t delete'>del</li>"
+				,"<li class='b-t delete'><image class='removeIcon' src='/pos/img/remove.png'/></li>"
 				,"<li class='b-r b-t clear'>4</li>"
 				,"<li class='b-r b-t'>5</li>"
 				,"<li class='b-r b-t'>6</li>"
 				,"<li class='b-r b-t clear'>7</li>"
 				,"<li class='b-r b-t'>8</li>"
 				,"<li class='b-r b-t'>9</li>"
-				,"<li class='b-r b-t clear down'>hide</li>"
+				,"<li class='b-r b-t clear down'><image class='downIcon' src='/pos/img/key.png' /></li>"
 				,"<li class='b-r b-t'>0</li>"
 				,"<li class='b-r b-t'>.</li>"
 				,"<li class='b-t pay'>确认付款</li></ul>"

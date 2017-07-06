@@ -2,7 +2,6 @@ package com.dianba.pos.item.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.base.exception.PosNullPointerException;
 import com.dianba.pos.common.util.DateUtil;
 import com.dianba.pos.common.util.StringUtil;
 import com.dianba.pos.item.mapper.PosItemMapper;
@@ -68,6 +67,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Autowired
     private LifeItemTypeJpaRepository itemTypeJpaRepository;
+
     @Override
     public List<PosItem> getAllByPosTypeId(Long posTypeId) {
         return posItemJpaRepository.getAllByPosTypeId(posTypeId);
@@ -75,23 +75,23 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Override
     public List<PosItem> getAllByPassportIdAndItemTypeId(Long passportId, Long itemTypeId) {
-        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        Passport passport = passportMapper.getPassportInfoByCashierId(passportId);
         return posItemJpaRepository.getAllByPassportIdAndItemTypeId(passport.getId(), itemTypeId);
     }
 
     @Override
     public List<PosItem> getAllByPassportId(Long passportId) {
-        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        Passport passport = passportMapper.getPassportInfoByCashierId(passportId);
         return posItemJpaRepository.getAllByPassportId(passport.getId());
     }
 
 
     @Override
-    public PosItem  getPosItemByPassportIdAndItemTemplateIdAndIsDelete(Long passportId
-            , Long itemId,String isDelete) {
-        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+    public PosItem getPosItemByPassportIdAndItemTemplateIdAndIsDelete(Long passportId
+            , Long itemId, String isDelete) {
+        Passport passport = passportMapper.getPassportInfoByCashierId(passportId);
         return posItemJpaRepository.getPosItemByPassportIdAndItemTemplateIdAndIsDelete(passport.getId()
-                ,itemId,isDelete);
+                , itemId, isDelete);
     }
 
     @Override
@@ -102,14 +102,14 @@ public class DefaultPosItemManager implements PosItemManager {
         LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode(barcode);
         PosItemVo posItemVo = null;
 
-        Passport passport=passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
+        Passport passport = passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
 
         if (itemTemplate != null) { //商品模板有此商品信息
-            Long userId =passport.getId();
+            Long userId = passport.getId();
 
             posItemVo = new PosItemVo();
             PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateIdAndIsDelete(userId
-                    , itemTemplate.getId(),"N");
+                    , itemTemplate.getId(), "N");
             if (posItem == null) {
                 // posItemVo.setId(posItem.getId());
                 //    posItemVo.setPosTypeId(posItem.getItemTypeId());
@@ -149,10 +149,10 @@ public class DefaultPosItemManager implements PosItemManager {
         if (StringUtil.isEmpty(posItemVo.getBarcode())) {
             map.put("result", "false");
             map.put("msg", "商品入库码不能为空!");
-        } else if (posItemVo.getStockPrice()==null) {
+        } else if (posItemVo.getStockPrice() == null) {
             map.put("result", "false");
             map.put("msg", "商品进货价不能为空");
-        } else if (posItemVo.getSalesPrice()==null) {
+        } else if (posItemVo.getSalesPrice() == null) {
             map.put("result", "false");
             map.put("msg", "商品零售价不能为空");
         } else if (posItemVo.getRepertory().equals(0)) {
@@ -223,10 +223,10 @@ public class DefaultPosItemManager implements PosItemManager {
         if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
             posItem.setBarcode(posItemVo.getBarcode());
         }
-        if (posItemVo.getStockPrice()!=null) {
+        if (posItemVo.getStockPrice() != null) {
             posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
         }
-        if (posItemVo.getSalesPrice()!=null) {
+        if (posItemVo.getSalesPrice() != null) {
             posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
         }
 
@@ -241,7 +241,7 @@ public class DefaultPosItemManager implements PosItemManager {
             posItem.setShelfLife(posItemVo.getShelfLife());
         } //商家id，以后收银员账号查询关联商家
         if (posItemVo.getPassportId() != null) {
-            Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+            Passport passport = passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
             posItem.setPassportId(passport.getId());
         }
         if (posItemVo.getPosTypeId() != null) {
@@ -285,7 +285,7 @@ public class DefaultPosItemManager implements PosItemManager {
                     } else {
                         itemTemplate.setImageUrl(posItemVo.getItemImg());
                     }
-                    itemTemplate.setDefineCode("POS"+DateUtil.getCurrDate("yyyyMMddHHmmss"));
+                    itemTemplate.setDefineCode("POS" + DateUtil.getCurrDate("yyyyMMddHHmmss"));
                     itemTemplate.setStatus(0);
                     itemTemplate.setUploadTime(new Date());
                     itemTemplate.setBarcode(posItemVo.getBarcode());
@@ -307,9 +307,9 @@ public class DefaultPosItemManager implements PosItemManager {
             } else {
                 //关联模板信息如果商家也入库了此商品的话就可以进行商品的一个编辑
                 //查询商家是否有入库此模板信息
-                Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+                Passport passport = passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
                 PosItem posItem = posItemManager.getPosItemByPassportIdAndItemTemplateIdAndIsDelete(passport.getId()
-                        , itemTemplate.getId(),"N");
+                        , itemTemplate.getId(), "N");
                 if (posItem == null) { //商家没有关系此模板信息
                     //set 实体类
                     posItem = convertToClass(posItemVo, itemTemplate);
@@ -353,9 +353,9 @@ public class DefaultPosItemManager implements PosItemManager {
         return posItems;
     }
 
-    public Map<String,Object> updatePosItem(PosItem posItem,PosItemVo posItemVo){
+    public Map<String, Object> updatePosItem(PosItem posItem, PosItemVo posItemVo) {
 
-        Map<String,Object> map=new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         if (posItem == null) {
             map.put("result", "false");
             map.put("msg", "查询商家商品为空!");
@@ -381,10 +381,10 @@ public class DefaultPosItemManager implements PosItemManager {
             if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
                 posItem.setBarcode(posItemVo.getBarcode());
             }
-            if (posItemVo.getStockPrice()!=null) {
+            if (posItemVo.getStockPrice() != null) {
                 posItem.setStockPrice((long) (posItemVo.getStockPrice().doubleValue() * 100));
             }
-            if (posItemVo.getSalesPrice()!=null) {
+            if (posItemVo.getSalesPrice() != null) {
                 posItem.setSalesPrice((long) (posItemVo.getSalesPrice().doubleValue() * 100));
             }
 
@@ -399,7 +399,7 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItem.setShelfLife(posItemVo.getShelfLife());
             } //商家id，以后收银员账号查询关联商家
             if (posItemVo.getPassportId() != null) {
-                Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+                Passport passport = passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
                 posItem.setPassportId(passport.getId());
             }
             if (posItemVo.getPosTypeId() != null) {
@@ -417,23 +417,24 @@ public class DefaultPosItemManager implements PosItemManager {
         }
         return map;
     }
+
     @Override
     public Map<String, Object> editPosItem(PosItemVo posItemVo) {
 
         Map<String, Object> map = new HashMap<>();
         //输入条形码是否为空
-        Passport passport=passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
-        if(!StringUtil.isEmpty(posItemVo.getBarcode())){
+        Passport passport = passportMapper.getPassportInfoByCashierId(posItemVo.getPassportId());
+        if (!StringUtil.isEmpty(posItemVo.getBarcode())) {
             PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcodeAndIsDelete(passport.getId()
-                    , posItemVo.getBarcode(),"N");
-           return updatePosItem(posItem,posItemVo);
-        }else if(posItemVo.getId()!=null){
+                    , posItemVo.getBarcode(), "N");
+            return updatePosItem(posItem, posItemVo);
+        } else if (posItemVo.getId() != null) {
             //根据id来编辑
             PosItem posItem = posItemJpaRepository.getPosItemById(posItemVo.getId());
-            if(posItem.getPassportId().equals(passport.getId())){
-                return updatePosItem(posItem,posItemVo);
-            }else {
-                map.put("result","false");
+            if (posItem.getPassportId().equals(passport.getId())) {
+                return updatePosItem(posItem, posItemVo);
+            } else {
+                map.put("result", "false");
                 map.put("msg", "此商家没有编辑权限!");
             }
 
@@ -449,7 +450,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setId(posItem.getId());
         posItemVo.setPosTypeId(posItem.getItemTypeId());
         LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
-        if(itemType!=null){
+        if (itemType != null) {
             posItemVo.setPosTypeName(itemType.getTitle());
         }
         posItemVo.setItemTemplateId(itemTemplate.getId());
@@ -478,12 +479,13 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setGeneratedDate(posItem.getGeneratedDate());
         return posItemVo;
     }
+
     @Override
     public List<PosItemVo> convertToVos(List<PosItem> posItems) {
         List<PosItemVo> posItemVos = new ArrayList<>();
         //商品模板ID
         List<Long> itemTemplateIdList = new ArrayList<>();
-        if(posItems.size()>0){
+        if (posItems.size() > 0) {
 
             for (PosItem posItem : posItems) {
                 itemTemplateIdList.add(posItem.getItemTemplateId());
@@ -503,13 +505,13 @@ public class DefaultPosItemManager implements PosItemManager {
                 }
             }
             //获取所有商品分类id
-            List<Long> itemTypeIdList=new ArrayList<>();
-            for(PosItem posItem : posItems){
+            List<Long> itemTypeIdList = new ArrayList<>();
+            for (PosItem posItem : posItems) {
                 itemTypeIdList.add(posItem.getItemTypeId());
             }
 
             //获取所有商品分类
-            List<LifeItemType> itemTypes=lifeItemTypeJpaRepository.findAll(itemTypeIdList);
+            List<LifeItemType> itemTypes = lifeItemTypeJpaRepository.findAll(itemTypeIdList);
             Map<Long, LifeItemType> itemTypeMap = new HashMap<>();
             for (PosItem posItem : posItems) {
                 for (LifeItemType itemType : itemTypes) {
@@ -546,10 +548,10 @@ public class DefaultPosItemManager implements PosItemManager {
                 posItemVo.setPassportId(posItem.getPassportId());
                 LifeItemUnit itemUnit = itemUnitMap.get(posItem.getItemTemplateId());
                 String title = "";
-                Long unitId=null;
+                Long unitId = null;
                 if (itemUnit != null) {
                     title = itemUnit.getTitle();
-                    unitId=itemUnit.getId();
+                    unitId = itemUnit.getId();
                 }
 
                 posItemVo.setItemUnitId(unitId);
@@ -563,10 +565,11 @@ public class DefaultPosItemManager implements PosItemManager {
         return posItemVos;
 
     }
+
     @Transactional
     public void offsetItemRepertory(Map<Long, Integer> itemIdMaps) {
         if (itemIdMaps == null || itemIdMaps.size() == 0) {
-            throw new PosNullPointerException("所需变更的商品库存为空！");
+            return;
         }
         List<PosItem> posItems = posItemJpaRepository.findAll(itemIdMaps.keySet());
         for (Long key : itemIdMaps.keySet()) {
@@ -579,9 +582,10 @@ public class DefaultPosItemManager implements PosItemManager {
         }
         posItemJpaRepository.save(posItems);
     }
-    public void addPosItem(Long passportId){
+
+    public void addPosItem(Long passportId) {
         //保存商家自由价商品
-        PosItem posItem=new PosItem();
+        PosItem posItem = new PosItem();
         posItem.setBarcode("BBBBBBBBBBBBBB");
         posItem.setBuyCount(0);
         posItem.setCodeId(0);
@@ -597,18 +601,19 @@ public class DefaultPosItemManager implements PosItemManager {
         posItem.setStockPrice(500L);
         posItem.setWarningRepertory(20);
         posItem.setRepertory(999999);
-        LifeItemTemplate itemTemplate=itemTemplateJpaRepository.findByAscriptionType(8);
+        LifeItemTemplate itemTemplate = itemTemplateJpaRepository.findByAscriptionType(8);
         posItem.setItemTemplateId(itemTemplate.getId());
-        LifeItemType itemType=itemTypeJpaRepository.findByAscriptionType(8);
+        LifeItemType itemType = itemTypeJpaRepository.findByAscriptionType(8);
         posItem.setItemTypeId(itemType.getId());
         posItem.setPosTypeId(0L);
         posItemJpaRepository.save(posItem);
     }
-    public void addItemTemplateAndPosItem(Long passportId){
+
+    public void addItemTemplateAndPosItem(Long passportId) {
         //检测有没有商家分类
-        LifeItemType itemType=itemTypeJpaRepository.findByAscriptionType(8);
-        if(itemType==null){
-            itemType=new LifeItemType();
+        LifeItemType itemType = itemTypeJpaRepository.findByAscriptionType(8);
+        if (itemType == null) {
+            itemType = new LifeItemType();
             itemType.setTitle("其他");
             itemType.setIcon("http://no1.0085.com");
             itemType.setImage("http://no1.0085.com");
@@ -621,8 +626,8 @@ public class DefaultPosItemManager implements PosItemManager {
         }
         //检测商家有没有只有价商品没有就新增一个
         LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("BBBBBBBBBBBBBB");
-        if(itemTemplate==null){
-            itemTemplate=new LifeItemTemplate();
+        if (itemTemplate == null) {
+            itemTemplate = new LifeItemTemplate();
             itemTemplate.setAscriptionType(8);
             itemTemplate.setImageUrl("http://no1.0085.com");
             itemTemplate.setDefineCode("POS111111111111");
@@ -637,29 +642,30 @@ public class DefaultPosItemManager implements PosItemManager {
             //添加模板信息
             itemTemplateJpaRepository.save(itemTemplate);
             addPosItem(passportId);
-        }else{
+        } else {
             //查看商家是否添加自由价商品
-            PosItem posItem=posItemJpaRepository.getPosItemByPassportIdAndBarcodeAndIsDelete(passportId
-                    ,"BBBBBBBBBBBBBB","N");
+            PosItem posItem = posItemJpaRepository.getPosItemByPassportIdAndBarcodeAndIsDelete(passportId
+                    , "BBBBBBBBBBBBBB", "N");
 
-            if(posItem==null){
+            if (posItem == null) {
                 addPosItem(passportId);
             }
 
         }
     }
+
     @Override
     public BasicResult getItemUnitAndType(String passportId) {
         if (StringUtil.isEmpty(passportId)) {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
 
-            logger.info("===Start获取所有商品单位规格Start==="+DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
+            logger.info("===Start获取所有商品单位规格Start===" + DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
             //规格
             List<LifeItemUnit> itemUnits = itemUnitJpaRepository.findAll();
             //商品分类
             logger.info("获取所有商品分类");
-            Passport passport=passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
+            Passport passport = passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
             //添加商家自由价商品
             addItemTemplateAndPosItem(passport.getId());
             List<PosType> posTypes = posTypeJpaRepository.getAllByPassportId(passport.getId());
@@ -694,7 +700,7 @@ public class DefaultPosItemManager implements PosItemManager {
             jo.put("itemTypes", posTypeVos);
             BasicResult basicResult = BasicResult.createSuccessResult();
             basicResult.setResponse(jo);
-            logger.info("===Start获取所有商品单位规格Start==="+DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
+            logger.info("===Start获取所有商品单位规格Start===" + DateUtil.getCurrDate("yyyy-MM-dd HH:mmssSSS"));
             return basicResult;
 
         }
@@ -707,7 +713,7 @@ public class DefaultPosItemManager implements PosItemManager {
             return BasicResult.createFailResult("参数输入有误，或者参数值为空");
         } else {
             List<PosItem> posItems = null;
-            Passport passport=passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
+            Passport passport = passportMapper.getPassportInfoByCashierId(Long.parseLong(passportId));
             if (StringUtil.isEmpty(itemTypeId)) {
                 posItems = posItemManager.getAllByPassportId(passport.getId());
             } else {
@@ -716,7 +722,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
             }
             if (posItems.size() == 0) {
-                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!",posItems);
+                return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItems);
             } else {
                 List<PosItemVo> posItemVos = posItemManager.convertToVos(posItems);
                 return BasicResult.createSuccessResultWithDatas("获取商家商品信息成功!", posItemVos);
@@ -726,7 +732,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Override
     public BasicResult getListBySearchText(String searchText, Long passportId) {
-        Passport passport=passportMapper.getPassportInfoByCashierId(passportId);
+        Passport passport = passportMapper.getPassportInfoByCashierId(passportId);
         List<PosItemVo> posItemVos = posItemMapper.getListBySearchText(searchText, passport.getId());
         return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos);
     }

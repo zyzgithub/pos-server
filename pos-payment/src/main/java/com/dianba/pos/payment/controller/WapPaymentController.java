@@ -12,9 +12,9 @@ import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
+import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WapPaymentManager;
-import com.dianba.pos.payment.util.IPUtil;
-import com.dianba.pos.payment.util.MD5Util;
+import com.dianba.pos.payment.util.*;
 import com.dianba.pos.payment.xmlbean.WechatReturnXml;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
@@ -31,8 +31,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 @Controller
@@ -51,6 +49,8 @@ public class WapPaymentController {
     private PosQRCodeManager posQRCodeManager;
     @Autowired
     private WapPaymentManager wapPaymentManager;
+    @Autowired
+    private PaymentManager paymentManager;
     @Autowired
     private AppConfig appConfig;
 
@@ -123,6 +123,7 @@ public class WapPaymentController {
 
     /**
      * 支付宝WAP支付
+     *
      * @param request
      * @param response
      * @param sequenceNumber
@@ -135,89 +136,49 @@ public class WapPaymentController {
     }
 
     @RequestMapping("aliPayReturnUrl")
-    public void aliPayReturnUrl(HttpServletRequest request, HttpServletResponse response) {
-        String text;
+    public ModelAndView aliPayReturnUrl(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("支付宝同步回调开始！");
+        ModelAndView modelAndView = new ModelAndView();
         try {
-            // 获取支付宝GET过来反馈信息
-            Map<String, String> map = request.getParameterMap();
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                System.out.println(entry.getKey() + " = " + entry.getValue());
-            }
-            boolean verifyResult = AlipaySignature.rsaCheckV1(map, alipayConfig.getAlipayPublicKey()
-                    , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);
-            if (verifyResult) {// 验证成功
-                // TODO 请在这里加上商户的业务逻辑程序代码
-                System.out.println("return_url 验证成功");
-                text = "success";
-            } else {
-                System.out.println("return_url 验证失败");
-                // TODO
-                text = "failure";
-            }
+            boolean verifyResult = AlipaySignature.rsaCheckV1(ParamUtil.convertRequestMap(request)
+                    , alipayConfig.getAlipayPublicKey()
+                    , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);//调用SDK验证签名
+            logger.info("验签结果：" + verifyResult);
+            String amount = request.getParameter("total_amount");
+            modelAndView.setViewName("pay_success");
+            modelAndView.addObject("amount", amount);
         } catch (AlipayApiException e) {
+            modelAndView.setViewName("pay_error");
             e.printStackTrace();
-            text = "failure";
         }
-        PrintWriter writer = null;
-        try {
-            response.setHeader("Pragma", "no-cache");
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0L);
-            response.setContentType("text/plain");
-            response.setCharacterEncoding(AlipayConfig.CHARSET);
-            writer = response.getWriter();
-            writer.write(text);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-
-        }
+        logger.info("支付宝同步回调结束！");
+        return modelAndView;
     }
 
     @RequestMapping("aliPayNotifyUrl")
     public void aliPayNotifyUrl(HttpServletRequest request, HttpServletResponse response) {
-        String text = "";
+        logger.info("支付宝异步通知开始！");
+        String text = "success";
         try {
-            Map<String, String> paramsMap = request.getParameterMap();
-            for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-                System.out.println(entry.getKey() + "--->" + entry.getValue());
-            }
-            System.out.println("alipayPulicKey>" + alipayConfig.getAlipayPublicKey());
-            boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, alipayConfig.getAlipayPublicKey()
-                    , AlipayConfig.CHARSET); //调用SDK验证签名
+            boolean signVerified = AlipaySignature.rsaCheckV1(ParamUtil.convertRequestMap(request)
+                    , alipayConfig.getAlipayPublicKey()
+                    , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE); //调用SDK验证签名
+            logger.info("验签结果：" + signVerified);
             if (signVerified) {
-                // TODO 验签成功后，按照支付结果异步通知中的描述，对支付结果中的业务内容进行二次校
-                // 验，校验成功后在response中返回success并继续商户自身业务处理，校验失败返回failure
-                text = "success";
-            } else {
-                // TODO 验签失败则记录异常日志，并在response中返回failure.
-                text = "failure";
+                if (AlipayResultUtil.isSuccess(request)) {
+                    String sequenceNumber = request.getParameter("out_trade_no");
+                    String buyerId = request.getParameter("buyer_id");
+                    logger.info("支付宝扫码订单更新！" + sequenceNumber);
+                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
+                            , false, false);
+                }
             }
         } catch (AlipayApiException e) {
+            text = "failure";
             e.printStackTrace();
         }
-        PrintWriter writer = null;
-        try {
-            response.setHeader("Pragma", "no-cache");
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0L);
-            response.setContentType("text/plain");
-            response.setCharacterEncoding(AlipayConfig.CHARSET);
-            writer = response.getWriter();
-            writer.write(text);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-
-        }
+        AlipayResultUtil.writeResult(response, text);
+        logger.info("支付宝异步通知结束！");
     }
 
     /**
@@ -234,6 +195,7 @@ public class WapPaymentController {
     public ModelAndView wechatPay(HttpServletRequest request, HttpServletResponse response
             , @PathVariable(name = "sequenceNumber") String sequenceNumber)
             throws Exception {
+        logger.info("微信预支付下单！");
         ModelAndView modelAndView = new ModelAndView();
         String ip = IPUtil.getRemoteIp(request);
         BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip);
@@ -244,24 +206,30 @@ public class WapPaymentController {
             logger.info(basicResult.getResponse().toJSONString());
             modelAndView.setViewName("pay_error");
         }
+        logger.info("微信预支付下单结束!");
         return modelAndView;
     }
 
     /**
      * 微信JS支付回调
-     *
-     * @param request
-     * @param sequenceNumber
-     * @return
      */
-    @RequestMapping("wechatNotifyUrl/{sequenceNumber}")
-    public WechatReturnXml notifyUrl(HttpServletRequest request
-            , @PathVariable(name = "sequenceNumber") String sequenceNumber) {
-        logger.info("开始接收微信支付回调消息：" + sequenceNumber);
-        for (Object key : request.getParameterMap().keySet()) {
-            logger.info("key=" + key + " value=" + request.getParameter(key.toString()));
+    @RequestMapping("wechatNotifyUrl")
+    public void notifyUrl(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("开始接收微信支付异步回调消息：");
+        Map<String, String> resultMap = XMLUtil.getRequestXML(request);
+        if (WechatResultUtil.isSuccess(resultMap)) {
+            String squenceNumber = resultMap.get("out_trade_no");
+            String totalAmount = resultMap.get("total_fee");
+            String openId = resultMap.get("openid");
+            paymentManager.processPaidOrder(squenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
+                    , false, false);
+        } else {
+            String errMsg = WechatResultUtil.getErrorMsg(resultMap);
+            logger.info("支付失败！" + errMsg);
         }
-        logger.info("结束接收！");
-        return WechatReturnXml.createSuccessReturn();
+        WechatReturnXml wechatReturnXml = WechatReturnXml.createSuccessReturn();
+        XMLUtil.setResponseXML(response, wechatReturnXml);
+        logger.info("返回:" + wechatReturnXml.toString());
+        logger.info("微信支付异步回调结束！");
     }
 }

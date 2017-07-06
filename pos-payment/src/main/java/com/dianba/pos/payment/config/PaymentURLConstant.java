@@ -24,5 +24,5 @@ public class PaymentURLConstant {
     public static final String WAP_ALIPAY_NOTIFY_URL = WAP + "aliPayNotifyUrl";
 
     //微信支付回调地址
-    public static final String WAP_WETCHAT_PAY_CALL_BACK_URL = WAP + "wechatNotifyUrl/";
+    public static final String WAP_WETCHAT_PAY_CALL_BACK_URL = WAP + "wechatNotifyUrl";
 }

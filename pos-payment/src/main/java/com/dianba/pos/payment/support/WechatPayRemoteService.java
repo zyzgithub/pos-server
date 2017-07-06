@@ -76,8 +76,7 @@ public class WechatPayRemoteService {
         wechatOrderXml.setBody(body);
         wechatOrderXml.setDetail(detail);
         wechatOrderXml.setOutTradeNo(outTradeNo);
-        wechatOrderXml.setNotifyUrl(appConfig.getPosCallBackHost()
-                + PaymentURLConstant.WAP_WETCHAT_PAY_CALL_BACK_URL + outTradeNo);
+        wechatOrderXml.setNotifyUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_WETCHAT_PAY_CALL_BACK_URL);
         if (!StringUtils.isEmpty(attach)) {
             wechatOrderXml.setAttach(attach);
         }
