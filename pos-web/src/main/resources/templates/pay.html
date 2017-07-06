@@ -18,7 +18,7 @@
         <span class="logo"></span>
     </div>
     <div class="payTitle-right">
-        <p>小吃店</p>
+        <p th:text="${showName}"></p>
         <p>1号生活pos收银台</p>
     </div>
 </div>
@@ -62,9 +62,9 @@
                 dataType: 'json',
                 success: function (data) {
                     if (paymentType == "WEIXIN_JS") {
-                        window.location.href = "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
+                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
                     } else if (paymentType == "ALIPAY") {
-                        window.location.href = "/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/alipay/" + data.response.sequenceNumber;
                     }
                 },
                 error: function (data) {
