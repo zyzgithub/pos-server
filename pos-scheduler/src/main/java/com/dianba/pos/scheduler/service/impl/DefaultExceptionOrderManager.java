@@ -41,9 +41,16 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                 for (ScalpListByPassportVo sb : maps){
                     if(sb.getSeconds()!=null){
                         logger.info("passportId:"+sb.getPassportId()+"======seconds : " + sb.getSeconds());
-                        if(sb.getSeconds() < 10){
+                        if(sb.getSeconds() < 13){
                             i++;
                             logger.info("商家正在刷单:"+i);
+                            if(i>4){
+                                PosBlackList posBlackList=new PosBlackList();
+                                posBlackList.setPassportId(sb.getPassportId());
+                                posBlackListJpaRepository.save(posBlackList);
+                                i=0;
+                                break;
+                            }
                         }else if(i>4){
                             logger.info("此商家存在刷单行为");
                             PosBlackList posBlackList=new PosBlackList();
@@ -54,7 +61,7 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                         }else {
                             logger.info("刷单行为停止,当前已刷次数:"+i);
                             i=0;
-                            continue;
+                            break;
                         }
                     }
 
