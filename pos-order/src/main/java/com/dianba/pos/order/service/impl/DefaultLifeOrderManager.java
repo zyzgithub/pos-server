@@ -571,12 +571,13 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
-                    recordVo.setTransType("现金");
+                    recordVo.setTransType(PaymentTypeEnum.CASH.getValue());
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
-                    recordVo.setTransType("支付宝");
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
-                        ||PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
-                    recordVo.setTransType("微信");
+                    recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
+                    recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+                } else if(PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())){
+                    recordVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
                 }
 
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
@@ -596,7 +597,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
                     zfbSum = recordVo.getCountMap();
                     zfbMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
+                        ||PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     wxSum = recordVo.getCountMap();
                     wxMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }
