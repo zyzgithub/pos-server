@@ -39,7 +39,7 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
         if (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() == order.getStatus()) {
             throw new PosAccessDeniedException("订单已付款！无需重复付款！");
         }
-        if (order.getTotalPrice() >= 3) {
+        if (order.getTotalPrice() > 3) {
             throw new PosAccessDeniedException("交易超限！微信单笔交易限额3000！");
         }
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);

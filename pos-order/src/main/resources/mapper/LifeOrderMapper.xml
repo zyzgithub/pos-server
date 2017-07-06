@@ -195,17 +195,17 @@
     <select id="findNotSyncScanOrder" resultMap="BaseResultMap">
         select
         <include refid="LifeOrderColumns"/>
-         from life_order.order_entry t
-        where t.trans_type in('ALIPAY','WEIXIN_JS')
-        and t.type=4 and t.status=8 and t.shipping_passport_id=#{passportId}
-        and t.total_price in
+         from life_order.order_entry o
+        where o.trans_type in('ALIPAY','WEIXIN_JS')
+        and o.type=4 and o.status=8 and o.shipping_passport_id=#{passportId}
+        and o.total_price in
         <foreach collection="orderAmounts" item="amount" open="(" close=")" separator=",">
             #{amount}
         </foreach>
-        and t.payment_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s')
+        and o.payment_time between date_format(#{beginTime},'%Y-%m-%d %H:%i:%s')
             and date_format(#{endTime},'%Y-%m-%d %H:%i:%s')
-        and not exists(select 1 from life_order.order_item_snapshot s where s.order_id=t.id)
-        order by t.id desc
+        and not exists(select 1 from life_order.order_item_snapshot s where s.order_id=o.id)
+        order by o.id desc
     </select>
 
     <!--商家pos 机每月营业额o e.type 3-采购 7-pos营业订单 -->

@@ -345,6 +345,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }
                 List<OrderItemPojo> orderItemPojos = JsonHelper.toList(orderPojo.getItemSnapshots()
                         , OrderItemPojo.class);
+                if (StringUtils.isEmpty(orderPojo.getPaymentType())) {
+                    orderPojo.setPaymentType(PaymentTypeEnum.CASH.getKey());
+                }
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderPojo.getPaymentType());
                 LifeOrder lifeOrder = buildLifeOrder(orderPojo.getPassportId(), null, null
                         , OrderStatusEnum.ORDER_STATUS_PAYMENT, OrderTypeEnum.SCAN_ORDER_TYPE
@@ -352,7 +355,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                         , createDate, paymentDate
                         , orderPojo.getActualPrice()
                         , orderItemPojos);
-                if (PaymentTypeEnum.UNKNOWN.getKey().equals(lifeOrder.getPaymentType())) {
+                if (PaymentTypeEnum.UNKNOWN.getKey().equals(lifeOrder.getTransType())) {
                     if (beginTime == null) {
                         beginTime = lifeOrder.getCreateTime();
                         endTime = lifeOrder.getCreateTime();
@@ -361,7 +364,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                             beginTime = lifeOrder.getCreateTime();
                         }
                         if (endTime.before(lifeOrder.getCreateTime())) {
-                            beginTime = lifeOrder.getCreateTime();
+                            endTime = lifeOrder.getCreateTime();
                         }
                     }
                     orderAmounts.add(lifeOrder.getTotalPrice().longValue());
@@ -377,26 +380,35 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             for (LifeOrder lifeOrder : cashLifeOrders) {
                 lifeOrder.setShippingPassportId(merchantPassport.getId());
             }
+            beginTime = new Date(beginTime.getTime() - 180000);
+            endTime = new Date(endTime.getTime() + 180000);
             if (orderAmounts.size() > 0) {
                 List<LifeOrder> notSyncOrder = lifeOrderMapper.findNotSyncScanOrder(merchantPassport.getId()
                         , orderAmounts
                         , DateUtil.DateToString(beginTime, DateUtil.FORMAT_ONE)
                         , DateUtil.DateToString(endTime, DateUtil.FORMAT_ONE));
                 if (notSyncOrder.size() > 0) {
-                    for (int i = unknownLifeOrders.size() - 1; i >= 0; i--) {
-                        for (LifeOrder lifeOrder : notSyncOrder) {
+                    List<LifeOrderItemSnapshot> lifeOrderItemSnapshots = new ArrayList<>();
+                    for (LifeOrder lifeOrder : notSyncOrder) {
+                        for (int i = unknownLifeOrders.size() - 1; i >= 0; i--) {
                             if (unknownLifeOrders.get(i).getTotalPrice().compareTo(lifeOrder.getTotalPrice()) == 0) {
                                 Date date1 = unknownLifeOrders.get(i).getPaymentTime();
                                 Date date2 = lifeOrder.getPaymentTime();
                                 Integer minutes = DateUtil.getMinuteByDate(date1, date2);
                                 if (Math.abs(minutes) <= 3) {
                                     lifeOrder.setPartnerUserId(passportId + "");
-                                    lifeOrder.setItemSnapshots(unknownLifeOrders.get(i).getItemSnapshots());
+                                    for (LifeOrderItemSnapshot lifeOrderItemSnapshot : unknownLifeOrders
+                                            .get(i).getItemSnapshots()) {
+                                        lifeOrderItemSnapshot.setOrderId(lifeOrder.getId());
+                                        lifeOrderItemSnapshots.add(lifeOrderItemSnapshot);
+                                    }
+                                    break;
                                 }
                             }
                         }
                     }
                     lifeOrderJpaRepository.save(notSyncOrder);
+                    itemSnapshotJpaRepository.save(lifeOrderItemSnapshots);
                 }
             }
             lifeOrderJpaRepository.save(cashLifeOrders);
@@ -566,8 +578,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             }
 
             for (OrderTransactionRecordVo recordVo : list) {
-                if (recordVo.getCount()>1) {
-                    recordVo.setItemName(recordVo.getItemName() + "等..." + recordVo.getCount()+ "件商品");
+                if (recordVo.getCount() > 1) {
+                    recordVo.setItemName(recordVo.getItemName() + "等..." + recordVo.getCount() + "件商品");
                 }
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
@@ -576,9 +588,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
                 } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
-                } else if(PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())){
+                } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
-                } else if(PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())){
+                } else if (PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType(PaymentTypeEnum.UNKNOWN.getValue());
                 }
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
@@ -599,7 +611,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     zfbSum = recordVo.getCountMap();
                     zfbMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
-                        ||PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
+                        || PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     wxSum = recordVo.getCountMap();
                     wxMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }

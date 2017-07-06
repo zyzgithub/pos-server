@@ -9,6 +9,8 @@ import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.HttpUtil;
 import com.dianba.pos.order.service.QROrderManager;
+import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
@@ -52,6 +54,8 @@ public class WapPaymentController {
     @Autowired
     private PaymentManager paymentManager;
     @Autowired
+    private PassportManager passportManager;
+    @Autowired
     private AppConfig appConfig;
 
     /**
@@ -83,7 +87,9 @@ public class WapPaymentController {
             , @PathVariable(name = "passportId") Long passportId
             , String code, String state) throws Exception {
         ModelAndView modelAndView = new ModelAndView("pay");
+        Passport passport = passportManager.findById(passportId);
         modelAndView.addObject("passportId", passportId);
+        modelAndView.addObject("showName", passport.getShowName());
         modelAndView.addObject("paymentType", PaymentTypeEnum.WEIXIN_JS.getKey());
         if (code == null || state == null) {
             modelAndView.addObject("paymentType", PaymentTypeEnum.ALIPAY.getKey());
