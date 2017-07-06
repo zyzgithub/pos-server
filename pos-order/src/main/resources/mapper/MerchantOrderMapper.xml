@@ -37,6 +37,7 @@
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
                         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
                         else 0 end rate
                 from life_order.order_entry t
@@ -57,6 +58,7 @@
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
                         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
                         else 0 end rate
                 from life_order.order_entry t
@@ -83,6 +85,7 @@
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
                         when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
                         else 0 end rate
                 from life_order.order_entry t
@@ -109,6 +112,7 @@
             ,case t.trans_type
             when 'CASH' then 0
             when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
+            when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
             when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
             else 0 end rate
             ,t.payment_type paymentType

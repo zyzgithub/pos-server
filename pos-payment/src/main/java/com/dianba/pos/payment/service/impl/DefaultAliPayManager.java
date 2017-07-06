@@ -6,6 +6,7 @@ import com.alipay.demo.trade.model.builder.AlipayTradePayContentBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
+import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.service.PassportManager;
@@ -37,7 +38,7 @@ public class DefaultAliPayManager implements AliPayManager {
     }
 
     @Override
-    public BarcodePayResponse barcodePayment(Long passportId, Long orderId, String authCode) {
+    public BarcodePayResponse barcodePayment(Long passportId, Long orderId, String authCode) throws Exception {
         BarcodePayResponse response = null;
         OrderEntry order = orderManager.getOrder(orderId);
         if (order == null) {
@@ -60,6 +61,9 @@ public class DefaultAliPayManager implements AliPayManager {
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
         BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice());
         totalAmount = totalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+        if (totalAmount.compareTo(BigDecimal.valueOf(0.01)) > 0) {
+            throw new PosAccessDeniedException("交易超限！支付宝单笔交易限额1000！");
+        }
         String undiscountableAmount = "0.0";
         // 卖家支付宝账号ID，用于支持一个签约账号下支持打款到不同的收款账号，(打款到sellerId对应的支付宝账号)
         // 如果该字段为空，则默认为与支付宝签约的商户的PID，也就是appid对应的PID

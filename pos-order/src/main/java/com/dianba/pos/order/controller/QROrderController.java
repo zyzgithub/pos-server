@@ -2,6 +2,7 @@ package com.dianba.pos.order.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.order.config.OrderURLConstant;
 import com.dianba.pos.order.po.LifeOrder;
@@ -29,12 +30,18 @@ public class QROrderController {
     @ResponseBody
     @RequestMapping(value = "create_order", method = RequestMethod.POST)
     public BasicResult createQROrder(Long passportId, String paymentType
-            , BigDecimal amount, String openId) {
+            , BigDecimal amount, String openId) throws Exception {
         PaymentTypeEnum paymentTypeEnum;
         if (PaymentTypeEnum.ALIPAY.getKey().equals(paymentType)) {
             paymentTypeEnum = PaymentTypeEnum.ALIPAY;
+            if (amount.compareTo(BigDecimal.valueOf(0.01)) > 0) {
+                throw new PosAccessDeniedException("交易超限！支付宝单笔交易限额1000！");
+            }
         } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(paymentType)) {
             paymentTypeEnum = PaymentTypeEnum.WEIXIN_JS;
+            if (amount.compareTo(BigDecimal.valueOf(0.03)) > 0) {
+                throw new PosAccessDeniedException("交易超限！微信单笔交易限额3000！");
+            }
         } else {
             throw new PosIllegalArgumentException("支付类型非法！");
         }

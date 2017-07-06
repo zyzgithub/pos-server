@@ -86,8 +86,8 @@ public class DefaultCreditLoanManager extends PaymentRemoteService implements Cr
         params.put("business_ordernum", orderEntry.getSequenceNumber());
         BigDecimal totalAmount = BigDecimal.valueOf(orderEntry.getTotalPrice());
         totalAmount = totalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-        BasicResult payAmountResult = creditLoanManager.calculationPayAmount(passportId, totalAmount);
-        totalAmount = payAmountResult.getResponse().getBigDecimal("result");
+//        BasicResult payAmountResult = creditLoanManager.calculationPayAmount(passportId, totalAmount);
+//        totalAmount = payAmountResult.getResponse().getBigDecimal("result");
         params.put("amount", totalAmount + "");
         params.put("commodity_title", "1号生活715超市--" + passport.getShowName());
         String itemDeatils = "";

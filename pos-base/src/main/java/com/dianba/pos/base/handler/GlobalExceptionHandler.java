@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(Exception.class)
-    public BasicResult exceptionHandler(RuntimeException e, HttpServletResponse response) {
+    public BasicResult exceptionHandler(Exception e, HttpServletResponse response) {
         boolean isCustomException = false;
         for (Class cla : EXCEPTIONS) {
             if (e.getClass().getName().equals(cla.getName())) {

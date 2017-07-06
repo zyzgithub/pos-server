@@ -28,6 +28,10 @@ public interface LifeOrderMapper {
     List<LifeOrder> findOrderByPartnerUserAndPaymentTime(@Param("passportId") Long passportId
             , @Param("date") String date);
 
+    List<LifeOrder> findNotSyncScanOrder(@Param("passportId") Long passportId
+            , @Param("orderAmounts") List<Long> orderAmounts
+            , @Param("beginTime") String beginTime, @Param("endTime") String endTime);
+
     /**
      * 查询商家使用pos盈利信息
      */
@@ -48,13 +52,14 @@ public interface LifeOrderMapper {
 
     /**
      * pos端交易记录
+     *
      * @param merchantId
-     * @param enterType 1 日,2 月
+     * @param enterType  1 日,2 月
      * @return
      */
     List<OrderTransactionRecordVo> findOrderTransactionRecord(@Param("passportId") Long merchantId
-            , @Param("enterType") Integer enterType,@Param("createTime") String createTime);
+            , @Param("enterType") Integer enterType, @Param("createTime") String createTime);
 
     List<OrderTransactionRecordVo> findOrderTransactionRecordSum(@Param("passportId") Long merchantId
-            , @Param("enterType") Integer enterType,@Param("createTime") String createTime);
+            , @Param("enterType") Integer enterType, @Param("createTime") String createTime);
 }

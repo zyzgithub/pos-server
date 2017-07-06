@@ -57,6 +57,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     @Autowired
     private LifeOrderJpaRepository lifeOrderJpaRepository;
     @Autowired
+    private LifeOrderMapper lifeOrderMapper;
+    @Autowired
     private LifeOrderItemSnapshotJpaRepository itemSnapshotJpaRepository;
     @Autowired
     private PassportJpaRepository passportJpaRepository;
@@ -82,18 +84,22 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
 
     public LifeOrderVo getLifeOrder(long orderId, boolean convertRMBUnit) {
         LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
+        if (lifeOrder == null) {
+            throw new PosNullPointerException("订单不存在！");
+        }
         LifeOrderVo lifeOrderVo = new LifeOrderVo();
         BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (convertRMBUnit) {
             lifeOrderTransformation(lifeOrderVo);
         }
-        BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
         } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
         } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+        } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(lifeOrderVo.getTransType())) {
+            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
         }
         return lifeOrderVo;
     }
@@ -317,8 +323,12 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     public BasicResult syncOfflineOrders(List<OrderPojo> orders) {
         List<Map<String, String>> successOrderIds = new ArrayList<>();
         try {
-            List<LifeOrder> lifeOrders = new ArrayList<>();
+            List<LifeOrder> cashLifeOrders = new ArrayList<>();
+            List<LifeOrder> unknownLifeOrders = new ArrayList<>();
             Long passportId = null;
+            List<Long> orderAmounts = new ArrayList<>();
+            Date beginTime = null;
+            Date endTime = null;
             for (OrderPojo orderPojo : orders) {
                 if (passportId == null) {
                     passportId = orderPojo.getPassportId();
@@ -335,22 +345,61 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 }
                 List<OrderItemPojo> orderItemPojos = JsonHelper.toList(orderPojo.getItemSnapshots()
                         , OrderItemPojo.class);
+                PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderPojo.getPaymentType());
                 LifeOrder lifeOrder = buildLifeOrder(orderPojo.getPassportId(), null, null
                         , OrderStatusEnum.ORDER_STATUS_PAYMENT, OrderTypeEnum.SCAN_ORDER_TYPE
-                        , PaymentTypeEnum.CASH
+                        , paymentTypeEnum
                         , createDate, paymentDate
                         , orderPojo.getActualPrice()
                         , orderItemPojos);
-                lifeOrders.add(lifeOrder);
+                if (PaymentTypeEnum.UNKNOWN.getKey().equals(lifeOrder.getPaymentType())) {
+                    if (beginTime == null) {
+                        beginTime = lifeOrder.getCreateTime();
+                        endTime = lifeOrder.getCreateTime();
+                    } else {
+                        if (beginTime.after(lifeOrder.getCreateTime())) {
+                            beginTime = lifeOrder.getCreateTime();
+                        }
+                        if (endTime.before(lifeOrder.getCreateTime())) {
+                            beginTime = lifeOrder.getCreateTime();
+                        }
+                    }
+                    orderAmounts.add(lifeOrder.getTotalPrice().longValue());
+                    unknownLifeOrders.add(lifeOrder);
+                } else {
+                    cashLifeOrders.add(lifeOrder);
+                }
                 Map<String, String> map = new HashMap<>();
                 map.put("id", orderPojo.getId());
                 successOrderIds.add(map);
             }
             Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
-            for (LifeOrder lifeOrder : lifeOrders) {
+            for (LifeOrder lifeOrder : cashLifeOrders) {
                 lifeOrder.setShippingPassportId(merchantPassport.getId());
             }
-            lifeOrderJpaRepository.save(lifeOrders);
+            if (orderAmounts.size() > 0) {
+                List<LifeOrder> notSyncOrder = lifeOrderMapper.findNotSyncScanOrder(merchantPassport.getId()
+                        , orderAmounts
+                        , DateUtil.DateToString(beginTime, DateUtil.FORMAT_ONE)
+                        , DateUtil.DateToString(endTime, DateUtil.FORMAT_ONE));
+                if (notSyncOrder.size() > 0) {
+                    for (int i = unknownLifeOrders.size() - 1; i >= 0; i--) {
+                        for (LifeOrder lifeOrder : notSyncOrder) {
+                            if (unknownLifeOrders.get(i).getTotalPrice().compareTo(lifeOrder.getTotalPrice()) == 0) {
+                                Date date1 = unknownLifeOrders.get(i).getPaymentTime();
+                                Date date2 = lifeOrder.getPaymentTime();
+                                Integer minutes = DateUtil.getMinuteByDate(date1, date2);
+                                if (Math.abs(minutes) <= 3) {
+                                    lifeOrder.setPartnerUserId(passportId + "");
+                                    lifeOrder.setItemSnapshots(unknownLifeOrders.get(i).getItemSnapshots());
+                                }
+                            }
+                        }
+                    }
+                    lifeOrderJpaRepository.save(notSyncOrder);
+                }
+            }
+            lifeOrderJpaRepository.save(cashLifeOrders);
         } catch (Exception e) {
             e.printStackTrace();
         }
