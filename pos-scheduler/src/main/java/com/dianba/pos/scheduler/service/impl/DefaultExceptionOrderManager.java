@@ -61,7 +61,6 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                         }else {
                             logger.info("刷单行为停止,当前已刷次数:"+i);
                             i=0;
-                            break;
                         }
                     }
 
