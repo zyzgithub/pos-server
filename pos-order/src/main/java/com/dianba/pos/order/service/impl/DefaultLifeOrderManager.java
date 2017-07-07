@@ -642,10 +642,10 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sumCount", wxSum + cashSum + zfbSum+wxjsSum);
         jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney));
-        jsonObject.put("wxSum", wxSum);
+        jsonObject.put("wxSum", wxSum+wxjsSum);
         jsonObject.put("cashSum", cashSum);
         jsonObject.put("zfbSum", zfbSum);
-        jsonObject.put("wxMoney", wxMoney);
+        jsonObject.put("wxMoney", wxMoney.add(wxjsMoney));
         jsonObject.put("cashMoney", cashMoney);
         jsonObject.put("zfbMoney", zfbMoney);
         jsonObject.put("transactionRecordList", lst);
