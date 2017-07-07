@@ -380,9 +380,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             for (LifeOrder lifeOrder : cashLifeOrders) {
                 lifeOrder.setShippingPassportId(merchantPassport.getId());
             }
-            beginTime = new Date(beginTime.getTime() - 180000);
-            endTime = new Date(endTime.getTime() + 180000);
             if (orderAmounts.size() > 0) {
+                beginTime = new Date(beginTime.getTime() - 180000);
+                endTime = new Date(endTime.getTime() + 180000);
                 List<LifeOrder> notSyncOrder = lifeOrderMapper.findNotSyncScanOrder(merchantPassport.getId()
                         , orderAmounts
                         , DateUtil.DateToString(beginTime, DateUtil.FORMAT_ONE)

@@ -17,7 +17,6 @@ import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.util.*;
-import com.dianba.pos.payment.xmlbean.WechatReturnXml;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
@@ -62,13 +61,12 @@ public class WapPaymentController {
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
      */
     @RequestMapping(value = "qr_scan/{code}", method = RequestMethod.GET)
-    public ModelAndView qrScan(@PathVariable("code") String code)
-            throws Exception {
+    public ModelAndView qrScan(@PathVariable("code") String code) throws Exception {
         ModelAndView modelAndView = new ModelAndView("auth_code");
         PosQRCode posQRCode = posQRCodeManager.getQRCodeByCode(code);
         String authCodeUrl = wechatConfig.getAuthCodeUrl(appConfig.getPosCallBackHost()
                 + PaymentURLConstant.WAP_CALLBACK_URL + posQRCode.getMerchantId());
-        logger.info("二维码访问地址：" + authCodeUrl);
+        logger.info("扫码牌号：" + posQRCode.getCode() + "扫码对应商家：" + posQRCode.getMerchantId());
         modelAndView.addObject("url", authCodeUrl);
         modelAndView.addObject("passportId", posQRCode.getMerchantId());
         modelAndView.addObject("pay_url", PaymentURLConstant.WAP_CALLBACK_URL);
@@ -77,14 +75,9 @@ public class WapPaymentController {
 
     /**
      * 支付宝跳转/微信授权回调
-     *
-     * @param request
-     * @param response
-     * @return
      */
     @RequestMapping("to_pay/{passportId}")
-    public ModelAndView toPay(HttpServletRequest request, HttpServletResponse response
-            , @PathVariable(name = "passportId") Long passportId
+    public ModelAndView toPay(@PathVariable(name = "passportId") Long passportId
             , String code, String state) throws Exception {
         ModelAndView modelAndView = new ModelAndView("pay");
         Passport passport = passportManager.findById(passportId);
@@ -150,9 +143,11 @@ public class WapPaymentController {
                     , alipayConfig.getAlipayPublicKey()
                     , AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);//调用SDK验证签名
             logger.info("验签结果：" + verifyResult);
-            String amount = request.getParameter("total_amount");
-            modelAndView.setViewName("pay_success");
-            modelAndView.addObject("amount", amount);
+            if (verifyResult) {
+                String amount = request.getParameter("total_amount");
+                modelAndView.setViewName("pay_success");
+                modelAndView.addObject("amount", amount);
+            }
         } catch (AlipayApiException e) {
             modelAndView.setViewName("pay_error");
             e.printStackTrace();
@@ -231,11 +226,11 @@ public class WapPaymentController {
                     , false, false);
         } else {
             String errMsg = WechatResultUtil.getErrorMsg(resultMap);
-            logger.info("支付失败！" + errMsg);
+            logger.info("确认支付信息失败！" + errMsg);
+            WechatResultUtil.writeFailResult(response, errMsg);
+            return;
         }
-        WechatReturnXml wechatReturnXml = WechatReturnXml.createSuccessReturn();
-        XMLUtil.setResponseXML(response, wechatReturnXml);
-        logger.info("返回:" + wechatReturnXml.toString());
+        WechatResultUtil.writeSuccessResult(response);
         logger.info("微信支付异步回调结束！");
     }
 }

@@ -1,8 +1,6 @@
 package com.dianba.pos.payment.config;
 
 import com.dianba.pos.payment.util.MD5Util;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -15,8 +13,6 @@ import java.io.UnsupportedEncodingException;
 @Configuration
 @PropertySource("classpath:properties/wechat.properties")
 public class WechatConfig {
-
-    private static Logger logger = LogManager.getLogger(WechatConfig.class);
 
     //获取网页授权地址
     @Value("${wechat.auth_code.url}")
@@ -73,11 +69,9 @@ public class WechatConfig {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        authCodeUrl = authCodeUrl.replace("APPID", publicAppId)
+        return authCodeUrl.replace("APPID", publicAppId)
                 .replace("REDIRECT_URI", callBackUrl)
                 .replace("STATE", state);
-        logger.info("微信授权回调地址：" + authCodeUrl);
-        return authCodeUrl;
     }
 
     public String getAccessTokenUrl(String code) {

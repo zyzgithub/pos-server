@@ -53,9 +53,20 @@ public class DefaultPosQRCodeManager implements PosQRCodeManager {
         throw new PosNullPointerException("该二维码未绑定商家信息！");
     }
 
-    public void putQRCodeInOutPutStrem(String code, Integer width, Integer height
+    public void showQRCodeByPassportId(Long passportId, Integer width, Integer height
+            , HttpServletResponse response) throws Exception {
+        PosQRCode posQRCode = getQRCodeByMerchantId(passportId);
+        putQRCodeInOutPutStrem(posQRCode, width, height, response);
+    }
+
+    public void showQRCodeByCode(String code, Integer width, Integer height
             , HttpServletResponse response) throws Exception {
         PosQRCode posQRCode = getQRCodeByCode(code);
+        putQRCodeInOutPutStrem(posQRCode, width, height, response);
+    }
+
+    private void putQRCodeInOutPutStrem(PosQRCode posQRCode, Integer width, Integer height
+            , HttpServletResponse response) throws Exception {
         if (width == null) {
             width = 300;
         }

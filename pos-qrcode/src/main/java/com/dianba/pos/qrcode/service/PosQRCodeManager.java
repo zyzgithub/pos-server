@@ -10,6 +10,9 @@ public interface PosQRCodeManager {
 
     PosQRCode getQRCodeByCode(String code);
 
-    void putQRCodeInOutPutStrem(String code, Integer width, Integer height
+    void showQRCodeByPassportId(Long passportId, Integer width, Integer height
+            , HttpServletResponse response) throws Exception;
+
+    void showQRCodeByCode(String code, Integer width, Integer height
             , HttpServletResponse response) throws Exception;
 }
