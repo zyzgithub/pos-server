@@ -5,10 +5,6 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta http-equiv="expires" content="0"/>
-    <meta http-equiv="pragma" content="no-cache"/>
-    <meta http-equiv="cache-control" content="no-cache"/>
-    <meta http-equiv="cache" content="no-cache"/>
     <title>1号生活扫码支付</title>
     <link th:href="@{/css/base.css}" rel="stylesheet"/>
     <link th:href="@{/css/keyboard.css}" rel="stylesheet"/>
@@ -65,10 +61,14 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    if (paymentType == "WEIXIN_JS") {
-                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
-                    } else if (paymentType == "ALIPAY") {
-                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                    if (data.code == 0) {
+                        if (paymentType == "WEIXIN_JS") {
+                            window.location.href = "http://apptest.0085.com" + "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
+                        } else if (paymentType == "ALIPAY") {
+                            window.location.href = "http://apptest.0085.com" + "/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                        }
+                    } else {
+                        alert(data.msg);
                     }
                 },
                 error: function (data) {

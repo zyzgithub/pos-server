@@ -153,8 +153,13 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
             }
             try {
                 PaymentTypeEnum paymentTypeEnum = PaymentTypeEnum.getPaymentTypeEnum(orderIncome.getTransType());
-                orderIncome.setTransType(paymentTypeEnum.getKey());
-                orderIncome.setTitle(paymentTypeEnum.getValue());
+                if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(paymentTypeEnum.getKey())) {
+                    orderIncome.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+                    orderIncome.setTitle(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+                } else {
+                    orderIncome.setTransType(paymentTypeEnum.getKey());
+                    orderIncome.setTitle(paymentTypeEnum.getValue());
+                }
             } catch (Exception e) {
                 orderIncome.setTransType(PaymentTypeEnum.UNKNOWN.getKey());
                 orderIncome.setTitle(PaymentTypeEnum.UNKNOWN.getValue());

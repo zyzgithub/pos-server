@@ -96,10 +96,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
         } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
-        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())) {
+        } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())
+                || PaymentTypeEnum.WEIXIN_JS.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
-        } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(lifeOrderVo.getTransType())) {
-            lifeOrderVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
         }
         return lifeOrderVo;
     }
@@ -217,6 +216,26 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             }
         }
         return basicResult;
+    }
+
+    @Transactional
+    public BasicResult paymentOrder(LifeOrderVo lifeOrderVo, PaymentTypeEnum paymentTypeEnum) {
+        LifeOrder lifeOrder = new LifeOrder();
+        BeanUtils.copyProperties(lifeOrderVo, lifeOrder);
+        lifeOrder.setPaymentTime(new Date());
+        lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+        lifeOrder.setTransType(paymentTypeEnum.getKey());
+        lifeOrderJpaRepository.save(lifeOrder);
+        if (OrderTypeEnum.PURCHASE_ORDER_TYPE.getKey() == lifeOrder.getType()) {
+            //打印采购单
+            BasicResult result = supplyChainPrinterManager.printerPurchaseOrder(lifeOrder.getShippingPassportId()
+                    , lifeOrder.getId());
+            if (!result.isSuccess()) {
+                logger.error("采购订单打印失败！" + result.getMsg() + "，订单ID:" + lifeOrder.getId());
+            }
+            return result;
+        }
+        return BasicResult.createSuccessResult();
     }
 
     public BasicResult confirmOrder(long passportId, long orderId) {
@@ -586,10 +605,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.CASH.getValue());
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
                     recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
+                        || PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
-                } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {
-                    recordVo.setTransType(PaymentTypeEnum.WEIXIN_JS.getValue());
                 } else if (PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType(PaymentTypeEnum.UNKNOWN.getValue());
                 }

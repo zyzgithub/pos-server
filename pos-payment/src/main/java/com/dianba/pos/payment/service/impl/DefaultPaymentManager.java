@@ -178,7 +178,7 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
         BasicResult basicResult = BasicResult.createSuccessResult();
         try {
             //通知订单系统，订单已经支付
-            basicResult = orderManager.paymentOrder(lifeOrder.getId(), paymentTypeEnum);
+            basicResult = orderManager.paymentOrder((LifeOrderVo) lifeOrder, paymentTypeEnum);
             Map<Long, Integer> itemIdMaps = new HashMap<>();
             //修改商品库存
             if (OrderTypeEnum.SCAN_ORDER_TYPE.getKey() == lifeOrder.getType()) {
@@ -236,8 +236,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             if (returnOrderInfo) {
                 //返回订单详情-加商品列表
                 LifeOrderVo lifeOrderVo = orderManager.getLifeOrder(lifeOrder.getId());
-                //TODO 修正数据脏读
-                lifeOrderVo.setTransType(paymentTypeEnum.getValue());
                 basicResult.setResponse(lifeOrderVo);
                 basicResult.getResponse().put("rewardAmount", offsetRewardAmount
                         .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP)
