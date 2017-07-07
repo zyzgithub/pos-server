@@ -33,7 +33,8 @@
         select ifnull(a.todayTotalAmount,0) todayTotalAmount,ifnull(b.monthTotalAmount,0) monthTotalAmount
         from
             (select sum(x.total_price-x.total_price*x.rate) todayTotalAmount from (
-                select t.total_price,t.trans_type
+                select t.trans_type
+                    ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
@@ -54,7 +55,8 @@
             ) a
         inner join
             (select sum(x.total_price-x.total_price*x.rate) monthTotalAmount from (
-                select t.total_price,t.trans_type
+                select t.trans_type
+                    ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
@@ -80,8 +82,9 @@
         select a.time,count(a.time) count,sum(a.real_amount) totalAmount from (
             select x.*,x.amount-x.amount*x.rate real_amount from (
                 select date_format(t.payment_time,'%Y-%m-%d') time
-                    ,b.commission_rate,t.total_price amount
+                    ,b.commission_rate
                     ,t.trans_type
+                    ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END amount
                     ,case t.trans_type
                         when 'CASH' then 0
                         when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
@@ -108,7 +111,8 @@
     <select id="findMerchantIncomeOrder" resultType="com.dianba.pos.order.vo.MerchantOrderIncomeVo">
         select a.*,a.total_price-a.total_price*a.rate amount from (
             select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') time,sequence_number transSequence
-            ,t.total_price,t.trans_type transType,ps.real_name realName
+            ,t.trans_type transType,ps.real_name realName
+            ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
             ,case t.trans_type
             when 'CASH' then 0
             when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)

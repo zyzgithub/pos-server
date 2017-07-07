@@ -68,6 +68,11 @@ public interface LifeOrderManager {
     BasicResult paymentOrder(Long orderId, PaymentTypeEnum paymentTypeEnum);
 
     /**
+     * 确认支付订单
+     */
+    BasicResult paymentOrder(LifeOrderVo lifeOrder, PaymentTypeEnum paymentTypeEnum);
+
+    /**
      * 确认完成订单-2.0
      */
     BasicResult confirmOrder(long passportId, long orderId);
