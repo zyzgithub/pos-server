@@ -5,6 +5,10 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="cache" content="no-cache"/>
     <title>1号生活扫码支付</title>
     <link th:href="@{/css/base.css}" rel="stylesheet"/>
     <link th:href="@{/css/keyboard.css}" rel="stylesheet"/>
@@ -18,7 +22,7 @@
         <span class="logo"></span>
     </div>
     <div class="payTitle-right">
-        <p>小吃店</p>
+        <p th:text="${showName}"></p>
         <p>1号生活pos收银台</p>
     </div>
 </div>
@@ -62,9 +66,9 @@
                 dataType: 'json',
                 success: function (data) {
                     if (paymentType == "WEIXIN_JS") {
-                        window.location.href = "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
+                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
                     } else if (paymentType == "ALIPAY") {
-                        window.location.href = "/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                        window.location.href = "http://apptest.0085.com"+"/pos/payment/wap/alipay/" + data.response.sequenceNumber;
                     }
                 },
                 error: function (data) {

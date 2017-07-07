@@ -5,6 +5,11 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="cache" content="no-cache"/>
+    <link th:href="@{/css/base.css}" rel="stylesheet"/>
     <title></title>
 </head>
 <script th:inline="javascript">
@@ -14,10 +19,11 @@
         //微信浏览器
         window.location.href = [[${url}]];
     } else if (ua.match("alipayclient")) {
-        window.location.href = "/pos/" + [[${pay_url}]] + passportId;
+        window.location.href = "http://apptest.0085.com" + "/pos/" + [[${pay_url}]] + passportId;
+    } else {
+        alert('请选择使用支付宝或者微信扫码！!');
     }
 </script>
 <body>
-请选择使用支付宝或者微信扫码！!
 </body>
 </html>

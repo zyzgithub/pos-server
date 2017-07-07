@@ -34,12 +34,12 @@ public class QROrderController {
         PaymentTypeEnum paymentTypeEnum;
         if (PaymentTypeEnum.ALIPAY.getKey().equals(paymentType)) {
             paymentTypeEnum = PaymentTypeEnum.ALIPAY;
-            if (amount.compareTo(BigDecimal.valueOf(0.01)) > 0) {
+            if (amount.compareTo(BigDecimal.valueOf(1000)) > 0) {
                 throw new PosAccessDeniedException("交易超限！支付宝单笔交易限额1000！");
             }
         } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(paymentType)) {
             paymentTypeEnum = PaymentTypeEnum.WEIXIN_JS;
-            if (amount.compareTo(BigDecimal.valueOf(0.03)) > 0) {
+            if (amount.compareTo(BigDecimal.valueOf(3000)) > 0) {
                 throw new PosAccessDeniedException("交易超限！微信单笔交易限额3000！");
             }
         } else {

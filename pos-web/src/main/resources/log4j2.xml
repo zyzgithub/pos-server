@@ -23,6 +23,7 @@
         <logger name="com.alibaba.druid" level="INFO"/>
         <logger name="springfox.documentation" level="INFO"/>
         <logger name="org.thymeleaf" level="INFO"/>
+        <logger name="net.sf.json.JSONObject" level="ERROR"/>
 
         <root level="INFO">
             <appender-ref ref="RollingFile"/>

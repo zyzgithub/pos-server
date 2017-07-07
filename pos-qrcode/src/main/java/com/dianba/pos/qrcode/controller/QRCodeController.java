@@ -31,13 +31,20 @@ public class QRCodeController {
             , @PathVariable("code") String code) throws Exception {
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=" + code + ".png");
-        posQRCodeManager.putQRCodeInOutPutStrem(code, 300, 300, response);
+        posQRCodeManager.showQRCodeByCode(code, 300, 300, response);
     }
 
-    @ApiOperation("通过CODE暂时商家二维码")
+    @ApiOperation("通过CODE展示商家二维码")
     @RequestMapping(value = "show_qrcode/{code}", method = {RequestMethod.GET})
     public void showQRCodeByCode(HttpServletRequest request, HttpServletResponse response
             , @PathVariable("code") String code) throws Exception {
-        posQRCodeManager.putQRCodeInOutPutStrem(code, 300, 300, response);
+        posQRCodeManager.showQRCodeByCode(code, 300, 300, response);
+    }
+
+    @ApiOperation("通过passportId展示商家二维码")
+    @RequestMapping(value = "show_qrcode", method = {RequestMethod.GET, RequestMethod.POST})
+    public void showQRCodeByPassportId(HttpServletRequest request, HttpServletResponse response
+            , Long passportId) throws Exception {
+        posQRCodeManager.showQRCodeByPassportId(passportId, 300, 300, response);
     }
 }
