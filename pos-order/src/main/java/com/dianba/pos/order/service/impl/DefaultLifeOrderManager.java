@@ -575,9 +575,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         Integer wxSum = 0;
         Integer zfbSum = 0;
         Integer cashSum = 0;
+        Integer wxjsSum=0;
         BigDecimal wxMoney = new BigDecimal(0);
         BigDecimal cashMoney = new BigDecimal(0);
         BigDecimal zfbMoney = new BigDecimal(0);
+        BigDecimal wxjsMoney = new BigDecimal(0);
         BigDecimal a = new BigDecimal(100);
         List<Long> orderIds = new ArrayList<>();
         for (OrderTransactionRecordVo lifeOrder : list) {
@@ -628,16 +630,18 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
                     zfbSum = recordVo.getCountMap();
                     zfbMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
-                        || PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())) {//微信支付
                     wxSum = recordVo.getCountMap();
                     wxMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
+                } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
+                    wxjsSum = recordVo.getCountMap();
+                    wxjsMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sumCount", wxSum + cashSum + zfbSum);
-        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney));
+        jsonObject.put("sumCount", wxSum + cashSum + zfbSum+wxjsSum);
+        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney));
         jsonObject.put("wxSum", wxSum);
         jsonObject.put("cashSum", cashSum);
         jsonObject.put("zfbSum", zfbSum);
