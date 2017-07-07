@@ -129,7 +129,16 @@
 //				addArr.splice(addtextNum,0,character);
 //				addArr = addArr.join(",").replace(/,/g, "");
 //				$write.val(addArr);
-				$write.val($write.val() + character);
+                var n = $write.val() + character;
+                num = (n.split(".")).length-1;
+                if(n.toString().split(".")[1] != undefined && n.toString().split(".")[1].length > 2){
+                    n = parseFloat(n).toFixed(2);
+                    return false;
+                    $write.val(n);
+                }else{
+                    if(num > 1) return false;
+                    $write.val(n);
+                }
 				
 				// 存在change事件 则执行
 				if($write.attr('event-change')){
