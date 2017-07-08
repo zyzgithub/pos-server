@@ -171,7 +171,7 @@ public class WapPaymentController {
                     String buyerId = request.getParameter("buyer_id");
                     logger.info("支付宝扫码订单更新！" + sequenceNumber);
                     paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
-                            , false, false);
+                            , true, false);
                 }
             }
         } catch (AlipayApiException e) {
@@ -223,7 +223,7 @@ public class WapPaymentController {
             String totalAmount = resultMap.get("total_fee");
             String openId = resultMap.get("openid");
             paymentManager.processPaidOrder(squenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
-                    , false, false);
+                    , true, false);
         } else {
             String errMsg = WechatResultUtil.getErrorMsg(resultMap);
             logger.info("确认支付信息失败！" + errMsg);
