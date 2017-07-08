@@ -20,6 +20,45 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <version>1.5.3.RELEASE</version>
         </dependency>
+
+        <!--TODO REMOVE:EBGIN-->
+        <dependency>
+            <groupId>com.dianba</groupId>
+            <artifactId>platform-base</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>1.5.3.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>4.3.8.RELEASE</version>
+        </dependency>
+        <!--TODO REMOVE:END-->
+
         <dependency>
             <groupId>com.dianba</groupId>
             <artifactId>pos-extended</artifactId>
@@ -43,7 +82,6 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <!--<addMavenDescriptor>false</addMavenDescriptor>-->
                             <useUniqueVersions>false</useUniqueVersions>
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>com.dianba.pos.scheduler.Application</mainClass>
@@ -54,8 +92,6 @@
                     </archive>
                     <excludes>
                         <exclude>application.properties</exclude>
-                        <exclude>extended.properties</exclude>
-                        <exclude>app_config.properties</exclude>
                     </excludes>
                 </configuration>
             </plugin>
