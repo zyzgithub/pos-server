@@ -35,6 +35,7 @@
         <module>pos-settlement</module>
         <module>pos-qrcode</module>
         <module>pos-maintenance</module>
+        <module>pos-box</module>
     </modules>
 
     <dependencies>
