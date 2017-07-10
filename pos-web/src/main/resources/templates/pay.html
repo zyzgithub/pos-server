@@ -17,7 +17,7 @@
     </div>
     <div class="payTitle-right">
         <p th:text="${showName}"></p>
-        <p>1号生活pos收银台</p>
+        <p>1号生活</p>
     </div>
 </div>
 <div class="payInput clearfix" onclick="inputshow(this);">
@@ -37,6 +37,18 @@
     var paymentType = [[${paymentType}]];
     $(function () {
         FastClick.attach(document.body);
+        var logoLeft = $(".logoLeft").width();
+        var payRight = $(".payTitle-right").width();
+        var dw = $(document).width() - 85;
+        $(".payTitle-right").css("max-width", dw);
+        if (dw > payRight) {
+            $(".payTitle").width(payRight + logoLeft);
+        }
+        if ($(".payTitle-right").height() > 85) {
+            $(".logoLeft").css("margin-top", $(".payTitle-right").height() - 85);
+            console.log($(".payTitle-right").height() - 85);
+        }
+
         keyBoard({
             type: 'tel',
             self: $('#money'),
