@@ -1,5 +1,6 @@
 package com.dianba.pos.qrcode.service;
 
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.qrcode.po.PosQRCode;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,8 @@ public interface PosQRCodeManager {
 
     void showQRCodeByPassportId(Long passportId, Integer width, Integer height
             , HttpServletResponse response) throws Exception;
+
+    BasicResult showQRCodeContentByPassportId(Long passportId) throws Exception;
 
     void showQRCodeByCode(String code, Integer width, Integer height
             , HttpServletResponse response) throws Exception;
