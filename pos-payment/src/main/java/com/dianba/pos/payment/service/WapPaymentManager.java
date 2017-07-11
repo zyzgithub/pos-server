@@ -8,5 +8,6 @@ public interface WapPaymentManager {
 
     BasicResult wechatPay(String sequenceNumber, String spBillCreateIP) throws Exception;
 
-    void aliPayByOutHtml(HttpServletResponse response, String sequenceNumber) throws Exception;
+    void aliPayByOutHtml(HttpServletResponse response, String sequenceNumber
+            , String returnUrl, String notifyUrl) throws Exception;
 }

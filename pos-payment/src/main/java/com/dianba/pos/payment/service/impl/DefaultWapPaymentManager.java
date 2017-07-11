@@ -11,7 +11,6 @@ import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.payment.config.AlipayConfig;
-import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.pojo.BizContent;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.service.WeChatPayManager;
@@ -44,7 +43,8 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
     }
 
     @Override
-    public void aliPayByOutHtml(HttpServletResponse response, String sequenceNumber) throws Exception {
+    public void aliPayByOutHtml(HttpServletResponse response, String sequenceNumber
+            , String returnUrl, String notifyUrl) throws Exception {
         LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(sequenceNumber, true);
         if (lifeOrder != null) {
             AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getUrl()
@@ -62,10 +62,9 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
             try {
                 AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
                 //在公共参数中设置回跳和通知地址
-                alipayRequest.setReturnUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_RETURN_URL);
-                alipayRequest.setNotifyUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_NOTIFY_URL);
+                alipayRequest.setReturnUrl(returnUrl);
+                alipayRequest.setNotifyUrl(notifyUrl);
                 //参数参考 https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1#s0
-                System.out.println(JSON.toJSONString(content));
                 alipayRequest.setBizContent(JSON.toJSONString(content));//填充业务参数
                 String form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
                 response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);

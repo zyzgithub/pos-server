@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title></title>
+    <link th:href="@{/css/base.css}" rel="stylesheet"/>
+    <style>
+        .success {
+            height: auto;
+            width: 100%;
+        }
+
+        .successLogo {
+            height: auto;
+            width: 35%;
+            margin: 15% auto 0;
+        }
+
+        .payTitle {
+            color: #666;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .num {
+            text-align: center;
+            font-size: 30px;
+            margin-top: 5%;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payBtn {
+            height: auto;
+            width: 70%;
+            background: #D81e06;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            margin: 10% auto 0;
+            display: block;
+            padding: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="success">
+    <img class="successLogo" th:src="@{/img/error.png}"/>
+    <p class="payTitle">支付失败</p>
+</div>
+<script>
+</script>
+</body>
+</html>

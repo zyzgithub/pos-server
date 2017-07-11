@@ -1,0 +1,13 @@
+.title{ height: 45px; line-height: 45px; width: 100%; box-sizing: border-box; font-size: 16px; text-align: center; background: #ea4a4d; color: #fff; position: fixed; top: 0;}
+.carList{ height: auto; width: 100%; background: #fff; margin: 55px 0 50px 0; }
+.carList ul{padding:0 10px; box-sizing: border-box;}
+.carList li{ height: auto; width: 100%; padding: 10px 0; box-sizing: border-box; word-wrap: break-word; font-size: 14px; border-bottom: 1px solid #e5e5e5; color: #666;}
+.carList li p.protect{ width: 50%; float: left;}
+.carList li p.price{ width: 29%;  text-align: center;float: right;text-align: right; }
+.carList li p.num{ width: 20%; float: left;}
+.carList li:last-child{ border: 0;}
+.totalMonry{ text-align: right; padding: 10px; box-sizing: border-box; font-size:16px; color:#ea4a4d; border-top: 1px solid #e5e5e5;}
+.payBtn{ height: auto; width: 100%; display: block; padding: 10px 0; text-align: center; background: #ea4a4d; color: #fff; position: fixed; bottom: 0;}
+.carTitle{ height: auto; width: 100%;box-sizing: border-box; padding: 10px; border-bottom: 1px solid #e5e5e5; font-size: 16px; color: #333;}
+.carList .carNav p{ color: #333; font-size: 15px; }
+.carList .carNav{ border: 0;}

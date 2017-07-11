@@ -1,6 +1,8 @@
 package com.dianba.pos.box.service;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.box.po.BoxItemLabel;
+import com.dianba.pos.box.vo.BoxItemVo;
 import com.dianba.pos.box.vo.ItemStorageVo;
 
 import java.util.List;
@@ -17,5 +19,9 @@ public interface BoxItemLabelManager {
      */
     BasicResult itemStorage(ItemStorageVo itemStorageVo);
 
-    BasicResult getItemsByRFID(Long passportId, List<String> rfids);
+    BasicResult showItemsByRFID(Long passportId, String rfids);
+
+    List<BoxItemVo> getItemsByRFID(Long passportId, String rfids);
+
+    List<BoxItemLabel> updateItemLabelToPaid(String rfids);
 }

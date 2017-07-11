@@ -131,7 +131,9 @@ public class WapPaymentController {
     @RequestMapping("alipay/{sequenceNumber}")
     public void aliPay(HttpServletRequest request, HttpServletResponse response
             , @PathVariable(name = "sequenceNumber") String sequenceNumber) throws Exception {
-        wapPaymentManager.aliPayByOutHtml(response, sequenceNumber);
+        wapPaymentManager.aliPayByOutHtml(response, sequenceNumber
+                , appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_RETURN_URL
+                , appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_ALIPAY_NOTIFY_URL);
     }
 
     @RequestMapping("aliPayReturnUrl")

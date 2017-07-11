@@ -9,6 +9,7 @@ public class BoxItemVo implements Serializable {
     private String itemName;
     private Integer itemQuantity;
     private BigDecimal itemPrice;
+    private BigDecimal totalPrice;
     //0,未支付，1已支付，3包含未支付商品
     private Integer isPaid;
     private String showPaidName;
@@ -44,6 +45,14 @@ public class BoxItemVo implements Serializable {
 
     public void setItemPrice(BigDecimal itemPrice) {
         this.itemPrice = itemPrice;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public Integer getIsPaid() {
