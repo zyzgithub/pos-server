@@ -11,7 +11,6 @@ import com.dianba.pos.box.repository.BoxItemLabelJpaRepository;
 import com.dianba.pos.box.service.BoxItemLabelManager;
 import com.dianba.pos.box.util.ScanItemsUtil;
 import com.dianba.pos.box.vo.BoxItemVo;
-import com.dianba.pos.box.vo.ItemStorageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
-/**
- * Created by zhangyong on 2017/7/4.
- */
 @Service
 public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
 
@@ -29,14 +25,6 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     private BoxItemLabelMapper boxItemLabelMapper;
     @Autowired
     private BoxItemLabelJpaRepository itemLabelJpaRepository;
-
-    @Override
-    public BasicResult itemStorage(ItemStorageVo itemStorageVo) {
-
-        //根据code码
-
-        return null;
-    }
 
     @Override
     public BasicResult showItemsByRFID(Long passportId, String rfids) {
@@ -103,6 +91,31 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
             boxItemLabel.setIsPaid(1);
         }
         return itemLabelJpaRepository.save(boxItemLabels);
+    }
+
+    @Transactional
+    public void bindItemLabelToItems(Long itemId, String rfids) {
+        List<String> rfidList = convertToRfidList(rfids);
+        List<BoxItemLabel> boxItemLabels = getRFIDItems(rfids);
+        for (String rfid : rfidList) {
+            boolean isExists = false;
+            for (BoxItemLabel boxItemLabel : boxItemLabels) {
+                if (boxItemLabel.getRfid().equals(rfid)) {
+                    isExists = true;
+                    boxItemLabel.setItemId(itemId);
+                    boxItemLabel.setIsPaid(BoxItemLabelPaidEnum.NOT_PAID.getKey());
+                    break;
+                }
+            }
+            if (!isExists) {
+                BoxItemLabel boxItemLabel = new BoxItemLabel();
+                boxItemLabel.setItemId(itemId);
+                boxItemLabel.setRfid(rfid);
+                boxItemLabel.setIsPaid(BoxItemLabelPaidEnum.NOT_PAID.getKey());
+                boxItemLabels.add(boxItemLabel);
+            }
+        }
+        itemLabelJpaRepository.save(boxItemLabels);
     }
 
     private List<String> convertToRfidList(String rfids) {

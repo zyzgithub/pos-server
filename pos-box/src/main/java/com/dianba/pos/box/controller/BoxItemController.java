@@ -58,4 +58,14 @@ public class BoxItemController {
         basicResult.setResponseDatas(itemsByCodeOrName);
         return basicResult;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "bindItemLabel", method = {RequestMethod.GET, RequestMethod.POST})
+    public BasicResult bindItemLabel(Long passportId, Long itemId, String rfids) {
+        boxItemLabelManager.bindItemLabelToItems(itemId, rfids);
+        List<BoxItemLabel> boxItemLabels = boxItemLabelManager.getRFIDItems(rfids);
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        basicResult.setResponseDatas(boxItemLabels);
+        return basicResult;
+    }
 }
