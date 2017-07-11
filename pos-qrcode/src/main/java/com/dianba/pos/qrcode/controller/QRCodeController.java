@@ -1,5 +1,6 @@
 package com.dianba.pos.qrcode.controller;
 
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.qrcode.config.QRCodeURLConstant;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
 import io.swagger.annotations.Api;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,5 +48,13 @@ public class QRCodeController {
     public void showQRCodeByPassportId(HttpServletRequest request, HttpServletResponse response
             , Long passportId) throws Exception {
         posQRCodeManager.showQRCodeByPassportId(passportId, 300, 300, response);
+    }
+
+    @ApiOperation("通过passportId展示商家二维码")
+    @ResponseBody
+    @RequestMapping(value = "show_qrcode_content", method = {RequestMethod.GET, RequestMethod.POST})
+    public BasicResult showQRCodeContentByPassportId(HttpServletRequest request, HttpServletResponse response
+            , Long passportId) throws Exception {
+        return posQRCodeManager.showQRCodeContentByPassportId(passportId);
     }
 }
