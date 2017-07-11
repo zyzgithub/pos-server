@@ -31,7 +31,7 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
     @Transactional
     public LifeOrder createBoxOrder(Long passportId) {
         String rfids = ScanItemsUtil.getRFIDItems(passportId);
-        List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids);
+        List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids, true);
         LifeOrder lifeOrder = new LifeOrder();
         lifeOrder.setRemark(rfids);
         lifeOrder.setShippingPassportId(passportId);

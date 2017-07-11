@@ -82,12 +82,12 @@ public class BoxPaymentController {
             , String code, String state) throws Exception {
         ModelAndView modelAndView = new ModelAndView("item_list");
         Passport passport = passportManager.findById(passportId);
-        ScanItemsUtil.writeScanItems(passportId, "E004015073E2E7A8,E004015073E28139");
+//        ScanItemsUtil.writeScanItems(passportId, "E004015073E2E7A8,E004015073E28139");
         String rfids = ScanItemsUtil.getRFIDItems(passportId);
-        List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids);
+        List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids, true);
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (BoxItemVo boxItemVo : boxItemVos) {
-            totalPrice = totalPrice.add(boxItemVo.getTotalPrice());
+        for (int i = boxItemVos.size() - 1; i >= 0; i--) {
+            totalPrice = totalPrice.add(boxItemVos.get(i).getTotalPrice());
         }
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("showName", passport.getShowName());

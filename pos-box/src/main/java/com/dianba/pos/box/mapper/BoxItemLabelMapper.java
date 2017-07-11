@@ -6,9 +6,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by zhangyong on 2017/7/4.
- */
 @Mapper
 public interface BoxItemLabelMapper {
 

@@ -7,8 +7,8 @@
         </Console>
 
         <!-- 大小超过size，按年份-月份建立的文件夹下面并进行压缩，作为存档-->
-        <RollingFile name="RollingFile" fileName="logs/pos-server.log"
-                     filePattern="logs/$${date:yyyy-MM}/pos-server-%d{MM-dd-yyyy}-%i.log.gz">
+        <RollingFile name="RollingFile" fileName="logs/box-server.log"
+                     filePattern="logs/$${date:yyyy-MM}/box-server-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
             <SizeBasedTriggeringPolicy size="200MB"/>
             <!--默认7，设置同目录最多50个文件-->

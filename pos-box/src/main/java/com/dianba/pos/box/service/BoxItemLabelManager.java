@@ -21,7 +21,9 @@ public interface BoxItemLabelManager {
 
     BasicResult showItemsByRFID(Long passportId, String rfids);
 
-    List<BoxItemVo> getItemsByRFID(Long passportId, String rfids);
+    List<BoxItemVo> getItemsByRFID(Long passportId, String rfids, boolean excludePaid);
+
+    List<BoxItemLabel> getRFIDItems(String rfids);
 
     List<BoxItemLabel> updateItemLabelToPaid(String rfids);
 }

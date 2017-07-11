@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.box.config.BoxURLConstant;
+import com.dianba.pos.box.constant.BoxItemLabelPaidEnum;
 import com.dianba.pos.box.mapper.BoxItemLabelMapper;
 import com.dianba.pos.box.po.BoxItemLabel;
 import com.dianba.pos.box.repository.BoxItemLabelJpaRepository;
@@ -40,7 +41,7 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     @Override
     public BasicResult showItemsByRFID(Long passportId, String rfids) {
         ScanItemsUtil.writeScanItems(passportId, rfids);
-        List<BoxItemVo> boxItemVos = getItemsByRFID(passportId, rfids);
+        List<BoxItemVo> boxItemVos = getItemsByRFID(passportId, rfids, false);
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(boxItemVos);
         JSONObject jsonObject = basicResult.getResponse();
@@ -49,25 +50,23 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
         return basicResult;
     }
 
-    public List<BoxItemVo> getItemsByRFID(Long passportId, String rfids) {
-        String[] rfidKeys = rfids.split(",");
-        if (rfidKeys.length == 0) {
-            throw new PosIllegalArgumentException("未选择商品！");
-        }
-        List<String> rfidList = Arrays.asList(rfidKeys);
-        List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(rfidList);
+    public List<BoxItemVo> getItemsByRFID(Long passportId, String rfids, boolean excludePaid) {
+        List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(convertToRfidList(rfids));
         Map<Long, BoxItemVo> boxItemVoMap = new HashMap<>();
         for (BoxItemLabel boxItemLabel : boxItemLabels) {
             BigDecimal itemPrice = boxItemLabel.getSalesPrice()
                     .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            if (excludePaid && boxItemLabel.getIsPaid().intValue() == BoxItemLabelPaidEnum.PAID.getKey()) {
+                continue;
+            }
             if (boxItemVoMap.containsKey(boxItemLabel.getItemId())) {
                 BoxItemVo boxItemVo = boxItemVoMap.get(boxItemLabel.getItemId());
                 boxItemVo.setItemQuantity(boxItemVo.getItemQuantity() + 1);
                 boxItemVo.setTotalPrice(boxItemVo.getTotalPrice().add(itemPrice));
                 boxItemVo.setRfids(boxItemVo.getRfids() + "," + boxItemLabel.getRfid());
                 if (boxItemVo.getIsPaid().intValue() != boxItemLabel.getIsPaid().intValue()) {
-                    boxItemVo.setIsPaid(3);
-                    boxItemVo.setShowPaidName("包含未支付商品！");
+                    boxItemVo.setIsPaid(BoxItemLabelPaidEnum.HALF_PAID.getKey());
+                    boxItemVo.setShowPaidName(BoxItemLabelPaidEnum.HALF_PAID.getValue());
                 }
             } else {
                 BoxItemVo boxItemVo = new BoxItemVo();
@@ -76,8 +75,10 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
                 boxItemVo.setItemQuantity(1);
                 boxItemVo.setItemPrice(itemPrice);
                 boxItemVo.setTotalPrice(itemPrice);
-                boxItemVo.setIsPaid(boxItemLabel.getIsPaid());
-                boxItemVo.setShowPaidName(boxItemLabel.getIsPaid() == 1 ? "已支付" : "未支付");
+                BoxItemLabelPaidEnum itemLabelPaidEnum = BoxItemLabelPaidEnum
+                        .getBoxItemLabelPaidEnum(boxItemLabel.getIsPaid());
+                boxItemVo.setIsPaid(itemLabelPaidEnum.getKey());
+                boxItemVo.setShowPaidName(itemLabelPaidEnum.getValue());
                 boxItemVo.setRfids(boxItemLabel.getRfid());
                 boxItemVoMap.put(boxItemLabel.getItemId(), boxItemVo);
             }
@@ -85,17 +86,30 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
         return new ArrayList<>(boxItemVoMap.values());
     }
 
+    @Override
+    public List<BoxItemLabel> getRFIDItems(String rfids) {
+        List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(convertToRfidList(rfids));
+        for (BoxItemLabel boxItemLabel : boxItemLabels) {
+            boxItemLabel.setShowPaidName(BoxItemLabelPaidEnum
+                    .getBoxItemLabelPaidEnum(boxItemLabel.getIsPaid()).getValue());
+        }
+        return boxItemLabels;
+    }
+
     @Transactional
     public List<BoxItemLabel> updateItemLabelToPaid(String rfids) {
-        String[] rfidKeys = rfids.split(",");
-        if (rfidKeys.length == 0) {
-            throw new PosIllegalArgumentException("未选择商品！");
-        }
-        List<String> rfidList = Arrays.asList(rfidKeys);
-        List<BoxItemLabel> boxItemLabels = itemLabelJpaRepository.findByRfidIn(rfidList);
+        List<BoxItemLabel> boxItemLabels = itemLabelJpaRepository.findByRfidIn(convertToRfidList(rfids));
         for (BoxItemLabel boxItemLabel : boxItemLabels) {
             boxItemLabel.setIsPaid(1);
         }
         return itemLabelJpaRepository.save(boxItemLabels);
+    }
+
+    private List<String> convertToRfidList(String rfids) {
+        String[] rfidKeys = rfids.split(",");
+        if (rfidKeys.length == 0) {
+            throw new PosIllegalArgumentException("未选择商品！");
+        }
+        return Arrays.asList(rfidKeys);
     }
 }

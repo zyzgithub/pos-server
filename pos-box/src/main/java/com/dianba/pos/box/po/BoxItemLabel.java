@@ -26,6 +26,8 @@ public class BoxItemLabel implements Serializable {
     private Date createTime = new Date();
 
     @Transient
+    private String showPaidName;
+    @Transient
     private String itemName;
     @Transient
     private BigDecimal salesPrice;
@@ -68,6 +70,14 @@ public class BoxItemLabel implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getShowPaidName() {
+        return showPaidName;
+    }
+
+    public void setShowPaidName(String showPaidName) {
+        this.showPaidName = showPaidName;
     }
 
     public String getItemName() {
