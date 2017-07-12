@@ -7,6 +7,7 @@
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title></title>
 </head>
+<script th:src="@{/js/location.js}" type="text/javascript"></script>
 <script th:inline="javascript">
     var passportId = [[${passportId}]];
     var ua = navigator.userAgent.toLowerCase();
@@ -14,7 +15,7 @@
         //微信浏览器
         window.location.href = [[${url}]];
     } else if (ua.match("alipayclient")) {
-        window.location.href = "http://no1.0085.com" + "/pos/" + [[${pay_url}]] + passportId;
+        window.location.href = getProjectPath() + [[${pay_url}]] + passportId;
     } else {
         alert('请选择使用支付宝或者微信扫码！!');
     }
