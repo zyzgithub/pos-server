@@ -3,6 +3,8 @@ package com.dianba.pos.passport.repository;
 import com.dianba.pos.passport.po.LifePassportProperties;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 /**
  * Created by zhangyong on 2017/6/5.
  */
@@ -10,4 +12,6 @@ public interface LifePassportPropertiesJpaRepository extends JpaRepository<LifeP
     LifePassportProperties findLifePassportPropertiesByPassportIdAndKAndV(Long passportId,String k,String v);
 
     LifePassportProperties findLifePassportPropertiesByPassportId(Long passportId);
+
+    List<LifePassportProperties> findAllByPassportId(Long passportId);
 }

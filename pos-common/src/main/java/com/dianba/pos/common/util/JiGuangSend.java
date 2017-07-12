@@ -9,7 +9,7 @@ import cn.jpush.api.push.model.PushPayload;
 
 public class JiGuangSend {
 	
-	public static PushResult sendPushWithAlias(String alias,String content){
+	public static String sendPushWithAlias(String alias,String content){
 		PushResult result=null;
 		JPushClient  jpushClient = new JPushClient(ConstantsUtil.YUN_POS_JIGUANG_SERCRET,ConstantsUtil
 				.YUN_POS_JIGUANG_KEY);
@@ -25,7 +25,7 @@ public class JiGuangSend {
 		}
 		System.out.println(result);
 
-		return result;
+		return result.toString();
 	}
 
 	public static String sendPushWithAlias(String alias,String content,String message){
@@ -51,7 +51,7 @@ public class JiGuangSend {
 
 
 	public static void main(String[] args) {
-		sendPushWithAlias("100348","标题","推送测试海龙");
+		sendPushWithAlias("100045","测试推送","推送测试海龙");
 	}
 
 

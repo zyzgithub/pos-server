@@ -20,4 +20,9 @@ public class DefaultPosCashierAccountManager implements PosCashierAccountManager
     public List<PosCashierAccount> findAllByMerchantIdAndAccountType(Long merchantId, Integer type) {
         return posCashierAccountJpaRepository.findAllByMerchantIdAndAccountType(merchantId, type);
     }
+
+    @Override
+    public List<PosCashierAccount> findAllByMerchantId(Long merchantId) {
+        return posCashierAccountJpaRepository.findAllByMerchantId(merchantId);
+    }
 }

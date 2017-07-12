@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface PosCashierAccountManager {
     List<PosCashierAccount> findAllByMerchantIdAndAccountType(Long merchantId, Integer type);
+    List<PosCashierAccount> findAllByMerchantId(Long merchantId);
 }
