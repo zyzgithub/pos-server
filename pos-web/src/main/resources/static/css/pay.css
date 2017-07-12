@@ -1,10 +1,9 @@
 .payTitle .logo{ height: 85px; width: 85px; background: url(../img/logo.png) no-repeat; background-size: contain; float: right;}
-.payTitle .payTitle-right{ float: left; width: 50%;}
-.payTitle .payTitle-right p{ margin: 8% 0 0 0%;}
+.payTitle .payTitle-right{ float: left; margin-top: 12px;}
 .payTitle .payTitle-right p:nth-child(1){ color: #333; font-size: 20px;}
-.payTitle .payTitle-right p:nth-child(2){ color: #666; font-size: 14px;}
-.payTitle{ height: auto; width: 100%; margin: 3% auto 0; }
-.logoLeft{ height: auto; width: 45%; float: left;}
+.payTitle .payTitle-right p:nth-child(2){ color: #666; font-size: 14px; margin-top: 5px;}
+.payTitle{ height: auto; width: auto; margin: 3% auto 0; }
+.logoLeft{ height: auto; float: left;  display: inline-block;}
 
 .payInput{ height: 85px; width: 86%; padding:0 22px; box-sizing: border-box; border: 1px solid #9fa2a7; border-radius: 5px; margin: 25px auto 0; background: #fff;}
 .money{ font-size: 22px; line-height: 85px; color: #666; float: left; width:30%; }

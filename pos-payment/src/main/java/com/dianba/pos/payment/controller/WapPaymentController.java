@@ -8,9 +8,14 @@ import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.HttpUtil;
+import com.dianba.pos.order.po.LifeOrder;
+import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.service.QROrderManager;
 import com.dianba.pos.passport.po.Passport;
+import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.service.PassportManager;
+import com.dianba.pos.passport.service.PosCashierAccountManager;
+import com.dianba.pos.passport.service.PosPushLogManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
@@ -32,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -56,6 +62,15 @@ public class WapPaymentController {
     private PassportManager passportManager;
     @Autowired
     private AppConfig appConfig;
+
+    @Autowired
+    private LifeOrderManager orderManager;
+
+    @Autowired
+    private PosCashierAccountManager posCashierAccountManager;
+
+    @Autowired
+    private PosPushLogManager posPushLogManager;
 
     /**
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
@@ -85,7 +100,7 @@ public class WapPaymentController {
         modelAndView.addObject("showName", passport.getShowName());
         modelAndView.addObject("paymentType", PaymentTypeEnum.WEIXIN_JS.getKey());
         if (code == null || state == null) {
-            modelAndView.addObject("paymentType", PaymentTypeEnum.ALIPAY.getKey());
+            modelAndView.addObject("paymentType", PaymentTypeEnum.ALIPAY_JS.getKey());
             //支付宝直接返回
             return modelAndView;
         }
@@ -172,8 +187,17 @@ public class WapPaymentController {
                     String sequenceNumber = request.getParameter("out_trade_no");
                     String buyerId = request.getParameter("buyer_id");
                     logger.info("支付宝扫码订单更新！" + sequenceNumber);
-                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
+                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY_JS
                             , true, false);
+                    LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
+                    String id = lifeOrder.getPartnerUserId();
+                    logger.info("passportId:" + id + "=========支付宝支付成功,推送测试");
+                    List<PosCashierAccount> lst = posCashierAccountManager.findAllByMerchantIdAndAccountType(
+                            Long.parseLong(id), 0);
+                    for (PosCashierAccount posCashierAccount : lst) {
+                        posPushLogManager.posJPush(posCashierAccount.getCashierId().toString()
+                                , lifeOrder.getTotalPrice().toString());
+                    }
                 }
             }
         } catch (AlipayApiException e) {

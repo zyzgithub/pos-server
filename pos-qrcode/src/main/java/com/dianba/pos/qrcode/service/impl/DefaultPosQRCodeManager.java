@@ -1,5 +1,7 @@
 package com.dianba.pos.qrcode.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.base.exception.PosNullPointerException;
@@ -57,6 +59,16 @@ public class DefaultPosQRCodeManager implements PosQRCodeManager {
             , HttpServletResponse response) throws Exception {
         PosQRCode posQRCode = getQRCodeByMerchantId(passportId);
         putQRCodeInOutPutStrem(posQRCode, width, height, response);
+    }
+
+    public BasicResult showQRCodeContentByPassportId(Long passportId) throws Exception {
+        PosQRCode posQRCode = getQRCodeByMerchantId(passportId);
+        BasicResult basicResult = BasicResult.createSuccessResult();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("qrCodeContent", appConfig.getPosCallBackHost()
+                + QRCodeURLConstant.QRCODE_URL + posQRCode.getCode());
+        basicResult.setResponse(jsonObject);
+        return basicResult;
     }
 
     public void showQRCodeByCode(String code, Integer width, Integer height

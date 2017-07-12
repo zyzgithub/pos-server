@@ -17,7 +17,7 @@
     </div>
     <div class="payTitle-right">
         <p th:text="${showName}"></p>
-        <p>1号生活pos收银台</p>
+        <p>1号生活</p>
     </div>
 </div>
 <div class="payInput clearfix" onclick="inputshow(this);">
@@ -33,10 +33,43 @@
 <script th:src="@{/js/zepto.min.js}" type="text/javascript"></script>
 <script th:src="@{/js/keyborad.js}" type="text/javascript"></script>
 <script th:src="@{/js/fastclick.js}" type="application/javascript"></script>
+<script th:src="@{/js/location.js}" type="text/javascript"></script>
+<ul class='keyboard'>
+    <li class='b-r b-t'>1</li>
+    <li class='b-r b-t'>2</li>
+    <li class='b-r b-t'>3</li>
+    <li class='b-t delete'>
+        <image class="removeIcon" th:src="@{/img/remove.png}"/>
+    </li>
+    <li class='b-r b-t clear'>4</li>
+    <li class='b-r b-t'>5</li>
+    <li class='b-r b-t'>6</li>
+    <li class='b-r b-t clear'>7</li>
+    <li class='b-r b-t'>8</li>
+    <li class='b-r b-t'>9</li>
+    <li class='b-r b-t clear down'>
+        <image class="downIcon" th:src="@{/img/key.png}"/>
+    </li>
+    <li class='b-r b-t'>0</li>
+    <li class='b-r b-t'>.</li>
+    <li class='b-t pay'>确认付款</li>
+</ul>
 <script th:inline="javascript">
     var paymentType = [[${paymentType}]];
     $(function () {
         FastClick.attach(document.body);
+        var logoLeft = $(".logoLeft").width();
+        var payRight = $(".payTitle-right").width();
+        var dw = $(document).width() - 85;
+        $(".payTitle-right").css("max-width", dw);
+        if (dw > payRight) {
+            $(".payTitle").width(payRight + logoLeft + 3);
+        }
+        if ($(".payTitle-right").height() > 85) {
+            $(".logoLeft").css("margin-top", $(".payTitle-right").height() - 85);
+            console.log($(".payTitle-right").height() - 85);
+        }
+
         keyBoard({
             type: 'tel',
             self: $('#money'),
@@ -63,9 +96,9 @@
                 success: function (data) {
                     if (data.code == 0) {
                         if (paymentType == "WEIXIN_JS") {
-                            window.location.href = "http://no1.0085.com" + "/pos/payment/wap/wechatPay/" + data.response.sequenceNumber;
-                        } else if (paymentType == "ALIPAY") {
-                            window.location.href = "http://no1.0085.com" + "/pos/payment/wap/alipay/" + data.response.sequenceNumber;
+                            window.location.href = getProjectPath() + "payment/wap/wechatPay/" + data.response.sequenceNumber;
+                        } else if (paymentType == "ALIPAY_JS") {
+                            window.location.href = getProjectPath() + "payment/wap/alipay/" + data.response.sequenceNumber;
                         }
                     } else {
                         alert(data.msg);

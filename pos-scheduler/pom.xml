@@ -66,6 +66,11 @@
         </dependency>
         <dependency>
             <groupId>com.dianba</groupId>
+            <artifactId>pos-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dianba</groupId>
             <artifactId>pos-order</artifactId>
             <version>${project.version}</version>
         </dependency>
