@@ -32,8 +32,8 @@ public class QROrderController {
     public BasicResult createQROrder(Long passportId, String paymentType
             , BigDecimal amount, String openId) throws Exception {
         PaymentTypeEnum paymentTypeEnum;
-        if (PaymentTypeEnum.ALIPAY.getKey().equals(paymentType)) {
-            paymentTypeEnum = PaymentTypeEnum.ALIPAY;
+        if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(paymentType)) {
+            paymentTypeEnum = PaymentTypeEnum.ALIPAY_JS;
             if (amount.compareTo(BigDecimal.valueOf(1000)) > 0) {
                 throw new PosAccessDeniedException("交易超限！支付宝单笔交易限额1000！");
             }

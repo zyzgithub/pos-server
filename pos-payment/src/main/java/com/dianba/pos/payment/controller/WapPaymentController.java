@@ -71,6 +71,7 @@ public class WapPaymentController {
 
     @Autowired
     private PosPushLogManager posPushLogManager;
+
     /**
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
      */
@@ -99,7 +100,7 @@ public class WapPaymentController {
         modelAndView.addObject("showName", passport.getShowName());
         modelAndView.addObject("paymentType", PaymentTypeEnum.WEIXIN_JS.getKey());
         if (code == null || state == null) {
-            modelAndView.addObject("paymentType", PaymentTypeEnum.ALIPAY.getKey());
+            modelAndView.addObject("paymentType", PaymentTypeEnum.ALIPAY_JS.getKey());
             //支付宝直接返回
             return modelAndView;
         }
@@ -184,18 +185,17 @@ public class WapPaymentController {
                     String sequenceNumber = request.getParameter("out_trade_no");
                     String buyerId = request.getParameter("buyer_id");
                     logger.info("支付宝扫码订单更新！" + sequenceNumber);
-                    LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
-                    String id=lifeOrder.getPartnerUserId();
-                    logger.info("passportId:"+id+"=========支付宝支付成功,推送测试");
-                    List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantIdAndAccountType(
-                            Long.parseLong(id),0);
-
-                    for(PosCashierAccount posCashierAccount : lst){
-                        posPushLogManager.posJPush(posCashierAccount.getCashierId().toString()
-                                ,lifeOrder.getTotalPrice().toString());
-                    }
-                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
+                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY_JS
                             , true, false);
+                    LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
+                    String id = lifeOrder.getPartnerUserId();
+                    logger.info("passportId:" + id + "=========支付宝支付成功,推送测试");
+                    List<PosCashierAccount> lst = posCashierAccountManager.findAllByMerchantIdAndAccountType(
+                            Long.parseLong(id), 0);
+                    for (PosCashierAccount posCashierAccount : lst) {
+                        posPushLogManager.posJPush(posCashierAccount.getCashierId().toString()
+                                , lifeOrder.getTotalPrice().toString());
+                    }
                 }
             }
         } catch (AlipayApiException e) {

@@ -97,7 +97,7 @@
                     if (data.code == 0) {
                         if (paymentType == "WEIXIN_JS") {
                             window.location.href = getProjectPath() + "payment/wap/wechatPay/" + data.response.sequenceNumber;
-                        } else if (paymentType == "ALIPAY") {
+                        } else if (paymentType == "ALIPAY_JS") {
                             window.location.href = getProjectPath() + "payment/wap/alipay/" + data.response.sequenceNumber;
                         }
                     } else {
