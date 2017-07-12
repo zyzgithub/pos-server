@@ -8,7 +8,6 @@ import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
 import com.dianba.pos.common.util.HttpUtil;
-import com.dianba.pos.common.util.JiGuangSend;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.order.service.QROrderManager;
@@ -16,6 +15,7 @@ import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosCashierAccountManager;
+import com.dianba.pos.passport.service.PosPushLogManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
@@ -25,7 +25,6 @@ import com.dianba.pos.payment.util.*;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
-import com.xlibao.common.constant.payment.TransTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +68,9 @@ public class WapPaymentController {
 
     @Autowired
     private PosCashierAccountManager posCashierAccountManager;
+
+    @Autowired
+    private PosPushLogManager posPushLogManager;
     /**
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
      */
@@ -187,14 +189,10 @@ public class WapPaymentController {
                     logger.info("passportId:"+id+"=========支付宝支付成功,推送测试");
                     List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantIdAndAccountType(
                             Long.parseLong(id),0);
-                    JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("type",PaymentTypeEnum.ALIPAY.getValue());
-                    jsonObject.put("body",lifeOrder.getTotalPrice());
+
                     for(PosCashierAccount posCashierAccount : lst){
-                        String result= JiGuangSend.sendPushWithAlias(posCashierAccount.getCashierId().toString()
-                                , TransTypeEnum.PAYMENT.getValue()
-                                ,jsonObject.toJSONString());
-                        logger.info("===========支付宝推送返回:"+result);
+                        posPushLogManager.posJPush(posCashierAccount.getCashierId().toString()
+                                ,lifeOrder.getTotalPrice().toString());
                     }
                     paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
                             , true, false);

@@ -51,7 +51,31 @@ public class PushExample {
                 .setOptions(Options.newBuilder().setApnsProduction(true).build())
                 .build();
     }
-
+    /**
+     /**
+     *  所有平台，推送目标是别名为 "alias1"，通知内容为  【神马都是浮云!】
+     *
+     *  */
+    public static PushPayload buildPushObject_all_alias_sms(String alis, String sms) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.android_ios())
+                .setNotification(
+                        Notification
+                                .newBuilder()
+                                .addPlatformNotification(
+                                        AndroidNotification.newBuilder()
+                                               .build())
+                                .addPlatformNotification(IosNotification.newBuilder().addExtra("content", sms).build())
+                                .build())
+                .setAudience(
+                        Audience.newBuilder()
+                                .addAudienceTarget(AudienceTarget.alias(alis))
+                                .build())
+                .setMessage(
+                        Message.newBuilder().setMsgContent(sms).addExtra("content",sms).build())
+                .setOptions(Options.newBuilder().setApnsProduction(true).build())
+                .build();
+    }
     /**
      *  平台是 Android，目标是 tag 为 "tag1" 的设备，内容是 【这是内容】，并且标题为 【这是标题】。
      *
