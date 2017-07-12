@@ -267,39 +267,49 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                 //pos 用户
                 //删除原账号
                 Passport passport = passportJpaRepository.getPassportById(registerVo.getAccountId());
-                passportJpaRepository.delete(passport);
+                //passportJpaRepository.delete(passport);
 
 
                 //删除2个登录账号
 
-                if (passport.getPhoneNumber().equals(passport.getDefaultName())) {
-                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
-                            .findLifePassportAliasByAliasName(passport.getDefaultName());
-                    lifePassportAliasJpaRepository.delete(lifePassportAlias);
-                } else {
-                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
-                            .findLifePassportAliasByAliasName(passport.getDefaultName());
-                    if (lifePassportAlias != null) {
-                        lifePassportAliasJpaRepository.delete(lifePassportAlias);
-                    }
-
-                    LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository
-                            .findLifePassportAliasByAliasName(passport.getPhoneNumber());
-                    if (lifePassportAlias1 != null) {
-                        lifePassportAliasJpaRepository.delete(lifePassportAlias1);
-                    }
-
+//                if (passport.getPhoneNumber().equals(passport.getDefaultName())) {
+//                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
+//                            .findLifePassportAliasByAliasName(passport.getDefaultName());
+//                    lifePassportAliasJpaRepository.delete(lifePassportAlias);
+//                } else {
+//                    LifePassportAlias lifePassportAlias = lifePassportAliasJpaRepository
+//                            .findLifePassportAliasByAliasName(passport.getDefaultName());
+//                    if (lifePassportAlias != null) {
+//                        lifePassportAliasJpaRepository.delete(lifePassportAlias);
+//                    }
+//
+//                    LifePassportAlias lifePassportAlias1 = lifePassportAliasJpaRepository
+//                            .findLifePassportAliasByAliasName(passport.getPhoneNumber());
+//                    if (lifePassportAlias1 != null) {
+//                        lifePassportAliasJpaRepository.delete(lifePassportAlias1);
+//                    }
+//
+//                }
+                //删除账号表
+                List<LifePassportAlias> aliases=lifePassportAliasJpaRepository.findAllByPassportId(passport.getId());
+                for(LifePassportAlias alias : aliases){
+                    lifePassportAliasJpaRepository.delete(alias);
                 }
-
-
-                //删除账号权限
-                LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
-                        .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
-
-                lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
+//
+//                LifePassportProperties lifePassportProperties = lifePassportPropertiesJpaRepository
+//                        .findLifePassportPropertiesByPassportId(registerVo.getAccountId());
+//
+//                lifePassportPropertiesJpaRepository.delete(lifePassportProperties);
+                //删除商家pos 关联表
                 PosCashierAccount posCashierAccount = posCashierAccountJpaRepository.findPosCashierAccountByCashierId(
                         registerVo.getAccountId());
                 posCashierAccountJpaRepository.delete(posCashierAccount);
+                //删除账号权限
+                List<LifePassportProperties> passportProperties=lifePassportPropertiesJpaRepository
+                        .findAllByPassportId(passport.getId());
+                for(LifePassportProperties properties : passportProperties){
+                    lifePassportPropertiesJpaRepository.delete(properties);
+                }
                 return BasicResult.createSuccessResult("删除成功");
             } else {
                 logger.error("要删除的用户id为：" + registerVo.getAccountId() + "删除出现异常。");
