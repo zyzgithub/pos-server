@@ -92,7 +92,7 @@ public class JiGuangSend {
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("type", JPushTypeEnum.BLACKLIST.getKey());
 		jsonObject.put("msg",JPushTypeEnum.BLACKLIST.getMsg());
-		sendPushWithAlias("100045",JPushTypeEnum.BLACKLIST.getTitle(),jsonObject.toJSONString());
+		sendPushWithAlias("100353",JPushTypeEnum.BLACKLIST.getTitle(),jsonObject.toJSONString());
 //		if(result!=null){
 //			JSONObject object= JSON.parseObject(result);
 //			int code=object.getIntValue("statusCode");

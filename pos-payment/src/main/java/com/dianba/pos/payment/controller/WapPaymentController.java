@@ -192,11 +192,16 @@ public class WapPaymentController {
                     logger.info("passportId:"+id+"========支付宝支付成功,推送测试");
                     List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
                             Long.parseLong(id));
+                    if(lst.size()>0){
+                        for(PosCashierAccount posCashierAccount : lst){
+                            posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
+                                    ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+                        }
+                    }else {
+                            posPushLogManager.posJPushMsg(id,lifeOrder.getTotalPrice().toString(),sequenceNumber);
 
-                    for(PosCashierAccount posCashierAccount : lst){
-                        posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
-                                ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
                     }
+
 
 
                 }
@@ -257,9 +262,14 @@ public class WapPaymentController {
             List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
                     Long.parseLong(id));
 
-            for(PosCashierAccount posCashierAccount : lst){
-                posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
-                        ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+            if(lst.size()>0){
+                for(PosCashierAccount posCashierAccount : lst){
+                    posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
+                            ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+                }
+            }else {
+                    posPushLogManager.posJPushMsg(id,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+
             }
 
 
