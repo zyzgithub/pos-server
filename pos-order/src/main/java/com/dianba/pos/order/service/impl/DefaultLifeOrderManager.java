@@ -576,10 +576,12 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         Integer zfbSum = 0;
         Integer cashSum = 0;
         Integer wxjsSum=0;
+        Integer zfbjsSum=0;
         BigDecimal wxMoney = new BigDecimal(0);
         BigDecimal cashMoney = new BigDecimal(0);
         BigDecimal zfbMoney = new BigDecimal(0);
         BigDecimal wxjsMoney = new BigDecimal(0);
+        BigDecimal zfbjsMoney = new BigDecimal(0);
         BigDecimal a = new BigDecimal(100);
         List<Long> orderIds = new ArrayList<>();
         for (OrderTransactionRecordVo lifeOrder : list) {
@@ -639,18 +641,21 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     wxjsSum = recordVo.getCountMap();
                     wxjsMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
+                }else if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())) {//
+                    zfbjsSum= recordVo.getCountMap();
+                    zfbjsMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sumCount", wxSum + cashSum + zfbSum+wxjsSum);
-        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney));
+        jsonObject.put("sumCount", wxSum + cashSum + zfbSum+wxjsSum+zfbjsSum);
+        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney));
         jsonObject.put("wxSum", wxSum+wxjsSum);
         jsonObject.put("cashSum", cashSum);
-        jsonObject.put("zfbSum", zfbSum);
+        jsonObject.put("zfbSum", zfbSum+zfbjsSum);
         jsonObject.put("wxMoney", wxMoney.add(wxjsMoney));
         jsonObject.put("cashMoney", cashMoney);
-        jsonObject.put("zfbMoney", zfbMoney);
+        jsonObject.put("zfbMoney", zfbMoney.add(zfbjsMoney));
         jsonObject.put("transactionRecordList", lst);
         return BasicResult.createSuccessResult("获取交易记录成功", jsonObject);
     }
