@@ -607,11 +607,14 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.CASH.getValue());
                 } else if (PaymentTypeEnum.ALIPAY.getKey().equals(recordVo.getTransType())) { //支付宝支付
                     recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
-                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType())
-                        || PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
+                } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(recordVo.getTransType()) ) {//微信支付
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
                 } else if (PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType(PaymentTypeEnum.UNKNOWN.getValue());
+                } else if( PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())){
+                    recordVo.setTransType("微信扫码支付");
+                } else if( PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())){
+                    recordVo.setTransType("支付宝扫码支付");
                 }
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));

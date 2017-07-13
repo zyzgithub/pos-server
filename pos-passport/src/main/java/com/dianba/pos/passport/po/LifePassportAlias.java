@@ -25,7 +25,7 @@ public class LifePassportAlias {
     private Date crateTime;
 
     @Column(name = "passport_id")
-    private String passportId;
+    private Long passportId;
 
 
     @Column(name = "status")
@@ -58,11 +58,12 @@ public class LifePassportAlias {
         this.crateTime = crateTime;
     }
 
-    public String getPassportId() {
+
+    public Long getPassportId() {
         return passportId;
     }
 
-    public void setPassportId(String passportId) {
+    public void setPassportId(Long passportId) {
         this.passportId = passportId;
     }
 

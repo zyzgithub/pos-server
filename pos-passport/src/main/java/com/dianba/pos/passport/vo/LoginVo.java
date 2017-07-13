@@ -1,5 +1,7 @@
 package com.dianba.pos.passport.vo;
 
+import com.dianba.pos.common.util.StringUtil;
+
 /**
  * Created by zhangyong on 2017/6/5.
  */
@@ -46,8 +48,12 @@ public class LoginVo {
         private String accountTypeName;
 
 
-    public String getRealName() {
-            return realName;
+        public String getRealName() {
+            if(StringUtil.isEmpty(realName)){
+                return "";
+            }else {
+                return realName;
+            }
         }
 
         public void setRealName(String realName) {
@@ -55,7 +61,12 @@ public class LoginVo {
         }
 
         public String getShowName() {
-            return showName;
+            if(StringUtil.isEmpty(showName)){
+                return "";
+            }else {
+                return showName;
+            }
+
         }
 
         public void setShowName(String showName) {
