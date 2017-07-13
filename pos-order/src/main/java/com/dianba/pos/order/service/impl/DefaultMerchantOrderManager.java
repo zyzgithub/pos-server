@@ -156,6 +156,9 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
                 if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(paymentTypeEnum.getKey())) {
                     orderIncome.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
                     orderIncome.setTitle(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+                }else if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(paymentTypeEnum.getKey())){
+                    orderIncome.setTransType(PaymentTypeEnum.ALIPAY.getKey());
+                    orderIncome.setTitle(PaymentTypeEnum.ALIPAY.getValue());
                 } else {
                     orderIncome.setTransType(paymentTypeEnum.getKey());
                     orderIncome.setTitle(paymentTypeEnum.getValue());

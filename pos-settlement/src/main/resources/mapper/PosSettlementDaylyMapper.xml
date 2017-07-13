@@ -3,15 +3,21 @@
 <mapper namespace="com.dianba.pos.settlement.mapper.PosSettlementDaylyMapper">
 
     <select id="statisticsOrderByDay" resultType="com.dianba.pos.settlement.po.PosSettlementDayly">
-        select t.trans_type paymentType,count(t.id) count,sum(t.total_price) amount
-        from life_order.order_entry t
-        where t.type=4 and t.status=8
-        and t.partner_user_id=#{passportId}
-        and t.trans_type in('ALIPAY','WEIXIN_NATIVE','CASH')
-        <if test="dateTime!=null">
-            and t.payment_time>=date_format(#{dateTime},'%Y-%m-%d %H:%i:%s')
-        </if>
-        group by t.trans_type
+        select a.paymentType,count(a.id) count,sum(a.total_price) amount
+        from (
+            select case t.trans_type
+            when 'ALIPAY_JS' then 'ALIPAY'
+            when 'WEIXIN_JS' then 'WEIXIN_NATIVE'
+            else t.trans_type end paymentType
+            ,t.id,t.total_price
+            from life_order.order_entry t
+            where t.type=4 and t.status=8
+            and t.partner_user_id=#{passportId}
+            and t.trans_type in('ALIPAY','WEIXIN_NATIVE','ALIPAY_JS','WEIXIN_JS','CASH')
+            <if test="dateTime!=null">
+                and t.payment_time>=date_format(#{dateTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+        )a group by a.paymentType
     </select>
 
     <select id="findLastSettlementTime" resultType="java.lang.String">

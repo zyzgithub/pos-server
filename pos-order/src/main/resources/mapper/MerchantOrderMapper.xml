@@ -37,10 +37,7 @@
                     ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
                     ,case t.trans_type
                         when 'CASH' then 0
-                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-                        else 0 end rate
+                        else if(b.is_need=1,b.commission_rate,0) end rate
                 from life_order.order_entry t
                 inner join (
                     select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
@@ -59,10 +56,7 @@
                     ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
                     ,case t.trans_type
                         when 'CASH' then 0
-                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-                        else 0 end rate
+                        else if(b.is_need=1,b.commission_rate,0) end rate
                 from life_order.order_entry t
                 inner join (
                     select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
@@ -87,10 +81,7 @@
                     ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END amount
                     ,case t.trans_type
                         when 'CASH' then 0
-                        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-                        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-                        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-                        else 0 end rate
+                        else if(b.is_need=1,b.commission_rate,0) end rate
                 from life_order.order_entry t
                 inner join (
                     select t.is_need,t.commission_rate from pos_merchant_rate t where t.passport_id=#{passportId}
@@ -115,10 +106,7 @@
             ,CASE t.type WHEN 9 then t.total_price-t.actual_price ELSE t.total_price END total_price
             ,case t.trans_type
             when 'CASH' then 0
-            when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-            when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-            when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-            else 0 end rate
+            else if(b.is_need=1,b.commission_rate,0) end rate
             ,t.payment_type paymentType
             from life_order.order_entry t
             inner join life_passport.passport ps on ps.id=t.partner_user_id
