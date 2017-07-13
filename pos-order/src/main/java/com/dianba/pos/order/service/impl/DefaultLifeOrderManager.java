@@ -94,7 +94,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         }
         if (PaymentTypeEnum.CASH.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.CASH.getValue());
-        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())) {
+        } else if (PaymentTypeEnum.ALIPAY.getKey().equals(lifeOrderVo.getTransType())
+                || PaymentTypeEnum.ALIPAY_JS.getKey().equals(lifeOrderVo.getTransType())) {
             lifeOrderVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
         } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(lifeOrderVo.getTransType())
                 || PaymentTypeEnum.WEIXIN_JS.getKey().equals(lifeOrderVo.getTransType())) {
@@ -575,8 +576,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         Integer wxSum = 0;
         Integer zfbSum = 0;
         Integer cashSum = 0;
-        Integer wxjsSum=0;
-        Integer zfbjsSum=0;
+        Integer wxjsSum = 0;
+        Integer zfbjsSum = 0;
         BigDecimal wxMoney = new BigDecimal(0);
         BigDecimal cashMoney = new BigDecimal(0);
         BigDecimal zfbMoney = new BigDecimal(0);
@@ -613,10 +614,10 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
                 } else if (PaymentTypeEnum.UNKNOWN.getKey().equals(recordVo.getTransType())) {
                     recordVo.setTransType(PaymentTypeEnum.UNKNOWN.getValue());
-                } else if(PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())){
-                    recordVo.setTransType("微信扫码支付");
-                } else if(PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())){
-                    recordVo.setTransType("支付宝扫码支付");
+                } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {
+                    recordVo.setTransType(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
+                } else if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())) {
+                    recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
                 }
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
@@ -641,18 +642,18 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 } else if (PaymentTypeEnum.WEIXIN_JS.getKey().equals(recordVo.getTransType())) {//微信支付
                     wxjsSum = recordVo.getCountMap();
                     wxjsMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
-                }else if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())) {//
-                    zfbjsSum= recordVo.getCountMap();
+                } else if (PaymentTypeEnum.ALIPAY_JS.getKey().equals(recordVo.getTransType())) {//
+                    zfbjsSum = recordVo.getCountMap();
                     zfbjsMoney = recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sumCount", wxSum + cashSum + zfbSum+wxjsSum+zfbjsSum);
+        jsonObject.put("sumCount", wxSum + cashSum + zfbSum + wxjsSum + zfbjsSum);
         jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney));
-        jsonObject.put("wxSum", wxSum+wxjsSum);
+        jsonObject.put("wxSum", wxSum + wxjsSum);
         jsonObject.put("cashSum", cashSum);
-        jsonObject.put("zfbSum", zfbSum+zfbjsSum);
+        jsonObject.put("zfbSum", zfbSum + zfbjsSum);
         jsonObject.put("wxMoney", wxMoney.add(wxjsMoney));
         jsonObject.put("cashMoney", cashMoney);
         jsonObject.put("zfbMoney", zfbMoney.add(zfbjsMoney));
