@@ -6,7 +6,10 @@ import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.PushPayload;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import java.math.BigDecimal;
 
 
 public class JiGuangSend {
@@ -71,11 +74,32 @@ public class JiGuangSend {
 		else
 			return result.toString();
 	}
+	public static String getPrettyNumber(String number) {
+		return BigDecimal.valueOf(Double.parseDouble(number))
+				.stripTrailingZeros().toPlainString();
+	}
+
 	public static void main(String[] args) {
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("type", JPushTypeEnum.SPEAK.getKey());
-        jsonObject.put("msg",JPushTypeEnum.SPEAK.getMsg()+"20元");
-	    sendPushWithAlias("100045",JPushTypeEnum.SPEAK.getTitle(),jsonObject.toJSONString());
+//        JSONObject jsonObject=new JSONObject();
+//        jsonObject.put("type", JPushTypeEnum.SPEAK.getKey());
+//		String mon=	getPrettyNumber("20.00");
+//		System.out.println(mon);
+//        jsonObject.put("msg",JPushTypeEnum.SPEAK.getMsg()+mon+"元");
+//        for(int i=0;i<5;i++){
+//			String aa=sendPushWithAliasAndSms("104",jsonObject.toJSONString());
+//			String result=sendPushWithAliasAndSms("100045",jsonObject.toJSONString());
+//		}
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("type", JPushTypeEnum.BLACKLIST.getKey());
+		jsonObject.put("msg",JPushTypeEnum.BLACKLIST.getMsg());
+		sendPushWithAlias("100045",JPushTypeEnum.BLACKLIST.getTitle(),jsonObject.toJSONString());
+//		if(result!=null){
+//			JSONObject object= JSON.parseObject(result);
+//			int code=object.getIntValue("statusCode");
+//			if(code==0){
+//				System.out.println("-----------------------------");
+//			}
+//		}
 		//System.out.println(jsonObject);
 	}
 

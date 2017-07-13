@@ -188,14 +188,17 @@ public class WapPaymentController {
                     paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY_JS
                             , true, false);
                     LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
-                    String id = lifeOrder.getPartnerUserId();
-                    logger.info("passportId:" + id + "=========支付宝支付成功,推送测试");
-                    List<PosCashierAccount> lst = posCashierAccountManager.findAllByMerchantIdAndAccountType(
-                            Long.parseLong(id), 0);
-                    for (PosCashierAccount posCashierAccount : lst) {
-                        posPushLogManager.posJPush(posCashierAccount.getCashierId().toString()
-                                , lifeOrder.getTotalPrice().toString());
+                    String id=lifeOrder.getShippingPassportId().toString();
+                    logger.info("passportId:"+id+"========支付宝支付成功,推送测试");
+                    List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+                            Long.parseLong(id));
+
+                    for(PosCashierAccount posCashierAccount : lst){
+                        posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
+                                ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
                     }
+
+
                 }
             }
         } catch (AlipayApiException e) {
@@ -243,11 +246,23 @@ public class WapPaymentController {
         logger.info("开始接收微信支付异步回调消息：");
         Map<String, String> resultMap = XMLUtil.getRequestXML(request);
         if (WechatResultUtil.isSuccess(resultMap)) {
-            String squenceNumber = resultMap.get("out_trade_no");
+            String sequenceNumber = resultMap.get("out_trade_no");
             String totalAmount = resultMap.get("total_fee");
             String openId = resultMap.get("openid");
-            paymentManager.processPaidOrder(squenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
+            paymentManager.processPaidOrder(sequenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
                     , true, false);
+            LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
+            String id=lifeOrder.getShippingPassportId().toString();
+            logger.info("passportId:"+id+"=========微信支付成功,推送测试");
+            List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+                    Long.parseLong(id));
+
+            for(PosCashierAccount posCashierAccount : lst){
+                posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
+                        ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+            }
+
+
         } else {
             String errMsg = WechatResultUtil.getErrorMsg(resultMap);
             logger.info("确认支付信息失败！" + errMsg);

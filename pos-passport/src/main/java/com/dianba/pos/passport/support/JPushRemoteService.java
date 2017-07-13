@@ -20,6 +20,13 @@ public class JPushRemoteService {
     @Autowired
     private JPushConfig jPushConfig;
 
+    /**
+     * 语音播报 通知加自定义消息
+     * @param passportId
+     * @param content
+     * @param msg
+     * @return
+     */
     protected String sendPushWithAlias(String passportId,String content,String msg){
         PushResult result=null;
         JPushClient jpushClient = new JPushClient(jPushConfig.getPosJPushSecret(),jPushConfig.getPosJPushKey());
@@ -37,11 +44,32 @@ public class JPushRemoteService {
         }else{
             return result.toString();
         }
-
-
-
     }
 
+    /**
+     * 语言播报 自定义消息
+     * @param passportId
+     * @param msg
+     * @return
+     */
+    protected String sendPushWithAliasAndSms(String passportId,String msg){
+        PushResult result=null;
+        JPushClient jpushClient = new JPushClient(jPushConfig.getPosJPushSecret(),jPushConfig.getPosJPushKey());
+        PushPayload payload = PushExample.buildPushObject_all_alias_sms(passportId,msg);
+        try {
+            result = jpushClient.sendPush(payload);
+            System.out.println(result);
+
+        } catch (APIConnectionException e) {
+
+        } catch (APIRequestException e) {
+        }
+        if(result==null){
+            return "null";
+        }else{
+            return result.toString();
+        }
+    }
     protected void posJPush(String passportId,String msg){
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("type", JPushTypeEnum.SPEAK.getKey());

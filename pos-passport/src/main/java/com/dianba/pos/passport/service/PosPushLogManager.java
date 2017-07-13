@@ -5,5 +5,15 @@ package com.dianba.pos.passport.service;
  */
 public interface PosPushLogManager {
 
-    void posJPush(String passportId,String msg);
+    /**
+     * 通知加自定义消息(语言播报)
+     * @param passportId
+     * @param msg
+     */
+    void posJPush(String passportId,String msg,String orderNum);
+
+    /**推送自定义消息(语言播报)**/
+    void posJPushMsg(String passportId,String msg,String orderNum);
+
+    void posJPushByBlackList(String passportId,String orderNum);
 }

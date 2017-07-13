@@ -10,7 +10,6 @@ import java.util.Date;
 @Entity
 @Table(name = "life_pos.pos_push_log")
 public class PosPushLog {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -31,6 +30,8 @@ public class PosPushLog {
     @Column(name = "state")
     private String state;
 
+    @Column(name = "sequence_number")
+    private String sequenceNumber;
     public Long getId() {
         return id;
     }
@@ -77,5 +78,13 @@ public class PosPushLog {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(String sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 }
