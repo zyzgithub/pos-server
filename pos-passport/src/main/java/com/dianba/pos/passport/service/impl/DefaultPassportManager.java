@@ -77,17 +77,17 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
             //普通商家权限
             LifePassportProperties a = lifePassportPropertiesJpaRepository
                     .findLifePassportPropertiesByPassportIdAndKAndV(
-                            Long.parseLong(lifePassportAlias.getPassportId()), "consumer"
+                            lifePassportAlias.getPassportId(), "consumer"
                             , "11");
             //签约商家权限
             LifePassportProperties b = lifePassportPropertiesJpaRepository
                     .findLifePassportPropertiesByPassportIdAndKAndV(
-                            Long.parseLong(lifePassportAlias.getPassportId()), "consumer", "14");
+                            lifePassportAlias.getPassportId(), "consumer", "14");
 
             //pos商家权限
             LifePassportProperties c = lifePassportPropertiesJpaRepository
                     .findLifePassportPropertiesByPassportIdAndKAndV(
-                            Long.parseLong(lifePassportAlias.getPassportId()), "pos", "41");
+                           lifePassportAlias.getPassportId(), "pos", "41");
             if (b != null || a != null) {
                 passportVo.setClientType(3);
                 BasicResult basicResult = post(LOGIN, passportVo);

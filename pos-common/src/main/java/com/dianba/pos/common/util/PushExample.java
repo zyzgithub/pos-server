@@ -57,23 +57,15 @@ public class PushExample {
      *
      *  */
     public static PushPayload buildPushObject_all_alias_sms(String alis, String sms) {
-        return PushPayload.newBuilder()
-                .setPlatform(Platform.android_ios())
-                .setNotification(
-                        Notification
-                                .newBuilder()
-                                .addPlatformNotification(
-                                        AndroidNotification.newBuilder()
-                                               .build())
-                                .addPlatformNotification(IosNotification.newBuilder().addExtra("content", sms).build())
-                                .build())
+        Message message = Message.newBuilder().setMsgContent(sms).build();
+        return PushPayload.newBuilder().setPlatform(Platform.all())
+                .setAudience(Audience.registrationId(alis))
                 .setAudience(
                         Audience.newBuilder()
                                 .addAudienceTarget(AudienceTarget.alias(alis))
                                 .build())
-                .setMessage(
-                        Message.newBuilder().setMsgContent(sms).addExtra("content",sms).build())
-                .setOptions(Options.newBuilder().setApnsProduction(true).build())
+//              .setNotification(Notification.alert(pushData.getContent()))//通知
+                .setMessage(message)//使用自定义消息推送
                 .build();
     }
     /**

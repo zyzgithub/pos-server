@@ -86,9 +86,11 @@ public class DefaultSettlementManager implements SettlementManager {
         for (PosSettlementDayly settlementDayly : posSettlementDaylies) {
             PosSettlementDaylyVo settlementDaylyVo = new PosSettlementDaylyVo();
             BeanUtils.copyProperties(settlementDayly, settlementDaylyVo);
-            if (PaymentTypeEnum.ALIPAY.getKey().equals(settlementDaylyVo.getPaymentType())) {
+            if (PaymentTypeEnum.ALIPAY.getKey().equals(settlementDaylyVo.getPaymentType())
+                    || PaymentTypeEnum.ALIPAY_JS.getKey().equals(settlementDaylyVo.getPaymentType())) {
                 settlementDaylyVo.setPaymentTypeTitle(PaymentTypeEnum.ALIPAY.getValue());
-            } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(settlementDaylyVo.getPaymentType())) {
+            } else if (PaymentTypeEnum.WEIXIN_NATIVE.getKey().equals(settlementDaylyVo.getPaymentType())
+                    || PaymentTypeEnum.WEIXIN_JS.getKey().equals(settlementDaylyVo.getPaymentType())) {
                 settlementDaylyVo.setPaymentTypeTitle(PaymentTypeEnum.WEIXIN_NATIVE.getValue());
             } else if (PaymentTypeEnum.CASH.getKey().equals(settlementDaylyVo.getPaymentType())) {
                 settlementDaylyVo.setPaymentTypeTitle(PaymentTypeEnum.CASH.getValue());

@@ -1,5 +1,7 @@
 package com.dianba.pos.passport.po;
 
+import com.dianba.pos.common.util.StringUtil;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -127,7 +129,12 @@ public class Passport implements Serializable {
     }
 
     public String getShowName() {
-        return showName;
+        if(StringUtil.isEmpty(showName)){
+            return "";
+        }else {
+            return showName;
+        }
+
     }
 
     public void setShowName(String showName) {
@@ -135,7 +142,11 @@ public class Passport implements Serializable {
     }
 
     public String getRealName() {
-        return realName;
+        if(StringUtil.isEmpty(realName)){
+            return "";
+        }else {
+            return realName;
+        }
     }
 
     public void setRealName(String realName) {
@@ -143,9 +154,13 @@ public class Passport implements Serializable {
     }
 
     public String getIdNumber() {
-        return idNumber;
-    }
+        if(StringUtil.isEmpty(idNumber)){
+            return "";
+        }else {
+            return idNumber;
+        }
 
+    }
     public void setIdNumber(String idNumber) {
         this.idNumber = idNumber;
     }

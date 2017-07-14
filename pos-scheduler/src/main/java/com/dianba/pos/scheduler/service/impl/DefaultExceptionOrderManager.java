@@ -1,10 +1,9 @@
 package com.dianba.pos.scheduler.service.impl;
-
-import com.dianba.pos.common.util.JiGuangSend;
 import com.dianba.pos.passport.po.PosBlackList;
 import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.repository.PosBlackListJpaRepository;
 import com.dianba.pos.passport.service.PosCashierAccountManager;
+import com.dianba.pos.passport.service.PosPushLogManager;
 import com.dianba.pos.scheduler.mapper.PosBlackListMapper;
 import com.dianba.pos.scheduler.service.ExceptionOrderManager;
 import com.dianba.pos.scheduler.vo.ScalpListByPassportVo;
@@ -30,6 +29,9 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
 
     @Autowired
     private PosCashierAccountManager posCashierAccountManager;
+
+    @Autowired
+    private PosPushLogManager posPushLogManager;
     private Logger logger = LogManager.getLogger(DefaultExceptionOrderManager.class);
     @Override
     public void checkBlackPassport() {
@@ -58,9 +60,8 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                                 List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
                                         sb.getPassportId());
                                 for(PosCashierAccount posCashierAccount : lst){
-                                    String result= JiGuangSend.sendPushWithAlias(posCashierAccount.getCashierId()
-                                   .toString(),"您的账号存在刷单行为,已被拉黑,如需了解详情,请联系点吧客服了解具体情况");
-                                    logger.info("=====账号{0}=====拉黑推送返回:",sb.getPassportId()+result);
+                                    posPushLogManager.posJPushByBlackList(posCashierAccount.getCashierId()
+                                            .toString(),sb.getSequenceNumber());
                                 }
                                 i=0;
                                 break;
@@ -70,6 +71,13 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                             PosBlackList posBlackList=new PosBlackList();
                             posBlackList.setPassportId(sb.getPassportId());
                             posBlackListJpaRepository.save(posBlackList);
+                            //推送给商家告诉商家账号被拉黑
+                            List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+                                    sb.getPassportId());
+                            for(PosCashierAccount posCashierAccount : lst){
+                                posPushLogManager.posJPushByBlackList(posCashierAccount.getCashierId()
+                                        .toString(),sb.getSequenceNumber());
+                            }
                             i=0;
                             break;
                         }else {

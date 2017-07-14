@@ -13,10 +13,11 @@
     <select id="findScalpListByPassport" resultType="com.dianba.pos.scheduler.vo.ScalpListByPassportVo">
         SELECT * FROM (
         SELECT
-        A.shippingPassportId passportId,TIMESTAMPDIFF(SECOND,B.createTime,A.createTime) seconds
+        A.shippingPassportId passportId,TIMESTAMPDIFF(SECOND,B.createTime,A.createTime) seconds,A.sequenceNumber
         FROM (
         SELECT
         a.shipping_passport_id shippingPassportId,
+        a.sequence_number sequenceNumber,
         a.create_time createTime,
         (@i := @i + 1) AS num
         FROM life_order.order_entry a, (SELECT @i := 1) d

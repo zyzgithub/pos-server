@@ -196,7 +196,7 @@
         select
         <include refid="LifeOrderColumns"/>
          from life_order.order_entry o
-        where o.trans_type in('ALIPAY','WEIXIN_JS')
+        where o.trans_type in('ALIPAY_JS','WEIXIN_JS')
         and o.type=4 and o.status=8 and o.shipping_passport_id=#{passportId}
         and o.total_price in
         <foreach collection="orderAmounts" item="amount" open="(" close=")" separator=",">
@@ -265,10 +265,7 @@
         ,t.actual_price actualPrice
         ,case t.trans_type
         when 'CASH' then 0
-        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-        else 0 end rate
+        else if(b.is_need=1,b.commission_rate,0) end rate
         ,CASE t.type WHEN 9 then t.total_price-t.actual_price
         else t.total_price END sum
         ,t.payment_type paymentType
@@ -295,10 +292,8 @@
         SELECT oe.actual_price actualPrice,oe.trans_type transType,CASE oe.type WHEN 9 then oe.total_price-oe.actual_price else oe.total_price END sum
         ,case oe.trans_type
         when 'CASH' then 0
-        when 'WEIXIN_NATIVE' then if(b.is_need=1,b.commission_rate,0)
-        when 'WEIXIN_JS' then if(b.is_need=1,b.commission_rate,0)
-        when 'ALIPAY' then if(b.is_need=1,b.commission_rate,0)
-        else 0 end rate FROM life_order.order_entry oe
+        else if(b.is_need=1,b.commission_rate,0) end rate
+        FROM life_order.order_entry oe
         inner join (
         select t.is_need,t.commission_rate from life_pos.pos_merchant_rate t where t.passport_id=#{passportId}
         union

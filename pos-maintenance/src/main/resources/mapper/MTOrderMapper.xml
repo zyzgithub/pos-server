@@ -52,7 +52,7 @@
 
     <select id="findNoneOffsetAmountOrders" resultMap="SingleOrderResultMap">
         select * from life_order.order_entry o
-        where o.type in(3,4,8,9) and o.status=8 and o.trans_type in('ALIPAY','WEIXIN_NATIVE')
+        where o.type in(3,4,8,9) and o.status=8 and o.trans_type in('ALIPAY','WEIXIN_NATIVE','ALIPAY_JS','WEIXIN_JS')
         and not exists(
           select 1 from life_payment.payment_currency_offset_logger t where t.relation_trans_sequence=o.sequence_number
         )
