@@ -44,7 +44,7 @@ public class BoxItemController {
         if (StringUtils.isEmpty(rfids)) {
             throw new PosIllegalArgumentException("RFIDS不能为空");
         }
-        List<BoxItemLabel> boxItemLabels = boxItemLabelManager.getRFIDItems(rfids);
+        List<BoxItemLabel> boxItemLabels = boxItemLabelManager.getItemsToBindingByRFID(rfids);
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(boxItemLabels);
         return basicResult;
@@ -62,6 +62,9 @@ public class BoxItemController {
     @ResponseBody
     @RequestMapping(value = "bindItemLabel", method = {RequestMethod.GET, RequestMethod.POST})
     public BasicResult bindItemLabel(Long passportId, Long itemId, String rfids) {
+        if (StringUtils.isEmpty(rfids)) {
+            throw new PosIllegalArgumentException("RFIDS不能为空");
+        }
         boxItemLabelManager.bindItemLabelToItems(itemId, rfids);
         List<BoxItemLabel> boxItemLabels = boxItemLabelManager.getRFIDItems(rfids);
         BasicResult basicResult = BasicResult.createSuccessResult();

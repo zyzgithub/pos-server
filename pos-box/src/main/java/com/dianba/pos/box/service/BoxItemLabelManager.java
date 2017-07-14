@@ -14,6 +14,8 @@ public interface BoxItemLabelManager {
 
     List<BoxItemLabel> getRFIDItems(String rfids);
 
+    List<BoxItemLabel> getItemsToBindingByRFID(String rfids);
+
     List<BoxItemLabel> updateItemLabelToPaid(String rfids);
 
     void bindItemLabelToItems(Long itemId, String rfids);

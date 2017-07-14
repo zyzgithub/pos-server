@@ -1,5 +1,7 @@
 package com.dianba.pos.box.po;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,6 +12,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "life_pos.pos_item_label")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxItemLabel implements Serializable {
 
     @Id

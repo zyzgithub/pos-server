@@ -84,6 +84,28 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
         return boxItemLabels;
     }
 
+    @Override
+    public List<BoxItemLabel> getItemsToBindingByRFID(String rfids) {
+        List<BoxItemLabel> boxItemLabels = getRFIDItems(rfids);
+        for (String rfid : convertToRfidList(rfids)) {
+            boolean isExists = false;
+            for (BoxItemLabel boxItemLabel : boxItemLabels) {
+                if (rfid.equals(boxItemLabel.getRfid())) {
+                    isExists = true;
+                    break;
+                }
+            }
+            if (!isExists) {
+                BoxItemLabel boxItemLabel = new BoxItemLabel();
+                boxItemLabel.setRfid(rfid);
+                boxItemLabel.setIsPaid(BoxItemLabelPaidEnum.NOT_PAID.getKey());
+                boxItemLabel.setShowPaidName(BoxItemLabelPaidEnum.NOT_PAID.getValue());
+                boxItemLabels.add(boxItemLabel);
+            }
+        }
+        return boxItemLabels;
+    }
+
     @Transactional
     public List<BoxItemLabel> updateItemLabelToPaid(String rfids) {
         List<BoxItemLabel> boxItemLabels = itemLabelJpaRepository.findByRfidIn(convertToRfidList(rfids));

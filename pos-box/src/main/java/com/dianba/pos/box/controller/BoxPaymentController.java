@@ -183,7 +183,7 @@ public class BoxPaymentController {
                     String sequenceNumber = request.getParameter("out_trade_no");
                     String buyerId = request.getParameter("buyer_id");
                     logger.info("支付宝扫码订单更新！" + sequenceNumber);
-                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY
+                    paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY_JS
                             , true, false);
                     LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(sequenceNumber, false);
                     boxItemLabelManager.updateItemLabelToPaid(lifeOrder.getRemark());
