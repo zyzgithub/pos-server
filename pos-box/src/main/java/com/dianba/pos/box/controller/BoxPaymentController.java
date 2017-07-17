@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -61,14 +63,9 @@ public class BoxPaymentController {
     /**
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
      */
-    @RequestMapping(value = "qr_scan/{passportId}", method = RequestMethod.GET)
+    @RequestMapping(value = "qr_scan/{passportId}", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView qrScan(@PathVariable("passportId") String passportId) throws Exception {
         ModelAndView modelAndView = new ModelAndView("auth_code");
-//        PosQRCode posQRCode = posQRCodeManager.getQRCodeByCode(code);
-//        String authCodeUrl = wechatConfig.getAuthCodeUrl(appConfig.getPosCallBackHost()
-//                + PaymentURLConstant.WAP_CALLBACK_URL + posQRCode.getMerchantId());
-//        logger.info("扫码牌号：" + posQRCode.getCode() + "扫码对应商家：" + posQRCode.getMerchantId());
-//        modelAndView.addObject("url", authCodeUrl);
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("pay_url", BoxURLConstant.CALLBACK_URL + passportId);
         return modelAndView;
@@ -82,9 +79,11 @@ public class BoxPaymentController {
             , String code, String state) throws Exception {
         ModelAndView modelAndView = new ModelAndView("item_list");
         Passport passport = passportManager.findById(passportId);
-//        ScanItemsUtil.writeScanItems(passportId, "E004015073E2E7A8,E004015073E28139");
         String rfids = ScanItemsUtil.getRFIDItems(passportId);
-        List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids, true);
+        List<BoxItemVo> boxItemVos = new ArrayList<>();
+        if (!StringUtils.isEmpty(rfids)) {
+            boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids, true);
+        }
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (int i = boxItemVos.size() - 1; i >= 0; i--) {
             totalPrice = totalPrice.add(boxItemVos.get(i).getTotalPrice());

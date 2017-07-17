@@ -1,25 +1,26 @@
 package com.dianba.pos.box.vo;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.Serializable;
 
 public class AccessResultVo implements Serializable {
 
     //命令代号
-    private Integer cmd;
+    private String cmd;
     //设备序列号
     private String sn;
     //时间戳
-    private Long curTime;
+    private String curtime;
     //命令数据部分
-    private JSONArray data;
+    private JSONObject data;
 
-    public Integer getCmd() {
+    public String getCmd() {
         return cmd;
     }
 
-    public void setCmd(Integer cmd) {
+    public void setCmd(String cmd) {
         this.cmd = cmd;
     }
 
@@ -31,19 +32,19 @@ public class AccessResultVo implements Serializable {
         this.sn = sn;
     }
 
-    public Long getCurTime() {
-        return curTime;
+    public String getCurtime() {
+        return curtime;
     }
 
-    public void setCurTime(Long curTime) {
-        this.curTime = curTime;
+    public void setCurtime(String curtime) {
+        this.curtime = curtime;
     }
 
-    public JSONArray getData() {
+    public JSONObject getData() {
         return data;
     }
 
-    public void setData(JSONArray data) {
+    public void setData(JSONObject data) {
         this.data = data;
     }
 }

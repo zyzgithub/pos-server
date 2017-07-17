@@ -1,5 +1,6 @@
 package com.dianba.pos.box.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.box.config.BoxURLConstant;
 import com.dianba.pos.box.vo.AccessResultVo;
 import org.apache.logging.log4j.LogManager;
@@ -23,12 +24,36 @@ public class BoxAccessController {
     }
 
     @ResponseBody
+    @RequestMapping("deviceControl")
+    public AccessResultVo test(HttpServletRequest request) {
+        AccessResultVo accessResultVo = new AccessResultVo();
+        accessResultVo.setCmd("36");
+        accessResultVo.setSn("1102890139");
+        accessResultVo.setCurtime("141325634232");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("door", "1");
+//        jsonObject.put("ctrltype", "1");
+//        jsonObject.put("reason","0");
+        accessResultVo.setData(jsonObject);
+        return accessResultVo;
+    }
+
+    @ResponseBody
     @RequestMapping("DeviceControl")
     public AccessResultVo deviceControl(HttpServletRequest request) {
-        logger.info(request.getParameterMap());
         for (Object key : request.getParameterMap().keySet()) {
-            logger.info("k=" + key.toString() + ",v=" + request.getParameter(key.toString()));
+            logger.info("key->" + key.toString() + ",val->" + request.getParameter(key.toString()));
         }
-        return new AccessResultVo();
+        return test(request);
+    }
+
+    @ResponseBody
+    @RequestMapping("submitrecord")
+    public AccessResultVo submitRecord(HttpServletRequest request) {
+        logger.info("接收报警记录");
+        for (Object key : request.getParameterMap().keySet()) {
+            logger.info("key->" + key.toString() + ",val->" + request.getParameter(key.toString()));
+        }
+        return test(request);
     }
 }

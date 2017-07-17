@@ -3,6 +3,7 @@ package com.dianba.pos.box.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosIllegalArgumentException;
+import com.dianba.pos.box.config.BoxAppConfig;
 import com.dianba.pos.box.config.BoxURLConstant;
 import com.dianba.pos.box.constant.BoxItemLabelPaidEnum;
 import com.dianba.pos.box.mapper.BoxItemLabelMapper;
@@ -25,6 +26,8 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     private BoxItemLabelMapper boxItemLabelMapper;
     @Autowired
     private BoxItemLabelJpaRepository itemLabelJpaRepository;
+    @Autowired
+    private BoxAppConfig boxAppConfig;
 
     @Override
     public BasicResult showItemsByRFID(Long passportId, String rfids) {
@@ -33,13 +36,17 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
         BasicResult basicResult = BasicResult.createSuccessResult();
         basicResult.setResponseDatas(boxItemVos);
         JSONObject jsonObject = basicResult.getResponse();
-        jsonObject.put("qrCodeContent", "http://apptest.0085.com/box/"
+        jsonObject.put("qrCodeContent", boxAppConfig.getBoxCallBackHost()
                 + BoxURLConstant.PAYMENT + "qr_scan/" + passportId);
         return basicResult;
     }
 
     public List<BoxItemVo> getItemsByRFID(Long passportId, String rfids, boolean excludePaid) {
-        List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(convertToRfidList(rfids));
+        List<String> rfidList = convertToRfidList(rfids);
+        if (rfidList.size() == 0) {
+            return new ArrayList<>();
+        }
+        List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(rfidList);
         Map<Long, BoxItemVo> boxItemVoMap = new HashMap<>();
         for (BoxItemLabel boxItemLabel : boxItemLabels) {
             BigDecimal itemPrice = boxItemLabel.getSalesPrice()
@@ -78,6 +85,8 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     public List<BoxItemLabel> getRFIDItems(String rfids) {
         List<BoxItemLabel> boxItemLabels = boxItemLabelMapper.findItemsByRFID(convertToRfidList(rfids));
         for (BoxItemLabel boxItemLabel : boxItemLabels) {
+            boxItemLabel.setSalesPrice(boxItemLabel.getSalesPrice().divide(BigDecimal.valueOf(100)
+                    , 2, BigDecimal.ROUND_HALF_UP));
             boxItemLabel.setShowPaidName(BoxItemLabelPaidEnum
                     .getBoxItemLabelPaidEnum(boxItemLabel.getIsPaid()).getValue());
         }
