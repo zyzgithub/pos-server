@@ -1,6 +1,5 @@
 package com.dianba.pos.box.vo;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.Serializable;
