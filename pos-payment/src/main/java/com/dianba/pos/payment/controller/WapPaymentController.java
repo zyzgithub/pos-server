@@ -188,20 +188,19 @@ public class WapPaymentController {
                     paymentManager.processPaidOrder(sequenceNumber, buyerId, PaymentTypeEnum.ALIPAY_JS
                             , true, false);
                     LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
-                    String id=lifeOrder.getShippingPassportId().toString();
-                    logger.info("passportId:"+id+"========支付宝支付成功,推送测试");
-                    List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+                    String id = lifeOrder.getShippingPassportId().toString();
+                    logger.info("passportId:" + id + "========支付宝支付成功,推送测试");
+                    List<PosCashierAccount> lst = posCashierAccountManager.findAllByMerchantId(
                             Long.parseLong(id));
-                    if(lst.size()>0){
-                        for(PosCashierAccount posCashierAccount : lst){
+                    if (lst.size() > 0) {
+                        for (PosCashierAccount posCashierAccount : lst) {
                             posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
-                                    ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+                                    , lifeOrder.getTotalPrice().toString(), sequenceNumber);
                         }
-                    }else {
-                            posPushLogManager.posJPushMsg(id,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+                    } else {
+                        posPushLogManager.posJPushMsg(id, lifeOrder.getTotalPrice().toString(), sequenceNumber);
 
                     }
-
 
 
                 }
@@ -257,21 +256,20 @@ public class WapPaymentController {
             paymentManager.processPaidOrder(sequenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
                     , true, false);
             LifeOrder lifeOrder = orderManager.getLifeOrder(sequenceNumber);
-            String id=lifeOrder.getShippingPassportId().toString();
-            logger.info("passportId:"+id+"=========微信支付成功,推送测试");
-            List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+            String id = lifeOrder.getShippingPassportId().toString();
+            logger.info("passportId:" + id + "=========微信支付成功,推送测试");
+            List<PosCashierAccount> lst = posCashierAccountManager.findAllByMerchantId(
                     Long.parseLong(id));
 
-            if(lst.size()>0){
-                for(PosCashierAccount posCashierAccount : lst){
+            if (lst.size() > 0) {
+                for (PosCashierAccount posCashierAccount : lst) {
                     posPushLogManager.posJPushMsg(posCashierAccount.getCashierId().toString()
-                            ,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+                            , lifeOrder.getTotalPrice().toString(), sequenceNumber);
                 }
-            }else {
-                    posPushLogManager.posJPushMsg(id,lifeOrder.getTotalPrice().toString(),sequenceNumber);
+            } else {
+                posPushLogManager.posJPushMsg(id, lifeOrder.getTotalPrice().toString(), sequenceNumber);
 
             }
-
 
         } else {
             String errMsg = WechatResultUtil.getErrorMsg(resultMap);

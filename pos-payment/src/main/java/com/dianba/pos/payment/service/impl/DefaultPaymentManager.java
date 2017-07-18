@@ -62,6 +62,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private LifePaymentCurrencyOffsetLoggerJpaRepository currencyOffsetLoggerJpaRepository;
     @Autowired
     private PosRewardManager posRewardManager;
+    @Autowired
+    private PaymentLogManager paymentLogManager;
 
     public BasicResult balancePayment(long passportId, long orderId, String paymentPassword) {
         LifeOrder lifeOrder = orderManager.getLifeOrder(orderId, false);
@@ -167,6 +169,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
             return processPaidOrder(lifeOrder, authCode, paymentTypeEnum, true, true);
         } else {
             logger.info("支付失败！订单ID：" + orderId + "，返回：" + barcodePayResponse.getMsg());
+            paymentLogManager.saveFailPaymentLog(lifeOrder.getId(), lifeOrder.getSequenceNumber()
+                    , barcodePayResponse.getMsg());
             return BasicResult.createFailResult(barcodePayResponse.getMsg());
         }
     }
@@ -175,7 +179,8 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
     private BasicResult completeOrder(LifeOrder lifeOrder, String userCode
             , PaymentTypeEnum paymentTypeEnum, TransTypeEnum transTypeEnum
             , boolean rewardOrder, boolean returnOrderInfo) {
-        BasicResult basicResult = BasicResult.createSuccessResult();
+        BasicResult basicResult = BasicResult.createFailResult();
+        String msg = "";
         try {
             //通知订单系统，订单已经支付
             basicResult = orderManager.paymentOrder((LifeOrderVo) lifeOrder, paymentTypeEnum);
@@ -243,7 +248,14 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 return basicResult;
             }
         } catch (Exception e) {
+            msg = e.getMessage();
             e.printStackTrace();
+        } finally {
+            if ("".equals(msg)) {
+                msg = basicResult.getMsg();
+            }
+            paymentLogManager.savePaidPaymentLog(lifeOrder.getId(), lifeOrder.getSequenceNumber()
+                    , basicResult.isSuccess(), msg);
         }
         return basicResult;
     }

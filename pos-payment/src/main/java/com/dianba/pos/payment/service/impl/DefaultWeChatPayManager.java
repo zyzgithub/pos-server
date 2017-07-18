@@ -3,6 +3,7 @@ package com.dianba.pos.payment.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
+import com.dianba.pos.base.thread.WorkStealingPool;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.passport.po.Passport;
@@ -10,6 +11,7 @@ import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.service.WeChatPayManager;
 import com.dianba.pos.payment.support.WechatPayRemoteService;
+import com.dianba.pos.payment.thread.FixWechatPaymentThread;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.metadata.order.OrderEntry;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +26,7 @@ import java.util.Map;
 public class DefaultWeChatPayManager extends WechatPayRemoteService implements WeChatPayManager {
 
     private static Logger logger = LogManager.getLogger(DefaultWeChatPayManager.class);
-    private static final int RETRY_TIMES = 60;
+    private static final int RETRY_TIMES = 20;
 
     @Autowired
     private LifeOrderManager orderManager;
@@ -153,9 +155,10 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
     public BarcodePayResponse onWaitingEntryPassword(Map<String, String> result) {
         String outTradeNo = result.get("out_trade_no");
         Map<String, String> query = null;
+        boolean isPaying = false;
         for (int i = 0; i < RETRY_TIMES; i++) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 query = queryOrder(outTradeNo);
                 if (query != null) {
                     if (StringUtils.equals(query.get("trade_state"), BarcodePayResponse.WX_TRADE_STATE_ERROR)) {
@@ -166,23 +169,23 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
                         return BarcodePayResponse.FAILURE;
                     }
                     if (isTradeStateSuccess(query)) {
-                        logger.info("第{}次查询，支付成功...", i + 1);
+                        logger.info("第{" + i + "}次查询，支付成功...");
                         return BarcodePayResponse.SUCCESS;
                     } else {
-                        logger.info("第{}次查询，支付失败...", i + 1);
+                        isPaying = true;
+                        logger.info("第{" + i + "}次查询，支付失败...");
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return BarcodePayResponse.FAILURE;
             }
         }
-        BarcodePayResponse response = BarcodePayResponse.FAILURE;
-        if (query != null && query.get("trade_state_desc") != null) {
-            response.setMsg(result.get("trade_state_desc"));
-            //撤销订单
-            reverseOrder(outTradeNo);
+        if (isPaying) {
+            //继续后台支付
+            WorkStealingPool.submit(new FixWechatPaymentThread(() -> queryOrder(outTradeNo)));
         }
-        return response;
+        return BarcodePayResponse.FAILURE;
     }
 
 
