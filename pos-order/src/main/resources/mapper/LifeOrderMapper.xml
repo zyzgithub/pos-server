@@ -166,6 +166,14 @@
         <include refid="LifeOrderItemsColumns"/>
     </sql>
 
+    <select id="findOrderById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="ColumnsForBaseResultMap"/>
+        FROM life_order.order_entry o
+        left join life_order.order_item_snapshot s on s.order_id=o.id
+        where o.id=#{orderId}
+    </select>
+
     <select id="findOrderForPos" resultMap="BaseResultMap">
         SELECT
         <include refid="LifeOrderColumns"/>
