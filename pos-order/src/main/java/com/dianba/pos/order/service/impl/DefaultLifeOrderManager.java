@@ -49,8 +49,6 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     @Autowired
     private LifeOrderMapper orderMapper;
     @Autowired
-    private LifeOrderJpaRepository orderJpaRepository;
-    @Autowired
     private LifeSupplyChainPrinterManager supplyChainPrinterManager;
     @Autowired
     private PassportManager passportManager;
@@ -83,7 +81,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public LifeOrderVo getLifeOrder(long orderId, boolean convertRMBUnit) {
-        LifeOrder lifeOrder = orderJpaRepository.findOne(orderId);
+        LifeOrder lifeOrder = orderMapper.findOrderById(orderId);
         if (lifeOrder == null) {
             throw new PosNullPointerException("订单不存在！");
         }
@@ -109,7 +107,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public LifeOrderVo getLifeOrder(String sequenceNumber, boolean convertRMBUnit) {
-        LifeOrder lifeOrder = orderJpaRepository.findBySequenceNumber(sequenceNumber);
+        LifeOrder lifeOrder = lifeOrderJpaRepository.findBySequenceNumber(sequenceNumber);
         LifeOrderVo lifeOrderVo = new LifeOrderVo();
         BeanUtils.copyProperties(lifeOrder, lifeOrderVo);
         if (convertRMBUnit) {

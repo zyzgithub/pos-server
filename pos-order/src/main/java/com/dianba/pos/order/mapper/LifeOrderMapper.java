@@ -14,6 +14,9 @@ import java.util.Map;
 @Mapper
 public interface LifeOrderMapper {
 
+
+    LifeOrder findOrderById(@Param("orderId") Long orderId);
+
     /**
      * 根据商家ID，类型状态获取订单
      *

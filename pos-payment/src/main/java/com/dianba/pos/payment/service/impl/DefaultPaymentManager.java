@@ -245,7 +245,6 @@ public class DefaultPaymentManager extends PaymentRemoteService implements Payme
                 basicResult.getResponse().put("rewardAmount", offsetRewardAmount
                         .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP)
                         .setScale(2, BigDecimal.ROUND_HALF_UP));
-                return basicResult;
             }
         } catch (Exception e) {
             msg = e.getMessage();
