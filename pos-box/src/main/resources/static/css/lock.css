@@ -1,0 +1,13 @@
+.lock{ height: auto; width: 100%;position: relative; margin-top: 45%;}
+.lock .openBtn,.lock .noOpen{ height: auto; width: 50%; margin: 0 auto;}
+.lock .title{ position: absolute; top: 43%; font-size: 16px; text-align: center; height: auto; width: 100%; color: #fff; text-shadow: 2px 2px 2px #666;}
+.lock .noOpen{ display: none;}
+
+.lockSuccess{ height: auto; width: 100%;position: relative; margin-top: 45%; display: none;}
+.lockSuccess .successIcon{ height: auto; width: 35%; margin: 15% auto 0;}
+.lockSuccess .num{ text-align: center; font-size: 28px; margin-top: 5%; color: #333;}
+.lockSuccess .payTitle{ color: #666; text-align: center; font-size: 16px; margin-top: 10px;}
+
+.time{height: auto; width: 100%;position: relative; margin-top: 45%; display: none;}
+.time .timeIcon{ height: auto; width: 50%; margin: 0 auto;}
+.time .timeTitle{position: absolute; top: 43%; text-align: center; height: auto; width: 100%; color: #fff; text-shadow: 2px 2px 2px #666; font-size: 22px;}

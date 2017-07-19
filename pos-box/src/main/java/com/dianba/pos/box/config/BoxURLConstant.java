@@ -12,10 +12,11 @@ public class BoxURLConstant {
 
     public static final String ACCESS = BASE_URL + "access/";
 
-
+    public static final String P0S_BOX_URL=BASE_URL+"posBoxAccount/";
     //支付宝跳转、微信授权回调地址
     public static final String CALLBACK_URL = PAYMENT + "to_pay/";
-
+    //支付宝跳转、微信授权回调地址
+    public static final String ACCOUNT_CALLBACK_URL = P0S_BOX_URL + "authorization/";
     //支付宝同步返回地址
     public static final String ALIPAY_RETURN_URL = PAYMENT + "aliPayReturnUrl";
 

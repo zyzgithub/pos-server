@@ -1,0 +1,11 @@
+.title{ height: 45px; line-height: 45px; width: 100%; box-sizing: border-box; font-size: 16px; text-align: center; background: #ea4a4d; color: #fff;}
+.codeTitle{ font-size: 14px; text-align: center; margin: 15px 0;}
+.register{ height: auto; width: 100%; background: #fff; padding: 10px 0; }
+.register ul{ height: auto; width: 90%; margin: 0 auto;}
+.register ul li{ height: auto; width: 100%; padding: 10px 0; box-sizing: border-box;}
+.register ul li:first-child{ border-bottom: 1px solid #e5e5e5;}
+.phone{ height: auto; width: 100%; font-size: 14px; outline: none;}
+.codeInput{ height: auto; width: 60%; font-size: 14px;  outline: none;}
+.codeLabel{height: auto; font-size: 14px; background: #ea4a4d; display: inline-block; color: #fff; float: right; padding: 5px; border-radius: 5px; box-sizing: border-box; text-align: center;}
+.codeBtn{ height: auto; width: 90%; margin: 30px auto 0; text-align: center; display: block; background: #ea4a4d; color: #fff; border-radius: 5px; padding: 10px 0;}
+button{ border: 0px; outline: none;}
