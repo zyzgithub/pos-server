@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title></title>
+    <link th:href="@{/css/base.css}" rel="stylesheet"/>
+    <link th:href="@{/css/lock.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="lock" onclick="onLock(this);" data-num="1">
+    <img th:src="@{/img/open.png}" class="openBtn"/>
+    <img th:src="@{/img/noOpen.png}" class="noOpen"/>
+    <i class="title">立即开门</i>
+</div>
+
+<div class="lockSuccess">
+    <img th:src="@{img/success.png}" class="successIcon"/>
+    <p class="num">解锁成功</p>
+    <p class="payTitle">门锁已解开，请手动拉门进入一号盒子</p>
+</div>
+
+<div class="time">
+    <img th:src="@{/img/time.png}" class="timeIcon"/>
+    <i class="timeTitle"><span class="count">59</span>s</i>
+</div>
+
+<script type="text/javascript" th:src="@{/js/zepto.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/lock.js}"></script>
+</body>
+</html>

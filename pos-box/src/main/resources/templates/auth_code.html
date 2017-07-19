@@ -11,12 +11,12 @@
     var passportId = [[${passportId}]];
     var ua = navigator.userAgent.toLowerCase();
     if (ua.match("micromessenger")) {
-        //微信浏览器
-        window.location.href = [[${url}]];
+           //微信浏览器
+        window.location.href = "/box/" + [[${pay_url}]]+passportId;
     } else if (ua.match("alipayclient")) {
-        window.location.href = "/box/" + [[${pay_url}]];
+        window.location.href = "/box/" + [[${pay_url}]]+passportId;
     } else {
-        window.location.href = "/box/" + [[${pay_url}]];
+        window.location.href = "/box/" + [[${pay_url}]]+passportId;
 //        alert('请选择使用支付宝或者微信扫码！!');
     }
 </script>
