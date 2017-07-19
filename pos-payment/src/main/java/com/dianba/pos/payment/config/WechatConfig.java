@@ -80,6 +80,10 @@ public class WechatConfig {
                 .replace("CODE", code);
     }
 
+    public String getAuthCodeParam(String redirectUri) {
+        return "appid=" + getPublicAppId() + "&redirect_uri=" + redirectUri;
+    }
+
     public String getOrderPayUrl() {
         return orderPayUrl;
     }

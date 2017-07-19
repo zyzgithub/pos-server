@@ -79,6 +79,13 @@ public class DefaultPosQRCodeManager implements PosQRCodeManager {
 
     private void putQRCodeInOutPutStrem(PosQRCode posQRCode, Integer width, Integer height
             , HttpServletResponse response) throws Exception {
+        generateQRCodeByContent(appConfig.getPosCallBackHost() + QRCodeURLConstant.QRCODE_URL
+                        + posQRCode.getCode()
+                , width, height, response);
+    }
+
+    public void generateQRCodeByContent(String content, Integer width, Integer height
+            , HttpServletResponse response) throws Exception {
         if (width == null) {
             width = 300;
         }
@@ -88,8 +95,7 @@ public class DefaultPosQRCodeManager implements PosQRCodeManager {
         String qrcodeFormat = "png";
         HashMap<EncodeHintType, String> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(appConfig.getPosCallBackHost()
-                        + QRCodeURLConstant.QRCODE_URL + posQRCode.getCode()
+        BitMatrix bitMatrix = new MultiFormatWriter().encode(content
                 , BarcodeFormat.QR_CODE, width, height, hints);
         MatrixToImageWriter.writeToStream(bitMatrix, qrcodeFormat, response.getOutputStream());
     }

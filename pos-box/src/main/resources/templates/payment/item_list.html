@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title></title>
+    <link th:href="@{/css/base.css}" rel="stylesheet"/>
+    <link th:href="@{/css/item_list.css}" rel="stylesheet"/>
+    <script th:src="@{/js/zepto.min.js}" type="text/javascript"></script>
+</head>
+<body>
+<p class="title" th:text="${showName}">1号盒子</p>
+<div class="none">
+    <img th:src="@{/img/nonactivated.png}"/>
+    <i>您还没有选购商品哦！</i>
+</div>
+<div class="carList">
+    <p class="carTitle">商品信息</p>
+    <ul>
+        <li class="clearfix carNav">
+            <p class="protect">商品</p>
+            <p class="num">数量</p>
+            <p class="price">价格</p>
+        </li>
+        <li class="clearfix" th:each="item,itemStat:${items}">
+            <p class="protect" th:text="${item.itemName}"></p>
+            <p class="num" th:text="${item.itemQuantity}"></p>
+            <p class="price" th:text="${item.totalPrice}"></p>
+        </li>
+    </ul>
+    <p class="totalMonry" th:text="'合计：￥'+${totalPrice}"></p>
+</div>
+<a id="payBtn" name="payBtn" href="javascript:pay();" class="payBtn">支付</a>
+<script th:inline="javascript">
+    var paymentType = [[${paymentType}]];
+    $(function () {
+        var itemSize = [[${items.size()}]];
+        if (itemSize == 0) {
+            $(".carList").hide();
+            $(".payBtn").hide();
+            $(".none").show();
+        }
+    });
+    function pay() {
+        $.ajax({
+            type: 'post',
+            url: "/box/service/order/create_order",
+            data: {
+                passportId: [[${passportId}]]
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 0) {
+                    if (paymentType == "WEIXIN_JS") {
+                        window.location.href = "/box/service/payment/wechatPay/" + data.response.sequenceNumber;
+                    } else if (paymentType == "ALIPAY_JS") {
+                        window.location.href = "/box/service/payment/alipay/" + data.response.sequenceNumber;
+                    }
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert(data.msg);
+            }
+        });
+    }
+</script>
+</body>
+</html>

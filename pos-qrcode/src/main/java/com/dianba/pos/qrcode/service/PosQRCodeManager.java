@@ -18,4 +18,7 @@ public interface PosQRCodeManager {
 
     void showQRCodeByCode(String code, Integer width, Integer height
             , HttpServletResponse response) throws Exception;
+
+    void generateQRCodeByContent(String content, Integer width, Integer height
+            , HttpServletResponse response) throws Exception;
 }
