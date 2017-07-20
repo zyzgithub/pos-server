@@ -27,6 +27,9 @@ public class PosItem implements Serializable {
     @Column(name = "pos_type_id")
     private Long posTypeId;
 
+    @Column(name = "unit_id")
+    private Long unitId;
+
     @Column(name = "passport_id")
     private Long passportId;
 
@@ -283,6 +286,14 @@ public class PosItem implements Serializable {
 
     public void setGeneratedDate(Long generatedDate) {
         this.generatedDate = generatedDate;
+    }
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
     }
 }
 

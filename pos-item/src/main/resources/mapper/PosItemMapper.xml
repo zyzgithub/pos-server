@@ -56,9 +56,8 @@
         FROM life_pos.pos_item pi INNER JOIN life_item.item_type it on it.id=pi.item_type_id
         INNER JOIN life_item.item_template item on item.id=pi.item_template_id
         INNER JOIN life_item.item_unit iu on iu.id=item.unit_id
-        WHERE pi.passport_id=#{passportId} and pi.is_delete='N'
-         AND pi.item_name like CONCAT('%', #{searchText}, '%')
-        or pi.barcode LIKE CONCAT('%', #{searchText}, '%')
+        WHERE (pi.passport_id=#{passportId} and pi.is_delete='N' AND pi.item_name like CONCAT('%', #{searchText}, '%'))
+        or (pi.passport_id=#{passportId} and pi.is_delete='N' and pi.barcode LIKE CONCAT('%', #{searchText}, '%'))
     </select>
     <select id="getCountByItemType" resultType="java.util.Map">
         select item_type_id,count(1) count from life_pos.pos_item WHERE passport_id=#{passportId}

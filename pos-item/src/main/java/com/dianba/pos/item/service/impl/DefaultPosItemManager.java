@@ -250,6 +250,9 @@ public class DefaultPosItemManager implements PosItemManager {
         if (posItemVo.getItemTypeId() != null) {
             posItem.setItemTypeId(posItemVo.getItemTypeId());
         }
+        if (posItemVo.getItemUnitId() != null) {
+            posItem.setUnitId(posItemVo.getItemUnitId());
+        }
         return posItem;
     }
 
@@ -408,6 +411,9 @@ public class DefaultPosItemManager implements PosItemManager {
             if (posItemVo.getItemTypeId() != null) {
                 posItem.setItemTypeId(posItemVo.getItemTypeId());
             }
+            if (posItemVo.getItemUnitId() != null) {
+                posItem.setUnitId(posItemVo.getItemUnitId());
+            }
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
             map.put("result", "true");
@@ -445,7 +451,7 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Override
     public PosItemVo convertToVo(PosItem posItem) {
-        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
+       // LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
         PosItemVo posItemVo = new PosItemVo();
         posItemVo.setId(posItem.getId());
         posItemVo.setPosTypeId(posItem.getItemTypeId());
@@ -453,7 +459,7 @@ public class DefaultPosItemManager implements PosItemManager {
         if (itemType != null) {
             posItemVo.setPosTypeName(itemType.getTitle());
         }
-        posItemVo.setItemTemplateId(itemTemplate.getId());
+        posItemVo.setItemTemplateId(posItem.getItemTemplateId());
         posItemVo.setItemName(posItem.getItemName());
         BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
         BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
@@ -465,7 +471,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setItemTypeId(posItem.getItemTypeId());
         posItemVo.setBuyCount(posItem.getBuyCount());
         posItemVo.setCreateDate(posItem.getCreateTime());
-        posItemVo.setBarcode(itemTemplate.getBarcode());
+        posItemVo.setBarcode(posItem.getBarcode());
         posItemVo.setIsDelete(posItem.getIsDelete());
         posItemVo.setIsShelve(posItem.getIsShelve());
         posItemVo.setItemImg(posItem.getItemImgUrl());
@@ -473,7 +479,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setWarningRepertory(posItem.getWarningRepertory());
         posItemVo.setShelfLife(posItem.getShelfLife());
         posItemVo.setPassportId(posItem.getPassportId());
-        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
+        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(posItem.getUnitId());
         posItemVo.setItemUnitId(itemUnit.getId());
         posItemVo.setItemUnitName(itemUnit.getTitle());
         posItemVo.setGeneratedDate(posItem.getGeneratedDate());
