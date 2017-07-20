@@ -22,7 +22,7 @@ public class HfChargeScheduler {
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString().substring(0, 6);
         logger.info(id + "########话费充值定时任务开始#############");
-       // charge19eManager.orderListHfCharge();
+        charge19eManager.orderListHfCharge();
         logger.info(id + "########话费充值定时任务结束#############");
     }
 }

@@ -22,7 +22,7 @@ public class FlowChargeScheduler {
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString().substring(0, 6);
         logger.info(id + "########流量充值定时任务开始#############");
-       // charge19eManager.orderListFlowCharge();
+        charge19eManager.orderListFlowCharge();
         logger.info(id + "########流量充值定时任务结束#############");
     }
 }
