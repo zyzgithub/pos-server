@@ -20,9 +20,7 @@ import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WapPaymentManager;
-import com.dianba.pos.payment.util.AlipayResultUtil;
-import com.dianba.pos.payment.util.IPUtil;
-import com.dianba.pos.payment.util.ParamUtil;
+import com.dianba.pos.payment.util.*;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(BoxURLConstant.PAYMENT)
@@ -156,11 +155,11 @@ public class BoxPaymentController {
             logger.info("验签结果：" + verifyResult);
             if (verifyResult) {
                 String amount = request.getParameter("total_amount");
-                modelAndView.setViewName("pay_success");
+                modelAndView.setViewName("payment/pay_success");
                 modelAndView.addObject("amount", amount);
             }
         } catch (AlipayApiException e) {
-            modelAndView.setViewName("pay_error");
+            modelAndView.setViewName("payment/pay_error");
             e.printStackTrace();
         }
         logger.info("支付宝同步回调结束！");
@@ -212,7 +211,8 @@ public class BoxPaymentController {
         logger.info("微信预支付下单！");
         ModelAndView modelAndView = new ModelAndView();
         String ip = IPUtil.getRemoteIp(request);
-        BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip);
+        BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip
+                , boxAppConfig.getBoxCallBackHost() + BoxURLConstant.WETCHAT_PAY_CALL_BACK_URL);
         if (basicResult.isSuccess()) {
             modelAndView.addAllObjects(basicResult.getResponse());
             modelAndView.setViewName("payment/wechat_js_pay");
@@ -222,5 +222,30 @@ public class BoxPaymentController {
         }
         logger.info("微信预支付下单结束!");
         return modelAndView;
+    }
+
+    /**
+     * 微信JS支付回调
+     */
+    @RequestMapping("wechatNotifyUrl")
+    public void notifyUrl(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("开始接收微信支付异步回调消息：");
+        Map<String, String> resultMap = XMLUtil.getRequestXML(request);
+        if (WechatResultUtil.isSuccess(resultMap)) {
+            String sequenceNumber = resultMap.get("out_trade_no");
+            String totalAmount = resultMap.get("total_fee");
+            String openId = resultMap.get("openid");
+            paymentManager.processPaidOrder(sequenceNumber, openId, PaymentTypeEnum.WEIXIN_JS
+                    , true, false);
+            LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(sequenceNumber, false);
+            boxItemLabelManager.updateItemLabelToPaid(lifeOrder.getRemark());
+        } else {
+            String errMsg = WechatResultUtil.getErrorMsg(resultMap);
+            logger.info("确认支付信息失败！" + errMsg);
+            WechatResultUtil.writeFailResult(response, errMsg);
+            return;
+        }
+        WechatResultUtil.writeSuccessResult(response);
+        logger.info("微信支付异步回调结束！");
     }
 }

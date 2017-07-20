@@ -48,7 +48,8 @@
             type: 'post',
             url: "/box/service/order/create_order",
             data: {
-                passportId: [[${passportId}]]
+                passportId: [[${passportId}]],
+                openId: [[${openId}]]
             },
             dataType: 'json',
             success: function (data) {

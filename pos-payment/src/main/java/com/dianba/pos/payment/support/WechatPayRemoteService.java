@@ -2,7 +2,6 @@ package com.dianba.pos.payment.support;
 
 import com.dianba.pos.base.config.AppConfig;
 import com.dianba.pos.common.util.HttpUtil;
-import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.payment.util.MD5Util;
 import com.dianba.pos.payment.util.ParamUtil;
@@ -67,7 +66,7 @@ public class WechatPayRemoteService {
      */
     protected Map<String, String> payOrderByJSAPI(String openId, String body, String detail, String outTradeNo
             , String attach, Integer totalFee, String deviceInfo, String spBillCreateIP
-            , String goodsTag) {
+            , String goodsTag, String notifyUrl) {
         WechatOrderXml wechatOrderXml = new WechatOrderXml();
         wechatOrderXml.setAppid(wechatConfig.getPublicAppId());
         wechatOrderXml.setMchId(wechatConfig.getPublicMerchantId());
@@ -76,7 +75,7 @@ public class WechatPayRemoteService {
         wechatOrderXml.setBody(body);
         wechatOrderXml.setDetail(detail);
         wechatOrderXml.setOutTradeNo(outTradeNo);
-        wechatOrderXml.setNotifyUrl(appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_WETCHAT_PAY_CALL_BACK_URL);
+        wechatOrderXml.setNotifyUrl(notifyUrl);
         if (!StringUtils.isEmpty(attach)) {
             wechatOrderXml.setAttach(attach);
         }

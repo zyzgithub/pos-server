@@ -4,5 +4,5 @@ import com.dianba.pos.order.po.LifeOrder;
 
 public interface BoxOrderManager {
 
-    LifeOrder createBoxOrder(Long passportId);
+    LifeOrder createBoxOrder(Long passportId, String openId);
 }

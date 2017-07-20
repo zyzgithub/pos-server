@@ -9,6 +9,6 @@ public interface WeChatPayManager {
     BarcodePayResponse barcodePayment(Long passportId, Long orderId, String authCode
             , String deviceInfo, String spBillCreateIP) throws Exception;
 
-    BasicResult jsPayment(LifeOrder lifeOrder, String openId, String deviceInfo, String spBillCreateIP)
-            throws Exception;
+    BasicResult jsPayment(LifeOrder lifeOrder, String openId, String deviceInfo, String spBillCreateIP
+            , String notifyUrl) throws Exception;
 }

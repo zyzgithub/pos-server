@@ -232,7 +232,8 @@ public class WapPaymentController {
         logger.info("微信预支付下单！");
         ModelAndView modelAndView = new ModelAndView();
         String ip = IPUtil.getRemoteIp(request);
-        BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip);
+        BasicResult basicResult = wapPaymentManager.wechatPay(sequenceNumber, ip
+                , appConfig.getPosCallBackHost() + PaymentURLConstant.WAP_WETCHAT_PAY_CALL_BACK_URL);
         if (basicResult.isSuccess()) {
             modelAndView.addAllObjects(basicResult.getResponse());
             modelAndView.setViewName("wechat_js_pay");

@@ -8,13 +8,12 @@
     <title></title>
 </head>
 <script th:inline="javascript">
-    var passportId = [[${passportId}]];
     var ua = navigator.userAgent.toLowerCase();
     if (ua.match("micromessenger")) {
         //微信浏览器
         window.location.href = "http://no1.0085.com/pos/weixin_code.html?" + [[${params}]];
     } else if (ua.match("alipayclient")) {
-        window.location.href = "/box/" + [[${alipay_url}]] + passportId;
+        window.location.href = "/box/" + [[${alipay_url}]];
     } else {
         alert('请选择使用支付宝或者微信扫码！!');
     }

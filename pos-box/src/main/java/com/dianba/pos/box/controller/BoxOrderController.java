@@ -23,9 +23,9 @@ public class BoxOrderController {
 
     @ResponseBody
     @RequestMapping("create_order")
-    public BasicResult createOrder(Long passportId) {
+    public BasicResult createOrder(Long passportId, String openId) {
         logger.info("创建无人便利店订单" + passportId);
-        LifeOrder lifeOrder = boxOrderManager.createBoxOrder(passportId);
+        LifeOrder lifeOrder = boxOrderManager.createBoxOrder(passportId, openId);
         BasicResult basicResult = BasicResult.createSuccessResult();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sequenceNumber", lifeOrder.getSequenceNumber());

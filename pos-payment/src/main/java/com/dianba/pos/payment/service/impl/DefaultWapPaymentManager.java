@@ -34,10 +34,11 @@ public class DefaultWapPaymentManager implements WapPaymentManager {
     private LifeOrderManager lifeOrderManager;
 
     @Override
-    public BasicResult wechatPay(String sequenceNumber, String spBillCreateIP) throws Exception {
+    public BasicResult wechatPay(String sequenceNumber, String spBillCreateIP, String notifyUrl) throws Exception {
         LifeOrder lifeOrder = lifeOrderManager.getLifeOrder(sequenceNumber, false);
         if (lifeOrder != null) {
-            return weChatPayManager.jsPayment(lifeOrder, lifeOrder.getReceiptUserId(), "WEP", spBillCreateIP);
+            return weChatPayManager.jsPayment(lifeOrder, lifeOrder.getReceiptUserId()
+                    , "WEP", spBillCreateIP, notifyUrl);
         }
         return BasicResult.createFailResult("订单不存在！");
     }

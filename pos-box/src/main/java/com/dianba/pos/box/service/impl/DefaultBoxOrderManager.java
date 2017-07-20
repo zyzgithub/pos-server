@@ -14,6 +14,7 @@ import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,12 +30,15 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
     private LifeOrderJpaRepository lifeOrderJpaRepository;
 
     @Transactional
-    public LifeOrder createBoxOrder(Long passportId) {
+    public LifeOrder createBoxOrder(Long passportId, String openId) {
         String rfids = ScanItemsUtil.getRFIDItems(passportId);
         List<BoxItemVo> boxItemVos = boxItemLabelManager.getItemsByRFID(passportId, rfids, true);
         LifeOrder lifeOrder = new LifeOrder();
         lifeOrder.setRemark(rfids);
         lifeOrder.setShippingPassportId(passportId);
+        if (!StringUtils.isEmpty(openId)) {
+            lifeOrder.setReceiptUserId(openId);
+        }
         lifeOrder.setSequenceNumber(OrderSequenceUtil.generateOrderSequence());
         lifeOrder.setPartnerId(passportId + "");
         lifeOrder.setPartnerUserId(passportId + "");

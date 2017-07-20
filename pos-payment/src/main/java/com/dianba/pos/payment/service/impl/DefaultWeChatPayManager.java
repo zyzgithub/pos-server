@@ -64,8 +64,8 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
         return response;
     }
 
-    public BasicResult jsPayment(LifeOrder lifeOrder, String openId, String deviceInfo, String spBillCreateIP)
-            throws Exception {
+    public BasicResult jsPayment(LifeOrder lifeOrder, String openId, String deviceInfo, String spBillCreateIP
+            , String notifyUrl) throws Exception {
         if (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() == lifeOrder.getStatus()) {
             throw new PosAccessDeniedException("订单已付款！无需重复付款！");
         }
@@ -75,7 +75,8 @@ public class DefaultWeChatPayManager extends WechatPayRemoteService implements W
         try {
             Map<String, String> result = payOrderByJSAPI(openId, body, detail
                     , lifeOrder.getSequenceNumber(), body
-                    , lifeOrder.getTotalPrice().intValue(), deviceInfo, spBillCreateIP, null);
+                    , lifeOrder.getTotalPrice().intValue(), deviceInfo, spBillCreateIP, null
+                    , notifyUrl);
             if (result == null) {
                 BasicResult.createFailResult("支付失败！");
             }
