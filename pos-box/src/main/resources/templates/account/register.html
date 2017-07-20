@@ -20,11 +20,13 @@
             </li>
             <li class="clear">
                 <input type="number" placeholder="请输入验证码" class="codeInput"/>
-                <button class="codeLabel" onclick="onCode();">点击验证码</button>
+                <button class="codeLabel" onclick="onCode(this)">点击验证码</button>
             </li>
+            <input type="hidden" placeholder="openId" class="openId" th:value="${openId}"/>
+            <input type="hidden" placeholder="openId" class="passportId" th:value="${passportId}"/>
         </ul>
     </div>
-    <a href="javascript:register();" class="codeBtn">立即验证</a>
+    <a href="javascript:return false;" class="codeBtn" onclick="boxRegister(this)">立即验证</a>
 </div>
 
 <script type="text/javascript" th:src="@{/js/zepto.min.js}"></script>
