@@ -55,11 +55,31 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                 for (ScalpListByPassportVo sb : maps){
                     if(sb.getSeconds()!=null){
                         logger.info("passportId:"+sb.getPassportId()+"======seconds : " + sb.getSeconds());
-                        if(sb.getSeconds().intValue() < posBlackSet.getCheckTime().intValue()){
+                        if(sb.getSeconds().intValue() <= posBlackSet.getCheckTime().intValue()){
                             i++;
                             logger.info("商家正在刷单:"+i);
-                            if(i>posBlackSet.getBrushCount().intValue()){
-                                PosBlackList posBlackList=new PosBlackList();
+                            if(i>=(posBlackSet.getBrushCount().intValue()-1)){
+                                PosBlackList posBlackList=posBlackListJpaRepository.findByPassportId(sb.getPassportId());
+                                if(posBlackList==null){
+                                    posBlackList=new PosBlackList();
+                                    posBlackList.setPassportId(sb.getPassportId());
+                                    posBlackListJpaRepository.save(posBlackList);
+                                    //推送给商家告诉商家账号被拉黑
+                                    List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
+                                            sb.getPassportId());
+                                    for(PosCashierAccount posCashierAccount : lst){
+                                        posPushLogManager.posJPushByBlackList(posCashierAccount.getCashierId()
+                                                .toString(),sb.getSequenceNumber());
+                                    }
+                                    i=0;
+                                    break;
+                                }
+                            }
+                        }else if(i>=(posBlackSet.getBrushCount().intValue()-1)){
+                            logger.info("此商家存在刷单行为");
+                            PosBlackList posBlackList=posBlackListJpaRepository.findByPassportId(sb.getPassportId());
+                            if(posBlackList==null){
+                                posBlackList=new PosBlackList();
                                 posBlackList.setPassportId(sb.getPassportId());
                                 posBlackListJpaRepository.save(posBlackList);
                                 //推送给商家告诉商家账号被拉黑
@@ -69,27 +89,13 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                                     posPushLogManager.posJPushByBlackList(posCashierAccount.getCashierId()
                                             .toString(),sb.getSequenceNumber());
                                 }
-                                i=0;
-                                break;
-                            }
-                        }else if(i>posBlackSet.getBrushCount().intValue()){
-                            logger.info("此商家存在刷单行为");
-                            PosBlackList posBlackList=new PosBlackList();
-                            posBlackList.setPassportId(sb.getPassportId());
-                            posBlackListJpaRepository.save(posBlackList);
-                            //推送给商家告诉商家账号被拉黑
-                            List<PosCashierAccount> lst=posCashierAccountManager.findAllByMerchantId(
-                                    sb.getPassportId());
-                            for(PosCashierAccount posCashierAccount : lst){
-                                posPushLogManager.posJPushByBlackList(posCashierAccount.getCashierId()
-                                        .toString(),sb.getSequenceNumber());
                             }
                             i=0;
                             break;
                         }else {
-                            logger.info("刷单行为停止,当前已刷次数:"+i);
                             i=0;
                         }
+
                     }
 
                 }
