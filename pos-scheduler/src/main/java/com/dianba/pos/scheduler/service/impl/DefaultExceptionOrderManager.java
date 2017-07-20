@@ -1,7 +1,9 @@
 package com.dianba.pos.scheduler.service.impl;
 import com.dianba.pos.passport.po.PosBlackList;
+import com.dianba.pos.passport.po.PosBlackSet;
 import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.repository.PosBlackListJpaRepository;
+import com.dianba.pos.passport.repository.PosBlackSetJpaRepository;
 import com.dianba.pos.passport.service.PosCashierAccountManager;
 import com.dianba.pos.passport.service.PosPushLogManager;
 import com.dianba.pos.scheduler.mapper.PosBlackListMapper;
@@ -32,6 +34,9 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
 
     @Autowired
     private PosPushLogManager posPushLogManager;
+
+    @Autowired
+    private PosBlackSetJpaRepository posBlackSetJpaRepository;
     private Logger logger = LogManager.getLogger(DefaultExceptionOrderManager.class);
     @Override
     public void checkBlackPassport() {
@@ -39,6 +44,7 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
         //获取白名单商家
         List<Map<String,Object>> longMap=posBlackListMapper.findWhiteList();
 
+        PosBlackSet posBlackSet=posBlackSetJpaRepository.findByStateAndType(0,0);
         int i=0;
         for(Map<String,Object> map : longMap){
 
@@ -49,10 +55,10 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                 for (ScalpListByPassportVo sb : maps){
                     if(sb.getSeconds()!=null){
                         logger.info("passportId:"+sb.getPassportId()+"======seconds : " + sb.getSeconds());
-                        if(sb.getSeconds() < 13){
+                        if(sb.getSeconds().intValue() < posBlackSet.getCheckTime().intValue()){
                             i++;
                             logger.info("商家正在刷单:"+i);
-                            if(i>4){
+                            if(i>posBlackSet.getBrushCount().intValue()){
                                 PosBlackList posBlackList=new PosBlackList();
                                 posBlackList.setPassportId(sb.getPassportId());
                                 posBlackListJpaRepository.save(posBlackList);
@@ -66,7 +72,7 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                                 i=0;
                                 break;
                             }
-                        }else if(i>4){
+                        }else if(i>posBlackSet.getBrushCount().intValue()){
                             logger.info("此商家存在刷单行为");
                             PosBlackList posBlackList=new PosBlackList();
                             posBlackList.setPassportId(sb.getPassportId());
