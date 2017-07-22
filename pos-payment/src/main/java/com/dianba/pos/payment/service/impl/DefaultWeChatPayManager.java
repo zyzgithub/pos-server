@@ -3,7 +3,7 @@ package com.dianba.pos.payment.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.base.exception.PosAccessDeniedException;
-import com.dianba.pos.base.thread.WorkStealingPool;
+import com.dianba.pos.core.thread.WorkStealingPool;
 import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.service.LifeOrderManager;
 import com.dianba.pos.passport.po.Passport;

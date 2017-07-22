@@ -19,4 +19,6 @@ public interface BoxItemLabelManager {
     List<BoxItemLabel> updateItemLabelToPaid(String rfids);
 
     void bindItemLabelToItems(Long itemId, String rfids);
+
+    boolean isAllPaid(String rfids);
 }

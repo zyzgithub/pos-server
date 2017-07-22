@@ -21,21 +21,21 @@ public class NacCryptUtil {
     }
 
     public static AccessResultVo decode(String reqData) {
-        logger.info("原始key:" + reqData);
+        logger.debug("原始key:" + reqData);
         byte[] realDataBytes = new byte[reqData.getBytes().length * 2];
         NacCryptUtil.decrypt(reqData.getBytes(), reqData.getBytes().length, realDataBytes, realDataBytes.length);
         String realData = new String(realDataBytes);
-        logger.info("解析key:" + realData);
+        logger.debug("解析key:" + realData);
         return JSONObject.parseObject(realData, AccessResultVo.class);
     }
 
     public static void encode(HttpServletResponse response, AccessResultVo accessResultVo) {
         String reqData = JSONObject.toJSONString(accessResultVo);
-        logger.info("发送原始key:" + reqData);
+        logger.debug("发送原始key:" + reqData);
         byte[] realDataBytes = new byte[reqData.getBytes().length * 2];
         NacCryptUtil.encrypt(reqData.getBytes(), reqData.getBytes().length, realDataBytes, realDataBytes.length);
         String realData = new String(realDataBytes);
-        logger.info("发送加密key:" + realData);
+        logger.debug("发送加密key:" + realData);
         try {
             response.setContentType("application/json");
             response.getWriter().write(realData);

@@ -2,10 +2,14 @@ package com.dianba.pos.box.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.box.config.BoxURLConstant;
+import com.dianba.pos.box.po.BoxDoorInfo;
+import com.dianba.pos.box.service.BoxDoorInfoManager;
+import com.dianba.pos.box.util.DoorStatusUtil;
 import com.dianba.pos.box.util.NacCryptUtil;
 import com.dianba.pos.box.vo.AccessResultVo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +23,9 @@ public class BoxAccessController {
 
     private static Logger logger = LogManager.getLogger(BoxAccessController.class);
 
+    @Autowired
+    private BoxDoorInfoManager boxDoorInfoManager;
+
     @RequestMapping("checkPosition")
     public ModelAndView checkPosition() {
         return new ModelAndView("position");
@@ -27,9 +34,35 @@ public class BoxAccessController {
     @RequestMapping("DeviceControl")
     public void deviceControl(HttpServletRequest request, HttpServletResponse response) {
         AccessResultVo accessResultVoRequest = NacCryptUtil.decode(request);
+        BoxDoorInfo boxDoorInfo = boxDoorInfoManager.getDoorInfoByAccessSN(accessResultVoRequest.getSn());
+        if (boxDoorInfo != null) {
+            Long requestTimeMillis = DoorStatusUtil.getDoorStatus(boxDoorInfo.getPassportId());
+            if (null != requestTimeMillis) {
+                //有请求进店/离店人员，开门有效期5秒
+                Long currTimeMillis = System.currentTimeMillis();
+                if (currTimeMillis > requestTimeMillis
+                        && currTimeMillis - requestTimeMillis <= 5000) {
+                    openDoor(response, accessResultVoRequest.getSn());
+                    return;
+                }
+            }
+        }
+        doNothing(response, accessResultVoRequest.getSn());
+    }
+
+    private void doNothing(HttpServletResponse response, String sn) {
+        AccessResultVo accessResultVo = new AccessResultVo();
+        accessResultVo.setCmd("1");
+        accessResultVo.setSn(sn);
+        accessResultVo.setCurtime(System.currentTimeMillis() / 1000 + "");
+        accessResultVo.setData(new JSONObject());
+        NacCryptUtil.encode(response, accessResultVo);
+    }
+
+    private void openDoor(HttpServletResponse response, String sn) {
         AccessResultVo accessResultVo = new AccessResultVo();
         accessResultVo.setCmd("36");
-        accessResultVo.setSn("1102890139");
+        accessResultVo.setSn(sn);
         accessResultVo.setCurtime(System.currentTimeMillis() / 1000 + "");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("door", "1");

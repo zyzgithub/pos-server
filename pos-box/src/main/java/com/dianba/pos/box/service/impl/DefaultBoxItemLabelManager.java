@@ -149,6 +149,19 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
         itemLabelJpaRepository.save(boxItemLabels);
     }
 
+    @Override
+    public boolean isAllPaid(String rfids) {
+        List<BoxItemLabel> boxItemLabels = getItemsToBindingByRFID(rfids);
+        boolean isAllPaid = true;
+        for (BoxItemLabel boxItemLabel : boxItemLabels) {
+            if (!BoxItemLabelPaidEnum.PAID.getKey().equals(boxItemLabel.getIsPaid())) {
+                isAllPaid = false;
+                break;
+            }
+        }
+        return isAllPaid;
+    }
+
     private List<String> convertToRfidList(String rfids) {
         String[] rfidKeys = rfids.split(",");
         if (rfidKeys.length == 0) {

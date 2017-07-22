@@ -1,7 +1,7 @@
 package com.dianba.pos.payment.thread;
 
-import com.dianba.pos.base.context.ApplicationContextHelper;
-import com.dianba.pos.base.thread.RunTask;
+import com.dianba.pos.core.context.ApplicationContextHelper;
+import com.dianba.pos.core.thread.RunTask;
 import com.dianba.pos.payment.pojo.BarcodePayResponse;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
