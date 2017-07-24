@@ -87,7 +87,14 @@ public class BoxAccountController {
     public ModelAndView authorization(@PathVariable(name = "passportId") Long passportId
             , String code, String state) throws Exception {
         JSONObject param = posBoxAccountManager.authorizationOpenDoor(passportId, code, state);
-        ModelAndView modelAndView = new ModelAndView(param.getString("view"));
+        boolean flag=param.getBoolean("isFlag");
+        String view=null;
+        if(flag){
+            view="account/position";
+        }else {
+            view="account/register";
+        }
+        ModelAndView modelAndView = new ModelAndView(view);
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("openId", param.getString("openId"));
         modelAndView.addObject("longitude", param.getString("longitude"));
@@ -97,7 +104,7 @@ public class BoxAccountController {
     @RequestMapping("position/{passportId}")
     public ModelAndView position(@PathVariable(name = "passportId") Long passportId){
         JSONObject param = posBoxAccountManager.position(passportId);
-        ModelAndView modelAndView = new ModelAndView(param.getString("view"));
+        ModelAndView modelAndView = new ModelAndView("account/position");
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("longitude", param.getString("longitude"));
         modelAndView.addObject("latitude", param.getString("latitude"));

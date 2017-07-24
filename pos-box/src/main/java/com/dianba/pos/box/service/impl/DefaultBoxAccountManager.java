@@ -70,11 +70,13 @@ public class DefaultBoxAccountManager implements BoxAccountManager {
                 LifeAchieve lifeAchieve=lifeAchieveJpaRepository.findByPassportId(passportId);
                 //定位当前
                 if (boxAccount == null) {
-                    param.put("view", "account/register");
+                  //  param.put("view", "account/register");
+                    param.put("isFlag",false);
                 } else {
                     param.put("longitude",lifeAchieve.getLongitude());
                     param.put("latitude",lifeAchieve.getLatitude());
-                    param.put("view", "account/position");
+                   // param.put("view", "account/position");
+                    param.put("isFlag",true);
                 }
             } else {
                 throw new PosIllegalArgumentException(jsonObject.toJSONString());
@@ -91,7 +93,6 @@ public class DefaultBoxAccountManager implements BoxAccountManager {
         if(lifeAchieve!=null){
             param.put("longitude",lifeAchieve.getLongitude());
             param.put("latitude",lifeAchieve.getLatitude());
-            param.put("view", "account/position");
         }
         return param;
     }
