@@ -14,6 +14,7 @@ public class DefaultSMSManager extends PassportRemoteService implements SMSManag
     public BasicResult sendSMSCode(String phoneNumber) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("phoneNumber", phoneNumber);
+        jsonObject.put("type", SmsCodeTypeEnum.BOX_REGISTER.getKey());
         return post(SEND_VERIFY_CODE, jsonObject);
     }
 
@@ -22,7 +23,7 @@ public class DefaultSMSManager extends PassportRemoteService implements SMSManag
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("phone", phoneNumber);
         jsonObject.put("smsCode", smsCode);
-        jsonObject.put("smsType", SmsCodeTypeEnum.REGISTER.getKey());
+        jsonObject.put("smsType", SmsCodeTypeEnum.BOX_REGISTER.getKey());
         return post(VERIFY_SMS_CODE, jsonObject);
     }
 }

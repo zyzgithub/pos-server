@@ -8,6 +8,8 @@ import com.dianba.pos.box.po.BoxAccount;
 import com.dianba.pos.box.repository.BoxAccountJpaRepository;
 import com.dianba.pos.box.service.BoxAccountManager;
 import com.dianba.pos.common.util.HttpUtil;
+import com.dianba.pos.passport.po.LifeAchieve;
+import com.dianba.pos.passport.repository.LifeAchieveJpaRepository;
 import com.dianba.pos.passport.service.SMSManager;
 import com.dianba.pos.payment.config.WechatConfig;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +38,8 @@ public class DefaultBoxAccountManager implements BoxAccountManager {
     @Autowired
     private BoxAccountJpaRepository boxAccountJpaRepository;
 
+    @Autowired
+    private LifeAchieveJpaRepository lifeAchieveJpaRepository;
     @Override
     public BasicResult registerBoxAccount(BoxAccount posBoxAccount, String smsCode) {
         BasicResult result = smsManager.verifySMSCode(posBoxAccount.getPhoneNumber(), smsCode);
@@ -63,16 +67,32 @@ public class DefaultBoxAccountManager implements BoxAccountManager {
                 param.put("openId", openId);
                 //判断openId 是否被注册过
                 BoxAccount boxAccount = boxAccountJpaRepository.findByOpenId(openId);
+                LifeAchieve lifeAchieve=lifeAchieveJpaRepository.findByPassportId(passportId);
+                //定位当前
                 if (boxAccount == null) {
                     param.put("view", "account/register");
                 } else {
-                    param.put("view", "account/lock");
+                    param.put("longitude",lifeAchieve.getLongitude());
+                    param.put("latitude",lifeAchieve.getLatitude());
+                    param.put("view", "account/position");
                 }
             } else {
                 throw new PosIllegalArgumentException(jsonObject.toJSONString());
             }
         }
         logger.info("微信授权回调结束！");
+        return param;
+    }
+
+    @Override
+    public JSONObject position(Long passportId) {
+        JSONObject param = new JSONObject();
+        LifeAchieve lifeAchieve=lifeAchieveJpaRepository.findByPassportId(passportId);
+        if(lifeAchieve!=null){
+            param.put("longitude",lifeAchieve.getLongitude());
+            param.put("latitude",lifeAchieve.getLatitude());
+            param.put("view", "account/position");
+        }
         return param;
     }
 }

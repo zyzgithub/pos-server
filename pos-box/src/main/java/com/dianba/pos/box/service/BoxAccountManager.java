@@ -11,4 +11,5 @@ public interface BoxAccountManager {
     BasicResult registerBoxAccount(BoxAccount posBoxAccount, String smsCode);
     /**是否注册过账号**/
     JSONObject authorizationOpenDoor(Long passportId, String code, String state) throws Exception ;
+    JSONObject position(Long passportId) ;
 }

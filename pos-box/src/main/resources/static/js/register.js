@@ -25,11 +25,12 @@ function onCode(target) {
         },
         dataType: 'json',
         success: function (data) {
-            if (data.code == 0) {
-                //clearInterval(timer01);
+            if (data.code != 0) {
+                clearInterval(timer01);
                 $('.codeLabel').html("点击验证码");
                 $('.codeLabel').removeAttr("disabled", "disabled");
-            } else {
+                alert(data.msg);
+            }else{
                 alert(data.msg);
             }
         },
@@ -56,6 +57,7 @@ function boxRegister(target) {
         success: function (data) {
             if (data.code == 0) {
                 alert(data.msg)
+                window.location.href="/box/service/account/position/"+passportId;
             } else {
                 alert(data.msg);
             }

@@ -90,6 +90,22 @@ public class BoxAccountController {
         ModelAndView modelAndView = new ModelAndView(param.getString("view"));
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("openId", param.getString("openId"));
+        modelAndView.addObject("longitude", param.getString("longitude"));
+        modelAndView.addObject("latitude", param.getString("latitude"));
+        return modelAndView;
+    }
+    @RequestMapping("position/{passportId}")
+    public ModelAndView position(@PathVariable(name = "passportId") Long passportId){
+        JSONObject param = posBoxAccountManager.position(passportId);
+        ModelAndView modelAndView = new ModelAndView(param.getString("view"));
+        modelAndView.addObject("passportId", passportId);
+        modelAndView.addObject("longitude", param.getString("longitude"));
+        modelAndView.addObject("latitude", param.getString("latitude"));
+        return modelAndView;
+    }
+    @RequestMapping("openDoor")
+    public ModelAndView openDoor(){
+        ModelAndView modelAndView = new ModelAndView("account/lock");
         return modelAndView;
     }
 }
