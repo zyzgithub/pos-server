@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by zhangyong on 2017/7/17.
  */
 @Entity
-@Table(name = "life_pos.pos_box_account")
+@Table(name = "life_pos.box_account")
 public class BoxAccount implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

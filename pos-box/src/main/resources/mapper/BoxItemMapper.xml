@@ -13,7 +13,7 @@
 
     <select id="findItemsByRFID" resultMap="BaseResultMap">
         select t.id,t.rfid,t.is_paid,t.item_id,i.item_name,i.sales_price
-        from life_pos.pos_item_label t
+        from life_pos.box_item_label t
         inner join life_pos.pos_item i on i.id=t.item_id
         where t.rfid in
         <foreach collection="rfids" item="rfid" open="(" close=")" separator=",">

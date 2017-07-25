@@ -81,7 +81,8 @@ public class WechatConfig {
     }
 
     public String getAuthCodeParam(String redirectUri) {
-        return "appid=" + getPublicAppId() + "&redirect_uri=" + redirectUri;
+        return "appid=" + getPublicAppId() + "&scope=snsapi_userinfo"
+                + "&redirect_uri=" + redirectUri;
     }
 
     public String getOrderPayUrl() {

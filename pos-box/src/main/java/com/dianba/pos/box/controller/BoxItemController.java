@@ -65,6 +65,9 @@ public class BoxItemController {
         if (StringUtils.isEmpty(rfids)) {
             throw new PosIllegalArgumentException("RFIDS不能为空");
         }
+        if (itemId == null || itemId == 0) {
+            throw new PosIllegalArgumentException("商品ID不能为空！");
+        }
         boxItemLabelManager.bindItemLabelToItems(itemId, rfids);
         List<BoxItemLabel> boxItemLabels = boxItemLabelManager.getRFIDItems(rfids);
         BasicResult basicResult = BasicResult.createSuccessResult();

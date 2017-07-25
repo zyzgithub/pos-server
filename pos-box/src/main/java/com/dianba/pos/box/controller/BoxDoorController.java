@@ -3,6 +3,7 @@ package com.dianba.pos.box.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.box.config.BoxURLConstant;
+import com.dianba.pos.box.service.BoxAccountLogManager;
 import com.dianba.pos.box.service.BoxItemLabelManager;
 import com.dianba.pos.box.util.DoorPlayStatusUtil;
 import com.dianba.pos.box.util.DoorStatusUtil;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(BoxURLConstant.DOOR)
@@ -18,6 +20,15 @@ public class BoxDoorController {
 
     @Autowired
     private BoxItemLabelManager boxItemLabelManager;
+    @Autowired
+    private BoxAccountLogManager boxAccountLogManager;
+
+    @RequestMapping(value = "openDoor", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView openDoor(Long passportId, String openId) {
+        DoorStatusUtil.writeDoorStatus(passportId);
+        boxAccountLogManager.saveOpenLog(openId);
+        return new ModelAndView("account/lock");
+    }
 
     @ResponseBody
     @RequestMapping(value = "leaveInspect", method = {RequestMethod.GET, RequestMethod.POST})

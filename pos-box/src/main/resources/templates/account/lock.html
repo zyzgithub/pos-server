@@ -6,21 +6,30 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title></title>
+    <style>
+        .closeBtn {
+            height: auto;
+            width: 70%;
+            background: #8888;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            margin: 10% auto 0;
+            display: block;
+            padding: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
     <link th:href="@{/css/base.css}" rel="stylesheet"/>
     <link th:href="@{/css/lock.css}" rel="stylesheet"/>
 </head>
 <body>
 
-<div class="lock" onclick="onLock(this);" data-num="1">
-    <img th:src="@{/img/open.png}" class="openBtn"/>
-    <img th:src="@{/img/noOpen.png}" class="noOpen"/>
-    <i class="title">立即开门</i>
-</div>
-
 <div class="lockSuccess">
-    <img th:src="@{img/success.png}" class="successIcon"/>
+    <img th:src="@{/img/success.png}" class="successIcon"/>
     <p class="num">解锁成功</p>
     <p class="payTitle">门锁已解开，请手动拉门进入一号盒子</p>
+    <a href="javascript:WeixinJSBridge.call('closeWindow');" class="closeBtn">关闭</a>
 </div>
 
 <div class="time">

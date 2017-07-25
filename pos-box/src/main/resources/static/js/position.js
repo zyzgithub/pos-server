@@ -1,30 +1,20 @@
-var map = new BMap.Map("allmap");
-var point = new BMap.Point(116.331398,39.897445);
-map.centerAndZoom(point,12);
-var longitude=$('.longitude').val();
-var latitude=$(".latitude").val();
 var geolocation = new BMap.Geolocation();
-geolocation.getCurrentPosition(function(r){
-    if(this.getStatus() == BMAP_STATUS_SUCCESS){
-        var mk = new BMap.Marker(r.point);
-        map.addOverlay(mk);
-        map.panTo(r.point);
-        alert('您的位置：'+r.point.lng+','+r.point.lat);
-        alert('商家位置'+longitude+','+latitude);
-        var map1 = new BMap.Map("container");
-        var point1 = new BMap.Point(longitude,latitude);
-        var point2 = new BMap.Point(r.point.lng,r.point.lat);
-        var distance = parseInt(map1.getDistance(point1,point2));
-        if(distance<13){
-            window.location.href="/box/service/account/openDoor/";
-        }else {
-            alert("不在开门范围之内");
-        }
+geolocation.getCurrentPosition(function (r) {
+    if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+        var map = new BMap.Map("container");
+        var point1 = new BMap.Point(longitude, latitude);
+        var point2 = new BMap.Point(r.point.lng, r.point.lat);
+        var distance = parseInt(map.getDistance(point1, point2));
+        // if (distance < 13) {
+            window.location.href = "/box/service/door/openDoor?passportId=" + passportId + "&openId=" + openId;
+        // } else {
+        //     alert("不在开门范围之内");
+        // }
     }
     else {
-        alert('failed'+this.getStatus());
+        alert('failed' + this.getStatus());
     }
-},{enableHighAccuracy: true})
+}, {enableHighAccuracy: true})
 //关于状态码
 //BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
 //BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。

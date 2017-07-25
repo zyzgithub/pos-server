@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by zhangyong on 2017/7/4.
  */
 @Entity
-@Table(name = "life_pos.pos_item_label")
+@Table(name = "life_pos.box_item_label")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxItemLabel implements Serializable {
 
