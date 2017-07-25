@@ -6,6 +6,7 @@ import com.dianba.pos.box.config.BoxAppConfig;
 import com.dianba.pos.box.config.BoxURLConstant;
 import com.dianba.pos.box.po.BoxAccount;
 import com.dianba.pos.box.service.BoxAccountManager;
+import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.SMSManager;
 import com.dianba.pos.payment.config.WechatConfig;
@@ -45,6 +46,8 @@ public class BoxAccountController {
     private WechatConfig wechatConfig;
     @Autowired
     private BoxAppConfig boxAppConfig;
+    @Autowired
+    private LifeAchieveManager lifeAchieveManager;
 
     @ApiOperation("发送短信")
     @ResponseBody
@@ -53,10 +56,11 @@ public class BoxAccountController {
         return smsManager.sendSMSCode(phoneNumber);
     }
 
-    @RequestMapping("showRegisterQRCode")
-    public void showRegisterQRCode(HttpServletResponse response) throws Exception {
+    @RequestMapping("showRegisterQRCode/{passportId}")
+    public void showRegisterQRCode(HttpServletResponse response
+            , @PathVariable("passportId") Long passportId) throws Exception {
         posQRCodeManager.generateQRCodeByContent(boxAppConfig.getBoxCallBackHost()
-                        + BoxURLConstant.ACCOUNT + "qr_scan/" + 100045
+                        + BoxURLConstant.ACCOUNT + "qr_scan/" + passportId
                 , 300, 300, response);
     }
 
@@ -81,18 +85,18 @@ public class BoxAccountController {
     }
 
     /**
-     * 支付宝跳转/微信授权回调
+     * 微信授权回调
      */
     @RequestMapping("authorization/{passportId}")
     public ModelAndView authorization(@PathVariable(name = "passportId") Long passportId
             , String code, String state) throws Exception {
         JSONObject param = posBoxAccountManager.authorizationOpenDoor(passportId, code, state);
-        boolean flag=param.getBoolean("isFlag");
-        String view=null;
-        if(flag){
-            view="account/position";
-        }else {
-            view="account/register";
+        boolean flag = param.getBoolean("isFlag");
+        String view = null;
+        if (flag) {
+            view = "account/position";
+        } else {
+            view = "account/register";
         }
         ModelAndView modelAndView = new ModelAndView(view);
         modelAndView.addObject("passportId", passportId);
@@ -101,18 +105,14 @@ public class BoxAccountController {
         modelAndView.addObject("latitude", param.getString("latitude"));
         return modelAndView;
     }
+
     @RequestMapping("position/{passportId}")
-    public ModelAndView position(@PathVariable(name = "passportId") Long passportId){
+    public ModelAndView position(@PathVariable(name = "passportId") Long passportId) {
         JSONObject param = posBoxAccountManager.position(passportId);
         ModelAndView modelAndView = new ModelAndView("account/position");
         modelAndView.addObject("passportId", passportId);
         modelAndView.addObject("longitude", param.getString("longitude"));
         modelAndView.addObject("latitude", param.getString("latitude"));
-        return modelAndView;
-    }
-    @RequestMapping("openDoor")
-    public ModelAndView openDoor(){
-        ModelAndView modelAndView = new ModelAndView("account/lock");
         return modelAndView;
     }
 }
