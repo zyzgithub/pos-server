@@ -59,7 +59,8 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
                             i++;
                             logger.info("商家正在刷单:"+i);
                             if(i>=(posBlackSet.getBrushCount().intValue()-1)){
-                                PosBlackList posBlackList=posBlackListJpaRepository.findByPassportId(sb.getPassportId());
+                                PosBlackList posBlackList=posBlackListJpaRepository.findByPassportId(
+                                        sb.getPassportId());
                                 if(posBlackList==null){
                                     posBlackList=new PosBlackList();
                                     posBlackList.setPassportId(sb.getPassportId());
