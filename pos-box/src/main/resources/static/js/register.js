@@ -1,5 +1,6 @@
 $(function () {
 })
+
 function onCode(target) {
     var num = 60;
     var timer01 = null;
@@ -30,8 +31,6 @@ function onCode(target) {
                 $('.codeLabel').html("点击验证码");
                 $('.codeLabel').removeAttr("disabled", "disabled");
                 alert(data.msg);
-            }else{
-                alert(data.msg);
             }
         },
         error: function (data) {
@@ -39,6 +38,7 @@ function onCode(target) {
         }
     });
 }
+
 function boxRegister(target) {
     var smsCode = $(".codeInput").val();
     var openId = $(".openId").val();
@@ -56,8 +56,7 @@ function boxRegister(target) {
         dataType: 'json',
         success: function (data) {
             if (data.code == 0) {
-                alert(data.msg)
-                window.location.href="/box/service/account/position/"+passportId;
+                window.location.href = "/box/service/account/position?passportId=" + passportId + "&openId=" + openId;
             } else {
                 alert(data.msg);
             }

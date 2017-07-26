@@ -18,12 +18,12 @@
     <title></title>
 </head>
 <body>
-<div id="allmap"></div>
 <script th:inline="javascript">
     var passportId = [[${passportId}]];
     var openId = [[${openId}]];
     var longitude = [[${longitude}]];
     var latitude = [[${latitude}]];
+    var securitykey = [[${securitykey}]];
 </script>
 <script type="text/javascript" th:src="@{/js/zepto.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/position.js}"></script>

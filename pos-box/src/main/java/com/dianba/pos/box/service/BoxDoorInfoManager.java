@@ -7,4 +7,6 @@ public interface BoxDoorInfoManager {
     BoxDoorInfo getDoorInfoByPassportId(Long passportId);
 
     BoxDoorInfo getDoorInfoByAccessSN(String accessSN);
+
+    void saveLeaveLog(Long passportId, String rfids);
 }

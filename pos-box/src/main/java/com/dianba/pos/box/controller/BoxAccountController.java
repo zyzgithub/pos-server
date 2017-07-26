@@ -6,6 +6,7 @@ import com.dianba.pos.box.config.BoxAppConfig;
 import com.dianba.pos.box.config.BoxURLConstant;
 import com.dianba.pos.box.po.BoxAccount;
 import com.dianba.pos.box.service.BoxAccountManager;
+import com.dianba.pos.box.util.DoorStatusUtil;
 import com.dianba.pos.passport.service.LifeAchieveManager;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.SMSManager;
@@ -37,7 +38,7 @@ public class BoxAccountController {
     private SMSManager smsManager;
 
     @Autowired
-    private BoxAccountManager posBoxAccountManager;
+    private BoxAccountManager boxAccountManager;
     @Autowired
     private PassportManager passportManager;
     @Autowired
@@ -68,7 +69,7 @@ public class BoxAccountController {
     @ResponseBody
     @RequestMapping(value = "register", method = {RequestMethod.POST, RequestMethod.GET})
     public BasicResult register(BoxAccount boxAccount, String smsCode) {
-        return posBoxAccountManager.registerBoxAccount(boxAccount, smsCode);
+        return boxAccountManager.registerBoxAccount(boxAccount, smsCode);
     }
 
     /**
@@ -90,29 +91,30 @@ public class BoxAccountController {
     @RequestMapping("authorization/{passportId}")
     public ModelAndView authorization(@PathVariable(name = "passportId") Long passportId
             , String code, String state) throws Exception {
-        JSONObject param = posBoxAccountManager.authorizationOpenDoor(passportId, code, state);
-        boolean flag = param.getBoolean("isFlag");
-        String view = null;
-        if (flag) {
-            view = "account/position";
+        ModelAndView modelAndView = new ModelAndView();
+        String openId = boxAccountManager.getOpenId(code, state);
+        boolean isRegistered = boxAccountManager.checkIsRegistered(openId);
+        if (isRegistered) {
+            return position(passportId, openId);
         } else {
-            view = "account/register";
+            modelAndView.setViewName("account/register");
         }
-        ModelAndView modelAndView = new ModelAndView(view);
         modelAndView.addObject("passportId", passportId);
-        modelAndView.addObject("openId", param.getString("openId"));
-        modelAndView.addObject("longitude", param.getString("longitude"));
-        modelAndView.addObject("latitude", param.getString("latitude"));
+        modelAndView.addObject("openId", openId);
         return modelAndView;
     }
 
-    @RequestMapping("position/{passportId}")
-    public ModelAndView position(@PathVariable(name = "passportId") Long passportId) {
-        JSONObject param = posBoxAccountManager.position(passportId);
+    @RequestMapping("position")
+    public ModelAndView position(Long passportId, String openId) {
+        JSONObject param = boxAccountManager.position(passportId);
         ModelAndView modelAndView = new ModelAndView("account/position");
         modelAndView.addObject("passportId", passportId);
+        modelAndView.addObject("openId", openId);
         modelAndView.addObject("longitude", param.getString("longitude"));
         modelAndView.addObject("latitude", param.getString("latitude"));
+        String securityKey = DoorStatusUtil.getDoorSecurityKey(passportId);
+        modelAndView.addObject("securitykey", securityKey);
+        logger.info("开门安全校验KEY：" + securityKey);
         return modelAndView;
     }
 }

@@ -1,5 +1,6 @@
 package com.dianba.pos.box.service.impl;
 
+import com.dianba.pos.box.mapper.BoxOrderMapper;
 import com.dianba.pos.box.service.BoxItemLabelManager;
 import com.dianba.pos.box.service.BoxOrderManager;
 import com.dianba.pos.box.util.ScanItemsUtil;
@@ -28,6 +29,8 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
     private BoxItemLabelManager boxItemLabelManager;
     @Autowired
     private LifeOrderJpaRepository lifeOrderJpaRepository;
+    @Autowired
+    private BoxOrderMapper boxOrderMapper;
 
     @Transactional
     public LifeOrder createBoxOrder(Long passportId, String openId) {
@@ -73,5 +76,14 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
             lifeOrder.setItemSnapshots(lifeOrderItemSnapshots);
         }
         return lifeOrderJpaRepository.save(lifeOrder);
+    }
+
+    @Override
+    public LifeOrder getOrderByRfids(Long passportId, String rfids) {
+        String[] rfidKey = rfids.split(",");
+        if (rfidKey.length > 0) {
+            return boxOrderMapper.findByPassportIdAndRfids(passportId, "%" + rfidKey[0] + "%");
+        }
+        return null;
     }
 }

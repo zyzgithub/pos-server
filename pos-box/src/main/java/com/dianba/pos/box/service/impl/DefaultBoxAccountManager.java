@@ -48,39 +48,30 @@ public class DefaultBoxAccountManager implements BoxAccountManager {
         }
     }
 
-    @Override
-    public JSONObject authorizationOpenDoor(Long passportId, String code, String state) throws Exception {
-        JSONObject param = new JSONObject();
-        logger.info("微信回调参数：passportId" + passportId);
-        logger.info("微信回调参数：code" + code);
-        logger.info("微信回调参数：state" + state);
+
+    public String getOpenId(String code, String state) {
         logger.info("微信授权回调开始！");
         logger.info(code + " " + state);
         String authTokenUrl = wechatConfig.getAccessTokenUrl(code);
         JSONObject jsonObject = HttpUtil.post(authTokenUrl, new JSONObject());
+        String openId = null;
         if (jsonObject != null) {
             if (null == jsonObject.get("errcode")) {
-                String openId = jsonObject.getString("openid");
-                param.put("openId", openId);
-                //判断openId 是否被注册过
-                BoxAccount boxAccount = boxAccountJpaRepository.findByOpenId(openId);
-                LifeAchieve lifeAchieve = lifeAchieveManager.findByPassportId(passportId);
-                //定位当前
-                if (boxAccount == null) {
-                    //  param.put("view", "account/register");
-                    param.put("isFlag", false);
-                } else {
-                    param.put("longitude", lifeAchieve.getLongitude());
-                    param.put("latitude", lifeAchieve.getLatitude());
-                    // param.put("view", "account/position");
-                    param.put("isFlag", true);
-                }
+                openId = jsonObject.getString("openid");
             } else {
                 throw new PosIllegalArgumentException(jsonObject.toJSONString());
             }
         }
         logger.info("微信授权回调结束！");
-        return param;
+        return openId;
+    }
+
+    public boolean checkIsRegistered(String openId) {
+        BoxAccount boxAccount = boxAccountJpaRepository.findByOpenId(openId);
+        if (boxAccount == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -24,6 +24,7 @@ public class DefaultBoxItemManager implements BoxItemManager {
         if (Pattern.compile("[\u4e00-\u9fa5]").matcher(codeOrName).find()) {
             posItems = posItemJpaRepository.findAllByItemNameLikeAndPassportId(codeOrName, passportId);
         } else {
+            codeOrName = "%" + codeOrName + "%";
             posItems = posItemJpaRepository.findAllByBarcodeLikeAndPassportId(codeOrName, passportId);
         }
         List<BoxItemSearchVo> boxItemSearchVos = new ArrayList<>();

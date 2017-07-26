@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dianba.pos.box.mapper.BoxOrderMapper">
+
+    <select id="findByPassportIdAndRfids" resultMap="com.dianba.pos.order.mapper.LifeOrderMapper.BaseResultMap">
+        select * from life_order.order_entry t
+        where t.type=4 and t.shipping_passport_id=#{passportId}
+        and t.remark like #{rfid}
+    </select>
+</mapper>

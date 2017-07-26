@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title></title>
+    <link th:href="@{/css/base.css}" rel="stylesheet"/>
+    <style>
+        .error {
+            height: auto;
+            width: 100%;
+        }
+
+        .errorLogo {
+            height: auto;
+            width: 35%;
+            margin: 15% auto 0;
+        }
+
+        .payTitle {
+            color: #666;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="error">
+    <img class="errorLogo" th:src="@{/img/error.png}"/>
+    <p class="payTitle" th:value="@{msg}"></p>
+</div>
+
+<script>
+
+</script>
+</body>
+</html>
