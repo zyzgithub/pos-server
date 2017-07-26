@@ -451,13 +451,19 @@ public class DefaultPosItemManager implements PosItemManager {
 
     @Override
     public PosItemVo convertToVo(PosItem posItem) {
-       // LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
+        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateById(posItem.getItemTemplateId());
         PosItemVo posItemVo = new PosItemVo();
         posItemVo.setId(posItem.getId());
         posItemVo.setPosTypeId(posItem.getItemTypeId());
         LifeItemType itemType = itemTypeManager.getItemTypeById(posItem.getItemTypeId());
         if (itemType != null) {
             posItemVo.setPosTypeName(itemType.getTitle());
+        }
+        Long unitId=null;
+        if(posItem.getUnitId()==null){
+            unitId=itemTemplate.getUnitId();
+        }else{
+            unitId=posItem.getUnitId();
         }
         posItemVo.setItemTemplateId(posItem.getItemTemplateId());
         posItemVo.setItemName(posItem.getItemName());
@@ -479,7 +485,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setWarningRepertory(posItem.getWarningRepertory());
         posItemVo.setShelfLife(posItem.getShelfLife());
         posItemVo.setPassportId(posItem.getPassportId());
-        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(posItem.getUnitId());
+        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(unitId);
         posItemVo.setItemUnitId(itemUnit.getId());
         posItemVo.setItemUnitName(itemUnit.getTitle());
         posItemVo.setGeneratedDate(posItem.getGeneratedDate());

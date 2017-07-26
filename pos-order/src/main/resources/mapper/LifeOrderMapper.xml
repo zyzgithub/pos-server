@@ -267,7 +267,7 @@
     <!--pos端交易记录-->
     <select id="findOrderTransactionRecord" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
         SELECT * FROM (
-        select a.*,a.sum-a.sum*a.rate totalPrice from (
+        select a.*,a.sum-a.sum*a.rate totalPrice,a.sum*a.rate ratePrice,a.sum cashPrice from (
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') paymentTime,sequence_number sequenceNumber
         ,t.total_price,t.trans_type transType,ps.real_name realName
         ,t.actual_price actualPrice
@@ -296,7 +296,7 @@
       ) a order by a.paymentTime desc)c
     </select>
     <select id="findOrderTransactionRecordSum" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
-        SELECT c.*,sum(c.sum-c.sum*c.rate) totalPrice,count(1) countMap FROM (
+        SELECT c.*,sum(c.sum-c.sum*c.rate) totalPrice,sum(c.sum*c.rate) ratePrice,sum(c.sum) cashPrice,count(1) countMap FROM (
         SELECT oe.actual_price actualPrice,oe.trans_type transType,CASE oe.type WHEN 9 then oe.total_price-oe.actual_price else oe.total_price END sum
         ,case oe.trans_type
         when 'CASH' then 0

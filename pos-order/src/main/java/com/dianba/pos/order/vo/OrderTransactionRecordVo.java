@@ -12,6 +12,8 @@ public class OrderTransactionRecordVo {
     private String transType;
     private String paymentTime;
     private BigDecimal totalPrice;
+    private BigDecimal ratePrice;
+    private BigDecimal cashPrice;
     private BigDecimal actualPrice;
     private Integer count;
     private Integer countMap;
@@ -97,5 +99,21 @@ public class OrderTransactionRecordVo {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public BigDecimal getRatePrice() {
+        return ratePrice;
+    }
+
+    public void setRatePrice(BigDecimal ratePrice) {
+        this.ratePrice = ratePrice;
+    }
+
+    public BigDecimal getCashPrice() {
+        return cashPrice;
+    }
+
+    public void setCashPrice(BigDecimal cashPrice) {
+        this.cashPrice = cashPrice;
     }
 }
