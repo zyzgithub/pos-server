@@ -632,7 +632,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         if (map != null && map.size() > 0) {
             for (OrderTransactionRecordVo recordVo : map) {
                 rateMoney=rateMoney.add(recordVo.getRatePrice());
-                normalMoney=normalMoney.add(recordVo.getCashPrice());
+              //  normalMoney=normalMoney.add(recordVo.getCashPrice());
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
                     cashSum = recordVo.getCountMap();
@@ -654,9 +654,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sumCount", wxSum + cashSum + zfbSum + wxjsSum + zfbjsSum);
-        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney));
-        jsonObject.put("outMoney",rateMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP));
-        jsonObject.put("normalMoney",normalMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP));
+        BigDecimal sumMoney = wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney);
+        jsonObject.put("sumMoney", sumMoney);
+        BigDecimal outMoney =rateMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP);
+        jsonObject.put("outMoney",outMoney);
+        jsonObject.put("normalMoney",sumMoney.add(outMoney));
         jsonObject.put("wxSum", wxSum + wxjsSum);
         jsonObject.put("cashSum", cashSum);
         jsonObject.put("zfbSum", zfbSum + zfbjsSum);
