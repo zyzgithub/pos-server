@@ -46,26 +46,9 @@ public class DefaultSettlementManager implements SettlementManager {
     @Autowired
     private SettlementOrderManager settlementOrderManager;
 
-    @Transactional
     public BasicResult getSettlementOrder(Long passportId) {
-        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
-                .findByPassportIdAndIsPaid(passportId, 0);
         Long merchantPassportId = 0L;
-        if (posSettlementDaylies.size() == 0) {
-            Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
-            merchantPassportId = merchantPassport.getId();
-            String dateTime = posSettlementDaylyMapper.findLastSettlementTime(passportId);
-            //计算结算信息
-            posSettlementDaylies = posSettlementDaylyMapper.statisticsOrderByDay(passportId, dateTime);
-            for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
-                BigDecimal amount = posSettlementDayly.getAmount()
-                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-                posSettlementDayly.setAmount(amount);
-                posSettlementDayly.setPassportId(passportId);
-                posSettlementDayly.setMerchantPassportId(merchantPassport.getId());
-            }
-            posSettlementDaylies = settlementDaylyJpaRepository.save(posSettlementDaylies);
-        }
+        List<PosSettlementDayly> posSettlementDaylies = statisticsOrder(passportId);
         List<PosSettlementDaylyVo> settlementDaylyVos = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (PosSettlementDayly settlementDayly : posSettlementDaylies) {
@@ -99,29 +82,47 @@ public class DefaultSettlementManager implements SettlementManager {
         return basicResult;
     }
 
+    private List<PosSettlementDayly> statisticsOrder(Long passportId) {
+        Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
+        String dateTime = posSettlementDaylyMapper.findLastSettlementTime(passportId);
+        //计算结算信息
+        List<PosSettlementDayly> posSettlementDaylies = posSettlementDaylyMapper
+                .statisticsOrderByDay(passportId, dateTime);
+        for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
+            BigDecimal amount = posSettlementDayly.getAmount()
+                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            posSettlementDayly.setAmount(amount);
+            posSettlementDayly.setPassportId(passportId);
+            posSettlementDayly.setMerchantPassportId(merchantPassport.getId());
+        }
+        return posSettlementDaylies;
+    }
+
     @Transactional
     public BasicResult settlementShift(Long passportId, BigDecimal cashAmount) throws Exception {
-        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
-                .findByPassportIdAndIsPaid(passportId, 0);
+        List<PosSettlementDayly> posSettlementDaylies = statisticsOrder(passportId);
+        if (posSettlementDaylies == null || posSettlementDaylies.isEmpty()) {
+            return BasicResult.createSuccessResult();
+        }
         Passport merchantPassport = passportManager.getPassportInfoByCashierId(passportId);
         PosMerchantType posMerchantType = posMerchantTypeManager.findByPassportId(merchantPassport.getId());
-        if (posMerchantType != null && posSettlementDaylies.size() > 0) {
+        if (posMerchantType != null) {
             throw new PosAccessDeniedException("直营店结算请先支付！");
         }
         for (PosSettlementDayly settlementDayly : posSettlementDaylies) {
             settlementDayly.setIsPaid(1);
             settlementDayly.setCashAmount(cashAmount);
         }
-        if (posSettlementDaylies.size() > 0) {
-            settlementDaylyJpaRepository.save(posSettlementDaylies);
-        }
+        settlementDaylyJpaRepository.save(posSettlementDaylies);
         return BasicResult.createSuccessResult();
     }
 
     public BasicResult settlementPay(Long passportId, String paymentType, String authCode
             , BigDecimal cashAmount) throws Exception {
-        List<PosSettlementDayly> posSettlementDaylies = settlementDaylyJpaRepository
-                .findByPassportIdAndIsPaid(passportId, 0);
+        List<PosSettlementDayly> posSettlementDaylies = statisticsOrder(passportId);
+        if (posSettlementDaylies == null || posSettlementDaylies.isEmpty()) {
+            return BasicResult.createSuccessResult();
+        }
         BigDecimal realCashAmount = BigDecimal.ZERO;
         for (PosSettlementDayly posSettlementDayly : posSettlementDaylies) {
             if (posSettlementDayly.getPaymentType().equals(PaymentTypeEnum.CASH.getKey())) {
@@ -150,10 +151,10 @@ public class DefaultSettlementManager implements SettlementManager {
                     date = DateUtil.DateToString(posSettlementDayly.getCreateTime(), DateUtil.FORMAT_ONE);
                 }
             }
+            settlementDaylyJpaRepository.save(posSettlementDaylies);
+            //更新指定收银员操作的指定日期前的订单为已经结算状态
+            settlementOrderManager.updateSettlementCashOrderByUserAndDate(passportId, date);
         }
-        settlementDaylyJpaRepository.save(posSettlementDaylies);
-        //更新指定收银员操作的指定日期前的订单为已经结算状态
-        settlementOrderManager.updateSettlementCashOrderByUserAndDate(passportId, date);
         return basicResult;
     }
 }
