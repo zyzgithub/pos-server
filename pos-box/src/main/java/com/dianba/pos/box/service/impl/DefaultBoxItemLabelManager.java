@@ -12,6 +12,7 @@ import com.dianba.pos.box.repository.BoxItemLabelJpaRepository;
 import com.dianba.pos.box.service.BoxItemLabelManager;
 import com.dianba.pos.box.util.ScanItemsUtil;
 import com.dianba.pos.box.vo.BoxItemVo;
+import com.dianba.pos.item.service.PosItemManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,8 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     private BoxItemLabelMapper boxItemLabelMapper;
     @Autowired
     private BoxItemLabelJpaRepository itemLabelJpaRepository;
+    @Autowired
+    private PosItemManager posItemManager;
     @Autowired
     private BoxAppConfig boxAppConfig;
 
@@ -128,6 +131,10 @@ public class DefaultBoxItemLabelManager implements BoxItemLabelManager {
     public void bindItemLabelToItems(Long itemId, String rfids) {
         List<String> rfidList = convertToRfidList(rfids);
         List<BoxItemLabel> boxItemLabels = getRFIDItems(rfids);
+        //绑定且增加商品库存
+        Map<Long, Integer> items = new HashMap<>();
+        items.put(itemId, -rfidList.size());
+        posItemManager.offsetItemRepertory(items);
         for (String rfid : rfidList) {
             boolean isExists = false;
             for (BoxItemLabel boxItemLabel : boxItemLabels) {
