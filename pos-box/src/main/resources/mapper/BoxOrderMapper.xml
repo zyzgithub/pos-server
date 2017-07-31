@@ -4,7 +4,7 @@
 
     <select id="findByPassportIdAndRfids" resultMap="com.dianba.pos.order.mapper.LifeOrderMapper.BaseResultMap">
         select * from life_order.order_entry t
-        where t.type=4 and t.shipping_passport_id=#{passportId}
+        where t.type=7 and t.shipping_passport_id=#{passportId}
         and t.remark like #{rfid}
     </select>
 </mapper>

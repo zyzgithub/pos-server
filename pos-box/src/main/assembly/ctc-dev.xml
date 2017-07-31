@@ -28,7 +28,7 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>target/pos/WEB-INF/lib</directory>
+            <directory>target/box/WEB-INF/lib</directory>
             <outputDirectory>WEB-INF/lib</outputDirectory>
         </fileSet>
     </fileSets>

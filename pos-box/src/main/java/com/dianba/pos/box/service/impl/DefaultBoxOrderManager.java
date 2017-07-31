@@ -46,7 +46,7 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
         lifeOrder.setPartnerId(passportId + "");
         lifeOrder.setPartnerUserId(passportId + "");
         lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
-        lifeOrder.setType(OrderTypeEnum.SCAN_ORDER_TYPE.getKey());
+        lifeOrder.setType(OrderTypeEnum.BOX_SCAN_ORDER_TYPE.getKey());
         lifeOrder.setPaymentType("-1");
         lifeOrder.setTransType(PaymentTypeEnum.UNKNOWN.getKey());
         lifeOrder.setCreateTime(new Date());

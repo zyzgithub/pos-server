@@ -5,12 +5,12 @@ geolocation.getCurrentPosition(function (r) {
         var point1 = new BMap.Point(longitude, latitude);
         var point2 = new BMap.Point(r.point.lng, r.point.lat);
         var distance = parseInt(map.getDistance(point1, point2));
-        if (distance < 100) {
+        // if (distance < 2000) {
             window.location.href = "/box/service/door/openDoor?passportId=" + passportId
                 + "&openId=" + openId + "&key=" + securitykey;
-        } else {
-            alert("不在开门范围之内");
-        }
+        // } else {
+        //     alert("不在开门范围之内");
+        // }
     }
     else {
         alert('failed' + this.getStatus());

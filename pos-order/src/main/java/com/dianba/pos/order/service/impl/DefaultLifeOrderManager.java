@@ -250,7 +250,7 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         if (orderItems == null || orderItems.size() < 0) {
             return BasicResult.createFailResult("订单商品为空！");
         }
-        if (OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey() == orderType) {
+        if (7 == orderType) {
             orderType = OrderTypeEnum.SCAN_ORDER_TYPE.getKey();
         }
         if (OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey() == orderType) {
