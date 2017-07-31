@@ -60,6 +60,9 @@ public class DefaultAliPayManager implements AliPayManager {
         // (必填) 订单总金额，单位为元，不能超过1亿元
         // 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
         BigDecimal totalAmount = BigDecimal.valueOf(order.getTotalPrice());
+        if (totalAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            return BarcodePayResponse.SUCCESS;
+        }
         totalAmount = totalAmount.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         if (totalAmount.compareTo(BigDecimal.valueOf(1000)) > 0) {
             throw new PosAccessDeniedException("交易超限！支付宝单笔交易限额1000！");
