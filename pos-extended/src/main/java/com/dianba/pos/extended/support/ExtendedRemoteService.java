@@ -64,9 +64,20 @@ public class ExtendedRemoteService {
         map.put("merchantId", flow.getMerchantId());
         map.put("merOrderNo", flow.getMerOrderNo());
         String md5 = FlowChargeSign.getSignByMap(map);
-
-        map.put("sign", md5);
-        Map<String, Object> sortMapByKey = MapUtil.sortMapByKey(map);
+        logger.info("流量充值md5:"+md5);
+        Map map1 = new HashMap<>();
+        map1.put("signType", flow.getSignType());
+        map1.put("timestamp", flow.getTimestamp());
+        map1.put("dataType", flow.getDataType());
+        map1.put("inputCharset", flow.getInputCharset());
+        map1.put("version", flow.getVersion());
+        map1.put("productId", flow.getProductId());
+        map1.put("mobile", flow.getMobile());
+        map1.put("merchantId", flow.getMerchantId());
+        map1.put("merOrderNo", flow.getMerOrderNo());
+        //mapm.put("remake",flow.getRemark());
+        map1.put("sign", md5);
+        Map<String, Object> sortMapByKey = MapUtil.sortMapByKey(map1);
         String params = MapUtil.createLinkString(sortMapByKey);
         logger.info("流量充值参数:" + params);
         String result = HttpUtil.postParams(extendedConfig.getExtendedFlowChargeUrl(), params);

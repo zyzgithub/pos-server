@@ -108,7 +108,7 @@ public class Charge19EController {
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
                 //查询此订单是否更新完毕
                 Object ob = charge19eMapper.getByPayId(merchantOrderId);
-                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_WAIT.getKey())) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     //发货完成
@@ -147,7 +147,7 @@ public class Charge19EController {
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = charge19eMapper.getByPayId(merOrderNo);
-                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_WAIT.getKey())) {
                     //改变原订单状态
                     charge19eMapper.editOrderInfoBy19e(8, merOrderNo);
                     //改变第三方订单状态

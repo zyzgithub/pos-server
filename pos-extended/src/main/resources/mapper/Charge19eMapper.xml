@@ -7,7 +7,7 @@
     </select>
     <update id="editCharge19e" parameterType="java.util.Map">
         UPDATE life_pos.pos_charge_19e_order SET charge_state =#{chargeState},finish_time=#{finishTime}
-        WHERE merchantOrderId=#{merchantOrderId}
+        WHERE merchant_order_id=#{merchantOrderId}
     </update>
     <!--获取增值服务平台订单支付成功,未请求第三方服务type：1话费充值2流量充值 deliver_statues 0 未发货 2 发货中 8 发货成功-->
     <select id="getOrderListBy19EMenu" resultType="com.dianba.pos.extended.vo.Order19EDto">
@@ -34,6 +34,26 @@
     <!--查询此订单号是否被更新过了-->
     <select id="getByPayId" resultType="java.lang.Object">
         SELECT deliver_status FROM  life_order.order_entry WHERE id =
-        (SELECT orderId FROM charge_19e WHERE merchantOrderId=#{orderNum})
+        (SELECT po.order_id FROM life_pos.pos_charge_19e_order po WHERE po.merchant_order_id=#{orderNum})
+    </select>
+    <!--获取话费充值商品信息-->
+    <select id="getMenuListByPhoneAndType" resultType="com.dianba.pos.item.vo.PosItemVo">
+        SELECT pi.id id,pi.item_name itemName,pi.barcode barcode,pi.pos_type_id posTypeId,it.title posTypeName
+        ,pi.item_type_id itemTypeId,iu.id itemUnitId,iu.title itemUnitName,pi.item_template_id itemTemplateId
+        ,pi.passport_id passportId,pi.item_img_url itemImg,pi.create_time createDate,pi.generated_date generatedDate
+        ,pi.buy_count buyCount,pi.description,pi.is_shelve isShelve,pi.is_delete isDelete,pi.repertory
+        ,pi.warning_repertory warningRepertory,pi.shelf_life shelfLife,pi.stock_price stockPrice
+        ,pi.sales_price salesPrice
+        FROM life_pos.pos_item pi
+        INNER JOIN life_pos.pos_phone_info phone
+        on phone.code=pi.code_id and
+        phone.print_type=pi.operator_type
+        JOIN life_item.item_type it on it.id=pi.item_type_id
+        JOIN life_item.item_template item on item.id=pi.item_template_id
+        JOIN life_item.item_unit iu on iu.id=item.unit_id
+        where pi.passport_id=-1
+        and phone.id=#{phone}
+        and pi.is_shelve='Y' and pi.is_delete='N'
+        ORDER BY salesPrice
     </select>
 </mapper>
