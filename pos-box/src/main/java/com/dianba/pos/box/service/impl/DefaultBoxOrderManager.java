@@ -67,7 +67,7 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
             orderItemSnapshot.setCostPrice(itemPrice);
             orderItemSnapshot.setNormalPrice(itemPrice);
             orderItemSnapshot.setNormalQuantity(boxItemVo.getItemQuantity());
-            orderItemSnapshot.setTotalPrice(itemPrice);
+            orderItemSnapshot.setTotalPrice(itemPrice.multiply(BigDecimal.valueOf(boxItemVo.getItemQuantity())));
             lifeOrder.setTotalPrice(lifeOrder.getTotalPrice().add(orderItemSnapshot.getTotalPrice()));
             lifeOrderItemSnapshots.add(orderItemSnapshot);
         }

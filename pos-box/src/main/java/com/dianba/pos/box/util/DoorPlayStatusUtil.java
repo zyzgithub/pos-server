@@ -1,20 +1,23 @@
 package com.dianba.pos.box.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.dianba.pos.box.constant.BoxRedisKeySet;
+import com.dianba.pos.core.context.ApplicationContextHelper;
+import com.dianba.pos.core.service.RedisManager;
 
 public class DoorPlayStatusUtil {
 
-    private static final Map<Long, Long> DOOR_PLAY_STATUS = new ConcurrentHashMap<>();
+    private static RedisManager redisManager = ApplicationContextHelper
+            .getApplicationContext().getBean(RedisManager.class);
 
     public static Long getDoorPlayStatus(Long passportId) {
-        if (DOOR_PLAY_STATUS.containsKey(passportId)) {
-            return DOOR_PLAY_STATUS.get(passportId);
+        String time = redisManager.get(BoxRedisKeySet.DOOR_PLAY_STATUS + passportId);
+        if (time != null) {
+            return Long.parseLong(time);
         }
         return null;
     }
 
     public static void writeDoorPlayStatus(Long passportId) {
-        DOOR_PLAY_STATUS.put(passportId, System.currentTimeMillis());
+        redisManager.set(BoxRedisKeySet.DOOR_PLAY_STATUS + passportId, System.currentTimeMillis() + "");
     }
 }

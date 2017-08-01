@@ -6,5 +6,6 @@
         select * from life_order.order_entry t
         where t.type=7 and t.shipping_passport_id=#{passportId}
         and t.remark like #{rfid}
+        order by id desc limit 1
     </select>
 </mapper>
