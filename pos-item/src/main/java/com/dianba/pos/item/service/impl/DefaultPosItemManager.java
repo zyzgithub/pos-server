@@ -637,10 +637,11 @@ public class DefaultPosItemManager implements PosItemManager {
             itemTypeJpaRepository.save(itemType);
         }
         //检测商家有没有只有价商品没有就新增一个
-        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("BBBBBBBBBBBBBB");
+        LifeItemTemplate itemTemplate = itemTemplateJpaRepository.findByBarcodeAndAscriptionType(
+                "BBBBBBBBBBBBBB",8);
         if (itemTemplate == null) {
             itemTemplate = new LifeItemTemplate();
-            itemTemplate.setAscriptionType(8);
+            itemTemplate.setAscriptionType(1);
             itemTemplate.setImageUrl("http://no1.0085.com");
             itemTemplate.setDefineCode("POS111111111111");
             itemTemplate.setStatus(0);

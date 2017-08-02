@@ -35,6 +35,7 @@ public interface LifeItemTemplateJpaRepository extends JpaRepository<LifeItemTem
     @Query("SELECT it FROM LifeItemTemplate it where it.barcode=:barcode and it.ascriptionType=1")
     LifeItemTemplate getItemTemplateByBarcode(@Param("barcode") String barcode);
 
+    LifeItemTemplate findByBarcodeAndAscriptionType(String barcode,Integer type);
     /***
      * 判断模板名字是否重复
      * @param
