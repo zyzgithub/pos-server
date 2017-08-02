@@ -246,7 +246,8 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
                     Product pd = new Product();
                     pd.setMobile(phone);
                     pd.setMerchantId(extendedConfig.getExtendedFlowMerchantId());
-                    String result = FlowCharge19EApi.queryProduct(extendedConfig.getExtendedFlowProductUrl(), pd);
+                  //  String result = FlowCharge19EApi.queryProduct(extendedConfig.getExtendedFlowProductUrl(), pd);
+                    String result = queryProduct(extendedConfig.getExtendedFlowProductUrl(), pd);
                     JSONObject jb = JSON.parseObject(result);
                     long endTime=0L;
                     List<PosItemVo> posItemVos = new ArrayList<>();
