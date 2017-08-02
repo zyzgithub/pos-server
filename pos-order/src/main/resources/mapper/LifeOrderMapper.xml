@@ -267,7 +267,7 @@
     <!--pos端交易记录-->
     <select id="findOrderTransactionRecord" resultType="com.dianba.pos.order.vo.OrderTransactionRecordVo">
         SELECT * FROM (
-        select a.*,a.sum-a.sum*a.rate cashPrice,a.sum*a.rate ratePrice,a.sum totalPrice from (
+        select a.*,a.sum-a.sum*a.rate cashPrice,a.sum*a.rate ratePrice,a.total_price totalPrice from (
         select t.id,date_format(t.payment_time,'%Y-%m-%d %H:%i:%s') paymentTime,sequence_number sequenceNumber
         ,t.total_price,t.trans_type transType,ps.real_name realName
         ,t.actual_price actualPrice
