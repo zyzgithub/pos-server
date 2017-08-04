@@ -1,6 +1,7 @@
 package com.dianba.pos.extended.service;
 
 import com.dianba.pos.base.BasicResult;
+import com.dianba.pos.extended.po.PosCharge19eOrder;
 import com.dianba.pos.extended.vo.ChargeFlowResult;
 import com.dianba.pos.extended.vo.ChargeResult;
 import com.dianba.pos.extended.vo.Order19EDto;
@@ -55,4 +56,6 @@ public interface Charge19eManager {
      * @return
      */
     BasicResult chargeMenu(String type, String phone);
+
+    PosCharge19eOrder findByMerchantOrderId(String merchantOrderId);
 }

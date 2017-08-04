@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface Charge19eJpaRepository extends JpaRepository<PosCharge19eOrder, Long> {
+
+    PosCharge19eOrder findByMerchantOrderId(String merchantOrderId);
 }

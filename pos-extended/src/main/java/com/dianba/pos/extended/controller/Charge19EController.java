@@ -1,12 +1,12 @@
 package com.dianba.pos.extended.controller;
 
 import com.dianba.pos.base.BasicResult;
-import com.dianba.pos.common.util.AjaxJson;
-import com.dianba.pos.common.util.DateUtil;
-import com.dianba.pos.common.util.OrderDeliverStatusEnum;
-import com.dianba.pos.common.util.StringUtil;
+import com.dianba.pos.common.util.*;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
+import com.dianba.pos.extended.po.PosExtendedBackLog;
+import com.dianba.pos.extended.repository.Charge19eJpaRepository;
+import com.dianba.pos.extended.repository.PosExtendedBackLogJpaRepository;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.util.FlowOrderStatus;
 import com.dianba.pos.extended.vo.ChargeCallBack;
@@ -61,6 +61,11 @@ public class Charge19EController {
     @Autowired
     private PosItemManager posItemManager;
 
+    @Autowired
+    private Charge19eJpaRepository charge19eJpaRepository;
+
+    @Autowired
+    private PosExtendedBackLogJpaRepository posExtendedBackLogJpaRepository;
     /**
      * 19e 话费充值平台
      *
@@ -105,10 +110,16 @@ public class Charge19EController {
             logger.info("话费充值回调类：========");
             String merchantOrderId = chargeCallBack.getMerchantOrderId();
             // Long times = Long.parseInt(DateUtil.currentTimeMillis().toString());
+
+            String json= JsonUtil.toJson(chargeCallBack);
+            PosExtendedBackLog posExtendedBackLog=new PosExtendedBackLog();
+            posExtendedBackLog.setContent(json);
+            posExtendedBackLog.setType(1);
+            posExtendedBackLogJpaRepository.save(posExtendedBackLog);
             if (chargeCallBack.getChargeStatus().equals("SUCCESS")) {
                 //查询此订单是否更新完毕
                 Object ob = charge19eMapper.getByPayId(merchantOrderId);
-                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_WAIT.getKey())) {
                     //修改订单信息为success
                     String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                     //发货完成
@@ -133,6 +144,11 @@ public class Charge19EController {
     public String flowChargeCallBack(FlowChargeCallBack chargeCallBack) {
         logger.info("进入流量充值回调：");
         String result = "";
+        String json= JsonUtil.toJson(chargeCallBack);
+        PosExtendedBackLog posExtendedBackLog=new PosExtendedBackLog();
+        posExtendedBackLog.setContent(json);
+        posExtendedBackLog.setType(2);
+        posExtendedBackLogJpaRepository.save(posExtendedBackLog);
         if (!StringUtil.isEmpty(chargeCallBack.getMerOrderNo())) {
             Map map = new HashMap<>();
             map.put("merOrderNo", chargeCallBack.getMerOrderNo());
@@ -147,7 +163,7 @@ public class Charge19EController {
                 //修改订单信息为success
                 String date = DateUtil.getCurrDate("yyyyMMddHHmmss");
                 Object ob = charge19eMapper.getByPayId(merOrderNo);
-                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_FAIL.getKey())) {
+                if (ob != null & !ob.equals(OrderDeliverStatusEnum.ORDER_DELIVER_STATUS_WAIT.getKey())) {
                     //改变原订单状态
                     charge19eMapper.editOrderInfoBy19e(8, merOrderNo);
                     //改变第三方订单状态

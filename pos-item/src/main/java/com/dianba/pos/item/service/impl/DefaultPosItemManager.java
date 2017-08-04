@@ -250,6 +250,9 @@ public class DefaultPosItemManager implements PosItemManager {
         if (posItemVo.getItemTypeId() != null) {
             posItem.setItemTypeId(posItemVo.getItemTypeId());
         }
+        if (posItemVo.getItemUnitId() != null) {
+            posItem.setUnitId(posItemVo.getItemUnitId());
+        }
         return posItem;
     }
 
@@ -408,6 +411,9 @@ public class DefaultPosItemManager implements PosItemManager {
             if (posItemVo.getItemTypeId() != null) {
                 posItem.setItemTypeId(posItemVo.getItemTypeId());
             }
+            if (posItemVo.getItemUnitId() != null) {
+                posItem.setUnitId(posItemVo.getItemUnitId());
+            }
             //添加商家商品信息
             posItemJpaRepository.save(posItem);
             map.put("result", "true");
@@ -453,7 +459,13 @@ public class DefaultPosItemManager implements PosItemManager {
         if (itemType != null) {
             posItemVo.setPosTypeName(itemType.getTitle());
         }
-        posItemVo.setItemTemplateId(itemTemplate.getId());
+        Long unitId=null;
+        if(posItem.getUnitId()==null){
+            unitId=itemTemplate.getUnitId();
+        }else{
+            unitId=posItem.getUnitId();
+        }
+        posItemVo.setItemTemplateId(posItem.getItemTemplateId());
         posItemVo.setItemName(posItem.getItemName());
         BigDecimal sMoney = new BigDecimal(posItem.getStockPrice());
         BigDecimal saMoney = new BigDecimal(posItem.getSalesPrice());
@@ -465,7 +477,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setItemTypeId(posItem.getItemTypeId());
         posItemVo.setBuyCount(posItem.getBuyCount());
         posItemVo.setCreateDate(posItem.getCreateTime());
-        posItemVo.setBarcode(itemTemplate.getBarcode());
+        posItemVo.setBarcode(posItem.getBarcode());
         posItemVo.setIsDelete(posItem.getIsDelete());
         posItemVo.setIsShelve(posItem.getIsShelve());
         posItemVo.setItemImg(posItem.getItemImgUrl());
@@ -473,7 +485,7 @@ public class DefaultPosItemManager implements PosItemManager {
         posItemVo.setWarningRepertory(posItem.getWarningRepertory());
         posItemVo.setShelfLife(posItem.getShelfLife());
         posItemVo.setPassportId(posItem.getPassportId());
-        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(itemTemplate.getUnitId());
+        LifeItemUnit itemUnit = itemUnitManager.getItemUnitById(unitId);
         posItemVo.setItemUnitId(itemUnit.getId());
         posItemVo.setItemUnitName(itemUnit.getTitle());
         posItemVo.setGeneratedDate(posItem.getGeneratedDate());
@@ -625,10 +637,11 @@ public class DefaultPosItemManager implements PosItemManager {
             itemTypeJpaRepository.save(itemType);
         }
         //检测商家有没有只有价商品没有就新增一个
-        LifeItemTemplate itemTemplate = itemTemplateManager.getItemTemplateByBarcode("BBBBBBBBBBBBBB");
+        LifeItemTemplate itemTemplate = itemTemplateJpaRepository.findByBarcodeAndAscriptionType(
+                "BBBBBBBBBBBBBB",8);
         if (itemTemplate == null) {
             itemTemplate = new LifeItemTemplate();
-            itemTemplate.setAscriptionType(8);
+            itemTemplate.setAscriptionType(1);
             itemTemplate.setImageUrl("http://no1.0085.com");
             itemTemplate.setDefineCode("POS111111111111");
             itemTemplate.setStatus(0);

@@ -11,7 +11,7 @@ public class FlowChargeSign {
     public static String getSignByMap(Map<String,Object> map){
         Map<String, Object> pdmap = MapUtil.sortMapByKey(map);
         String sign = MapUtil.createLinkString(pdmap);
-        String result = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.KEY);
+        String result = FlowCharge19EUtil.getKeyedDigest(sign, FlowCharge19EUtil.FOR_KEY);
         return result;
 
     }

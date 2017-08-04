@@ -87,7 +87,20 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
             //pos商家权限
             LifePassportProperties c = lifePassportPropertiesJpaRepository
                     .findLifePassportPropertiesByPassportIdAndKAndV(
-                           lifePassportAlias.getPassportId(), "pos", "41");
+                            lifePassportAlias.getPassportId(), "pos", "41");
+            Passport ps = passportMapper.getPassportInfoByCashierId(lifePassportAlias.getPassportId());
+            PosCashierAccount pca = posCashierAccountJpaRepository
+                    .findPosCashierAccountByMerchantIdAndAccountType(ps.getId(), 0);
+            if (pca == null) {
+                PosCashierAccount posCashierAccount = new PosCashierAccount();
+                posCashierAccount.setAccountType(0);
+                posCashierAccount.setCashierPhoto("");
+                posCashierAccount.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+                posCashierAccount.setCashierId(ps.getId());
+                posCashierAccount.setMerchantId(ps.getId());
+                //注册店长
+                posCashierAccountJpaRepository.save(posCashierAccount);
+            }
             if (b != null || a != null) {
                 passportVo.setClientType(3);
                 BasicResult basicResult = post(LOGIN, passportVo);
@@ -291,8 +304,8 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
 //
 //                }
                 //删除账号表
-                List<LifePassportAlias> aliases=lifePassportAliasJpaRepository.findAllByPassportId(passport.getId());
-                for(LifePassportAlias alias : aliases){
+                List<LifePassportAlias> aliases = lifePassportAliasJpaRepository.findAllByPassportId(passport.getId());
+                for (LifePassportAlias alias : aliases) {
                     lifePassportAliasJpaRepository.delete(alias);
                 }
 //
@@ -305,9 +318,9 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
                         registerVo.getAccountId());
                 posCashierAccountJpaRepository.delete(posCashierAccount);
                 //删除账号权限
-                List<LifePassportProperties> passportProperties=lifePassportPropertiesJpaRepository
+                List<LifePassportProperties> passportProperties = lifePassportPropertiesJpaRepository
                         .findAllByPassportId(passport.getId());
-                for(LifePassportProperties properties : passportProperties){
+                for (LifePassportProperties properties : passportProperties) {
                     lifePassportPropertiesJpaRepository.delete(properties);
                 }
                 return BasicResult.createSuccessResult("删除成功");
@@ -373,23 +386,23 @@ public class DefaultPassportManager extends PassportRemoteService implements Pas
 
 
             }
-            return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", registerVos);
-        } else {
-            if (!flag) { //注册一个店长信息
-                PosCashierAccount posCashierAccount = new PosCashierAccount();
-                posCashierAccount.setAccountType(0);
-                posCashierAccount.setCashierPhoto("");
-                posCashierAccount.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
-                posCashierAccount.setCashierId(userId);
-                posCashierAccount.setMerchantId(userId);
-                //注册店长
-                posCashierAccountJpaRepository.save(posCashierAccount);
-                Passport passport1 = passportJpaRepository.findOne(userId);
-                registerVo = getMerchantPosListVo(posCashierAccount, passport1);
-                registerVos.add(registerVo);
-            }
-            return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", registerVos);
+
         }
+        if (!flag) { //注册一个店长信息
+            PosCashierAccount posCashierAccount = new PosCashierAccount();
+            posCashierAccount.setAccountType(0);
+            posCashierAccount.setCashierPhoto("");
+            posCashierAccount.setCreateTime(DateUtil.getCurrDate("yyyy-MM-dd HH:mm:ss"));
+            posCashierAccount.setCashierId(userId);
+            posCashierAccount.setMerchantId(userId);
+            //注册店长
+            posCashierAccountJpaRepository.save(posCashierAccount);
+            Passport passport1 = passportJpaRepository.findOne(userId);
+            registerVo = getMerchantPosListVo(posCashierAccount, passport1);
+            registerVos.add(registerVo);
+        }
+        return BasicResult.createSuccessResultWithDatas("获取商家营业员信息成功!", registerVos);
+
 
     }
 
