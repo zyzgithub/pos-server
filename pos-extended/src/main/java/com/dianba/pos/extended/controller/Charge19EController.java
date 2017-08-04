@@ -4,7 +4,6 @@ import com.dianba.pos.base.BasicResult;
 import com.dianba.pos.common.util.*;
 import com.dianba.pos.extended.config.ExtendedUrlConstant;
 import com.dianba.pos.extended.mapper.Charge19eMapper;
-import com.dianba.pos.extended.po.PosCharge19eOrder;
 import com.dianba.pos.extended.po.PosExtendedBackLog;
 import com.dianba.pos.extended.repository.Charge19eJpaRepository;
 import com.dianba.pos.extended.repository.PosExtendedBackLogJpaRepository;

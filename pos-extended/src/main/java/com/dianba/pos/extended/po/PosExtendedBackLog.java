@@ -1,6 +1,5 @@
 package com.dianba.pos.extended.po;
 
-import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
 
