@@ -13,7 +13,6 @@ import com.dianba.pos.extended.repository.Charge19eJpaRepository;
 import com.dianba.pos.extended.service.Charge19eManager;
 import com.dianba.pos.extended.service.PosPhoneInfoManager;
 import com.dianba.pos.extended.support.ExtendedRemoteService;
-import com.dianba.pos.extended.util.FlowCharge19EApi;
 import com.dianba.pos.extended.vo.*;
 import com.dianba.pos.item.mapper.PosItemMapper;
 import com.dianba.pos.item.po.PosItem;
@@ -310,6 +309,11 @@ public class DefaultCharge19eManager extends ExtendedRemoteService implements Ch
         }
 
 
+    }
+
+    @Override
+    public PosCharge19eOrder findByMerchantOrderId(String merchantOrderId) {
+        return charge19eJpaRepository.findByMerchantOrderId(merchantOrderId);
     }
 
 

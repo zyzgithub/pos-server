@@ -27,6 +27,7 @@ public class FlowCharge19EUtil {
 //   public static final String MERCHANT_ID = "AA0ae02017050816303689733";
     public static final String KEY = "123456789";
 //   public static final String KEY = "d0CQEGdioiySxBoYnQYyS3884Kp1OZd6hq1OZd0CQYSo1OxhiJexBYy";
+public static final String FOR_KEY = "d0CQEGdioiySxBoYnQYyS3884Kp1OZd6hq1OZd0CQYSo1OxhiJexBYy";
     public static String getKeyedDigest(String paramsStr, String key) {
 
         MessageDigest md5 = null;
