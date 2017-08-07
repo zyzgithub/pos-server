@@ -734,6 +734,17 @@ public class DefaultPosItemManager implements PosItemManager {
     public BasicResult getListBySearchText(String searchText, Long passportId) {
         Passport passport = passportMapper.getPassportInfoByCashierId(passportId);
         List<PosItemVo> posItemVos = posItemMapper.getListBySearchText(searchText, passport.getId());
-        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos);
+        List<PosItemVo> posItemVos1=new ArrayList<>();
+        if(posItemVos.size()>0){
+            BigDecimal a = new BigDecimal(100);
+            for (PosItemVo posItemVo:posItemVos){
+                BigDecimal sPrice = posItemVo.getStockPrice().divide(a, 2, BigDecimal.ROUND_UP);
+                BigDecimal saPrice = posItemVo.getSalesPrice().divide(a, 2, BigDecimal.ROUND_UP);
+                posItemVo.setStockPrice(sPrice);
+                posItemVo.setSalesPrice(saPrice);
+                posItemVos1.add(posItemVo);
+            }
+        }
+        return BasicResult.createSuccessResultWithDatas("搜索成功!", posItemVos1);
     }
 }
