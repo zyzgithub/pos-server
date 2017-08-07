@@ -19,19 +19,20 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("get_order")
-    public BasicResult getSettlementOrder(Long passportId, BigDecimal cashAmount) {
-        return settlementManager.getSettlementOrder(passportId, cashAmount);
+    public BasicResult getSettlementOrder(Long passportId) {
+        return settlementManager.getSettlementOrder(passportId);
     }
 
     @ResponseBody
     @RequestMapping("settlement_shift")
-    public BasicResult settlementShift(Long passportId) throws Exception {
-        return settlementManager.settlementShift(passportId);
+    public BasicResult settlementShift(Long passportId, BigDecimal cashAmount) throws Exception {
+        return settlementManager.settlementShift(passportId, cashAmount);
     }
 
     @ResponseBody
     @RequestMapping("settlement_pay")
-    public BasicResult settlementPay(Long passportId, String paymentTypeKey, String authCode) throws Exception {
-        return settlementManager.settlementPay(passportId, paymentTypeKey, authCode);
+    public BasicResult settlementPay(Long passportId, String paymentTypeKey, String authCode
+            , BigDecimal cashAmount) throws Exception {
+        return settlementManager.settlementPay(passportId, paymentTypeKey, authCode, cashAmount);
     }
 }

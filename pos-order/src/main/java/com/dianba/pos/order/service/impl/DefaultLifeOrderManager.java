@@ -245,12 +245,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
     }
 
     public BasicResult createOrder(Long passportId, Integer orderType, BigDecimal actualPrice
-            , String phoneNumber
-            , List<OrderItemPojo> orderItems) throws Exception {
-        if (orderItems == null || orderItems.size() < 0) {
-            return BasicResult.createFailResult("订单商品为空！");
+            , String phoneNumber, List<OrderItemPojo> orderItems) throws Exception {
+        if (orderItems == null || orderItems.isEmpty()) {
+            throw new PosIllegalArgumentException("订单商品为空！");
         }
-        if (OrderTypeEnum.POS_SCAN_ORDER_TYPE.getKey() == orderType) {
+        if (7 == orderType) {
             orderType = OrderTypeEnum.SCAN_ORDER_TYPE.getKey();
         }
         if (OrderTypeEnum.POS_EXTENDED_ORDER_TYPE.getKey() == orderType) {
@@ -348,6 +347,9 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
             Date beginTime = null;
             Date endTime = null;
             for (OrderPojo orderPojo : orders) {
+                if (orderPojo.getItemSnapshots() == null || orderPojo.getItemSnapshots().isEmpty()) {
+                    continue;
+                }
                 if (passportId == null) {
                     passportId = orderPojo.getPassportId();
                 }
@@ -361,8 +363,6 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     Long paymentTime = Long.parseLong(orderPojo.getPaymentTime()) / 1000;
                     paymentDate = DateUtil.StringtoDate(DateUtil.stampToDate(paymentTime), DateUtil.FORMAT_ONE);
                 }
-                List<OrderItemPojo> orderItemPojos = JsonHelper.toList(orderPojo.getItemSnapshots()
-                        , OrderItemPojo.class);
                 if (StringUtils.isEmpty(orderPojo.getPaymentType())) {
                     orderPojo.setPaymentType(PaymentTypeEnum.CASH.getKey());
                 }
@@ -372,7 +372,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                         , paymentTypeEnum
                         , createDate, paymentDate
                         , orderPojo.getActualPrice()
-                        , orderItemPojos);
+                        , orderPojo.getItemSnapshots());
+                //UNKNOWN 支付方式为同步扫码支付订单
                 if (PaymentTypeEnum.UNKNOWN.getKey().equals(lifeOrder.getTransType())) {
                     if (beginTime == null) {
                         beginTime = lifeOrder.getCreateTime();
@@ -581,6 +582,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         BigDecimal zfbMoney = new BigDecimal(0);
         BigDecimal wxjsMoney = new BigDecimal(0);
         BigDecimal zfbjsMoney = new BigDecimal(0);
+        BigDecimal rateMoney = new BigDecimal(0);
+        BigDecimal normalMoney = new BigDecimal(0);
         BigDecimal a = new BigDecimal(100);
         List<Long> orderIds = new ArrayList<>();
         for (OrderTransactionRecordVo lifeOrder : list) {
@@ -618,6 +621,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                     recordVo.setTransType(PaymentTypeEnum.ALIPAY.getValue());
                 }
                 recordVo.setTotalPrice(recordVo.getTotalPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
+                recordVo.setRatePrice(recordVo.getRatePrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
+                recordVo.setCashPrice(recordVo.getCashPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 recordVo.setActualPrice(recordVo.getActualPrice().divide(a, 2, BigDecimal.ROUND_HALF_UP));
                 lst.add(recordVo);
             }
@@ -627,6 +632,8 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
                 , enterType, createTime);
         if (map != null && map.size() > 0) {
             for (OrderTransactionRecordVo recordVo : map) {
+                rateMoney = rateMoney.add(recordVo.getRatePrice());
+                //  normalMoney=normalMoney.add(recordVo.getCashPrice());
                 //现金支付
                 if (PaymentTypeEnum.CASH.getKey().equals(recordVo.getTransType())) {
                     cashSum = recordVo.getCountMap();
@@ -648,7 +655,11 @@ public class DefaultLifeOrderManager extends OrderRemoteService implements LifeO
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sumCount", wxSum + cashSum + zfbSum + wxjsSum + zfbjsSum);
-        jsonObject.put("sumMoney", wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney));
+        BigDecimal sumMoney = wxMoney.add(cashMoney).add(zfbMoney).add(wxjsMoney).add(zfbjsMoney);
+        jsonObject.put("sumMoney", sumMoney);
+        BigDecimal outMoney = rateMoney.divide(a, 2, BigDecimal.ROUND_HALF_UP);
+        jsonObject.put("outMoney", outMoney);
+        jsonObject.put("normalMoney", sumMoney.add(outMoney));
         jsonObject.put("wxSum", wxSum + wxjsSum);
         jsonObject.put("cashSum", cashSum);
         jsonObject.put("zfbSum", zfbSum + zfbjsSum);

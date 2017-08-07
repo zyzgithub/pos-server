@@ -16,6 +16,8 @@ public class BoxURLConstant {
 
     public static final String DOOR = BASE_URL + "door/";
 
+    public static final String MAINTENANCE = BASE_URL + "maintenance/";
+
 
     //支付宝跳转、微信授权回调地址
     public static final String CALLBACK_URL = PAYMENT + "to_pay/";

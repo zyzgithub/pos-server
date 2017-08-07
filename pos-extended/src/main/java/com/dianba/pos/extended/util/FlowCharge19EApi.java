@@ -42,7 +42,8 @@ public class FlowCharge19EApi {
         // map.put("remake",flow.getRemark());
 
         String md5 = FlowChargeSign.getSignByMap(map);
-
+        logger.info("流量充值md5:"+md5);
+        System.out.println("流量充值md5"+md5);
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -81,6 +82,7 @@ public class FlowCharge19EApi {
             // 发送请求参数
 
             logger.info("流量充值请求参数:"+params);
+            System.out.println("流量充值请求参数"+params);
             out.print(params);
             // flush输出流的缓冲
             out.flush();

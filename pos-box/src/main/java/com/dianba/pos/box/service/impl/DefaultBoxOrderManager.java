@@ -46,7 +46,7 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
         lifeOrder.setPartnerId(passportId + "");
         lifeOrder.setPartnerUserId(passportId + "");
         lifeOrder.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
-        lifeOrder.setType(OrderTypeEnum.SCAN_ORDER_TYPE.getKey());
+        lifeOrder.setType(OrderTypeEnum.BOX_SCAN_ORDER_TYPE.getKey());
         lifeOrder.setPaymentType("-1");
         lifeOrder.setTransType(PaymentTypeEnum.UNKNOWN.getKey());
         lifeOrder.setCreateTime(new Date());
@@ -67,7 +67,7 @@ public class DefaultBoxOrderManager implements BoxOrderManager {
             orderItemSnapshot.setCostPrice(itemPrice);
             orderItemSnapshot.setNormalPrice(itemPrice);
             orderItemSnapshot.setNormalQuantity(boxItemVo.getItemQuantity());
-            orderItemSnapshot.setTotalPrice(itemPrice);
+            orderItemSnapshot.setTotalPrice(itemPrice.multiply(BigDecimal.valueOf(boxItemVo.getItemQuantity())));
             lifeOrder.setTotalPrice(lifeOrder.getTotalPrice().add(orderItemSnapshot.getTotalPrice()));
             lifeOrderItemSnapshots.add(orderItemSnapshot);
         }

@@ -1,20 +1,23 @@
 package com.dianba.pos.box.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.dianba.pos.box.constant.BoxRedisKeySet;
+import com.dianba.pos.core.context.ApplicationContextHelper;
+import com.dianba.pos.core.service.RedisManager;
 
 public class ScanItemsUtil {
 
-    private static final Map<Long, String> SCAN_ITEMS = new ConcurrentHashMap<>();
+    private static RedisManager redisManager = ApplicationContextHelper
+            .getApplicationContext().getBean(RedisManager.class);
 
     public static String getRFIDItems(Long passportId) {
-        if (SCAN_ITEMS.containsKey(passportId)) {
-            return SCAN_ITEMS.get(passportId);
+        String rfids = redisManager.get(BoxRedisKeySet.USER_BUY_RFID + passportId);
+        if (rfids != null) {
+            return rfids;
         }
-        return "";
+        return null;
     }
 
     public static void writeScanItems(Long passportId, String rfids) {
-        SCAN_ITEMS.put(passportId, rfids);
+        redisManager.set(BoxRedisKeySet.USER_BUY_RFID, rfids);
     }
 }

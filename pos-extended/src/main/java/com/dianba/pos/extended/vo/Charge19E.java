@@ -241,13 +241,15 @@ public class Charge19E {
 
     public static void main(String[] args) {
         Charge19E ch = new Charge19E();
-        ch.setChargeNumber("13249196270");
-        ch.setChargeMoney("1");
+        ch.setChargeNumber("17052912344");
+        ch.setChargeMoney("10");
         ch.setChargeType("0");
         ch.setMerchantOrderId("111111111111111");
         ch.setSendNotifyUrl(HfCharge19EUtil.NOTIFY_URL);
         ch.setIspId("");
         ch.setProvinceId("");
+        ch.setMerchantId("AA0b0192015072415092542712");
+        ch.setKey("1OxQjlashjdlsc1OZd0CQYohforvnlfpsdj");
         ch.setFillType("0");
         ChargeResult cr = HfCharge19EApi.hfCharge(HfCharge19EUtil.HF_CHARGE_19E_URL, ch);
 

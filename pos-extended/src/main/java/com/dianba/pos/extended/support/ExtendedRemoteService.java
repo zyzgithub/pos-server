@@ -64,14 +64,14 @@ public class ExtendedRemoteService {
         map.put("merchantId", flow.getMerchantId());
         map.put("merOrderNo", flow.getMerOrderNo());
         String md5 = FlowChargeSign.getSignByMap(map);
-
+        logger.info("流量充值md5:"+md5);
         map.put("sign", md5);
         Map<String, Object> sortMapByKey = MapUtil.sortMapByKey(map);
         String params = MapUtil.createLinkString(sortMapByKey);
         logger.info("流量充值参数:" + params);
         String result = HttpUtil.postParams(extendedConfig.getExtendedFlowChargeUrl(), params);
         logger.info("流量充值返回结果:" + result);
-        ChargeFlowResult chargeFlowResult =(ChargeFlowResult)JSONObject.parseObject(result, ChargeFlowResult.class);
+        ChargeFlowResult chargeFlowResult =JSONObject.parseObject(result, ChargeFlowResult.class);
         return chargeFlowResult;
     }
 

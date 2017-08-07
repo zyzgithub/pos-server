@@ -7,7 +7,7 @@ public class ScalpListByPassportVo {
 
     private Long passportId;
 
-    private Long seconds;
+    private Integer seconds;
 
     private String sequenceNumber;
     public Long getPassportId() {
@@ -18,11 +18,11 @@ public class ScalpListByPassportVo {
         this.passportId = passportId;
     }
 
-    public Long getSeconds() {
+    public Integer getSeconds() {
         return seconds;
     }
 
-    public void setSeconds(Long seconds) {
+    public void setSeconds(Integer seconds) {
         this.seconds = seconds;
     }
 
