@@ -35,6 +35,7 @@
         <module>pos-qrcode</module>
         <module>pos-maintenance</module>
         <module>pos-box</module>
+        <module>pos-push</module>
     </modules>
 
     <dependencies>

@@ -15,13 +15,13 @@ import com.dianba.pos.passport.po.Passport;
 import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.service.PassportManager;
 import com.dianba.pos.passport.service.PosCashierAccountManager;
-import com.dianba.pos.passport.service.PosPushLogManager;
 import com.dianba.pos.payment.config.AlipayConfig;
 import com.dianba.pos.payment.config.PaymentURLConstant;
 import com.dianba.pos.payment.config.WechatConfig;
 import com.dianba.pos.payment.service.PaymentManager;
 import com.dianba.pos.payment.service.WapPaymentManager;
 import com.dianba.pos.payment.util.*;
+import com.dianba.pos.push.service.JPushManager;
 import com.dianba.pos.qrcode.po.PosQRCode;
 import com.dianba.pos.qrcode.service.PosQRCodeManager;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
@@ -70,7 +70,7 @@ public class WapPaymentController {
     private PosCashierAccountManager posCashierAccountManager;
 
     @Autowired
-    private PosPushLogManager posPushLogManager;
+    private JPushManager posPushLogManager;
 
     /**
      * 扫码跳转页面-（判定扫码设备，以及微信鉴权）
