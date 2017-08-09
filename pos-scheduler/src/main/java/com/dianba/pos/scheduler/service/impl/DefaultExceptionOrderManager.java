@@ -5,7 +5,7 @@ import com.dianba.pos.passport.po.PosCashierAccount;
 import com.dianba.pos.passport.repository.PosBlackListJpaRepository;
 import com.dianba.pos.passport.repository.PosBlackSetJpaRepository;
 import com.dianba.pos.passport.service.PosCashierAccountManager;
-import com.dianba.pos.passport.service.PosPushLogManager;
+import com.dianba.pos.push.service.JPushManager;
 import com.dianba.pos.scheduler.mapper.PosBlackListMapper;
 import com.dianba.pos.scheduler.service.ExceptionOrderManager;
 import com.dianba.pos.scheduler.vo.ScalpListByPassportVo;
@@ -33,7 +33,7 @@ public class DefaultExceptionOrderManager implements ExceptionOrderManager {
     private PosCashierAccountManager posCashierAccountManager;
 
     @Autowired
-    private PosPushLogManager posPushLogManager;
+    private JPushManager posPushLogManager;
 
     @Autowired
     private PosBlackSetJpaRepository posBlackSetJpaRepository;
