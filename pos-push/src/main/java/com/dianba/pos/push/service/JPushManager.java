@@ -18,5 +18,5 @@ public interface JPushManager {
     void posJPushByBlackList(String passportId,String orderNum);
 
     /**商家结算清单推送**/
-    void merchantJPushBySettlement(String passportId);
+    void merchantJPushBySettlement(String passportId,String realName);
 }

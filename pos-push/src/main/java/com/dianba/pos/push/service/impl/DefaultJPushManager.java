@@ -139,7 +139,38 @@ public class DefaultJPushManager extends JPushRemoteService implements JPushMana
     }
 
     @Override
-    public void merchantJPushBySettlement(String passportId) {
+    public void merchantJPushBySettlement(String passportId,String realName) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", JPushTypeEnum.SETTLEMENT.getKey());
+        String msg=JPushTypeEnum.SETTLEMENT.getMsg()+realName;
+        jsonObject.put("msg",msg);
+        logger.info("推送的商家id:" + passportId);
+        logger.info("推送的内容:" + jsonObject);
+        String result = sendPushAlertAndMsgByAlias(passportId,msg,jsonObject.toJSONString());
+        if (!StringUtil.isEmpty(result)) {
+            logger.info("极光推送返回:==" + result);
+            JSONObject object = JSON.parseObject(result);
+            int code = object.getIntValue("statusCode");
+            if (code == 0) {
+                PosJPushLog posPushLog = new PosJPushLog();
+                posPushLog.setPassportId(Long.parseLong(passportId));
+                posPushLog.setMessage(jsonObject.toJSONString());
+                posPushLog.setTitle(JPushTypeEnum.SETTLEMENT.getTitle());
+                posPushLog.setSequenceNumber("");
+                posPushLog.setState("success");
+                pushLogJpaRepository.save(posPushLog);
+                logger.info("======推送成功====");
+            }
 
+        } else {
+            PosJPushLog posPushLog = new PosJPushLog();
+            posPushLog.setPassportId(Long.parseLong(passportId));
+            posPushLog.setMessage(jsonObject.toJSONString());
+            posPushLog.setTitle(JPushTypeEnum.SETTLEMENT.getTitle());
+            posPushLog.setSequenceNumber("");
+            posPushLog.setState("error");
+            pushLogJpaRepository.save(posPushLog);
+            logger.info("======推送失败====");
+        }
     }
 }
