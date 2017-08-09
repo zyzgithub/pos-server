@@ -1,4 +1,4 @@
-package com.dianba.pos.passport.po;
+package com.dianba.pos.push.po;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,7 +9,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "life_pos.pos_push_log")
-public class PosPushLog {
+public class PosJPushLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

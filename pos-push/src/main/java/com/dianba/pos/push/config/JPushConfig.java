@@ -1,4 +1,4 @@
-package com.dianba.pos.passport.config;
+package com.dianba.pos.push.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +16,10 @@ public class JPushConfig {
     @Value("${pos.jpush.key}")
     private String posJPushKey;
 
+    @Value("${merchant.jpush.secret}")
+    private String merchantJPushSecret;
+    @Value("${merchant.jpush.key}")
+    private String merchantJPushKey;
     public String getPosJPushSecret() {
         return posJPushSecret;
     }
@@ -30,5 +34,21 @@ public class JPushConfig {
 
     public void setPosJPushKey(String posJPushKey) {
         this.posJPushKey = posJPushKey;
+    }
+
+    public String getMerchantJPushSecret() {
+        return merchantJPushSecret;
+    }
+
+    public void setMerchantJPushSecret(String merchantJPushSecret) {
+        this.merchantJPushSecret = merchantJPushSecret;
+    }
+
+    public String getMerchantJPushKey() {
+        return merchantJPushKey;
+    }
+
+    public void setMerchantJPushKey(String merchantJPushKey) {
+        this.merchantJPushKey = merchantJPushKey;
     }
 }

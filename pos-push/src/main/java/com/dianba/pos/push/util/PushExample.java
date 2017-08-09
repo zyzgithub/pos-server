@@ -1,4 +1,4 @@
-package com.dianba.pos.common.util;
+package com.dianba.pos.push.util;
 import cn.jpush.api.push.model.*;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.audience.AudienceTarget;
@@ -12,26 +12,17 @@ public class PushExample {
      *  所有平台，所有设备，内容为 【成佩涛发送过来的!】 的通知
      *
      *  */
-    public static PushPayload buildPushObject_all_all_alert(String name) {
+    public static PushPayload buildPushObjectAllAlert(String name) {
         return PushPayload.alertAll(name);
     }
-    /**
-     *  所有平台，推送目标是别名为 "alias1"，通知内容为  【神马都是浮云!】
-     *
-     *  */
-    public static PushPayload buildPushObject_all_alias_alert(String alis,String content) {
-        return PushPayload.newBuilder()
-                .setPlatform(Platform.android())
-                .setAudience(Audience.alias(alis))
-                .setNotification(Notification.alert(content))
-                .build();
-    }
+
     /**
      /**
      *  所有平台，推送目标是别名为 "alias1"，通知内容为  【神马都是浮云!】
+     *  apnsProduction true 线上环境 false 测试环境
      *
      *  */
-    public static PushPayload buildPushObject_all_alias_alert(String alis,String content, String sms) {
+    public static PushPayload buildPushAlertAndMsgByAlias(String alis,String content, String sms) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.android_ios())
                 .setNotification(
@@ -40,7 +31,8 @@ public class PushExample {
                                 .addPlatformNotification(
                                         AndroidNotification.newBuilder()
                                                 .setAlert(content).build())
-                                .addPlatformNotification(IosNotification.newBuilder().setAlert(content).addExtra("content", sms).build())
+                                .addPlatformNotification(IosNotification.newBuilder().setAlert(content)
+                                        .addExtra("content", sms).build())
                                 .build())
                 .setAudience(
                         Audience.newBuilder()
@@ -56,7 +48,7 @@ public class PushExample {
      *  所有平台，推送目标是别名为 "alias1"，通知内容为  【神马都是浮云!】
      *
      *  */
-    public static PushPayload buildPushObject_all_alias_sms(String alis, String sms) {
+    public static PushPayload buildPushSmsByAlias(String alis, String sms) {
         Message message = Message.newBuilder().setMsgContent(sms).build();
         return PushPayload.newBuilder().setPlatform(Platform.all())
                 .setAudience(Audience.registrationId(alis))
@@ -64,19 +56,8 @@ public class PushExample {
                         Audience.newBuilder()
                                 .addAudienceTarget(AudienceTarget.alias(alis))
                                 .build())
-//              .setNotification(Notification.alert(pushData.getContent()))//通知
+      //       .setNotification(Notification.alert(pushData.getContent()))//通知
                 .setMessage(message)//使用自定义消息推送
-                .build();
-    }
-    /**
-     *  平台是 Android，目标是 tag 为 "tag1" 的设备，内容是 【这是内容】，并且标题为 【这是标题】。
-     *
-     *  */
-    public static PushPayload buildPushObject_android_tag_alertWithTitle(String shebei,String content,String title) {
-        return PushPayload.newBuilder()
-                .setPlatform(Platform.android())
-                .setAudience(Audience.tag(shebei))
-                .setNotification(Notification.android(content,title, null))
                 .build();
     }
 
@@ -88,4 +69,5 @@ public class PushExample {
                 .setSMS(sms)
                 .build();
     }
+
 }

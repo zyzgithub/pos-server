@@ -1,14 +1,12 @@
-package com.dianba.pos.passport.support;
+package com.dianba.pos.push.support;
 
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.PushPayload;
-import com.alibaba.fastjson.JSONObject;
-import com.dianba.pos.common.util.JPushTypeEnum;
-import com.dianba.pos.common.util.PushExample;
-import com.dianba.pos.passport.config.JPushConfig;
+import com.dianba.pos.push.config.JPushConfig;
+import com.dianba.pos.push.util.PushExample;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -27,10 +25,10 @@ public class JPushRemoteService {
      * @param msg
      * @return
      */
-    protected String sendPushWithAlias(String passportId,String content,String msg){
+    protected String sendPushAlertAndMsgByAlias(String passportId,String content,String msg){
         PushResult result=null;
         JPushClient jpushClient = new JPushClient(jPushConfig.getPosJPushSecret(),jPushConfig.getPosJPushKey());
-        PushPayload payload = PushExample.buildPushObject_all_alias_alert(passportId,content,msg);
+        PushPayload payload = PushExample.buildPushAlertAndMsgByAlias(passportId,content,msg);
         try {
             result = jpushClient.sendPush(payload);
             System.out.println(result);
@@ -52,10 +50,10 @@ public class JPushRemoteService {
      * @param msg
      * @return
      */
-    protected String sendPushWithAliasAndSms(String passportId,String msg){
+    protected String sendPushMsgByAlias(String passportId,String msg){
         PushResult result=null;
         JPushClient jpushClient = new JPushClient(jPushConfig.getPosJPushSecret(),jPushConfig.getPosJPushKey());
-        PushPayload payload = PushExample.buildPushObject_all_alias_sms(passportId,msg);
+        PushPayload payload = PushExample.buildPushSmsByAlias(passportId,msg);
         try {
             result = jpushClient.sendPush(payload);
             System.out.println(result);
@@ -69,11 +67,5 @@ public class JPushRemoteService {
         }else{
             return result.toString();
         }
-    }
-    protected void posJPush(String passportId,String msg){
-        JSONObject jsonObject=new JSONObject();
-        jsonObject.put("type", JPushTypeEnum.SPEAK.getKey());
-        jsonObject.put("msg",JPushTypeEnum.SPEAK.getMsg()+msg+"元");
-        sendPushWithAlias(passportId,JPushTypeEnum.SPEAK.getTitle(),jsonObject.toJSONString());
     }
 }
