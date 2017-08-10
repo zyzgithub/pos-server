@@ -193,10 +193,14 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
     }
 
     @Override
-    public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email) {
+    public BasicResult findMerchantDayReport(Long merchantId, Long itId, String itemName, String email
+            ,String createTime) {
+        if (StringUtil.isEmpty(createTime)) {
+            createTime = DateUtil.getCurrDate("yyyy-MM-dd");
+        }
         Passport passport = passportMapper.getPassportInfoByCashierId(merchantId);
         List<MerchantDayReportVo> merchantDayReportVos = lifeOrderMapper
-                .findMerchantDayReport(passport.getId(), itId, itemName);
+                .findMerchantDayReport(passport.getId(), itId, itemName,createTime);
         if (StringUtil.isEmpty(email)) {
             return BasicResult.createSuccessResultWithDatas("获取成功", merchantDayReportVos);
         } else {

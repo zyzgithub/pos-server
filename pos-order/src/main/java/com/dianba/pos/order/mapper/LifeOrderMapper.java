@@ -48,7 +48,7 @@ public interface LifeOrderMapper {
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
-            , @Param("itemName") String itemName);
+            , @Param("itemName") String itemName,@Param("createTime") String createTime);
 
     List<MerchantCashierDayProfitInfo> findMerchantCashierDayProfitInfo(@Param("merchantId") Long merchantId
             , @Param("createTime") String createTime);
