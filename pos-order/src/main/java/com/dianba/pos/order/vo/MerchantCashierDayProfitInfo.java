@@ -43,7 +43,7 @@ public class MerchantCashierDayProfitInfo {
     }
 
     public String getTime() {
-        return time.substring(0,10);
+        return time.substring(0,19);
     }
 
     public void setTime(String time) {

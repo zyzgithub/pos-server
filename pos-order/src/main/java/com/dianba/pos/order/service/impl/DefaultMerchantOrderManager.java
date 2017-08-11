@@ -221,6 +221,17 @@ public class DefaultMerchantOrderManager implements MerchantOrderManager {
         return BasicResult.createSuccessResultWithDatas("获取成功", merchantCashierDayProfitInfos);
     }
 
+    @Override
+    public BasicResult findSettlementInfoByPassportId(Long passportId, String createTime) {
+        if (StringUtil.isEmpty(createTime)) {
+            createTime = DateUtil.getCurrDate("yyyy-MM-dd");
+        }
+        List<SettlementInfoByPassportIdVo> settlementInfoByPassportIdVos=orderMapper.findSettlementInfoByPassportId(
+                passportId,createTime);
+
+        return BasicResult.createSuccessResultWithDatas("获取成功",settlementInfoByPassportIdVos);
+    }
+
 
     private void sendEmail(List<MerchantDayReportVo> lineList, String email, String merchantName) {
         List<String> title = Arrays.asList("排名", "商品名称", "所属分类", "实时销售数"

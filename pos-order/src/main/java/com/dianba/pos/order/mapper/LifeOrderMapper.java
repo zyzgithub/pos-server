@@ -4,6 +4,7 @@ import com.dianba.pos.order.po.LifeOrder;
 import com.dianba.pos.order.vo.MerchantCashierDayProfitInfo;
 import com.dianba.pos.order.vo.MerchantDayReportVo;
 import com.dianba.pos.order.vo.OrderTransactionRecordVo;
+import com.dianba.pos.order.vo.SettlementInfoByPassportIdVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -47,12 +48,14 @@ public interface LifeOrderMapper {
     Map<String, Object> findMerchantStockMoney(@Param("id") Long id
             , @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
-    List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
+        List<MerchantDayReportVo> findMerchantDayReport(@Param("merchantId") Long merchantId, @Param("itId") Long idId
             , @Param("itemName") String itemName,@Param("createTime") String createTime);
 
     List<MerchantCashierDayProfitInfo> findMerchantCashierDayProfitInfo(@Param("merchantId") Long merchantId
             , @Param("createTime") String createTime);
-
+    /**商家端收银员结算详情**/
+    List<SettlementInfoByPassportIdVo> findSettlementInfoByPassportId(@Param("passportId") Long passportId
+            , @Param("createTime") String createTime);
     /**
      * pos端交易记录
      *

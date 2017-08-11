@@ -13,4 +13,6 @@ public interface MerchantOrderManager {
 
     BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email,String createTime);
     BasicResult findMerchantCashierDayProfitInfo(Long merchantId,String createTime);
+
+    BasicResult findSettlementInfoByPassportId(Long passportId,String createTime);
 }

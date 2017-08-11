@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 @Api("商家订单管理器")
 @Controller
 @RequestMapping(OrderURLConstant.MERCHANT)
@@ -86,5 +87,12 @@ public class MerchantOrderController {
     @RequestMapping(value = "findMerchantCashierDayProfitInfo",method = {RequestMethod.POST, RequestMethod.GET})
     public BasicResult findMerchantCashierDayProfitInfo(Long merchantId,String createTime){
         return merchantOrderManager.findMerchantCashierDayProfitInfo(merchantId, createTime);
+    }
+
+    @ResponseBody
+    @ApiOperation("商家收银员结算详情")
+    @RequestMapping(value = "findSettlementInfoByPassportId",method = {RequestMethod.POST, RequestMethod.GET})
+    public BasicResult findSettlementInfoByPassportId(Long passportId,String createTime){
+        return merchantOrderManager.findSettlementInfoByPassportId(passportId, createTime);
     }
 }
