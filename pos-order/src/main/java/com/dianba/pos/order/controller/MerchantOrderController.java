@@ -73,7 +73,7 @@ public class MerchantOrderController {
      */
     @ApiOperation("商家POS端日报表信息")
     @ResponseBody
-    @RequestMapping("findMerchantDayReport")
+    @RequestMapping(value = "findMerchantDayReport",method = {RequestMethod.POST, RequestMethod.GET})
     public BasicResult findMerchantDayReport(Long merchantId,Long itId,String itemName,String email,String createTime){
        return merchantOrderManager.findMerchantDayReport(merchantId, itId, itemName, email,createTime);
     }
